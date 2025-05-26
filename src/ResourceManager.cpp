@@ -1,0 +1,91 @@
+#include "../include/ResourceManager.h"
+
+std::map<std::string, Texture2D> ResourceManager::textures;
+
+void ResourceManager::loadTextures() {
+	// move
+	textures["SmallMario_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SmallMario_0.png");
+	textures["SmallMario_RIGHT_1"] = LoadTexture("resources/images/sprites/mario/SmallMario_1.png");
+	textures["SmallMario_LEFT_0"] = flipTexture(textures["SmallMario_RIGHT_0"]);
+	textures["SmallMario_LEFT_1"] = flipTexture(textures["SmallMario_RIGHT_1"]);
+
+	textures["SuperMario_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SuperMario_0.png");
+	textures["SuperMario_RIGHT_1"] = LoadTexture("resources/images/sprites/mario/SuperMario_1.png");
+	textures["SuperMario_RIGHT_2"] = LoadTexture("resources/images/sprites/mario/SuperMario_2.png");
+	textures["SuperMario_LEFT_0"] = flipTexture(textures["SuperMario_RIGHT_0"]);
+	textures["SuperMario_LEFT_1"] = flipTexture(textures["SuperMario_RIGHT_1"]);
+	textures["SuperMario_LEFT_2"] = flipTexture(textures["SuperMario_RIGHT_2"]);
+	// jump
+	textures["SmallMarioJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SmallMarioJumping_0.png");
+	textures["SmallMarioJumping_LEFT_0"] = flipTexture(textures["SmallMarioJumping_RIGHT_0"]);
+
+	textures["SuperMarioJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SuperMarioJumping_0.png");
+	textures["SuperMarioJumping_LEFT_0"] = flipTexture(textures["SuperMarioJumping_RIGHT_0"]);
+	// fall
+	textures["SmallMarioFalling_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SmallMarioFalling_0.png");
+	textures["SmallMarioFalling_LEFT_0"] = flipTexture(textures["SmallMarioFalling_RIGHT_0"]);
+
+	textures["SuperMarioFalling_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SuperMarioFalling_0.png");
+	textures["SuperMarioFalling_LEFT_0"] = flipTexture(textures["SuperMarioFalling_RIGHT_0"]);
+	// duck
+	textures["SmallMarioDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SmallMarioDucking_0.png");
+	textures["SmallMarioDucking_LEFT_0"] = flipTexture(textures["SmallMarioDucking_RIGHT_0"]);
+	
+	textures["SuperMarioDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SuperMarioDucking_0.png");
+	textures["SuperMarioDucking_LEFT_0"] = flipTexture(textures["SuperMarioDucking_RIGHT_0"]);
+
+	// trasition
+	textures["TransitioningMario_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/TransitioningMario_1.png");
+	textures["TransitioningMario_LEFT_0"] = flipTexture(textures["TransitioningMario_RIGHT_0"]);
+	// fireball
+	textures["FlowerMarioFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FlowerMarioFireball_0.png");
+	textures["FlowerMarioFireball_RIGHT_1"] = LoadTexture("resources/images/sprites/mario/FlowerMarioFireball_1.png");
+	textures["FlowerMarioFireball_RIGHT_2"] = LoadTexture("resources/images/sprites/mario/FlowerMarioFireball_2.png");
+	textures["FlowerMarioFireball_RIGHT_3"] = LoadTexture("resources/images/sprites/mario/FlowerMarioFireball_3.png");
+	textures["FlowerMarioFireball_LEFT_0"] = flipTexture(textures["FlowerMarioFireball_RIGHT_0"]);
+	textures["FlowerMarioFireball_LEFT_1"] = flipTexture(textures["FlowerMarioFireball_RIGHT_1"]);
+	textures["FlowerMarioFireball_LEFT_2"] = flipTexture(textures["FlowerMarioFireball_RIGHT_2"]);
+	textures["FlowerMarioFireball_LEFT_3"] = flipTexture(textures["FlowerMarioFireball_RIGHT_3"]);
+
+	textures["SuperMarioThrowingFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SuperMarioThrowingFireball_0.png");
+	textures["SuperMarioThrowingFireball_LEFT_0"] = flipTexture(textures["SuperMarioThrowingFireball_RIGHT_0"]);
+}
+
+void ResourceManager::unloadTextures() {
+	for (auto const &[key, val] : textures) {
+		unloadTexture(key);
+	}
+	textures.clear();
+}
+void ResourceManager::unloadTexture(std::string key) {
+	if (textures.find(key) != textures.end()) {
+		UnloadTexture(textures[key]);
+	}
+}
+
+void ResourceManager::LoadAllResources()
+{
+	loadTextures();
+}
+
+std::map<std::string, Texture2D>  ResourceManager::getTextures() {
+	return textures;
+}
+
+Texture2D& ResourceManager::getTexture(const std::string name)
+{
+	return textures[name];
+}
+
+void ResourceManager::UnloadAllResources()
+{
+	unloadTextures();
+}
+
+Texture2D flipTexture(Texture2D& a) {
+	Image img = LoadImageFromTexture(a);
+	ImageFlipHorizontal(&img);
+	Texture tex = LoadTextureFromImage(img);
+	UnloadImage(img);
+	return tex;
+}

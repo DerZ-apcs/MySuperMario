@@ -1,0 +1,14 @@
+#ifndef STATE_H
+#define STATE_H
+
+enum EntityState {
+	//IDLING,
+	FALLING,
+	JUMPING,
+	ON_GROUND,
+	IDLING,
+	ENTITY_ACTIVE,
+	ENTITY_TO_BE_REMOVED
+
+};
+#endif
