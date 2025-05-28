@@ -37,6 +37,22 @@ void ResourceManager::loadTextures() {
 	// trasition
 	textures["TransitioningMario_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/TransitioningMario_1.png");
 	textures["TransitioningMario_LEFT_0"] = flipTexture(textures["TransitioningMario_RIGHT_0"]);
+	// FireMario
+	textures["Fire_Mario_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FireMario_0.png");
+	textures["Fire_Mario_RIGHT_1"] = LoadTexture("resources/images/sprites/mario/FireMario_1.png");
+	textures["Fire_Mario_RIGHT_2"] = LoadTexture("resources/images/sprites/mario/FireMario_2.png");
+	textures["Fire_Mario_LEFT_0"] = flipTexture(textures["Fire_Mario_RIGHT_0"]);
+	textures["Fire_Mario_LEFT_1"] = flipTexture(textures["Fire_Mario_RIGHT_1"]);
+	textures["Fire_Mario_LEFT_2"] = flipTexture(textures["Fire_Mario_RIGHT_2"]);
+
+	textures["Fire_Mario_Jumping_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FireMarioJumping_0.png");
+	textures["Fire_Mario_Jumping_LEFT_0"] = flipTexture(textures["Fire_Mario_Jumping_RIGHT_0"]);
+
+	textures["Fire_Mario_Falling_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FireMarioFalling_0.png");
+	textures["Fire_Mario_Falling_LEFT_0"] = flipTexture(textures["Fire_Mario_Falling_RIGHT_0"]);
+
+	textures["Fire_Mario_Ducking_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FireMario_Ducking_0.png");
+	textures["Fire_Mario_Ducking_LEFT_0"] = flipTexture(textures["Fire_Mario_Ducking_RIGHT_0"]);
 	// fireball
 	textures["FlowerMarioFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FlowerMarioFireball_0.png");
 	textures["FlowerMarioFireball_RIGHT_1"] = LoadTexture("resources/images/sprites/mario/FlowerMarioFireball_1.png");
@@ -49,6 +65,10 @@ void ResourceManager::loadTextures() {
 
 	textures["SuperMarioThrowingFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SuperMarioThrowingFireball_0.png");
 	textures["SuperMarioThrowingFireball_LEFT_0"] = flipTexture(textures["SuperMarioThrowingFireball_RIGHT_0"]);
+	// tile
+	textures["MAP1_GRASS_NORMAL"] = LoadTexture("resources/images/tiles/1/tile_B.png");
+	textures["MAP1_GRASS_RIGHT_EDGE"] = LoadTexture("resources/images/tiles/1/tile_E.png");
+	textures["MAP1_GRASS_LEFT_EDGE"] = LoadTexture("resources/images/tiles/1/tile_F.png");
 }
 
 void ResourceManager::unloadTextures() {

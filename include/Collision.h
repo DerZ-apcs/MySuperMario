@@ -19,7 +19,7 @@ private:
 public:
 	Collision();
 	Collision(Vector2 pos, Vector2 sz, Color color);
-	~Collision() override;
+	~Collision();
 
 	void draw() const;
 	CollisionType checkCollision(Rectangle& rect) const;

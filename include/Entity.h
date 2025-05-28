@@ -34,24 +34,27 @@ public:
 	Entity();
 	Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState state, Texture2D tex, std::string name);
 	Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState state,
-		Texture2D tex, float FrameTime, int MaxFrame);
-	Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState state, float FrameTime, int MaxFrame);
+		Texture2D tex, float FrameTime, int MaxFrame, Color color);
+	Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState state, float FrameTime, int MaxFrame, Color color);
 	virtual void Update();
 	virtual void draw();
 	virtual void HandleInput();
 	virtual void UpdateTexture();
+	virtual void UpdatePhysics();
 	virtual void updateCollision();
 	virtual CollisionType CheckCollision(Entity* entity);
 
 	bool isOnGround() const;
 	virtual void RunLeft();
-	virtual void RunRight();
+	virtual void RunRight(
+	);
 	virtual void Jumping();
 	// Setter
 	void setPosition(Vector2 pos);
 	void setSize(Vector2 sz);
 	void setVel(Vector2 vel);
 	void setState(EntityState state);
+	void setColor(Color color);
 	// Getter
 	Vector2& getPosition();
 	float getX() const;

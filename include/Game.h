@@ -3,6 +3,8 @@
 #include <raylib.h>
 #include "../include/Mario.h"
 #include "../include/Clock.h"
+#include "../include/ResourceManager.h"
+#include "../include/Tile.h"
 
 class Game {
 private:
@@ -13,17 +15,21 @@ private:
 	//Camera2D camera;
 
 	//bool initialize;
+	std::vector<Tile*> Tiles;
 	Mario mario;
-	Clock clock;
+	Camera2D camera;
 public:
 	Game();
 	Game(int nwidth, int nheight, int ntargetFPS);
+	~Game();
 
-	void init();
+	void initGame();
+	void UpdateGame();
+	void draw();
 
-	int getWidth();
-	int getHeight();
-	int getTergetFPS();
+	int getWidth() const;
+	int getHeight() const;
+	int getTergetFPS() const;
 	//Color getColor();
 
 	void setWidth(int width);

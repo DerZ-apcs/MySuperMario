@@ -1,7 +1,7 @@
 #include "../include/Collision.h"
 
 Collision::Collision():
-	Collision(Vector2{0, 0}, Vector2{5, 5}, Color(255, 255, 255, 255)) {
+	Collision(Vector2{ 0, 0 }, Vector2{ 5, 5 }, Color{ 255, 255, 255, 255 }) {
 }
 
 Collision::Collision(Vector2 pos, Vector2 sz, Color color):
@@ -92,5 +92,5 @@ Color& Collision::getColor()
 
 Rectangle Collision::getRect() const
 {
-	return Rectangle(pos.x, pos.y, size.x, size.y);
+	return Rectangle{ pos.x, pos.y, size.x, size.y };
 }

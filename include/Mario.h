@@ -2,7 +2,10 @@
 #define MARIO_H
 #include <raylib.h>
 #include "../include/Entity.h"
+#include "../include/FireBall.h"
+#include "../include/Tile.h"
 #include <string>
+#include <list>
 
 enum MARIO_TYPE {
 	STATE_SMALL,
@@ -12,12 +15,14 @@ enum MARIO_TYPE {
 enum MARIO_SPRITE {
 	NORMAL,
 	STATE_TRANSITIONING_FROM_SMALL_TO_SUPER,
-	STATE_TRANSITIONING_FROM_SUPER_TO_SMALL
+	STATE_TRANSITIONING_FROM_SUPER_TO_SMALL,
+	STATE_TRANSITIONING_FROM_SMALL_TO_FLOWER
 };
 enum TextureMario {
 	SMALL,
 	SUPER,
-	TRANSITIONING
+	TRANSITIONING,
+	FLOWER
 };
 class Mario: public Entity {
 private:
@@ -38,16 +43,19 @@ private:
 	const int transitionFrameOrder[11] = { 0, 1, 0, 1, 0, 1, 2, 1, 2, 1, 2 };
 	const int reversetTransitionFrameOrder[11] = { 2, 1, 2, 1, 2, 1, 0, 1, 0, 1, 0 };
 
+	std::list<FireBall*> fireballs;
 	TextureMario textureSprite;
 	int pos_onGroundY;
 	bool isDucking;
+	bool isThrowing;
 public:
 	Mario();
-	Mario(Vector2 nposition, Vector2 nsize, Vector2 nvel, MARIO_TYPE Type0, EntityState playerState, Direction ndirection);
+	Mario(Vector2 nposition, Vector2 nsize, MARIO_TYPE type);
 	~Mario();
-	void RunLeft();
-	void RunRight();
-	void Jumping();
+	void HandleTileCollision(const Tile tile, CollisionType Colltype);
+	void RunLeft() override;
+	void RunRight() override;
+	void Jumping() override;
 	void Ducking();
 	void Standing();
 	void Update();
@@ -55,9 +63,13 @@ public:
 	void HandleInput();
 	void UpdateTexture();
 	bool isOnGround() const;
+
 	void TransitionToSuper();
 	void TransitionToSmall();
+	void TransitionToFire();
 	void TransitionMarioState();
+	
+	void ThrowingFireBalls();
 	// getter
 	
 };

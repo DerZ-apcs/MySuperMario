@@ -4,13 +4,14 @@
 
 class Clock {
 private:
-	static double lastUpdateTime;
+	//static constexpr double lastUpdateTime;
+	static constexpr double FIX_TIME_ST = 1 / 360.0;
+
 public:
 	static double UpdateTimeAcum;
-	static void StartTiming();
+	//static void StartTiming();
 	static double getDeltaTimeUpdate();
-	static void Update();
+	//static void Update();
 
-	static constexpr double FIX_TIME_ST = 1 / 360.0;
 };
 #endif

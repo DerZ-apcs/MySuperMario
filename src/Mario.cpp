@@ -1,37 +1,63 @@
 #include "../include/Mario.h"
 #include <iostream>
+#include "raymath.h"
 
-Mario::Mario(): 
-	Mario(Vector2{100, 500}, Vector2{100, 100}, Vector2{0, 0}, STATE_SMALL, ON_GROUND, RIGHT) {}
+Mario::Mario() : Mario(Vector2{ 0, 0 }, Vector2{ 32, 40 }, STATE_SMALL) {
 
-Mario::Mario(Vector2 nposition, Vector2 nsize, Vector2 nvel, MARIO_TYPE Type0, EntityState playerState, Direction ndirection) {
-	this->position = nposition;
-	this->size = nsize;
-	this->velocity = nvel;
-	pos_onGroundY = position.y;
+}
+	
+Mario::Mario(Vector2 nposition, Vector2 nsize, MARIO_TYPE type) :
+	Entity(nposition, {32, 40}, Vector2{0, 0}, RIGHT, FALLING, 0.1f, 1, WHITE),
+	isDucking(false),
+	Mario_State(type)
+	
+{
+	if (type == STATE_SMALL) {
+		this->size = { 32, 40 };
+	}
+	else  {
+		this->size = { 32, 56 };
+	} 
+	texture = ResourceManager::getTexture("SmallMario_RIGHT_0");
+	pos_onGroundY = 500;
 
 	Mario_sprite = NORMAL;
-	Mario_State = Type0;
-	state = playerState;
-	this->direction = ndirection;
-
-	maxFrame = 1;
-	currFrame = 0;
-	frameTime = 0.1;
-	frameAcum = 0;
-	isDucking = false;
-	texture = ResourceManager::getTexture("SmallMario_RIGHT_0");
-
 	transitioningFrameTime = 0.06;
 	transitioningFrameAcum = 0;
 	transitionSteps = 11;
 	transitionCurrentFrame = 0;
 	transitionCurrentFramePos = 0;
 	textureSprite = SMALL;
+	isThrowing = false;
 }
+
 Mario::~Mario()
 {
 	
+}
+void Mario::HandleTileCollision(const Tile tile, CollisionType Colltype)
+{
+	if (Colltype == COLLISION_TYPE_NONE)
+		return;
+	switch (Colltype) {
+	case COLLISION_TYPE_EAST:
+		
+		
+		break;
+	case COLLISION_TYPE_NORTH:
+
+		break;
+	case COLLISION_TYPE_SOUTH:
+		setPosition({ position.x, tile.getY() - size.y });
+		velocity.y = 0;
+		state = ON_GROUND;
+		break;
+	case COLLISION_TYPE_WEST:
+
+		break;
+	default:
+		break;
+	}
 }
 void Mario::HandleInput()
 {
@@ -51,9 +77,15 @@ void Mario::HandleInput()
 		}
 		else isDucking = false;
 	}
-	if (IsKeyPressed(KEY_SPACE) && Mario_sprite == NORMAL) {
+	if (IsKeyPressed(KEY_SPACE) /*&& Mario_sprite == NORMAL*/) {
 		TransitionMarioState();
 	}
+	if (IsKeyPressed(KEY_Z) && Mario_State != STATE_FIRE_BALL)
+		TransitionToFire();
+	if (IsKeyPressed(KEY_LEFT_CONTROL) && Mario_State == STATE_FIRE_BALL) {
+		ThrowingFireBalls();
+	}
+	/*else isThrowing = false;*/
 }
 
 void Mario::UpdateTexture()
@@ -64,6 +96,7 @@ void Mario::UpdateTexture()
 		if (state == ON_GROUND) {
 			if (velocity.x != 0 && !isDucking) {
 				// moving
+				frameTime = 0.1f;
 				frameAcum += deltaTime;
 				if (frameAcum > frameTime) {
 					currFrame++;
@@ -168,7 +201,74 @@ void Mario::UpdateTexture()
 				texture = ResourceManager::getTexture("SuperMarioFalling_LEFT_0");
 		}
 		textureSprite = SUPER;
+
+		if (isThrowing) {
+			if (direction == LEFT)
+				texture = ResourceManager::getTexture("SuperMarioThrowingFireball_LEFT_0");
+			else
+				texture = ResourceManager::getTexture("SuperMarioThrowingFireball_RIGHT_0");
+		
+		}
+
+		
 		break;	
+
+	case STATE_FIRE_BALL: {
+			// on ground
+		maxFrame = 2;
+		if (state == ON_GROUND) {
+			if (velocity.x != 0 && !isDucking) {
+				frameAcum += deltaTime;
+				if (frameAcum > frameTime) {
+					currFrame++;
+					if (currFrame > maxFrame) currFrame = 0;
+					frameAcum -= frameTime;
+				}
+				if (direction == RIGHT) {
+					if (currFrame == 0)
+						texture = ResourceManager::getTexture("Fire_Mario_RIGHT_0");
+					else if (currFrame == 1)
+						texture = ResourceManager::getTexture("Fire_Mario_RIGHT_1");
+					else
+						texture = ResourceManager::getTexture("Fire_Mario_RIGHT_2");
+				}
+				else if (direction == LEFT) {
+					if (currFrame == 0)
+						texture = ResourceManager::getTexture("Fire_Mario_LEFT_0");
+					else if (currFrame == 1)
+						texture = ResourceManager::getTexture("Fire_Mario_LEFT_1");
+					else
+						texture = ResourceManager::getTexture("Fire_Mario_LEFT_2");
+				}
+			}
+			if (velocity.x == 0 && !isDucking) {
+				if (direction == RIGHT)
+					texture = ResourceManager::getTexture("Fire_Mario_RIGHT_0");
+				else if (direction == LEFT)
+					texture = ResourceManager::getTexture("Fire_Mario_LEFT_0");
+			}
+			if (isDucking) {
+				velocity.x = 0;
+				if (direction == RIGHT)
+					texture = ResourceManager::getTexture("Fire_Mario_Ducking_RIGHT_0");
+				else if (direction == LEFT)
+					texture = ResourceManager::getTexture("Fire_Mario_Ducking_LEFT_0");
+			}
+		}
+		else if (state == JUMPING) {
+			if (direction == RIGHT)
+				texture = ResourceManager::getTexture("Fire_Mario_Jumping_RIGHT_0");
+			else if (direction == LEFT)
+				texture = ResourceManager::getTexture("Fire_Mario_Jumping_LEFT_0");
+		}
+		else if (state == FALLING) {
+			if (direction == RIGHT)
+				texture = ResourceManager::getTexture("Fire_Mario_Falling_RIGHT_0");
+			else if (direction == LEFT)
+				texture = ResourceManager::getTexture("Fire_Mario_Falling_LEFT_0");
+		}
+		
+	}
 	}
 
 	if (Mario_sprite == STATE_TRANSITIONING_FROM_SMALL_TO_SUPER) {
@@ -242,6 +342,7 @@ void Mario::UpdateTexture()
 		}	
 		textureSprite = TRANSITIONING;
 	}
+	
 }
 
 bool Mario::isOnGround() const
@@ -251,14 +352,25 @@ bool Mario::isOnGround() const
 
 void Mario::TransitionToSuper()
 {
+	this->size = { 32, 56 };
 	Mario_State = STATE_SUPER;
 	Mario_sprite = NORMAL;
+	maxFrame = 2;
 }
 
 void Mario::TransitionToSmall()
 {
+	this->size = { 32, 40 };
 	Mario_State = STATE_SMALL;
 	Mario_sprite = NORMAL;
+	maxFrame = 1;
+}
+
+void Mario::TransitionToFire()
+{
+	this->size = { 32, 56 };
+	Mario_State = STATE_FIRE_BALL;
+	maxFrame = 2;
 }
 
 void Mario::TransitionMarioState()
@@ -266,11 +378,27 @@ void Mario::TransitionMarioState()
 	if (Mario_State == STATE_SMALL)
 		Mario_sprite = STATE_TRANSITIONING_FROM_SMALL_TO_SUPER;
 	else if (Mario_State == STATE_SUPER)
+		Mario_State = STATE_FIRE_BALL;
+	else if (Mario_State == STATE_FIRE_BALL)
 		Mario_sprite = STATE_TRANSITIONING_FROM_SUPER_TO_SMALL;
 }
 
+void Mario::ThrowingFireBalls()
+{
+	//isThrowing = true;
+	//textureSprite = FLOWER;
+	if (direction == RIGHT) {
+		Vector2 velFb = Vector2Add(Vector2{400, 400}, this->velocity);
+		fireballs.push_back(new FireBall(Vector2{ position.x + this->getCurrTexture().width / 2, position.y + this->getCurrTexture().height / 2 - 3 }, Vector2{ 16, 16 }, velFb, RIGHT, 2));
+	}
+	else if (direction == LEFT) {
+		Vector2 velFb = Vector2Add(Vector2{ -400, 400 }, this->velocity);
+		fireballs.push_back(new FireBall(Vector2{ position.x + this->getCurrTexture().width / 2, position.y + this->getCurrTexture().height / 2 - 3 }, Vector2{ 16, 16 }, velFb, LEFT, 2));
+	}
+}
+
 void Mario::RunLeft() {
-	float deltaTime = Clock::getDeltaTimeUpdate();
+	float deltaTime = GetFrameTime();
 	if (direction == RIGHT) {
 		direction = LEFT;
 		velocity.x = 0;
@@ -284,7 +412,7 @@ void Mario::RunLeft() {
 
 }
 void Mario::RunRight() {
-	float deltaTime = Clock::getDeltaTimeUpdate();
+	float deltaTime = GetFrameTime();
 	if (direction == LEFT) {
 		direction = RIGHT;
 		velocity.x = 0;
@@ -306,7 +434,7 @@ void Mario::Ducking() {
 	this->isDucking = true;
 }
 void Mario::Standing() {
-	const float deltaTime = Clock::getDeltaTimeUpdate();
+	const float deltaTime = GetFrameTime();
 	if (velocity.x > 0) {
 		velocity.x -= accelerationX * deltaTime;
 	}
@@ -319,7 +447,7 @@ void Mario::Standing() {
 void Mario::Update()
 {
 	HandleInput();
-	const float deltaTime = Clock::getDeltaTimeUpdate();
+	const float deltaTime = GetFrameTime();
 	if (velocity.x != 0) position.x += velocity.x * deltaTime + 0.5 * accelerationX * deltaTime * deltaTime;
 
 	if (state != ON_GROUND) 
@@ -336,16 +464,34 @@ void Mario::Update()
 		velocity.y += GRAVITY * deltaTime;
 		position.y += 0.5 * GRAVITY * deltaTime * deltaTime;
 	}
+	for (auto i = fireballs.begin(); i != fireballs.end();) {
+		FireBall* fireball = *i;
+		if (fireball->isMaxDistance()) {
+			delete fireball;
+			fireball = nullptr;
+			i = fireballs.erase(i);
+		}
+		else {
+			fireball->Update();
+			++i;
+		}
+	}
 }
 
 void Mario::draw()
 {
 	UpdateTexture();
-	
+	for (auto& fireball : fireballs) {
+		fireball->UpdateTexture();
+	}
+	for (auto& fireball : fireballs) {
+		fireball->draw();
+	}
 	if (textureSprite == SUPER)
 		DrawTexture(texture, position.x, position.y - 15, WHITE);
 	else if (textureSprite == TRANSITIONING)
 		DrawTexture(texture, position.x, position.y - 10, WHITE);
 	else DrawTexture(texture, position.x, position.y, WHITE);
-}
 
+	
+}
