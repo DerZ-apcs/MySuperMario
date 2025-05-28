@@ -21,7 +21,7 @@ protected:
 	float frameTime;
 	float frameAcum;
 	Texture2D texture;
-
+	Rectangle rect;
 	const float GRAVITY = 800;
 	std::string Entity_name;
 
@@ -42,7 +42,7 @@ public:
 	virtual void UpdateTexture();
 	virtual void UpdatePhysics();
 	virtual void updateCollision();
-	virtual CollisionType CheckCollision(Entity* entity);
+	virtual CollisionType CheckCollision(const Entity& entity) const;
 
 	bool isOnGround() const;
 	virtual void RunLeft();

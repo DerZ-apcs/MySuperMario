@@ -1,6 +1,7 @@
 #ifndef FIREBALL_H
 #define FIREBALL_H
 #include <raylib.h>
+#include "../include/Tile.h"
 #include "../include/Entity.h"
 
 class FireBall: public Entity {
@@ -10,6 +11,7 @@ private:
 	static const float maxDistance;
 	float currDistance;
 	static const float FB_SpeedX;
+	static const float accelerationX;
 public:
 	FireBall(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, float timeSpan);
 	~FireBall();
@@ -19,7 +21,7 @@ public:
 	void updateCollision() override;
 	void UpdateTexture() override;
 	bool isMaxDistance() const;
-	void HandleGround(float pos_groundY);
+	void HandleTileCollision(const Tile tile, CollisionType Colltype);
 
 };
 #endif

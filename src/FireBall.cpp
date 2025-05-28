@@ -1,6 +1,6 @@
 #include "../include/FireBall.h"
 #include "../include/ResourceManager.h"
-
+#include "../include/Mario.h"
 const float FireBall::maxDistance = 1000.0f;
 const float FireBall::FB_SpeedX = 500.0f;
 
@@ -11,6 +11,12 @@ FireBall::FireBall(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, float ti
 		ResourceManager::getTexture("FlowerMarioFireball_LEFT_0");
 	this->frameAcum = 0;
 	this->currFrame = 0;
+	this->velocity = direction == RIGHT ? Vector2{ FB_SpeedX, -500 } : Vector2{ -FB_SpeedX, -500 };
+	this->CollNorth.setSize(Vector2{ size.x - 8, 1 });
+	this->CollSouth.setSize(Vector2{ size.x - 8, 1 });
+	this->CollEast.setSize(Vector2{ 1, size.y - 8 });
+	this->CollWest.setSize(Vector2{ 1, size.y - 8 });
+	this->updateCollision();
 }
 
 FireBall::~FireBall() {
@@ -30,13 +36,15 @@ void FireBall::Update()
 		if (currFrame > maxFrame) currFrame = 0;
 	}
 	currDistance += abs(velocity.x) * deltaTime;
-
+	if (velocity.x > 0)
+		direction = RIGHT;
+	else if (velocity.x > 0)
+		direction = LEFT;
 	position.x += velocity.x * deltaTime;
 	position.y += velocity.y * deltaTime;
 	velocity.y += GRAVITY * deltaTime;
-	if (position.y >= 550) {
-		HandleGround(550);
-	}
+
+	updateCollision();
 }
 
 void FireBall::draw()
@@ -48,7 +56,7 @@ void FireBall::draw()
 
 void FireBall::updateCollision()
 {
-
+	Entity::updateCollision();
 }
 
 void FireBall::UpdateTexture()
@@ -63,9 +71,28 @@ bool FireBall::isMaxDistance() const
 	return currDistance >= maxDistance;
 }
 
-void FireBall::HandleGround(float pos_groundY)
+void FireBall::HandleTileCollision(const Tile tile, CollisionType Colltype)
 {
-	position.y = pos_groundY - size.y;
-	state = JUMPING;
-	velocity.y *= -0.8;
+	if (Colltype == COLLISION_TYPE_NONE)
+		return;
+	switch (Colltype) {
+	case COLLISION_TYPE_EAST:
+		setPosition({ tile.getX() - size.x, position.y });
+		velocity.x *= -1;
+		break;
+	case COLLISION_TYPE_NORTH:
+		setPosition({ position.x, tile.getY() + tile.getHeight() });
+		velocity.y = 0;
+		break;
+	case COLLISION_TYPE_SOUTH:
+		setPosition({ position.x, tile.getY() - size.y });
+		velocity.y = -500;
+		break;
+	case COLLISION_TYPE_WEST:
+		setPosition({ tile.getX() + tile.getWidth(), position.y });
+		velocity.x *= -1;
+		break;
+	default:
+		break;
+	}
 }

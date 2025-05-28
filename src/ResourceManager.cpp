@@ -63,8 +63,8 @@ void ResourceManager::loadTextures() {
 	textures["FlowerMarioFireball_LEFT_2"] = flipTexture(textures["FlowerMarioFireball_RIGHT_2"]);
 	textures["FlowerMarioFireball_LEFT_3"] = flipTexture(textures["FlowerMarioFireball_RIGHT_3"]);
 
-	textures["SuperMarioThrowingFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SuperMarioThrowingFireball_0.png");
-	textures["SuperMarioThrowingFireball_LEFT_0"] = flipTexture(textures["SuperMarioThrowingFireball_RIGHT_0"]);
+	textures["FireMarioThrowingFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FireMario_Firing_0.png");
+	textures["FireMarioThrowingFireball_LEFT_0"] = flipTexture(textures["FireMarioThrowingFireball_RIGHT_0"]);
 	// tile
 	textures["MAP1_GRASS_NORMAL"] = LoadTexture("resources/images/tiles/1/tile_B.png");
 	textures["MAP1_GRASS_RIGHT_EDGE"] = LoadTexture("resources/images/tiles/1/tile_E.png");

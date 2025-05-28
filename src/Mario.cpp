@@ -29,6 +29,16 @@ Mario::Mario(Vector2 nposition, Vector2 nsize, MARIO_TYPE type) :
 	transitionCurrentFramePos = 0;
 	textureSprite = SMALL;
 	isThrowing = false;
+
+	CollNorth.setSize({ size.x / 2, 5 });
+	CollSouth.setSize({ size.x / 2, 5 });
+	CollWest.setSize({ 5, size.y - 5 });
+	CollEast.setSize({ 5, size.y - 5 });
+	updateCollision();
+	CollNorth.setColor(RED);
+	CollSouth.setColor(GREEN);
+	CollWest.setColor(BLUE);
+	CollEast.setColor(BLACK);
 }
 
 Mario::~Mario()
@@ -41,11 +51,13 @@ void Mario::HandleTileCollision(const Tile tile, CollisionType Colltype)
 		return;
 	switch (Colltype) {
 	case COLLISION_TYPE_EAST:
-		
-		
+		setPosition({tile.getX() - size.x, position.y});
+		velocity.x = 0;
 		break;
 	case COLLISION_TYPE_NORTH:
-
+		setPosition({position.x, tile.getY() + tile.getHeight()});
+		velocity.y = 0;
+		//state = FALLING;
 		break;
 	case COLLISION_TYPE_SOUTH:
 		setPosition({ position.x, tile.getY() - size.y });
@@ -53,7 +65,8 @@ void Mario::HandleTileCollision(const Tile tile, CollisionType Colltype)
 		state = ON_GROUND;
 		break;
 	case COLLISION_TYPE_WEST:
-
+		setPosition({tile.getX() + tile.getWidth(), position.y});
+		velocity.x = 0;
 		break;
 	default:
 		break;
@@ -85,7 +98,14 @@ void Mario::HandleInput()
 	if (IsKeyPressed(KEY_LEFT_CONTROL) && Mario_State == STATE_FIRE_BALL) {
 		ThrowingFireBalls();
 	}
-	/*else isThrowing = false;*/
+}
+
+void Mario::updateCollision()
+{
+
+	CollEast.setSize({ 5, size.y - 5 });
+	CollWest.setSize({ 5, size.y - 5 });
+	Entity::updateCollision();
 }
 
 void Mario::UpdateTexture()
@@ -267,7 +287,6 @@ void Mario::UpdateTexture()
 			else if (direction == LEFT)
 				texture = ResourceManager::getTexture("Fire_Mario_Falling_LEFT_0");
 		}
-		
 	}
 	}
 
@@ -385,16 +404,26 @@ void Mario::TransitionMarioState()
 
 void Mario::ThrowingFireBalls()
 {
-	//isThrowing = true;
+	isThrowing = true;
 	//textureSprite = FLOWER;
 	if (direction == RIGHT) {
-		Vector2 velFb = Vector2Add(Vector2{400, 400}, this->velocity);
-		fireballs.push_back(new FireBall(Vector2{ position.x + this->getCurrTexture().width / 2, position.y + this->getCurrTexture().height / 2 - 3 }, Vector2{ 16, 16 }, velFb, RIGHT, 2));
+		Vector2 velFb = Vector2Add(Vector2{500, 0}, this->velocity);
+		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, velFb, RIGHT, 2));
 	}
 	else if (direction == LEFT) {
-		Vector2 velFb = Vector2Add(Vector2{ -400, 400 }, this->velocity);
-		fireballs.push_back(new FireBall(Vector2{ position.x + this->getCurrTexture().width / 2, position.y + this->getCurrTexture().height / 2 - 3 }, Vector2{ 16, 16 }, velFb, LEFT, 2));
+		Vector2 velFb = Vector2Add(Vector2{ -500, 0 }, this->velocity);
+		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, velFb, LEFT, 2));
 	}
+}
+
+std::list<FireBall*> *Mario::getFireBalls()
+{
+	return &fireballs;
+}
+
+float Mario::getAccelerationX() const
+{
+	return accelerationX;
 }
 
 void Mario::RunLeft() {
@@ -409,7 +438,6 @@ void Mario::RunLeft() {
 	else {
 		velocity.x -= accelerationX * deltaTime;
 	}
-
 }
 void Mario::RunRight() {
 	float deltaTime = GetFrameTime();
@@ -453,17 +481,8 @@ void Mario::Update()
 	if (state != ON_GROUND) 
 		if (velocity.y >= 0) 
 			state = FALLING;
+	velocity.y += GRAVITY * deltaTime;
 	position.y += velocity.y * deltaTime;
-	if (position.y + 0.5 * GRAVITY * deltaTime * deltaTime >= pos_onGroundY) {
-		position.y = pos_onGroundY;
-		velocity.y = 0;
-		state = ON_GROUND;
-		//Standing();
-	}
-	else {
-		velocity.y += GRAVITY * deltaTime;
-		position.y += 0.5 * GRAVITY * deltaTime * deltaTime;
-	}
 	for (auto i = fireballs.begin(); i != fireballs.end();) {
 		FireBall* fireball = *i;
 		if (fireball->isMaxDistance()) {
@@ -476,6 +495,7 @@ void Mario::Update()
 			++i;
 		}
 	}
+	updateCollision();
 }
 
 void Mario::draw()
@@ -487,11 +507,11 @@ void Mario::draw()
 	for (auto& fireball : fireballs) {
 		fireball->draw();
 	}
-	if (textureSprite == SUPER)
-		DrawTexture(texture, position.x, position.y - 15, WHITE);
-	else if (textureSprite == TRANSITIONING)
-		DrawTexture(texture, position.x, position.y - 10, WHITE);
-	else DrawTexture(texture, position.x, position.y, WHITE);
 
-	
+	DrawTexture(texture, position.x, position.y, WHITE);
+
+	CollEast.draw();
+	CollSouth.draw();
+	CollNorth.draw();
+	CollWest.draw();
 }

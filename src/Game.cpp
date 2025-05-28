@@ -56,8 +56,12 @@ void Game::UpdateGame()
 {
 	//camera.target = mario.getPosition();
 	for (auto const& tile : Tiles) {
-		CollisionType MarioCollision = mario.CheckCollision(tile);
+		CollisionType MarioCollision = mario.CheckCollision(*tile);
 		mario.HandleTileCollision(*tile, MarioCollision);
+		for (auto& fireball : *mario.getFireBalls()) {
+			CollisionType FireBallCollision = fireball->CheckCollision(*tile);
+			fireball->HandleTileCollision(*tile, FireBallCollision);
+		}
 	}
 	mario.Update();
 }

@@ -61,6 +61,7 @@ public:
 	void Update();
 	void draw();
 	void HandleInput();
+	void updateCollision() override;
 	void UpdateTexture();
 	bool isOnGround() const;
 
@@ -70,7 +71,8 @@ public:
 	void TransitionMarioState();
 	
 	void ThrowingFireBalls();
+	std::list<FireBall*> *getFireBalls();
 	// getter
-	
+	float getAccelerationX() const;
 };
 #endif

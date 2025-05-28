@@ -10,7 +10,7 @@ Collision::Collision(Vector2 pos, Vector2 sz, Color color):
 
 Collision::~Collision() = default;
 
-void Collision::draw() const
+void Collision::draw() const 
 {
 	DrawRectangle(pos.x, pos.y, size.x, size.y, color);
 }
