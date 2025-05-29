@@ -5,6 +5,7 @@
 #include "../include/Clock.h"
 #include "../include/ResourceManager.h"
 #include "../include/Tile.h"
+#include "../include/Map.h"
 
 class Game {
 private:
@@ -17,6 +18,7 @@ private:
 	//bool initialize;
 	std::vector<Tile*> Tiles;
 	Mario mario;
+	Map map1;
 	Camera2D camera;
 public:
 	Game();

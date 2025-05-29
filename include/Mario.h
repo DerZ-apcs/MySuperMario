@@ -12,28 +12,24 @@ enum MARIO_TYPE {
 	STATE_SUPER,
 	STATE_FIRE_BALL
 };
-enum MARIO_SPRITE {
+enum SPRITE_STATE {
 	NORMAL,
 	STATE_TRANSITIONING_FROM_SMALL_TO_SUPER,
 	STATE_TRANSITIONING_FROM_SUPER_TO_SMALL,
-	STATE_TRANSITIONING_FROM_SMALL_TO_FLOWER
-};
-enum TextureMario {
-	SMALL,
-	SUPER,
-	TRANSITIONING,
-	FLOWER
+	STATE_TRANSITIONING_FROM_SMALL_TO_FIREBALL,
+	STATE_TRANSITIONING_FROM_SUPER_TO_FIREBALL,
+	STATE_TRANSITIONING_FROM_FIREBALL_TO_SMALL
 };
 class Mario: public Entity {
 private:
 	MARIO_TYPE Mario_State;
-	MARIO_SPRITE Mario_sprite;
+	SPRITE_STATE Mario_sprite;
+	SPRITE_STATE LastStateb4Transition;
 	const float maxspeedX = 500;
-	const float accelerationX = 700;
+	const float accelerationX = 600;
 	//Clock TimeUpdate;
 	const float GRAVITY = 800;
-	const float maxJumping = 400;
-	const float maxSpeedY = 500;
+	const float maxSpeedY = 600;
 	// transitioning
 	float transitioningFrameTime;
 	float transitioningFrameAcum;
@@ -41,10 +37,10 @@ private:
 	int transitionCurrentFrame;
 	int transitionCurrentFramePos;
 	const int transitionFrameOrder[11] = { 0, 1, 0, 1, 0, 1, 2, 1, 2, 1, 2 };
-	const int reversetTransitionFrameOrder[11] = { 2, 1, 2, 1, 2, 1, 0, 1, 0, 1, 0 };
+	const int reversedTransitionFrameOrder[11] = { 2, 1, 2, 1, 2, 1, 0, 1, 0, 1, 0 };
+	const int SuperToFlowerTransitionFrameOrder[10] = { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 };
 
 	std::list<FireBall*> fireballs;
-	TextureMario textureSprite;
 	int pos_onGroundY;
 	bool isDucking;
 	bool isThrowing;
@@ -74,5 +70,6 @@ public:
 	std::list<FireBall*> *getFireBalls();
 	// getter
 	float getAccelerationX() const;
+	void setLastStateBeforeTransition(SPRITE_STATE lastState);
 };
 #endif

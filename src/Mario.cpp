@@ -22,12 +22,12 @@ Mario::Mario(Vector2 nposition, Vector2 nsize, MARIO_TYPE type) :
 	pos_onGroundY = 500;
 
 	Mario_sprite = NORMAL;
+	LastStateb4Transition = NORMAL;
 	transitioningFrameTime = 0.06;
 	transitioningFrameAcum = 0;
 	transitionSteps = 11;
 	transitionCurrentFrame = 0;
 	transitionCurrentFramePos = 0;
-	textureSprite = SMALL;
 	isThrowing = false;
 
 	CollNorth.setSize({ size.x / 2, 5 });
@@ -90,7 +90,7 @@ void Mario::HandleInput()
 		}
 		else isDucking = false;
 	}
-	if (IsKeyPressed(KEY_SPACE) /*&& Mario_sprite == NORMAL*/) {
+	if (IsKeyPressed(KEY_SPACE)) {
 		TransitionMarioState();
 	}
 	if (IsKeyPressed(KEY_Z) && Mario_State != STATE_FIRE_BALL)
@@ -102,10 +102,18 @@ void Mario::HandleInput()
 
 void Mario::updateCollision()
 {
-
-	CollEast.setSize({ 5, size.y - 5 });
-	CollWest.setSize({ 5, size.y - 5 });
-	Entity::updateCollision();
+	if (isDucking){
+		CollNorth.setPos({position.x + size.x / 2 - CollNorth.getWidth() / 2, position.y + size.y / 2 - CollNorth.getHeight()});
+		CollEast.setSize({ 5, size.y / 2 });
+		CollEast.setPos({ position.x + size.x - CollEast.getWidth() , position.y + size.y * 3 / 4 - CollEast.getHeight() / 2});
+		CollWest.setSize({ 5, size.y / 2 });
+		CollWest.setPos({ position.x , position.y + size.y * 3 / 4 - CollWest.getHeight() / 2 });
+	}
+	else {
+		CollWest.setSize({ 5, size.y - 5 });
+		CollEast.setSize({ 5, size.y - 5 });
+		Entity::updateCollision();
+	}
 }
 
 void Mario::UpdateTexture()
@@ -163,7 +171,6 @@ void Mario::UpdateTexture()
 			else if (direction == LEFT)
 				texture = ResourceManager::getTexture("SmallMarioFalling_LEFT_0");
 		}
-		textureSprite = SMALL;
 		break;
 	case STATE_SUPER:
 		maxFrame = 2;
@@ -220,7 +227,6 @@ void Mario::UpdateTexture()
 			else if (direction == LEFT)
 				texture = ResourceManager::getTexture("SuperMarioFalling_LEFT_0");
 		}
-		textureSprite = SUPER;
 
 		if (isThrowing) {
 			if (direction == LEFT)
@@ -229,8 +235,6 @@ void Mario::UpdateTexture()
 				texture = ResourceManager::getTexture("SuperMarioThrowingFireball_RIGHT_0");
 		
 		}
-
-		
 		break;	
 
 	case STATE_FIRE_BALL: {
@@ -291,6 +295,7 @@ void Mario::UpdateTexture()
 	}
 
 	if (Mario_sprite == STATE_TRANSITIONING_FROM_SMALL_TO_SUPER) {
+		//transitionSteps = 11;
 		transitioningFrameAcum += deltaTime;
 		if (transitioningFrameAcum >= transitioningFrameTime) {
 			transitioningFrameAcum = 0;
@@ -324,14 +329,45 @@ void Mario::UpdateTexture()
 			else if (transitionCurrentFrame == 2)
 				texture = ResourceManager::getTexture("SuperMario_LEFT_0");
 		}
-		textureSprite = TRANSITIONING;
-	} else if (Mario_sprite == STATE_TRANSITIONING_FROM_SUPER_TO_SMALL) {
+	} else if (Mario_sprite == STATE_TRANSITIONING_FROM_SUPER_TO_FIREBALL) {
+		transitioningFrameAcum += deltaTime;
+		//transitionSteps--;
+		if (transitioningFrameAcum >= transitioningFrameTime) {
+			transitioningFrameAcum = 0;
+			transitionCurrentFramePos++;
+			if (transitionCurrentFramePos <= transitionSteps) {
+				transitionCurrentFrame = SuperToFlowerTransitionFrameOrder[transitionCurrentFramePos];
+			}
+			else {
+				transitionCurrentFramePos = 0;
+				TransitionToFire();
+				return;
+			}
+		}
+		if (direction == RIGHT) {
+			if (transitionCurrentFrame == 0) {
+				texture = ResourceManager::getTexture("SuperMario_RIGHT_0");
+			}
+			else if (transitionCurrentFrame == 1) {
+				texture = ResourceManager::getTexture("TransitioningFireMario_RIGHT_0");
+			}
+		}
+		else if (direction == LEFT) {
+			if (transitionCurrentFrame == 0) {
+				texture = ResourceManager::getTexture("SuperMario_LEFT_0");
+			}
+			else if (transitionCurrentFrame == 1) {
+				texture = ResourceManager::getTexture("TransitioningFireMario_LEFT_0");
+			}
+		}	
+	}
+	else if (Mario_sprite == STATE_TRANSITIONING_FROM_FIREBALL_TO_SMALL) {
 		transitioningFrameAcum += deltaTime;
 		if (transitioningFrameAcum >= transitioningFrameTime) {
 			transitioningFrameAcum = 0;
 			transitionCurrentFramePos++;
 			if (transitionCurrentFramePos <= transitionSteps) {
-				transitionCurrentFrame = reversetTransitionFrameOrder[transitionCurrentFramePos];
+				transitionCurrentFrame = reversedTransitionFrameOrder[transitionCurrentFramePos];
 			}
 			else {
 				transitionCurrentFramePos = 0;
@@ -344,22 +380,21 @@ void Mario::UpdateTexture()
 				texture = ResourceManager::getTexture("SmallMario_RIGHT_0");
 			}
 			else if (transitionCurrentFrame == 1) {
-				texture = ResourceManager::getTexture("TransitioningMario_RIGHT_0");
+				texture = ResourceManager::getTexture("TransitioningFireMario_RIGHT_0");
 			}
 			else if (transitionCurrentFrame == 2)
-				texture = ResourceManager::getTexture("SuperMario_RIGHT_0");
+				texture = ResourceManager::getTexture("Fire_Mario_RIGHT_0");
 		}
 		else if (direction == LEFT) {
 			if (transitionCurrentFrame == 0) {
 				texture = ResourceManager::getTexture("SmallMario_LEFT_0");
 			}
 			else if (transitionCurrentFrame == 1) {
-				texture = ResourceManager::getTexture("TransitioningMario_LEFT_0");
+				texture = ResourceManager::getTexture("TransitioningFireMario_LEFT_0");
 			}
 			else if (transitionCurrentFrame == 2)
-				texture = ResourceManager::getTexture("SuperMario_LEFT_0");
-		}	
-		textureSprite = TRANSITIONING;
+				texture = ResourceManager::getTexture("Fire_Mario_LEFT_0");
+		}
 	}
 	
 }
@@ -389,6 +424,7 @@ void Mario::TransitionToFire()
 {
 	this->size = { 32, 56 };
 	Mario_State = STATE_FIRE_BALL;
+	Mario_sprite = NORMAL;
 	maxFrame = 2;
 }
 
@@ -397,15 +433,14 @@ void Mario::TransitionMarioState()
 	if (Mario_State == STATE_SMALL)
 		Mario_sprite = STATE_TRANSITIONING_FROM_SMALL_TO_SUPER;
 	else if (Mario_State == STATE_SUPER)
-		Mario_State = STATE_FIRE_BALL;
+		Mario_sprite = STATE_TRANSITIONING_FROM_SUPER_TO_FIREBALL;
 	else if (Mario_State == STATE_FIRE_BALL)
-		Mario_sprite = STATE_TRANSITIONING_FROM_SUPER_TO_SMALL;
+		Mario_sprite = STATE_TRANSITIONING_FROM_FIREBALL_TO_SMALL;
 }
 
 void Mario::ThrowingFireBalls()
 {
 	isThrowing = true;
-	//textureSprite = FLOWER;
 	if (direction == RIGHT) {
 		Vector2 velFb = Vector2Add(Vector2{500, 0}, this->velocity);
 		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, velFb, RIGHT, 2));
@@ -510,8 +545,8 @@ void Mario::draw()
 
 	DrawTexture(texture, position.x, position.y, WHITE);
 
-	CollEast.draw();
+	/*CollEast.draw();
 	CollSouth.draw();
 	CollNorth.draw();
-	CollWest.draw();
+	CollWest.draw();*/
 }
