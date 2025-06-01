@@ -51,8 +51,17 @@ public:
 	virtual void Jumping();
 	// Setter
 	void setPosition(Vector2 pos);
+	void setX(float x);
+	void setY(float y);
+
 	void setSize(Vector2 sz);
+	void setWidth(float width);
+	void setHeight(float height);
+
 	void setVel(Vector2 vel);
+	void setVelX(float velx);
+	void setVelY(float vely);
+
 	void setState(EntityState state);
 	void setColor(Color color);
 	// Getter

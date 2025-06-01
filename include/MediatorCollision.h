@@ -1,0 +1,13 @@
+#ifndef MEDIATORCOLLISION_H
+#define MEDIATORCOLLISION_H
+#include "../include/Entity.h"
+#include "../include/Mario.h"
+#include "../include/Tile.h"
+class MediatorCollision {
+private:
+	void HandlePlayerWithTiles(Mario*& mario, Tile*& tile, CollisionType Colltype);
+	void HandleFireballWithTIles(FireBall*& fireball, Tile*& tile, CollisionType Colltype);
+public:
+	void HandleCollision(Entity* entity1, Entity* entity2);
+};
+#endif

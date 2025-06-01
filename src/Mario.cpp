@@ -19,7 +19,6 @@ Mario::Mario(Vector2 nposition, Vector2 nsize, MARIO_TYPE type) :
 		this->size = { 32, 56 };
 	} 
 	texture = ResourceManager::getTexture("SmallMario_RIGHT_0");
-	pos_onGroundY = 500;
 
 	Mario_sprite = NORMAL;
 	LastStateb4Transition = NORMAL;
@@ -442,11 +441,11 @@ void Mario::ThrowingFireBalls()
 {
 	isThrowing = true;
 	if (direction == RIGHT) {
-		Vector2 velFb = Vector2Add(Vector2{500, 0}, this->velocity);
+		Vector2 velFb = Vector2Add(Vector2{500, -200}, this->velocity);
 		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, velFb, RIGHT, 2));
 	}
 	else if (direction == LEFT) {
-		Vector2 velFb = Vector2Add(Vector2{ -500, 0 }, this->velocity);
+		Vector2 velFb = Vector2Add(Vector2{ -500, -200}, this->velocity);
 		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, velFb, LEFT, 2));
 	}
 }
@@ -511,13 +510,13 @@ void Mario::Update()
 {
 	HandleInput();
 	const float deltaTime = GetFrameTime();
-	if (velocity.x != 0) position.x += velocity.x * deltaTime + 0.5 * accelerationX * deltaTime * deltaTime;
+	position.x += velocity.x * deltaTime /*+ 0.5 * accelerationX * deltaTime * deltaTime*/;
+	position.y += velocity.y * deltaTime;
 
 	if (state != ON_GROUND) 
 		if (velocity.y >= 0) 
 			state = FALLING;
 	velocity.y += GRAVITY * deltaTime;
-	position.y += velocity.y * deltaTime;
 	for (auto i = fireballs.begin(); i != fireballs.end();) {
 		FireBall* fireball = *i;
 		if (fireball->isMaxDistance()) {

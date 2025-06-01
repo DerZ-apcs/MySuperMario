@@ -6,7 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include "../include/json.hpp"
-using json = nlohmann::json;
+using json = nlohmann::json; // to load file json
 
 class Map {
 private:
@@ -19,10 +19,11 @@ public:
 	TileType StringToTileType(const std::string& str);
 	std::vector<Tile*> *getVectorTiles();
 	void AddTile(Vector2 pos, TileType type, const std::string& name);
-	void saveToFile(const std::string& filename);
 	void loadFromFile(const std::string& filename);
 	void clear();
 	void drawMap();
 	void LoadFromJsonFile(const std::string& filepath);
+
+	
 };
 #endif

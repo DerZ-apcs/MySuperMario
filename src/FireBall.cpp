@@ -1,17 +1,17 @@
 #include "../include/FireBall.h"
 #include "../include/ResourceManager.h"
 #include "../include/Mario.h"
-const float FireBall::maxDistance = 1000.0f;
+const float FireBall::maxDistance = 1200.0f;
 const float FireBall::FB_SpeedX = 500.0f;
 
 FireBall::FireBall(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, float timeSpan) :
-	Entity(pos, sz, vel, dir, ENTITY_ACTIVE, 0.1f, 3, BLACK), timeSpan(timeSpan), timeSpanAcum(0), currDistance(0)
+	Entity(pos, sz, vel, dir, ON_GROUND, 0.1f, 3, BLACK), timeSpan(timeSpan), timeSpanAcum(0), currDistance(0)
 {
 	this->texture = direction == RIGHT ? ResourceManager::getTexture("FlowerMarioFireball_RIGHT_0") :
 		ResourceManager::getTexture("FlowerMarioFireball_LEFT_0");
 	this->frameAcum = 0;
 	this->currFrame = 0;
-	this->velocity = direction == RIGHT ? Vector2{ FB_SpeedX, -500 } : Vector2{ -FB_SpeedX, -500 };
+	/*this->velocity = direction == RIGHT ? Vector2{ FB_SpeedX, -500 } : Vector2{ -FB_SpeedX, -500 };*/
 	this->CollNorth.setSize(Vector2{ size.x - 8, 1 });
 	this->CollSouth.setSize(Vector2{ size.x - 8, 1 });
 	this->CollEast.setSize(Vector2{ 1, size.y - 8 });
@@ -38,7 +38,7 @@ void FireBall::Update()
 	currDistance += abs(velocity.x) * deltaTime;
 	if (velocity.x > 0)
 		direction = RIGHT;
-	else if (velocity.x > 0)
+	else if (velocity.x < 0)
 		direction = LEFT;
 	position.x += velocity.x * deltaTime;
 	position.y += velocity.y * deltaTime;
@@ -86,7 +86,7 @@ void FireBall::HandleTileCollision(const Tile tile, CollisionType Colltype)
 		break;
 	case COLLISION_TYPE_SOUTH:
 		setPosition({ position.x, tile.getY() - size.y });
-		velocity.y = -500;
+		velocity.y *= -1;
 		break;
 	case COLLISION_TYPE_WEST:
 		setPosition({ tile.getX() + tile.getWidth(), position.y });

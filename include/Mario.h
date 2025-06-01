@@ -12,14 +12,7 @@ enum MARIO_TYPE {
 	STATE_SUPER,
 	STATE_FIRE_BALL
 };
-enum SPRITE_STATE {
-	NORMAL,
-	STATE_TRANSITIONING_FROM_SMALL_TO_SUPER,
-	STATE_TRANSITIONING_FROM_SUPER_TO_SMALL,
-	STATE_TRANSITIONING_FROM_SMALL_TO_FIREBALL,
-	STATE_TRANSITIONING_FROM_SUPER_TO_FIREBALL,
-	STATE_TRANSITIONING_FROM_FIREBALL_TO_SMALL
-};
+
 class Mario: public Entity {
 private:
 	MARIO_TYPE Mario_State;
@@ -41,7 +34,6 @@ private:
 	const int SuperToFlowerTransitionFrameOrder[10] = { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 };
 
 	std::list<FireBall*> fireballs;
-	int pos_onGroundY;
 	bool isDucking;
 	bool isThrowing;
 public:

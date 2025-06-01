@@ -69,6 +69,7 @@ void Map::drawMap()
 	}
 }
 
+
 void Map::LoadFromJsonFile(const std::string& filepath)
 {
 	clear();
@@ -87,10 +88,10 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 
 	for (int y = 0; y < height; ++y) {
 		for (int x = 0; x < width; ++x) {
-			int tileId = data[y * width + x];
+			int tileId = data[static_cast<std::vector<int, std::allocator<int>>::size_type>(y) * width + x];
 			if (tileId != 0) {
 				tiles.push_back(new Tile(Vector2{ (float)x * tilewidth,(float)y * tilewidth },
-					TileType::TILE_TYPE_NORMAL, "TILE_" + std::to_string(tileId - 1)));
+					TileType::TILE_TYPE_NORMAL, "TILE_" + std::to_string(tileId - 2)));
 			}
 		}
 	}

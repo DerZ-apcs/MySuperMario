@@ -6,6 +6,7 @@
 #include "../include/ResourceManager.h"
 #include "../include/Tile.h"
 #include "../include/Map.h"
+#include "../include/MediatorCollision.h"
 
 class Game {
 private:
@@ -19,6 +20,11 @@ private:
 	std::vector<Tile*> Tiles;
 	Mario mario;
 	Map map1;
+	Texture2D BackGroundTex;
+	MediatorCollision mediatorCollision;
+	float BgWidth;
+	float BgHeight;
+	std::vector<Vector2> BackGroundPos;
 	Camera2D camera;
 public:
 	Game();
@@ -28,6 +34,7 @@ public:
 	void initGame();
 	void UpdateGame();
 	void draw();
+	void drawBackGround() const;
 
 	int getWidth() const;
 	int getHeight() const;

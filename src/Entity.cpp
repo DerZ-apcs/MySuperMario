@@ -108,13 +108,37 @@ void Entity::Jumping() {
 void Entity::setPosition(Vector2 pos) {
 	this->position = pos;
 }
+void Entity::setX(float x)
+{
+	this->position.x = x;
+}
+void Entity::setY(float y)
+{
+	this->position.y = y;
+}
 void Entity::setSize(Vector2 sz) {
 	this->size = sz;
 	rect.x = size.x;
 	rect.y = size.y;
 }
+void Entity::setWidth(float width)
+{
+	this->size.x = width;
+}
+void Entity::setHeight(float height)
+{
+	this->size.y = height;
+}
 void Entity::setVel(Vector2 vel) {
 	this->velocity = vel;
+}
+void Entity::setVelX(float velx)
+{
+	this->velocity.x = velx;
+}
+void Entity::setVelY(float vely)
+{
+	this->velocity.y = vely;
 }
 void Entity::setState(EntityState state) {
 	this->state = state;
