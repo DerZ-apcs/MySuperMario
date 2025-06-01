@@ -7,8 +7,8 @@ Game::Game(): Game(1200, 800, 140)
 }
 
 Game::Game(int nwidth, int nheight, int ntargetFPS) :
-	width(nwidth), height(nheight), targetFPS(ntargetFPS), Resource_manager(Singleton<ResourceManager>::getInstance()) {
-	Resource_manager.LoadAllResources();
+	width(nwidth), height(nheight), targetFPS(ntargetFPS) {
+	RESOURCE_MANAGER.LoadAllResources();
 	// map
 	map1.LoadFromJsonFile(Map::basePath + "MAP_1.1.json");
 	// background
@@ -34,11 +34,11 @@ Game::~Game()
 void Game::initGame()
 {
 	SetTargetFPS(targetFPS);
-	Resource_manager.playMusic("MUSIC1");
+	RESOURCE_MANAGER.playMusic("MUSIC1");
 
 	while (!WindowShouldClose()) {
 		UpdateGame();
-		UpdateMusicStream(Resource_manager.getMusic("MUSIC1"));
+		UpdateMusicStream(RESOURCE_MANAGER.getMusic("MUSIC1"));
 		ClearBackground(RAYWHITE);
 		BeginDrawing();
 		draw();

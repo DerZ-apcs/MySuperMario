@@ -6,6 +6,7 @@
 #include "../include/EntityState.h"
 #include "../include/Clock.h"
 #include "../include/Collision.h"
+#include "../include/Global.h"
 #include <string>
 #include <raylib.h>
 

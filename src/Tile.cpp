@@ -4,7 +4,7 @@ Tile::Tile(Vector2 pos, TileType type, std::string name) {
 	this->position = pos;
 	this->tileType = type;
 	this->setSize(Vector2{ 32, 32 });
-	texture = Singleton<ResourceManager>::getInstance().getTexture(name);
+	texture = RESOURCE_MANAGER.getTexture(name);
 	/*switch (tileType) {
 	case TILE_TYPE_NORMAL:
 		texture = ResourceManager::getTexture(name + "_NORMAL");

@@ -7,8 +7,8 @@ const float FireBall::FB_SpeedX = 500.0f;
 FireBall::FireBall(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, float timeSpan) :
 	Entity(pos, sz, vel, dir, ON_GROUND, 0.1f, 3, BLACK), timeSpan(timeSpan), timeSpanAcum(0), currDistance(0)
 {
-	this->texture = direction == RIGHT ? Singleton<ResourceManager>::getInstance().getTexture("FlowerMarioFireball_RIGHT_0") :
-		Singleton<ResourceManager>::getInstance().getTexture("FlowerMarioFireball_LEFT_0");
+	this->texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("FlowerMarioFireball_RIGHT_0") :
+		RESOURCE_MANAGER.getTexture("FlowerMarioFireball_LEFT_0");
 	this->frameAcum = 0;
 	this->currFrame = 0;
 	/*this->velocity = direction == RIGHT ? Vector2{ FB_SpeedX, -500 } : Vector2{ -FB_SpeedX, -500 };*/
@@ -63,7 +63,7 @@ void FireBall::UpdateTexture()
 {
 	const std::string dir = direction == LEFT ? "_LEFT_" : "_RIGHT_";
 	std::string textureName = "FlowerMarioFireball" + dir + std::to_string(currFrame);
-	texture = Singleton<ResourceManager>::getInstance().getTexture(textureName);
+	texture = RESOURCE_MANAGER.getTexture(textureName);
 }
 
 bool FireBall::isMaxDistance() const

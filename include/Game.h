@@ -4,6 +4,7 @@
 #include "../include/Mario.h"
 #include "../include/Clock.h"
 #include "../include/ResourceManager.h"
+#include "../include/Global.h"
 #include "../include/Tile.h"
 #include "../include/Map.h"
 #include "../include/MediatorCollision.h"
@@ -22,7 +23,6 @@ private:
 	Map map1;
 	Texture2D BackGroundTex;
 	MediatorCollision mediatorCollision;
-	ResourceManager& Resource_manager;
 	float BgWidth;
 	float BgHeight;
 	std::vector<Vector2> BackGroundPos;

@@ -1,7 +1,5 @@
 #include "../include/ResourceManager.h"
 
-//std::map<std::string, Texture2D> ResourceManager::textures;
-
 void ResourceManager::loadTextures() {
 	// move
 	textures["SmallMario_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SmallMario_0.png");

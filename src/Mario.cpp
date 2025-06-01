@@ -1,7 +1,7 @@
 #include "../include/Mario.h"
 #include <iostream>
 #include "raymath.h"
-//auto& resourceManager = Singleton<ResourceManager>::getInstance();
+
 Mario::Mario() : Mario(Vector2{ 0, 0 }, Vector2{ 32, 40 }, STATE_SMALL) {
 
 }
@@ -9,7 +9,7 @@ Mario::Mario() : Mario(Vector2{ 0, 0 }, Vector2{ 32, 40 }, STATE_SMALL) {
 Mario::Mario(Vector2 nposition, Vector2 nsize, MARIO_TYPE type) :
 	Entity(nposition, {32, 40}, Vector2{0, 0}, RIGHT, FALLING, 0.1f, 1, WHITE),
 	isDucking(false),
-	Mario_State(type), resourceManager(Singleton<ResourceManager>::getInstance())
+	Mario_State(type) 
 	
 {
 	if (type == STATE_SMALL) {
@@ -18,8 +18,8 @@ Mario::Mario(Vector2 nposition, Vector2 nsize, MARIO_TYPE type) :
 	else  {
 		this->size = { 32, 56 };
 	} 
-	texture = resourceManager.getTexture("SmallMario_RIGHT_0");
 
+	texture = RESOURCE_MANAGER.getTexture("SmallMario_RIGHT_0");
 	Mario_sprite = NORMAL;
 	LastStateb4Transition = NORMAL;
 	transitioningFrameTime = 0.06;
@@ -132,43 +132,43 @@ void Mario::UpdateTexture()
 				}
 				if (direction == RIGHT) {
 					if (currFrame == 0)
-						texture = resourceManager.getTexture("SmallMario_RIGHT_0");
+						texture = RESOURCE_MANAGER.getTexture("SmallMario_RIGHT_0");
 					else
-						texture = resourceManager.getTexture("SmallMario_RIGHT_1");
+						texture = RESOURCE_MANAGER.getTexture("SmallMario_RIGHT_1");
 				}
 				else if (direction == LEFT) {
 					if (currFrame == 0)
-						texture = resourceManager.getTexture("SmallMario_LEFT_0");
+						texture = RESOURCE_MANAGER.getTexture("SmallMario_LEFT_0");
 					else
-						texture = resourceManager.getTexture("SmallMario_LEFT_1");
+						texture = RESOURCE_MANAGER.getTexture("SmallMario_LEFT_1");
 				}
 
 			}
 			if (velocity.x == 0 && !isDucking) {
 				if (direction == RIGHT)
-					texture = resourceManager.getTexture("SmallMario_RIGHT_0");
+					texture = RESOURCE_MANAGER.getTexture("SmallMario_RIGHT_0");
 				else if (direction == LEFT)
-					texture = resourceManager.getTexture("SmallMario_LEFT_0");
+					texture = RESOURCE_MANAGER.getTexture("SmallMario_LEFT_0");
 			}
 			if (isDucking) {
 				velocity.x = 0;
 				if (direction == RIGHT)
-					texture = resourceManager.getTexture("SmallMarioDucking_RIGHT_0");
+					texture = RESOURCE_MANAGER.getTexture("SmallMarioDucking_RIGHT_0");
 				else if (direction == LEFT)
-					texture = resourceManager.getTexture("SmallMarioDucking_LEFT_0");
+					texture = RESOURCE_MANAGER.getTexture("SmallMarioDucking_LEFT_0");
 			}
 		}
 		else if (state == JUMPING) {
 			if (direction == RIGHT)
-				texture = resourceManager.getTexture("SmallMarioJumping_RIGHT_0");
+				texture = RESOURCE_MANAGER.getTexture("SmallMarioJumping_RIGHT_0");
 			else if (direction == LEFT)
-				texture = resourceManager.getTexture("SmallMarioJumping_LEFT_0");
+				texture = RESOURCE_MANAGER.getTexture("SmallMarioJumping_LEFT_0");
 		}
 		else if (state == FALLING) {
 			if (direction == RIGHT)
-				texture = resourceManager.getTexture("SmallMarioFalling_RIGHT_0");
+				texture = RESOURCE_MANAGER.getTexture("SmallMarioFalling_RIGHT_0");
 			else if (direction == LEFT)
-				texture = resourceManager.getTexture("SmallMarioFalling_LEFT_0");
+				texture = RESOURCE_MANAGER.getTexture("SmallMarioFalling_LEFT_0");
 		}
 		break;
 	case STATE_SUPER:
@@ -184,54 +184,54 @@ void Mario::UpdateTexture()
 				}
 				if (direction == RIGHT) {
 					if (currFrame == 0)
-						texture = resourceManager.getTexture("SuperMario_RIGHT_0");
+						texture = RESOURCE_MANAGER.getTexture("SuperMario_RIGHT_0");
 					else if (currFrame == 1)
-						texture = resourceManager.getTexture("SuperMario_RIGHT_1");
+						texture = RESOURCE_MANAGER.getTexture("SuperMario_RIGHT_1");
 					else 
-						texture = resourceManager.getTexture("SuperMario_RIGHT_2");
+						texture = RESOURCE_MANAGER.getTexture("SuperMario_RIGHT_2");
 				}
 				else if (direction == LEFT) {
 					if (currFrame == 0)
-						texture = resourceManager.getTexture("SuperMario_LEFT_0");
+						texture = RESOURCE_MANAGER.getTexture("SuperMario_LEFT_0");
 					else if (currFrame == 1)
-						texture = resourceManager.getTexture("SuperMario_LEFT_1");
+						texture = RESOURCE_MANAGER.getTexture("SuperMario_LEFT_1");
 					else 
-						texture = resourceManager.getTexture("SuperMario_LEFT_2");
+						texture = RESOURCE_MANAGER.getTexture("SuperMario_LEFT_2");
 				}
 
 			}
 			if (velocity.x == 0 && !isDucking) {
 				if (direction == RIGHT)
-					texture = resourceManager.getTexture("SuperMario_RIGHT_0");
+					texture = RESOURCE_MANAGER.getTexture("SuperMario_RIGHT_0");
 				else if (direction == LEFT)
-					texture = resourceManager.getTexture("SuperMario_LEFT_0");
+					texture = RESOURCE_MANAGER.getTexture("SuperMario_LEFT_0");
 			}
 			if (isDucking) {
 				velocity.x = 0;
 				if (direction == RIGHT)
-					texture = resourceManager.getTexture("SuperMarioDucking_RIGHT_0");
+					texture = RESOURCE_MANAGER.getTexture("SuperMarioDucking_RIGHT_0");
 				else if (direction == LEFT)
-					texture = resourceManager.getTexture("SuperMarioDucking_LEFT_0");
+					texture = RESOURCE_MANAGER.getTexture("SuperMarioDucking_LEFT_0");
 			}
 		}
 		else if (state == JUMPING) {
 			if (direction == RIGHT)
-				texture = resourceManager.getTexture("SuperMarioJumping_RIGHT_0");
+				texture = RESOURCE_MANAGER.getTexture("SuperMarioJumping_RIGHT_0");
 			else if (direction == LEFT)
-				texture = resourceManager.getTexture("SuperMarioJumping_LEFT_0");
+				texture = RESOURCE_MANAGER.getTexture("SuperMarioJumping_LEFT_0");
 		}
 		else if (state == FALLING) {
 			if (direction == RIGHT)
-				texture = resourceManager.getTexture("SuperMarioFalling_RIGHT_0");
+				texture = RESOURCE_MANAGER.getTexture("SuperMarioFalling_RIGHT_0");
 			else if (direction == LEFT)
-				texture = resourceManager.getTexture("SuperMarioFalling_LEFT_0");
+				texture = RESOURCE_MANAGER.getTexture("SuperMarioFalling_LEFT_0");
 		}
 
 		if (isThrowing) {
 			if (direction == LEFT)
-				texture = resourceManager.getTexture("SuperMarioThrowingFireball_LEFT_0");
+				texture = RESOURCE_MANAGER.getTexture("SuperMarioThrowingFireball_LEFT_0");
 			else
-				texture = resourceManager.getTexture("SuperMarioThrowingFireball_RIGHT_0");
+				texture = RESOURCE_MANAGER.getTexture("SuperMarioThrowingFireball_RIGHT_0");
 		
 		}
 		break;	
@@ -249,46 +249,46 @@ void Mario::UpdateTexture()
 				}
 				if (direction == RIGHT) {
 					if (currFrame == 0)
-						texture = resourceManager.getTexture("Fire_Mario_RIGHT_0");
+						texture = RESOURCE_MANAGER.getTexture("Fire_Mario_RIGHT_0");
 					else if (currFrame == 1)
-						texture = resourceManager.getTexture("Fire_Mario_RIGHT_1");
+						texture = RESOURCE_MANAGER.getTexture("Fire_Mario_RIGHT_1");
 					else
-						texture = resourceManager.getTexture("Fire_Mario_RIGHT_2");
+						texture = RESOURCE_MANAGER.getTexture("Fire_Mario_RIGHT_2");
 				}
 				else if (direction == LEFT) {
 					if (currFrame == 0)
-						texture = resourceManager.getTexture("Fire_Mario_LEFT_0");
+						texture = RESOURCE_MANAGER.getTexture("Fire_Mario_LEFT_0");
 					else if (currFrame == 1)
-						texture = resourceManager.getTexture("Fire_Mario_LEFT_1");
+						texture = RESOURCE_MANAGER.getTexture("Fire_Mario_LEFT_1");
 					else
-						texture = resourceManager.getTexture("Fire_Mario_LEFT_2");
+						texture = RESOURCE_MANAGER.getTexture("Fire_Mario_LEFT_2");
 				}
 			}
 			if (velocity.x == 0 && !isDucking) {
 				if (direction == RIGHT)
-					texture = resourceManager.getTexture("Fire_Mario_RIGHT_0");
+					texture = RESOURCE_MANAGER.getTexture("Fire_Mario_RIGHT_0");
 				else if (direction == LEFT)
-					texture = resourceManager.getTexture("Fire_Mario_LEFT_0");
+					texture = RESOURCE_MANAGER.getTexture("Fire_Mario_LEFT_0");
 			}
 			if (isDucking) {
 				velocity.x = 0;
 				if (direction == RIGHT)
-					texture = resourceManager.getTexture("Fire_Mario_Ducking_RIGHT_0");
+					texture = RESOURCE_MANAGER.getTexture("Fire_Mario_Ducking_RIGHT_0");
 				else if (direction == LEFT)
-					texture = resourceManager.getTexture("Fire_Mario_Ducking_LEFT_0");
+					texture = RESOURCE_MANAGER.getTexture("Fire_Mario_Ducking_LEFT_0");
 			}
 		}
 		else if (state == JUMPING) {
 			if (direction == RIGHT)
-				texture = resourceManager.getTexture("Fire_Mario_Jumping_RIGHT_0");
+				texture = RESOURCE_MANAGER.getTexture("Fire_Mario_Jumping_RIGHT_0");
 			else if (direction == LEFT)
-				texture = resourceManager.getTexture("Fire_Mario_Jumping_LEFT_0");
+				texture = RESOURCE_MANAGER.getTexture("Fire_Mario_Jumping_LEFT_0");
 		}
 		else if (state == FALLING) {
 			if (direction == RIGHT)
-				texture = resourceManager.getTexture("Fire_Mario_Falling_RIGHT_0");
+				texture = RESOURCE_MANAGER.getTexture("Fire_Mario_Falling_RIGHT_0");
 			else if (direction == LEFT)
-				texture = resourceManager.getTexture("Fire_Mario_Falling_LEFT_0");
+				texture = RESOURCE_MANAGER.getTexture("Fire_Mario_Falling_LEFT_0");
 		}
 	}
 	}
@@ -310,23 +310,23 @@ void Mario::UpdateTexture()
 		}
 		if (direction == RIGHT) {
 			if (transitionCurrentFrame == 0) {
-				texture = resourceManager.getTexture("SmallMario_RIGHT_0");
+				texture = RESOURCE_MANAGER.getTexture("SmallMario_RIGHT_0");
 			}
 			else if (transitionCurrentFrame == 1) {
-				texture = resourceManager.getTexture("TransitioningMario_RIGHT_0");
+				texture = RESOURCE_MANAGER.getTexture("TransitioningMario_RIGHT_0");
 			}
 			else if (transitionCurrentFrame == 2)
-				texture = resourceManager.getTexture("SuperMario_RIGHT_0");
+				texture = RESOURCE_MANAGER.getTexture("SuperMario_RIGHT_0");
 		}
 		else if (direction == LEFT) {
 			if (transitionCurrentFrame == 0) {
-				texture = resourceManager.getTexture("SmallMario_LEFT_0");
+				texture = RESOURCE_MANAGER.getTexture("SmallMario_LEFT_0");
 			}
 			else if (transitionCurrentFrame == 1) {
-				texture = resourceManager.getTexture("TransitioningMario_LEFT_0");
+				texture = RESOURCE_MANAGER.getTexture("TransitioningMario_LEFT_0");
 			}
 			else if (transitionCurrentFrame == 2)
-				texture = resourceManager.getTexture("SuperMario_LEFT_0");
+				texture = RESOURCE_MANAGER.getTexture("SuperMario_LEFT_0");
 		}
 	} else if (Mario_sprite == STATE_TRANSITIONING_FROM_SUPER_TO_FIREBALL) {
 		transitioningFrameAcum += deltaTime;
@@ -345,18 +345,18 @@ void Mario::UpdateTexture()
 		}
 		if (direction == RIGHT) {
 			if (transitionCurrentFrame == 0) {
-				texture = resourceManager.getTexture("SuperMario_RIGHT_0");
+				texture = RESOURCE_MANAGER.getTexture("SuperMario_RIGHT_0");
 			}
 			else if (transitionCurrentFrame == 1) {
-				texture = resourceManager.getTexture("TransitioningFireMario_RIGHT_0");
+				texture = RESOURCE_MANAGER.getTexture("TransitioningFireMario_RIGHT_0");
 			}
 		}
 		else if (direction == LEFT) {
 			if (transitionCurrentFrame == 0) {
-				texture = resourceManager.getTexture("SuperMario_LEFT_0");
+				texture = RESOURCE_MANAGER.getTexture("SuperMario_LEFT_0");
 			}
 			else if (transitionCurrentFrame == 1) {
-				texture = resourceManager.getTexture("TransitioningFireMario_LEFT_0");
+				texture = RESOURCE_MANAGER.getTexture("TransitioningFireMario_LEFT_0");
 			}
 		}	
 	}
@@ -376,23 +376,23 @@ void Mario::UpdateTexture()
 		}
 		if (direction == RIGHT) {
 			if (transitionCurrentFrame == 0) {
-				texture = resourceManager.getTexture("SmallMario_RIGHT_0");
+				texture = RESOURCE_MANAGER.getTexture("SmallMario_RIGHT_0");
 			}
 			else if (transitionCurrentFrame == 1) {
-				texture = resourceManager.getTexture("TransitioningFireMario_RIGHT_0");
+				texture = RESOURCE_MANAGER.getTexture("TransitioningFireMario_RIGHT_0");
 			}
 			else if (transitionCurrentFrame == 2)
-				texture = resourceManager.getTexture("Fire_Mario_RIGHT_0");
+				texture = RESOURCE_MANAGER.getTexture("Fire_Mario_RIGHT_0");
 		}
 		else if (direction == LEFT) {
 			if (transitionCurrentFrame == 0) {
-				texture = resourceManager.getTexture("SmallMario_LEFT_0");
+				texture = RESOURCE_MANAGER.getTexture("SmallMario_LEFT_0");
 			}
 			else if (transitionCurrentFrame == 1) {
-				texture = resourceManager.getTexture("TransitioningFireMario_LEFT_0");
+				texture = RESOURCE_MANAGER.getTexture("TransitioningFireMario_LEFT_0");
 			}
 			else if (transitionCurrentFrame == 2)
-				texture = resourceManager.getTexture("Fire_Mario_LEFT_0");
+				texture = RESOURCE_MANAGER.getTexture("Fire_Mario_LEFT_0");
 		}
 	}
 	
@@ -429,6 +429,7 @@ void Mario::TransitionToFire()
 
 void Mario::TransitionMarioState()
 {
+	RESOURCE_MANAGER.playSound("PLAYER_POWERUP");
 	if (Mario_State == STATE_SMALL)
 		Mario_sprite = STATE_TRANSITIONING_FROM_SMALL_TO_SUPER;
 	else if (Mario_State == STATE_SUPER)
@@ -440,6 +441,7 @@ void Mario::TransitionMarioState()
 void Mario::ThrowingFireBalls()
 {
 	isThrowing = true;
+	RESOURCE_MANAGER.playSound("PLAYER_FIREBALL");
 	if (direction == RIGHT) {
 		Vector2 velFb = Vector2Add(Vector2{500, -200}, this->velocity);
 		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, velFb, RIGHT, 2));
@@ -488,6 +490,7 @@ void Mario::RunRight() {
 
 }
 void Mario::Jumping(){
+	RESOURCE_MANAGER.playSound("PLAYER_JUMP");
 	velocity.y = -maxSpeedY;
 	state = JUMPING;
 }
