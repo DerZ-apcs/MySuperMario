@@ -22,6 +22,7 @@ private:
 	Map map1;
 	Texture2D BackGroundTex;
 	MediatorCollision mediatorCollision;
+	ResourceManager& Resource_manager;
 	float BgWidth;
 	float BgHeight;
 	std::vector<Vector2> BackGroundPos;

@@ -1,5 +1,6 @@
 #ifndef ENTITY_H
 #define ENTITY_H
+#include "../include/Singleton.h"
 #include "../include/ResourceManager.h"
 #include "../include/Direction.h"
 #include "../include/EntityState.h"

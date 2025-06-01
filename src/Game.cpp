@@ -7,14 +7,14 @@ Game::Game(): Game(1200, 800, 140)
 }
 
 Game::Game(int nwidth, int nheight, int ntargetFPS) :
-	width(nwidth), height(nheight), targetFPS(ntargetFPS) { 
-	ResourceManager::LoadAllResources();
+	width(nwidth), height(nheight), targetFPS(ntargetFPS), Resource_manager(Singleton<ResourceManager>::getInstance()) {
+	Resource_manager.LoadAllResources();
 	// map
 	map1.LoadFromJsonFile(Map::basePath + "MAP_1.1.json");
 	// background
 	BgWidth = (float)GetScreenWidth();
 	BgHeight = (float)GetScreenHeight();
-	BackGroundTex = ResourceManager::getTexture("BACKGROUND_1");
+	BackGroundTex = Singleton<ResourceManager>::getInstance().getTexture("BACKGROUND_1");
 	BackGroundPos = {{0, 0}, {BgWidth, 0}, {BgWidth*2, 0}};
 	// camera
 	camera.offset = Vector2{ (float)GetScreenWidth() / 2, (float)GetScreenHeight() / 2 };
@@ -22,19 +22,23 @@ Game::Game(int nwidth, int nheight, int ntargetFPS) :
 	camera.rotation = 0.0f;
 	camera.zoom = 1.0f;
 
+	//Resource_manager.playMusic("MUSIC1");
 }
 
 Game::~Game()
 {
-	ResourceManager::UnloadAllResources();
+	Singleton<ResourceManager>::getInstance().UnloadAllResources();
 
 }
 
 void Game::initGame()
 {
 	SetTargetFPS(targetFPS);
+	Resource_manager.playMusic("MUSIC1");
+
 	while (!WindowShouldClose()) {
 		UpdateGame();
+		UpdateMusicStream(Resource_manager.getMusic("MUSIC1"));
 		ClearBackground(RAYWHITE);
 		BeginDrawing();
 		draw();

@@ -1,6 +1,6 @@
 #include "../include/ResourceManager.h"
 
-std::map<std::string, Texture2D> ResourceManager::textures;
+//std::map<std::string, Texture2D> ResourceManager::textures;
 
 void ResourceManager::loadTextures() {
 	// move
@@ -77,11 +77,37 @@ void ResourceManager::loadTextures() {
 	textures["BACKGROUND_1"] = LoadTexture("resources/images/backgrounds/background1.png");
 }
 
+void ResourceManager::loadSounds()
+{
+	sounds["PLAYER_JUMP"] = LoadSound("resources/sounds/smw_jump.wav");
+	sounds["PLAYER_FIREBALL"] = LoadSound("resources/sounds/smw_fireball.wav");
+	sounds["PLAYER_POWERUP"] = LoadSound("resources/sounds/smw_power-up.wav");
+}
+
+void ResourceManager::loadMusics()
+{
+	musics["MUSIC1"] = LoadMusicStream("resources/musics/music1.mp3");
+}
+
 void ResourceManager::unloadTextures() {
 	for (auto const &[key, val] : textures) {
 		unloadTexture(key);
 	}
 	textures.clear();
+}
+void ResourceManager::unloadSounds()
+{
+	for (auto const& [key, val] : sounds) {
+		unloadSound(key);
+	}
+	sounds.clear();
+}
+void ResourceManager::unloadMusics()
+{
+	for (auto const& [key, val] : musics) {
+		unloadMusic(key);
+	}
+	musics.clear();
 }
 void ResourceManager::unloadTexture(std::string key) {
 	if (textures.find(key) != textures.end()) {
@@ -89,25 +115,114 @@ void ResourceManager::unloadTexture(std::string key) {
 	}
 }
 
+void ResourceManager::unloadSound(std::string key)
+{
+	if (sounds.find(key) != sounds.end()) {
+		UnloadSound(sounds[key]);
+	}
+}
+
+void ResourceManager::unloadMusic(std::string key)
+{
+	if (musics.find(key) != musics.end()) {
+		UnloadMusicStream(musics[key]);
+	}
+}
+
+ResourceManager::~ResourceManager()
+{
+	UnloadAllResources();
+}
+
 void ResourceManager::LoadAllResources()
 {
 	loadTextures();
+	loadSounds();
+	loadMusics();
 }
 
 std::map<std::string, Texture2D>  ResourceManager::getTextures() {
 	return textures;
 }
 
-Texture2D& ResourceManager::getTexture(const std::string name)
+std::map<std::string, Sound> ResourceManager::getSounds()
+{
+	return sounds;
+}
+
+std::map<std::string, Music> ResourceManager::getMusics()
+{
+	return musics;
+}
+
+Texture2D& ResourceManager::getTexture(const std::string& name)
 {
 	return textures[name];
+}
+
+Sound& ResourceManager::getSound(const std::string& name)
+{
+	return sounds[name];
+}
+
+Music& ResourceManager::getMusic(const std::string& name)
+{
+	return musics[name];
+}
+
+void ResourceManager::playMusic(const std::string& MusicName)
+{
+	if (currentMusic == MusicName) {
+		UpdateMusicStream(getMusic(MusicName));
+		return;
+	}
+	stopCurrentMusic();
+	PlayMusicStream(getMusic(MusicName));
+	currentMusic = MusicName;
+}
+
+bool ResourceManager::isMusicPlaying(const std::string& MusicName) 
+{
+	return IsMusicStreamPlaying(getMusic(MusicName));
+}
+
+void ResourceManager::stopMusic(const std::string& MusicName) 
+{
+	if (isMusicPlaying(MusicName))
+		StopMusicStream(getMusic(MusicName));
+}
+
+void ResourceManager::stopCurrentMusic() 
+{
+	if (!currentMusic.empty() && isMusicPlaying(currentMusic)) {
+		StopMusicStream(getMusic(currentMusic));
+		currentMusic.clear();
+	}
+}
+
+void ResourceManager::playSound(const std::string& soundName) 
+{
+	if (isPlayingSound(soundName) == false)
+		PlaySound(getSound(soundName));
+}
+
+bool ResourceManager::isPlayingSound(const std::string& soundName) 
+{
+	return IsSoundPlaying(getSound(soundName));
+}
+
+void ResourceManager::stopSound(const std::string& soundName) 
+{
+	if (isPlayingSound(soundName))
+		StopSound(getSound(soundName));
 }
 
 void ResourceManager::UnloadAllResources()
 {
 	unloadTextures();
+	unloadSounds();
+	unloadMusics();
 }
-
 Texture2D flipTexture(Texture2D& a) {
 	Image img = LoadImageFromTexture(a);
 	ImageFlipHorizontal(&img);

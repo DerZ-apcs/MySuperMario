@@ -15,6 +15,7 @@ enum MARIO_TYPE {
 
 class Mario: public Entity {
 private:
+	ResourceManager& resourceManager;
 	MARIO_TYPE Mario_State;
 	SPRITE_STATE Mario_sprite;
 	SPRITE_STATE LastStateb4Transition;
