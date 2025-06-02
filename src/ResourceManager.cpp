@@ -73,6 +73,7 @@ void ResourceManager::loadTextures() {
 	}
 	// background
 	textures["BACKGROUND_1"] = LoadTexture("resources/images/backgrounds/background1.png");
+	textures["MENU_SCREEN"] = LoadTexture("resources/images/backgrounds/Menuscreen.png");
 }
 
 void ResourceManager::loadSounds()
@@ -84,6 +85,7 @@ void ResourceManager::loadSounds()
 
 void ResourceManager::loadMusics()
 {
+	musics["TITLE"] = LoadMusicStream("resources/musics/Title.mp3");
 	musics["MUSIC1"] = LoadMusicStream("resources/musics/music1.mp3");
 }
 

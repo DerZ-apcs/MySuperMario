@@ -7,9 +7,11 @@
 #include "../include/Button.h"
 
 // forward declaration
-class MenuState;
+//class MenuState;
 
 class Menu {
+	Menu();
+	void init();
 
 };
 class MenuState: public Button {
