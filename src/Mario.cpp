@@ -513,13 +513,15 @@ void Mario::Update()
 {
 	HandleInput();
 	const float deltaTime = GetFrameTime();
-	position.x += velocity.x * deltaTime /*+ 0.5 * accelerationX * deltaTime * deltaTime*/;
+	position.x += velocity.x * deltaTime;
 	position.y += velocity.y * deltaTime;
 
-	if (state != ON_GROUND) 
-		if (velocity.y >= 0) 
-			state = FALLING;
+	//if (state != ON_GROUND) 
+	if (velocity.y > 50) 
+		state = FALLING;
+
 	velocity.y += GRAVITY * deltaTime;
+
 	for (auto i = fireballs.begin(); i != fireballs.end();) {
 		FireBall* fireball = *i;
 		if (fireball->isMaxDistance()) {
