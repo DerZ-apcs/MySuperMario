@@ -7869,58 +7869,58 @@ class lexer : public lexer_base<BasicJsonType>
         switch (get())
         {
             // single-line comments skip input until a newline or EOF is read
-            case '/':
+        case '/':
+        {
+            while (true)
             {
-                while (true)
+                switch (get())
                 {
-                    switch (get())
-                    {
-                        case '\n':
-                        case '\r':
-                        case char_traits<char_type>::eof():
-                        case '\0':
-                            return true;
+                case '\n':
+                case '\r':
+                case char_traits<char_type>::eof():
+                case '\0':
+                    return true;
 
-                        default:
-                            break;
-                    }
+                default:
+                    break;
                 }
             }
+        }
 
-            // multi-line comments skip input until */ is read
-            case '*':
+        // multi-line comments skip input until */ is read
+        case '*':
+        {
+            while (true)
             {
-                while (true)
+                switch (get())
                 {
-                    switch (get())
+                    case char_traits<char_type>::eof():
+                    case '\0':
                     {
-                        case char_traits<char_type>::eof():
-                        case '\0':
-                        {
-                            error_message = "invalid comment; missing closing '*/'";
-                            return false;
-                        }
+                        error_message = "invalid comment; missing closing '*/'";
+                        return false;
+                    }
 
-                        case '*':
+                    case '*':
+                    {
+                        switch (get())
                         {
-                            switch (get())
+                            case '/':
+                                return true;
+
+                            default:
                             {
-                                case '/':
-                                    return true;
-
-                                default:
-                                {
-                                    unget();
-                                    continue;
-                                }
+                                unget();
+                                continue;
                             }
                         }
-
-                        default:
-                            continue;
                     }
+
+                    default:
+                        continue;
                 }
             }
+        }
 
             // unexpected character after reading '/'
             default:
