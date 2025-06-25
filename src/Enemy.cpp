@@ -89,7 +89,7 @@ Goomba::Goomba(Vector2 pos, Texture2D texture)
     : Enemy(pos, { 32, 48 }, { 0, 0 }, LEFT, ON_GROUND, texture, 0.2f, 1, BROWN) {
 }
 
-void Goomba::Update() {
+void Goomba::Update() { // Note đại
     if (state == ON_GROUND && !isDead) {
         if (direction == LEFT) {
             velocity.x = -100;
