@@ -11,7 +11,7 @@ class ResourceManager {
 	template <class T>
 	friend class Singleton;
 private:
-	ResourceManager(){}
+	ResourceManager() {}
 	//~ResourceManager(){}
 	ResourceManager(const ResourceManager&) = delete;
 	ResourceManager& operator=(const ResourceManager&) = delete;

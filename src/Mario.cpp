@@ -5,19 +5,19 @@
 Mario::Mario() : Mario(Vector2{ 0, 0 }, Vector2{ 32, 40 }, STATE_SMALL) {
 
 }
-	
+
 Mario::Mario(Vector2 nposition, Vector2 nsize, MARIO_TYPE type) :
-	Entity(nposition, {32, 40}, Vector2{0, 0}, RIGHT, FALLING, 0.1f, 1, WHITE),
-	isDucking(false),
+	Entity(nposition, { 32, 40 }, Vector2{ 0, 0 }, RIGHT, FALLING, 0.1f, 1, WHITE),
+	isDucking(false), score(0),
 	Mario_State(type), resourceManager(Singleton<ResourceManager>::getInstance())
-	
+
 {
 	if (type == STATE_SMALL) {
 		this->size = { 32, 40 };
 	}
-	else  {
+	else {
 		this->size = { 32, 56 };
-	} 
+	}
 	texture = resourceManager.getTexture("SmallMario_RIGHT_0");
 
 	Mario_sprite = NORMAL;
@@ -42,7 +42,7 @@ Mario::Mario(Vector2 nposition, Vector2 nsize, MARIO_TYPE type) :
 
 Mario::~Mario()
 {
-	
+
 }
 void Mario::HandleTileCollision(const Tile tile, CollisionType Colltype)
 {
@@ -50,11 +50,11 @@ void Mario::HandleTileCollision(const Tile tile, CollisionType Colltype)
 		return;
 	switch (Colltype) {
 	case COLLISION_TYPE_EAST:
-		setPosition({tile.getX() - size.x, position.y});
+		setPosition({ tile.getX() - size.x, position.y });
 		velocity.x = 0;
 		break;
 	case COLLISION_TYPE_NORTH:
-		setPosition({position.x, tile.getY() + tile.getHeight()});
+		setPosition({ position.x, tile.getY() + tile.getHeight() });
 		velocity.y = 0;
 		//state = FALLING;
 		break;
@@ -64,7 +64,7 @@ void Mario::HandleTileCollision(const Tile tile, CollisionType Colltype)
 		state = ON_GROUND;
 		break;
 	case COLLISION_TYPE_WEST:
-		setPosition({tile.getX() + tile.getWidth(), position.y});
+		setPosition({ tile.getX() + tile.getWidth(), position.y });
 		velocity.x = 0;
 		break;
 	default:
@@ -101,10 +101,10 @@ void Mario::HandleInput()
 
 void Mario::updateCollision()
 {
-	if (isDucking){
-		CollNorth.setPos({position.x + size.x / 2 - CollNorth.getWidth() / 2, position.y + size.y / 2 - CollNorth.getHeight()});
+	if (isDucking) {
+		CollNorth.setPos({ position.x + size.x / 2 - CollNorth.getWidth() / 2, position.y + size.y / 2 - CollNorth.getHeight() });
 		CollEast.setSize({ 5, size.y / 2 });
-		CollEast.setPos({ position.x + size.x - CollEast.getWidth() , position.y + size.y * 3 / 4 - CollEast.getHeight() / 2});
+		CollEast.setPos({ position.x + size.x - CollEast.getWidth() , position.y + size.y * 3 / 4 - CollEast.getHeight() / 2 });
 		CollWest.setSize({ 5, size.y / 2 });
 		CollWest.setPos({ position.x , position.y + size.y * 3 / 4 - CollWest.getHeight() / 2 });
 	}
@@ -119,7 +119,7 @@ void Mario::UpdateTexture()
 {
 	const float deltaTime = GetFrameTime();
 	switch (Mario_State) {
-	case STATE_SMALL: 
+	case STATE_SMALL:
 		if (state == ON_GROUND) {
 			if (velocity.x != 0 && !isDucking) {
 				// moving
@@ -187,7 +187,7 @@ void Mario::UpdateTexture()
 						texture = resourceManager.getTexture("SuperMario_RIGHT_0");
 					else if (currFrame == 1)
 						texture = resourceManager.getTexture("SuperMario_RIGHT_1");
-					else 
+					else
 						texture = resourceManager.getTexture("SuperMario_RIGHT_2");
 				}
 				else if (direction == LEFT) {
@@ -195,7 +195,7 @@ void Mario::UpdateTexture()
 						texture = resourceManager.getTexture("SuperMario_LEFT_0");
 					else if (currFrame == 1)
 						texture = resourceManager.getTexture("SuperMario_LEFT_1");
-					else 
+					else
 						texture = resourceManager.getTexture("SuperMario_LEFT_2");
 				}
 
@@ -232,12 +232,12 @@ void Mario::UpdateTexture()
 				texture = resourceManager.getTexture("SuperMarioThrowingFireball_LEFT_0");
 			else
 				texture = resourceManager.getTexture("SuperMarioThrowingFireball_RIGHT_0");
-		
+
 		}
-		break;	
+		break;
 
 	case STATE_FIRE_BALL: {
-			// on ground
+		// on ground
 		maxFrame = 2;
 		if (state == ON_GROUND) {
 			if (velocity.x != 0 && !isDucking) {
@@ -328,7 +328,8 @@ void Mario::UpdateTexture()
 			else if (transitionCurrentFrame == 2)
 				texture = resourceManager.getTexture("SuperMario_LEFT_0");
 		}
-	} else if (Mario_sprite == STATE_TRANSITIONING_FROM_SUPER_TO_FIREBALL) {
+	}
+	else if (Mario_sprite == STATE_TRANSITIONING_FROM_SUPER_TO_FIREBALL) {
 		transitioningFrameAcum += deltaTime;
 		//transitionSteps--;
 		if (transitioningFrameAcum >= transitioningFrameTime) {
@@ -358,7 +359,7 @@ void Mario::UpdateTexture()
 			else if (transitionCurrentFrame == 1) {
 				texture = resourceManager.getTexture("TransitioningFireMario_LEFT_0");
 			}
-		}	
+		}
 	}
 	else if (Mario_sprite == STATE_TRANSITIONING_FROM_FIREBALL_TO_SMALL) {
 		transitioningFrameAcum += deltaTime;
@@ -395,7 +396,7 @@ void Mario::UpdateTexture()
 				texture = resourceManager.getTexture("Fire_Mario_LEFT_0");
 		}
 	}
-	
+
 }
 
 bool Mario::isOnGround() const
@@ -441,16 +442,16 @@ void Mario::ThrowingFireBalls()
 {
 	isThrowing = true;
 	if (direction == RIGHT) {
-		Vector2 velFb = Vector2Add(Vector2{500, -200}, this->velocity);
+		Vector2 velFb = Vector2Add(Vector2{ 500, -200 }, this->velocity);
 		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, velFb, RIGHT, 2));
 	}
 	else if (direction == LEFT) {
-		Vector2 velFb = Vector2Add(Vector2{ -500, -200}, this->velocity);
+		Vector2 velFb = Vector2Add(Vector2{ -500, -200 }, this->velocity);
 		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, velFb, LEFT, 2));
 	}
 }
 
-std::list<FireBall*> *Mario::getFireBalls()
+std::list<FireBall*>* Mario::getFireBalls()
 {
 	return &fireballs;
 }
@@ -487,7 +488,7 @@ void Mario::RunRight() {
 	}
 
 }
-void Mario::Jumping(){
+void Mario::Jumping() {
 	velocity.y = -maxSpeedY;
 	state = JUMPING;
 }
@@ -513,8 +514,8 @@ void Mario::Update()
 	position.x += velocity.x * deltaTime /*+ 0.5 * accelerationX * deltaTime * deltaTime*/;
 	position.y += velocity.y * deltaTime;
 
-	if (state != ON_GROUND) 
-		if (velocity.y >= 0) 
+	if (state != ON_GROUND)
+		if (velocity.y >= 0)
 			state = FALLING;
 	velocity.y += GRAVITY * deltaTime;
 	for (auto i = fireballs.begin(); i != fireballs.end();) {
@@ -548,4 +549,12 @@ void Mario::draw()
 	CollSouth.draw();
 	CollNorth.draw();
 	CollWest.draw();*/
+}
+
+void Mario::addScore(int points) {
+	score += points;
+}
+
+int Mario::getScore() const {
+	return score;
 }

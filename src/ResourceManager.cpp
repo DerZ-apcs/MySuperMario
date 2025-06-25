@@ -30,7 +30,7 @@ void ResourceManager::loadTextures() {
 	// duck
 	textures["SmallMarioDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SmallMarioDucking_0.png");
 	textures["SmallMarioDucking_LEFT_0"] = flipTexture(textures["SmallMarioDucking_RIGHT_0"]);
-	
+
 	textures["SuperMarioDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SuperMarioDucking_0.png");
 	textures["SuperMarioDucking_LEFT_0"] = flipTexture(textures["SuperMarioDucking_RIGHT_0"]);
 
@@ -68,6 +68,25 @@ void ResourceManager::loadTextures() {
 
 	textures["FireMarioThrowingFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FireMario_Firing_0.png");
 	textures["FireMarioThrowingFireball_LEFT_0"] = flipTexture(textures["FireMarioThrowingFireball_RIGHT_0"]);
+
+	// Enemies
+	textures["Goomba_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/Goomba_0.png");
+	textures["Goomba_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/Goomba_1.png");
+	textures["Goomba_LEFT_0"] = flipTexture(textures["Goomba_RIGHT_0"]);
+	textures["Goomba_LEFT_1"] = flipTexture(textures["Goomba_RIGHT_1"]);
+	textures["Goomba_Dead"] = LoadTexture("resources/images/sprites/baddies/Swooper_0.png");
+
+	textures["Koopa_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_0.png");
+	textures["Koopa_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_1.png");
+	textures["Koopa_LEFT_0"] = flipTexture(textures["Koopa_RIGHT_0"]);
+	textures["Koopa_LEFT_1"] = flipTexture(textures["Koopa_RIGHT_1"]);
+	textures["Koopa_Shell"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_Shell.png");
+	textures["Koopa_Shell_0"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_Shell_0.png");
+	textures["Koopa_Shell_1"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_Shell_1.png");
+	textures["Koopa_Shell_2"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_Shell_2.png");
+	textures["Koopa_Shell_3"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_Shell_3.png");
+
+
 	// tile
 	for (int i = 0; i <= 103; i++) {
 		std::string path = "resources/images/tiles/AllTiles/tile_" + std::to_string(i) + ".png";
@@ -90,7 +109,7 @@ void ResourceManager::loadMusics()
 }
 
 void ResourceManager::unloadTextures() {
-	for (auto const &[key, val] : textures) {
+	for (auto const& [key, val] : textures) {
 		unloadTexture(key);
 	}
 	textures.clear();
@@ -181,18 +200,18 @@ void ResourceManager::playMusic(const std::string& MusicName)
 	currentMusic = MusicName;
 }
 
-bool ResourceManager::isMusicPlaying(const std::string& MusicName) 
+bool ResourceManager::isMusicPlaying(const std::string& MusicName)
 {
 	return IsMusicStreamPlaying(getMusic(MusicName));
 }
 
-void ResourceManager::stopMusic(const std::string& MusicName) 
+void ResourceManager::stopMusic(const std::string& MusicName)
 {
 	if (isMusicPlaying(MusicName))
 		StopMusicStream(getMusic(MusicName));
 }
 
-void ResourceManager::stopCurrentMusic() 
+void ResourceManager::stopCurrentMusic()
 {
 	if (!currentMusic.empty() && isMusicPlaying(currentMusic)) {
 		StopMusicStream(getMusic(currentMusic));
@@ -200,18 +219,18 @@ void ResourceManager::stopCurrentMusic()
 	}
 }
 
-void ResourceManager::playSound(const std::string& soundName) 
+void ResourceManager::playSound(const std::string& soundName)
 {
 	if (isPlayingSound(soundName) == false)
 		PlaySound(getSound(soundName));
 }
 
-bool ResourceManager::isPlayingSound(const std::string& soundName) 
+bool ResourceManager::isPlayingSound(const std::string& soundName)
 {
 	return IsSoundPlaying(getSound(soundName));
 }
 
-void ResourceManager::stopSound(const std::string& soundName) 
+void ResourceManager::stopSound(const std::string& soundName)
 {
 	if (isPlayingSound(soundName))
 		StopSound(getSound(soundName));

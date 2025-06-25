@@ -1,15 +1,16 @@
 #include "../include/Entity.h"
 
-Entity::Entity():
-	Entity(Vector2{0, 0}, Vector2{0, 0}, Vector2{0, 0}, RIGHT, IDLING, texture, 0.1f, 0, BLACK)
-{}
-Entity::Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState state, Texture2D tex, std::string name):
+Entity::Entity() :
+	Entity(Vector2{ 0, 0 }, Vector2{ 0, 0 }, Vector2{ 0, 0 }, RIGHT, IDLING, texture, 0.1f, 0, BLACK)
+{
+}
+Entity::Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState state, Texture2D tex, std::string name) :
 	Entity(pos, sz, vel, dir, state, tex, 0.1, 0, BLACK)
 {
 
 }
 Entity::Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState state,
-	Texture2D tex, float FrameTime, int MaxFrame, Color color):
+	Texture2D tex, float FrameTime, int MaxFrame, Color color) :
 	position(pos), size(sz), velocity(vel), direction(dir), state(state), texture(tex),
 	frameTime(FrameTime), maxFrame(MaxFrame), frameAcum(0), currFrame(0), color(color)
 {
@@ -19,7 +20,7 @@ Entity::Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState 
 	CollWest.setColor(color);
 }
 // main
-Entity::Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState state, float FrameTime, int MaxFrame, Color color):
+Entity::Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState state, float FrameTime, int MaxFrame, Color color) :
 	position(pos), size(sz), velocity(vel), direction(dir), state(state), frameTime(FrameTime), maxFrame(MaxFrame), color(color),
 	CollNorth(Vector2{ pos.x + size.x / 2 - 5, pos.y }, Vector2{ size.x, 5 }, color),
 	CollSouth(Vector2{ pos.x + size.x / 2 - 5, pos.y + size.y - 5 }, Vector2{ size.x, 5 }, color),
@@ -62,8 +63,8 @@ void Entity::updateCollision()
 
 	CollSouth.setX(position.x + size.x / 2 - CollSouth.getWidth() / 2);
 	CollSouth.setY(position.y + size.y - CollSouth.getHeight());
-	
-	CollEast.setX(position.x + size.x  - CollEast.getWidth() );
+
+	CollEast.setX(position.x + size.x - CollEast.getWidth());
 	CollEast.setY(position.y + size.y / 2 - CollEast.getHeight() / 2);
 
 	CollWest.setX(position.x);

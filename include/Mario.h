@@ -1,4 +1,4 @@
-#ifndef MARIO_H
+﻿#ifndef MARIO_H
 #define MARIO_H
 #include <raylib.h>
 #include "../include/Entity.h"
@@ -13,7 +13,7 @@ enum MARIO_TYPE {
 	STATE_FIRE_BALL
 };
 
-class Mario: public Entity {
+class Mario : public Entity {
 private:
 	ResourceManager& resourceManager;
 	MARIO_TYPE Mario_State;
@@ -37,6 +37,8 @@ private:
 	std::list<FireBall*> fireballs;
 	bool isDucking;
 	bool isThrowing;
+
+	int score;
 public:
 	Mario();
 	Mario(Vector2 nposition, Vector2 nsize, MARIO_TYPE type);
@@ -58,11 +60,14 @@ public:
 	void TransitionToSmall();
 	void TransitionToFire();
 	void TransitionMarioState();
-	
+
 	void ThrowingFireBalls();
-	std::list<FireBall*> *getFireBalls();
+	std::list<FireBall*>* getFireBalls();
 	// getter
 	float getAccelerationX() const;
 	void setLastStateBeforeTransition(SPRITE_STATE lastState);
+
+	void addScore(int points); // Thêm điểm
+	int getScore() const; // Lấy điểm
 };
 #endif

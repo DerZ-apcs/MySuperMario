@@ -92,5 +92,5 @@ public:
 	Rectangle getRect() const;
 	Color& getColor();
 
-};	
+};
 #endif
