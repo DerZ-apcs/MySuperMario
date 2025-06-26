@@ -40,7 +40,6 @@ void Enemy::Update() {
 
 void Enemy::draw() {
     if (!isDead) {
-        // Vẽ với hiệu ứng nén
         Rectangle source = { 0, 0, (float)texture.width, (float)texture.height };
         Rectangle dest = { position.x, position.y, texture.width * squashScale, texture.height * squashScale };
         Vector2 origin = { (texture.width * squashScale) / 2, (texture.height * squashScale) / 2 };
@@ -50,8 +49,7 @@ void Enemy::draw() {
 
 void Enemy::updateSquashEffect() {
     if (state == STATE_IS_DYING) {
-        squashScale = 1.0f - (0.5f - deathTimer) / 0.5f; // Nén từ 1.0 xuống 0.0 trong 0.5s
-        // Chỉ cập nhật kích thước va chạm, không thay đổi kích thước thực của texture
+        squashScale = 1.0f - (0.5f - deathTimer) / 0.5f;
         updateCollision();
     }
 }
@@ -69,7 +67,6 @@ bool Enemy::isDying() {
 }
 
 void Enemy::updateCollision() {
-    // Cập nhật vùng va chạm với hiệu ứng nén
     CollNorth.setPos({ position.x + size.x / 2 - CollNorth.getWidth() / 2, position.y });
     CollSouth.setPos({ position.x + size.x / 2 - CollSouth.getWidth() / 2, position.y + size.y * squashScale - CollSouth.getHeight() });
     CollEast.setPos({ position.x + size.x * squashScale - CollEast.getWidth(), position.y + size.y * squashScale / 2 - CollEast.getHeight() / 2 });
@@ -89,7 +86,7 @@ Goomba::Goomba(Vector2 pos, Texture2D texture)
     : Enemy(pos, { 32, 48 }, { 0, 0 }, LEFT, ON_GROUND, texture, 0.2f, 1, BROWN) {
 }
 
-void Goomba::Update() { // Note đại
+void Goomba::Update() {
     if (state == ON_GROUND && !isDead) {
         if (direction == LEFT) {
             velocity.x = -100;
@@ -136,24 +133,26 @@ void Goomba::UpdateTexture() {
 }
 
 void Goomba::CollisionWithCharacter(Mario& mario, CollisionType collType) {
-    if (isDead) return;
-    if (collType == COLLISION_TYPE_SOUTH) {
+    if (isDead || state == STATE_IS_DYING) return;
+    if (collType == COLLISION_TYPE_SOUTH && (mario.getState() == JUMPING || mario.getState() == FALLING)) {
         state = STATE_IS_DYING;
         velocity.x = 0;
         velocity.y = 0;
-        deathTimer = 0.5f; // Hiển thị hiệu ứng nén trong 0.5 giây
-        mario.setVelY(-200); // Mario bật lên
-        mario.addScore(100); // Thêm điểm
-        Singleton<ResourceManager>::getInstance().playSound("PLAYER_JUMP");
+        deathTimer = 0.3f;
+        mario.setVelY(-300);
+        mario.addScore(100);
+        Singleton<ResourceManager>::getInstance().playSound("STOMP");
         updateSquashEffect();
         UpdateTexture();
     }
     else if (collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_WEST || collType == COLLISION_TYPE_NORTH) {
-        if (mario.getState() == STATE_SUPER || mario.getState() == STATE_FIRE_BALL) {
+        if (mario.getMarioState() == STATE_SUPER || mario.getMarioState() == STATE_FIRE_BALL) {
             mario.TransitionToSmall();
+            mario.setInvincibilityTimer(2.0f);
         }
         else {
-            // Mario nhỏ chịu sát thương (có thể thêm logic game over)
+            mario.setState(STATE_IS_DYING);
+            Singleton<ResourceManager>::getInstance().playSound("MARIO_DIE");
         }
     }
 }
@@ -198,7 +197,8 @@ void Goomba::HandleTileCollision(const Tile& tile, CollisionType collType) {
 
 // Koopa Class Implementation
 Koopa::Koopa(Vector2 pos, Texture2D texture)
-    : Enemy(pos, { 32, 48 }, { 0, 0 }, LEFT, ON_GROUND, texture, 0.2f, 1, GREEN), reviveTimer(0.0f) {
+    : Enemy(pos, { 32, 48 }, { 0, 0 }, LEFT, ON_GROUND, texture, 0.2f, 1, GREEN),
+    reviveTimer(0.0f), isReviving(false), reviveShakeTimer(0.0f) {
 }
 
 void Koopa::Update() {
@@ -215,44 +215,67 @@ void Koopa::Update() {
     }
     if (state == ON_GROUND && !isDead) {
         if (direction == LEFT) {
-            velocity.x = -80; // Test
+            velocity.x = -80;
         }
         else {
             velocity.x = 80;
         }
         reviveTimer = 0.0f;
+        isReviving = false;
+        reviveShakeTimer = 0.0f;
     }
     else if (state == STATE_SHELL && !isDead) {
         if (velocity.x == 0) {
             reviveTimer += GetFrameTime();
-            if (reviveTimer > 5.0f) { // Hồi sinh sau 5 giây
+            if (reviveTimer > 4.0f && reviveTimer < 5.0f) {
+                isReviving = true;
+                reviveShakeTimer += GetFrameTime();
+            }
+            if (reviveTimer > 5.0f) {
                 state = ON_GROUND;
                 setHeight(48);
-                setSize({ 32, 48 }); // Reset kích thước
+                setSize({ 32, 48 });
+                setY(getY() - 16);
                 velocity.x = (direction == LEFT) ? -80 : 80;
                 reviveTimer = 0.0f;
-                squashScale = 1.0f; // Reset nén
+                isReviving = false;
+                reviveShakeTimer = 0.0f;
+                squashScale = 1.0f;
                 updateCollision();
+                Singleton<ResourceManager>::getInstance().playSound("KOOPA_REVIVE");
                 UpdateTexture();
             }
         }
         else {
             reviveTimer = 0.0f;
+            isReviving = false;
+            reviveShakeTimer = 0.0f;
         }
     }
     Enemy::Update();
 }
 
+
 void Koopa::draw() {
-    Enemy::draw();
+    if (!isDead) {
+        Rectangle source = { 0, 0, (float)texture.width, (float)texture.height };
+        Rectangle dest = { position.x, position.y, texture.width * squashScale, texture.height * squashScale };
+        Vector2 origin = { (texture.width * squashScale) / 2, (texture.height * squashScale) / 2 };
+        if (isReviving && (int)(reviveShakeTimer * 10) % 2 == 0) {
+            DrawTexturePro(texture, source, dest, origin, 0.0f, Fade(WHITE, 0.5f));
+        }
+        else {
+            DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
+        }
+    }
 }
 
 void Koopa::UpdateTexture() {
     if (state == STATE_SHELL || state == STATE_IS_DYING) {
         if (state == STATE_SHELL && velocity.x != 0) {
             frameAcum += GetFrameTime();
-            if (frameAcum > 0.1f) {
-                currFrame = (currFrame + 1) % 4; // 4 frame xoay
+            if (frameAcum > 0.05f) {
+                currFrame = (currFrame + 1) % 4;
                 frameAcum = 0;
             }
             texture = Singleton<ResourceManager>::getInstance().getTexture("Koopa_Shell_" + std::to_string(currFrame));
@@ -287,49 +310,88 @@ void Koopa::UpdateTexture() {
     }
 }
 
+
 void Koopa::CollisionWithCharacter(Mario& mario, CollisionType collType) {
     if (isDead || state == STATE_IS_DYING) return;
-    if (collType == COLLISION_TYPE_SOUTH) {
+    if (collType == COLLISION_TYPE_SOUTH && (mario.getState() == JUMPING || mario.getState() == FALLING)) {
         if (state != STATE_SHELL) {
             state = STATE_SHELL;
             velocity.x = 0;
             velocity.y = 0;
-            setSize({ 32, 32 }); // Shell nhỏ hơn
+            setSize({ 32, 32 });
+            setY(getY() + 16);
             reviveTimer = 0.0f;
-            squashScale = 1.0f; // Reset nén
+            isReviving = false;
+            reviveShakeTimer = 0.0f;
+            squashScale = 1.0f;
             updateCollision();
-            mario.setVelY(-200);
-            mario.addScore(200);
-            Singleton<ResourceManager>::getInstance().playSound("PLAYER_JUMP");
+            mario.setVelY(-300);
+            mario.addScore(100);
+            Singleton<ResourceManager>::getInstance().playSound("STOMP");
             UpdateTexture();
         }
         else {
             state = STATE_IS_DYING;
             velocity.x = 0;
-            velocity.y = 0;
-            deathTimer = 0.5f;
-            mario.setVelY(-200);
+            velocity.y = -200;
+            deathTimer = 0.3f;
+            mario.setVelY(-300);
             mario.addScore(200);
-            Singleton<ResourceManager>::getInstance().playSound("PLAYER_JUMP");
+            Singleton<ResourceManager>::getInstance().playSound("STOMP");
             updateSquashEffect();
             UpdateTexture();
         }
     }
-    else if (collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_WEST || collType == COLLISION_TYPE_NORTH) {
+    else if (collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_WEST) {
         if (state == STATE_SHELL) {
-            velocity.x = (collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_NORTH) ? 200 : -200;
-            direction = (collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_NORTH) ? RIGHT : LEFT;
-            mario.setVelY(-200);
-            mario.addScore(50);
-            Singleton<ResourceManager>::getInstance().playSound("PLAYER_JUMP");
-            UpdateTexture();
-        }
-        else {
-            if (mario.getState() == STATE_SUPER || mario.getState() == STATE_FIRE_BALL) {
-                mario.TransitionToSmall();
+            if (velocity.x == 0) {
+                velocity.x = (collType == COLLISION_TYPE_EAST) ? 300 : -300;
+                direction = (collType == COLLISION_TYPE_EAST) ? RIGHT : LEFT;
+                reviveTimer = 0.0f;
+                isReviving = false;
+                reviveShakeTimer = 0.0f;
+                mario.setVelY(-300);
+                mario.addScore(200);
+                Singleton<ResourceManager>::getInstance().playSound("KICK");
+                UpdateTexture();
             }
             else {
-                // Mario nhỏ chịu sát thương (có thể thêm logic game over)
+                if (mario.getMarioState() == STATE_SUPER || mario.getMarioState() == STATE_FIRE_BALL) {
+                    mario.TransitionToSmall();
+                    mario.setInvincibilityTimer(2.0f);
+                }
+                else {
+                    mario.setState(STATE_IS_DYING);
+                    Singleton<ResourceManager>::getInstance().playSound("MARIO_DIE");
+                }
+            }
+        }
+        else {
+            if (mario.getMarioState() == STATE_SUPER || mario.getMarioState() == STATE_FIRE_BALL) {
+                mario.TransitionToSmall();
+                mario.setInvincibilityTimer(2.0f);
+            }
+            else {
+                mario.setState(STATE_IS_DYING);
+                Singleton<ResourceManager>::getInstance().playSound("MARIO_DIE");
+            }
+        }
+    }
+    else if (collType == COLLISION_TYPE_NORTH) {
+        if (state == STATE_SHELL) {
+            // Không tiêu diệt Shell, chỉ bật Mario lên
+            mario.setVelY(-200);
+            Singleton<ResourceManager>::getInstance().playSound("BUMP");
+        }
+        else {
+            // Koopa bình thường gây sát thương cho Mario
+            if (mario.getMarioState() == STATE_SUPER || mario.getMarioState() == STATE_FIRE_BALL) {
+                mario.TransitionToSmall();
+                mario.setInvincibilityTimer(2.0f);
+            }
+            else {
+                mario.setState(STATE_IS_DYING);
+                Singleton<ResourceManager>::getInstance().playSound("MARIO_DIE");
             }
         }
     }
@@ -338,7 +400,8 @@ void Koopa::CollisionWithCharacter(Mario& mario, CollisionType collType) {
 void Koopa::CollisionWithEnemy(Enemy& enemy, CollisionType collType) {
     if (isDead || state != STATE_SHELL || velocity.x == 0) return;
     if (collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_WEST) {
-        enemy.CollisionWithEnemy(*this, collType); // Gọi ngược lại để xử lý
+        enemy.CollisionWithEnemy(*this, collType);
+        Singleton<ResourceManager>::getInstance().playSound("STOMP");
     }
 }
 

@@ -4,11 +4,12 @@ Entity::Entity() :
 	Entity(Vector2{ 0, 0 }, Vector2{ 0, 0 }, Vector2{ 0, 0 }, RIGHT, IDLING, texture, 0.1f, 0, BLACK)
 {
 }
+
 Entity::Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState state, Texture2D tex, std::string name) :
 	Entity(pos, sz, vel, dir, state, tex, 0.1, 0, BLACK)
 {
-
 }
+
 Entity::Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState state,
 	Texture2D tex, float FrameTime, int MaxFrame, Color color) :
 	position(pos), size(sz), velocity(vel), direction(dir), state(state), texture(tex),
@@ -19,7 +20,7 @@ Entity::Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState 
 	CollSouth.setColor(color);
 	CollWest.setColor(color);
 }
-// main
+
 Entity::Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState state, float FrameTime, int MaxFrame, Color color) :
 	position(pos), size(sz), velocity(vel), direction(dir), state(state), frameTime(FrameTime), maxFrame(MaxFrame), color(color),
 	CollNorth(Vector2{ pos.x + size.x / 2 - 5, pos.y }, Vector2{ size.x, 5 }, color),
@@ -32,32 +33,25 @@ Entity::Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState 
 	rect = { pos.x, pos.y, size.x, size.y };
 }
 
-void Entity::Update() {
+void Entity::Update() {}
 
-}
-void Entity::draw() {
+void Entity::draw() {}
 
-}
-void Entity::HandleInput() {
+void Entity::HandleInput() {}
 
-}
-void Entity::UpdateTexture() {
+void Entity::UpdateTexture() {}
 
-}
 void Entity::UpdatePhysics()
 {
-	/*position.x += velocity.x * Clock::getDeltaTimeUpdate();
-	position.y += velocity.y * Clock::getDeltaTimeUpdate();*/
-
 	rect.width = size.x;
 	rect.height = size.y;
 	rect.x = position.x;
 	rect.y = position.y;
 	updateCollision();
 }
+
 void Entity::updateCollision()
 {
-	// update collision
 	CollNorth.setX(position.x + size.x / 2 - CollNorth.getWidth() / 2);
 	CollNorth.setY(position.y);
 
@@ -71,23 +65,18 @@ void Entity::updateCollision()
 	CollWest.setY(position.y + size.y / 2 - CollWest.getHeight() / 2);
 }
 
-CollisionType Entity::CheckCollision(const Entity& entity) const
-{
+CollisionType Entity::CheckCollision(const Entity& entity) const {
 	Rectangle rect = entity.getRect();
 	if (CollNorth.checkCollision(rect) == COLLISION_TYPE_COLLIDED) {
-		//entity->setColor(CollNorth.getColor());
 		return COLLISION_TYPE_NORTH;
 	}
 	if (CollSouth.checkCollision(rect) == COLLISION_TYPE_COLLIDED) {
-		//entity->setColor(CollSouth.getColor());
 		return COLLISION_TYPE_SOUTH;
 	}
 	if (CollEast.checkCollision(rect) == COLLISION_TYPE_COLLIDED) {
-		//entity->setColor(CollEast.getColor());
 		return COLLISION_TYPE_EAST;
 	}
 	if (CollWest.checkCollision(rect) == COLLISION_TYPE_COLLIDED) {
-		//entity->setColor(CollWest.getColor());
 		return COLLISION_TYPE_WEST;
 	}
 	return COLLISION_TYPE_NONE;
