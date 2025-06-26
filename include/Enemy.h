@@ -35,6 +35,10 @@ public:
     void HandleTileCollision(const Tile& tile, CollisionType collType) override;
 };
 
+class FlyingGoomba : public Goomba {
+
+};
+
 class Koopa : public Enemy {
 public:
     Koopa(Vector2 pos, Texture2D texture);
