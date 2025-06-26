@@ -36,7 +36,14 @@ public:
 };
 
 class FlyingGoomba : public Goomba {
-
+private:
+    float jumpTimer; // Timer để kiểm soát tần suất nhảy
+public:
+    FlyingGoomba(Vector2 pos, Texture2D texture);
+    void Update() override;
+    void UpdateTexture() override;
+    void CollisionWithCharacter(Mario& mario, CollisionType collType) override;
+    void HandleTileCollision(const Tile& tile, CollisionType collType) override;
 };
 
 class Koopa : public Enemy {

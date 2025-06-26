@@ -21,6 +21,7 @@ Game::Game(int nwidth, int nheight, int ntargetFPS) :
     enemies.push_back(new Goomba({ 400, 920 }, Resource_manager.getTexture("Goomba_LEFT_0")));
     enemies.push_back(new Goomba({ 300, 920 }, Resource_manager.getTexture("Goomba_LEFT_1")));
     enemies.push_back(new Koopa({ 500, 912 }, Resource_manager.getTexture("Koopa_LEFT_1")));
+    enemies.push_back(new FlyingGoomba({ 600, 920 }, Resource_manager.getTexture("FlyingGoomba_LEFT_0")));
 }
 
 Game::~Game()

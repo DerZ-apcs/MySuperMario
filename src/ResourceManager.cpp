@@ -75,6 +75,11 @@ void ResourceManager::loadTextures() {
 	textures["Goomba_LEFT_0"] = flipTexture(textures["Goomba_RIGHT_0"]);
 	textures["Goomba_LEFT_1"] = flipTexture(textures["Goomba_RIGHT_1"]);
 	textures["Goomba_Dead"] = LoadTexture("resources/images/sprites/baddies/Swooper_0.png");
+	
+	textures["FlyingGoomba_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/FlyingGoomba_0.png");
+	textures["FlyingGoomba_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/FlyingGoomba_1.png");
+	textures["FlyingGoomba_LEFT_0"] = flipTexture(textures["FlyingGoomba_RIGHT_0"]);
+	textures["FlyingGoomba_LEFT_1"] = flipTexture(textures["FlyingGoomba_RIGHT_1"]);
 
 	textures["Koopa_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_0.png");
 	textures["Koopa_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_1.png");
