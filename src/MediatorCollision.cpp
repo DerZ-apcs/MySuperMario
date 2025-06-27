@@ -1,4 +1,4 @@
-#include "../include/MediatorCollision.h"
+﻿#include "../include/MediatorCollision.h"
 
 void MediatorCollision::HandlePlayerWithTiles(Mario*& mario, Tile*& tile, CollisionType Colltype)
 {
@@ -69,36 +69,101 @@ void MediatorCollision::HandleEnemyWithMario(Enemy*& enemy, Mario*& mario, Colli
     enemy->CollisionWithCharacter(*mario, Colltype);
 }
 
-void MediatorCollision::HandleCollision(Entity* entity1, Entity* entity2)
-{
-    Mario* isMario_1 = dynamic_cast<Mario*>(entity1);
-    Mario* isMario_2 = dynamic_cast<Mario*>(entity2);
-    FireBall* isFireBall_1 = dynamic_cast<FireBall*>(entity1);
-    FireBall* isFireBall_2 = dynamic_cast<FireBall*>(entity2);
-    Tile* isTile_1 = dynamic_cast<Tile*>(entity1);
-    Tile* isTile_2 = dynamic_cast<Tile*>(entity2);
-    Enemy* isEnemy_1 = dynamic_cast<Enemy*>(entity1);
-    Enemy* isEnemy_2 = dynamic_cast<Enemy*>(entity2);
+//void MediatorCollision::HandleCollision(Entity* entity1, Entity* entity2)
+//{
+//    Mario* isMario_1 = dynamic_cast<Mario*>(entity1);
+//    Mario* isMario_2 = dynamic_cast<Mario*>(entity2);
+//    FireBall* isFireBall_1 = dynamic_cast<FireBall*>(entity1);
+//    FireBall* isFireBall_2 = dynamic_cast<FireBall*>(entity2);
+//    Tile* isTile_1 = dynamic_cast<Tile*>(entity1);
+//    Tile* isTile_2 = dynamic_cast<Tile*>(entity2);
+//    Enemy* isEnemy_1 = dynamic_cast<Enemy*>(entity1);
+//    Enemy* isEnemy_2 = dynamic_cast<Enemy*>(entity2);
+//
+//    if ((isMario_1 && isTile_2) || (isMario_2 && isTile_1)) {
+//        CollisionType CollType = isMario_1 ? isMario_1->CheckCollision(*isTile_2) : isMario_2->CheckCollision(*isTile_1);
+//        if (isMario_1)
+//            HandlePlayerWithTiles(isMario_1, isTile_2, CollType);
+//        else
+//            HandlePlayerWithTiles(isMario_2, isTile_1, CollType);
+//    }
+//    else if ((isFireBall_1 && isTile_2) || (isFireBall_2 && isTile_1)) {
+//        CollisionType CollType = isFireBall_1 ? isFireBall_1->CheckCollision(*isTile_2) : isFireBall_2->CheckCollision(*isTile_1);
+//        if (isFireBall_1)
+//            HandleFireballWithTiles(isFireBall_1, isTile_2, CollType);
+//        else
+//            HandleFireballWithTiles(isFireBall_2, isTile_1, CollType);
+//    }
+//    else if ((isMario_1 && isEnemy_2) || (isMario_2 && isEnemy_1)) {
+//        CollisionType CollType = isMario_1 ? isMario_1->CheckCollision(*isEnemy_2) : isMario_2->CheckCollision(*isEnemy_1);
+//        if (isMario_1)
+//            HandleEnemyWithMario(isEnemy_2, isMario_1, CollType);
+//        else
+//            HandleEnemyWithMario(isEnemy_1, isMario_2, CollType);
+//    }
+//}
 
-    if ((isMario_1 && isTile_2) || (isMario_2 && isTile_1)) {
-        CollisionType CollType = isMario_1 ? isMario_1->CheckCollision(*isTile_2) : isMario_2->CheckCollision(*isTile_1);
-        if (isMario_1)
-            HandlePlayerWithTiles(isMario_1, isTile_2, CollType);
-        else
-            HandlePlayerWithTiles(isMario_2, isTile_1, CollType);
+void MediatorCollision::HandleCollision(Entity* entity1, Entity* entity2) {
+    // Kiểm tra sớm để giảm dynamic_cast
+    if (entity1 == entity2) return;
+
+    Mario* mario = dynamic_cast<Mario*>(entity1);
+    Enemy* enemy = dynamic_cast<Enemy*>(entity2);
+    if (mario && enemy) {
+        CollisionType collType = mario->CheckCollision(*enemy);
+        if (collType != COLLISION_TYPE_NONE) {
+            HandleEnemyWithMario(enemy, mario, collType);
+        }
+        return;
     }
-    else if ((isFireBall_1 && isTile_2) || (isFireBall_2 && isTile_1)) {
-        CollisionType CollType = isFireBall_1 ? isFireBall_1->CheckCollision(*isTile_2) : isFireBall_2->CheckCollision(*isTile_1);
-        if (isFireBall_1)
-            HandleFireballWithTiles(isFireBall_1, isTile_2, CollType);
-        else
-            HandleFireballWithTiles(isFireBall_2, isTile_1, CollType);
+
+    mario = dynamic_cast<Mario*>(entity2);
+    enemy = dynamic_cast<Enemy*>(entity1);
+    if (mario && enemy) {
+        CollisionType collType = mario->CheckCollision(*enemy);
+        if (collType != COLLISION_TYPE_NONE) {
+            HandleEnemyWithMario(enemy, mario, collType);
+        }
+        return;
     }
-    else if ((isMario_1 && isEnemy_2) || (isMario_2 && isEnemy_1)) {
-        CollisionType CollType = isMario_1 ? isMario_1->CheckCollision(*isEnemy_2) : isMario_2->CheckCollision(*isEnemy_1);
-        if (isMario_1)
-            HandleEnemyWithMario(isEnemy_2, isMario_1, CollType);
-        else
-            HandleEnemyWithMario(isEnemy_1, isMario_2, CollType);
+
+    Tile* tile = dynamic_cast<Tile*>(entity1);
+    mario = dynamic_cast<Mario*>(entity2);
+    if (tile && mario) {
+        CollisionType collType = mario->CheckCollision(*tile);
+        if (collType != COLLISION_TYPE_NONE) {
+            HandlePlayerWithTiles(mario, tile, collType);
+        }
+        return;
+    }
+
+    tile = dynamic_cast<Tile*>(entity2);
+    mario = dynamic_cast<Mario*>(entity1);
+    if (tile && mario) {
+        CollisionType collType = mario->CheckCollision(*tile);
+        if (collType != COLLISION_TYPE_NONE) {
+            HandlePlayerWithTiles(mario, tile, collType);
+        }
+        return;
+    }
+
+    FireBall* fireball = dynamic_cast<FireBall*>(entity1);
+    tile = dynamic_cast<Tile*>(entity2);
+    if (fireball && tile) {
+        CollisionType collType = fireball->CheckCollision(*tile);
+        if (collType != COLLISION_TYPE_NONE) {
+            HandleFireballWithTiles(fireball, tile, collType);
+        }
+        return;
+    }
+
+    fireball = dynamic_cast<FireBall*>(entity2);
+    tile = dynamic_cast<Tile*>(entity1);
+    if (fireball && tile) {
+        CollisionType collType = fireball->CheckCollision(*tile);
+        if (collType != COLLISION_TYPE_NONE) {
+            HandleFireballWithTiles(fireball, tile, collType);
+        }
+        return;
     }
 }

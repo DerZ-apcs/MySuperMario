@@ -23,6 +23,8 @@ Game::Game(int nwidth, int nheight, int ntargetFPS) :
     enemies.push_back(new Koopa({ 500, 912 }, Resource_manager.getTexture("Koopa_LEFT_1")));
     enemies.push_back(new FlyingGoomba({ 700, 920 }, Resource_manager.getTexture("FlyingGoomba_LEFT_0")));
     enemies.push_back(new FlyingGoomba({ 800, 920 }, Resource_manager.getTexture("FlyingGoomba_LEFT_1")));
+    enemies.push_back(new Bullet({ 400, 704 }, Resource_manager.getTexture("Bullet_LEFT_1"), LEFT)); 
+    enemies.push_back(new Bullet({ 500, 704 }, Resource_manager.getTexture("Bullet_RIGHT_1"), RIGHT)); 
 }
 
 Game::~Game()

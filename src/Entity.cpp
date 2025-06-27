@@ -1,4 +1,4 @@
-#include "../include/Entity.h"
+﻿#include "../include/Entity.h"
 
 Entity::Entity() :
 	Entity(Vector2{ 0, 0 }, Vector2{ 0, 0 }, Vector2{ 0, 0 }, RIGHT, IDLING, texture, 0.1f, 0, BLACK)

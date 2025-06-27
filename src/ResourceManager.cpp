@@ -91,6 +91,11 @@ void ResourceManager::loadTextures() {
 	textures["Koopa_Shell_2"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_Shell_2.png");
 	textures["Koopa_Shell_3"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_Shell_3.png");
 
+	textures["Bullet_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/BanzaiBill_0.png");
+	textures["Bullet_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/GreenKoopaTroopa_0.png");
+	textures["Bullet_LEFT_0"] = flipTexture(textures["Bullet_RIGHT_0"]);
+	textures["Bullet_LEFT_1"] = flipTexture(textures["Bullet_RIGHT_1"]);
+	/*textures["Bullet_Dead"] = LoadTexture("resources/images/sprites/baddies/Bullet_Dead.png");*/
 
 	// tile
 	for (int i = 0; i <= 103; i++) {
