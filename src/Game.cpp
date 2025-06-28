@@ -10,7 +10,7 @@ Game::Game(int nwidth, int nheight, int ntargetFPS) :
 	width(nwidth), height(nheight), targetFPS(ntargetFPS), Resource_manager(Singleton<ResourceManager>::getInstance()) {
 	Resource_manager.LoadAllResources();
 	// map
-	map1.LoadFromJsonFile(Map::basePath + "MAP_1.1.json");
+	map1.LoadFromJsonFile(Map::basePath + "kmap_3.json"); // change map hereeeeeeeeeee <<-------
 	// background
 	BgWidth = (float)GetScreenWidth();
 	BgHeight = (float)GetScreenHeight();
@@ -49,11 +49,16 @@ void Game::initGame()
 void Game::UpdateGame()
 {
 	// cemera & background
-	camera.target.y = GetScreenHeight() / 2.0f;
-	if (mario.getX() >= GetScreenWidth() / 2.0f ) {
-		camera.target.x = mario.getX();
+	camera.target.x = mario.getX();
+	camera.target.y = mario.getY();
+
+	if (camera.target.x < GetScreenWidth() / 2.0f) {
+		camera.target.x = GetScreenWidth() / 2.0f;
 	}
-	else camera.target.x = GetScreenWidth() / 2.0f;
+
+	if (camera.target.y < GetScreenHeight() / 2.0f) {
+		camera.target.y = GetScreenHeight() / 2.0f;
+	}
 
 	for (int i = 0; i < 3; i++) {
 		// wrap from left to far most right
@@ -98,6 +103,7 @@ void Game::draw()
 	drawBackGround();
 	mario.draw();
 	map1.drawMap();
+	//Resource_manager.drawAllTiles(); // debug function to draw all tiles
 	EndMode2D();
 }
 

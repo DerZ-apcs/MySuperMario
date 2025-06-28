@@ -86,13 +86,25 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 	int tilewidth = mapJson["tilewidth"];
 	std::vector<int> data = mapJson["layers"][0]["data"];
 
+	int firstgid = mapJson["tilesets"][0]["firstgid"];
+
+	printf("firstgid: %d\n", firstgid);
+
 	for (int y = 0; y < height; ++y) {
 		for (int x = 0; x < width; ++x) {
-			int tileId = data[static_cast<std::vector<int, std::allocator<int>>::size_type>(y) * width + x];
+			int tileId = data[y * width + x];
 			if (tileId != 0) {
-				tiles.push_back(new Tile(Vector2{ (float)x * tilewidth,(float)y * tilewidth },
-					TileType::TILE_TYPE_NORMAL, "TILE_" + std::to_string(tileId - 2)));
+				// Subtract firstgid to get 0-based index
+				int texIndex = tileId - firstgid;
+				std::string texKey = "TILE_" + std::to_string(texIndex);
+
+				tiles.push_back(new Tile(
+					Vector2{ (float)x * tilewidth, (float)y * tilewidth },
+					TileType::TILE_TYPE_NORMAL,
+					texKey
+				));
 			}
 		}
 	}
 }
+

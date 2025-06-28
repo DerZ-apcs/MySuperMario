@@ -16,6 +16,14 @@ int main() {
 		EndDrawing();
 	}
 	resourceManager.UnloadAllResources();*/
+
+	
+	//std::string path = "resources/images/tiles/AllTiles/tile_99.png";
+	//Texture2D tt = LoadTexture(path.c_str());
+	//DrawTexture(tt, 50, 50, WHITE);
+	//std::filesystem::path fullPath = std::filesystem::absolute(path);
+	//std::cout << fullPath << std::endl;
+
 	CloseAudioDevice();
 	CloseWindow();
 	return 0;

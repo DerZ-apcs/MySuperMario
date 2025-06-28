@@ -44,6 +44,8 @@ public:
 	Sound& getSound(const std::string& name);
 	Music& getMusic(const std::string& name);
 
+	void drawAllTiles() const; // debug function
+
 	// play music track
 	void playMusic(const std::string& MusicName);
 	bool isMusicPlaying(const std::string& MusicName);

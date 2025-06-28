@@ -19,7 +19,7 @@ void Enemy::CollisionWithCharacter() {
 	
 }
 bool Enemy::isDying() {
-
+	return false;
 }
 void Enemy::Update() {
 
