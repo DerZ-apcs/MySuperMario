@@ -5,30 +5,29 @@
 #include <vector>
 #include "../include/Mario.h"
 #include "../include/Button.h"
-#include "../include/Game.h"
 
 // forward declaration
-//class MenuState;
+class MenuState;
+class Game;
 
 class MenuState: public Button {
 public:
 	virtual void draw() = 0;
 	virtual void handleInput() = 0;
-	virtual void init() = 0;
 	virtual void update() = 0;
+	virtual ~MenuState() = default;
 	void setGame(Game* game) { this->game = game;  }
 protected:
 	Game* game = nullptr;
 };
 
-class MainMenu : public MenuState {
+class MainMenuState : public MenuState {
 public:
-	explicit MainMenu(Game* game); 
-	void init() override;
+	explicit MainMenuState(Game* game); 
 	void draw() override;
 	void handleInput() override;
 	void update() override;
-	~MainMenu();
+	~MainMenuState();
 private:
 	Button startButton;
 	Button continueButton;

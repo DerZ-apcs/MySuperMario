@@ -1,4 +1,3 @@
-#include "Map.h"
 #include "../include/Map.h"
 
 const std::string Map::basePath = std::string(GetWorkingDirectory()) + "/resources/maps/";
@@ -28,30 +27,6 @@ std::vector<Tile*>* Map::getVectorTiles()
 void Map::AddTile(Vector2 pos, TileType type, const std::string& name)
 {
 	tiles.push_back(new Tile(pos, type, name));
-}
-
-void Map::loadFromFile(const std::string& filepath)
-{
-	clear();
-	std::ifstream fin(filepath);
-	if (!fin) {
-		std::cerr << "Failed to open" << filepath << "for reading" << std::endl;
-		return;
-	}
-	std::string line;
-	while (std::getline(fin, line)) {
-		if (line.empty() || line[0] == '/' || line[0] == '$')
-			continue;
-		std::istringstream iss(line);
-		std::string name, typeStr;
-		int x, y;
-		if (!(iss >> name >> x >> y >> typeStr)) {
-			std::cerr << "Invalid line: " << line << "\n";
-			continue;
-		}
-		AddTile(Vector2{(float)x, (float)y}, StringToTileType(typeStr), name);
-	}
-	fin.close();
 }
 
 void Map::clear() {
@@ -95,4 +70,27 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			}
 		}
 	}
+	setMapSize(Vector2{(float) width * tilewidth, (float) height * tilewidth});
+
+}
+
+void Map::loadBackgroundTexture(const std::string& backgroundName)
+{
+	if (background.id > 0)
+		UnloadTexture(background);
+	background = RESOURCE_MANAGER.getTexture(backgroundName);
+	if (background.id == 0) {
+		throw std::runtime_error("Failed to load background texture: " + backgroundName);
+	}
+}
+
+Vector2 Map::getMapSize() const
+{
+	return Vector2{ width, height };
+}
+
+void Map::setMapSize(Vector2 size)
+{
+	width = size.x;
+	height = size.y;
 }

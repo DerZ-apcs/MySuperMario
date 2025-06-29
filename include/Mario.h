@@ -64,5 +64,7 @@ public:
 	// getter
 	float getAccelerationX() const;
 	void setLastStateBeforeTransition(SPRITE_STATE lastState);
+
+	void reset();
 };
 #endif

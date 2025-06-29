@@ -1,52 +1,41 @@
 #ifndef GAME_H
 #define GAME_H
-#include <raylib.h>
-#include "../include/Mario.h"
-#include "../include/Clock.h"
-#include "../include/ResourceManager.h"
-#include "../include/Global.h"
-#include "../include/Tile.h"
-#include "../include/Map.h"
-#include "../include/MediatorCollision.h"
 #include "../include/Menu.h"
+#include "../include/Mario.h"
+#include "../include/Map.h"
+#include <memory>
+#include <utility>
+class MenuState;
 
 class Game {
-private:
-	int width;
-	int height;
-	int targetFPS;
-	
-	std::vector<Tile*> Tiles;
-
-	Texture2D BackGroundTex;
-	std::map<string, Texture2D> backgroundTextures;
-	MediatorCollision mediatorCollision;
-	float BgWidth;
-	float BgHeight;
-	std::vector<Vector2> BackGroundPos;
-	Camera2D camera;
-	std::vector<Button> Buttons;
-
 public:
 	Game();
-	Game(int nwidth, int nheight, int ntargetFPS);
 	~Game();
+	void init();
+    void setState(std::unique_ptr<MenuState> newState);
 
-	void initGame();
-	void UpdateGame();
-	void draw();
-	void drawBackGround();
+    void configureSettings(bool audioEnabled, bool musicEnabled);
+    void selectCharacter(int characterIndex);
+    void selectMap(int mapIndex);
+    bool isAudioEnabled() const;
+    bool isMusicEnabled() const;
+    int getSelectedCharacter() const;
+    int getSelectedMap() const;
+    void saveToConfig(string filename);
+    void loadFromConfig(string filename);
+    void returnToMainMenu();
+    void setBackground(const std::string& imageName);
+    Mario* player;
+    Map* map;
 
-	int getWidth() const;
-	int getHeight() const;
-	int getTergetFPS() const;
-	//Color getColor();
-
-	void setWidth(int width);
-	void setHeight(int height);
-	void setTargetFPS(int targetFPS);
-	//void setColor(Color color);
-	Mario mario;
-	Map map1;
+private:
+    vector<Map*> loadedLevel;
+    bool audioEnabled;
+    bool musicEnabled;
+    int selectedCharacter;
+    int selectedMap = 1;
+    std::unique_ptr<MenuState> currentState;
+    Texture2D backgroundTexture;
 };
+
 #endif

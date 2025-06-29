@@ -462,6 +462,17 @@ float Mario::getAccelerationX() const
 	return accelerationX;
 }
 
+void Mario::reset()
+{
+	setPosition({ 16, 500 });
+	setVel({ 0, 0 });
+	direction = RIGHT;
+	texture = RESOURCE_MANAGER.getTexture("SmallMario_RIGHT_0");
+	isThrowing = isDucking = false;
+
+
+}
+
 void Mario::RunLeft() {
 	float deltaTime = GetFrameTime();
 	if (direction == RIGHT) {
