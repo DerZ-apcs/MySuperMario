@@ -497,6 +497,7 @@ void Mario::Jumping(){
 
 void Mario::Ducking() {
 	this->isDucking = true;
+	velocity.y = 0;
 }
 void Mario::Standing() {
 	const float deltaTime = GetFrameTime();
@@ -549,8 +550,9 @@ void Mario::draw()
 
 	DrawTexture(texture, position.x, position.y, WHITE);
 
-	/*CollEast.draw();
-	CollSouth.draw();
-	CollNorth.draw();
-	CollWest.draw();*/
+	// for debug
+	//CollEast.draw();
+	//CollSouth.draw();
+	//CollNorth.draw();
+	//CollWest.draw();
 }

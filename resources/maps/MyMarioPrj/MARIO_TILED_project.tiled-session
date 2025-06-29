@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "tilesets/MarioTileset.tsx",
+    "activeFile": "maps/MAP_1.1.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -58,8 +58,8 @@
     ],
     "project": "MARIO_TILED_project.tiled-project",
     "recentFiles": [
-        "maps/MAP_1.1.tmx",
         "tilesets/MarioTileset.tsx",
+        "maps/MAP_1.1.tmx",
         "maps/MAP_1.1.json",
         "maps/MAP_1.tmx",
         "tilesets/MARIO_TILESETS.tsx"

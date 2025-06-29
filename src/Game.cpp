@@ -2,6 +2,8 @@
 #include "../include/Map.h"
 #include <iostream>
 
+Game* globalGame = nullptr;
+
 Game::Game(): Game(1200, 800, 140)
 {
 }
@@ -10,42 +12,38 @@ Game::Game(int nwidth, int nheight, int ntargetFPS) :
 	width(nwidth), height(nheight), targetFPS(ntargetFPS) {
 	RESOURCE_MANAGER.LoadAllResources();
 	// map
-	//map1.LoadFromJsonFile(Map::basePath + "MAP_1.1.json");
+	map1.LoadFromJsonFile(Map::basePath + "MAP_1.1.json");
 	// background
 	BgWidth = (float)GetScreenWidth();
 	BgHeight = (float)GetScreenHeight();
-	//BackGroundTex = RESOURCE_MANAGER.getTexture("BACKGROUND_1");
+	BackGroundTex = RESOURCE_MANAGER.getTexture("BACKGROUND_1");
 	BackGroundPos = {{0, 0}, {BgWidth, 0}, {BgWidth*2, 0}};
 	// camera
-	/*camera.offset = Vector2{ (float)GetScreenWidth() / 2, (float)GetScreenHeight() / 2 };
+	camera.offset = Vector2{ (float)GetScreenWidth() / 2, (float)GetScreenHeight() / 2 };
 	camera.target = mario.getPosition();
 	camera.rotation = 0.0f;
-	camera.zoom = 1.0f;*/
+	camera.zoom = 1.0f;
 	
 	backgroundTextures["MENUSCREEN"] = RESOURCE_MANAGER.getTexture("MENU_SCREEN");
 	backgroundTextures["BACKGROUND_1"] = RESOURCE_MANAGER.getTexture("BACKGROUND_1");
-	BackGroundTex = backgroundTextures["MENUSCREEN"];
-	startButton = { {80, 720}, {0, 0}, ORANGE, DARKGRAY, "Start"};
-	continueButton = { {340, 720}, {160, 40}, ORANGE, DARKGRAY, "Continue" };
-	settingButton = { {700, 720}, {160, 40}, ORANGE, DARKGRAY, "Setting" };
-	charSelectionButton = { {1000, 720}, {200, 40}, ORANGE, DARKGRAY, "Character" };
-	mapSelectionButton = { {1390, 720}, {160, 40}, ORANGE, DARKGRAY, "Map" };
+	BackGroundTex = backgroundTextures["BACKGROUND_1"];
+
 }
 
 Game::~Game()
 {
-	Singleton<ResourceManager>::getInstance().UnloadAllResources();
+	RESOURCE_MANAGER.UnloadAllResources();
 
 }
 
 void Game::initGame()
 {
 	SetTargetFPS(targetFPS);
-	//RESOURCE_MANAGER.playMusic("TITLE");
-
+	RESOURCE_MANAGER.playMusic("MUSIC1");
+	// main while loop
 	while (!WindowShouldClose()) {
 		UpdateGame();
-		UpdateMusicStream(RESOURCE_MANAGER.getMusic("TITLE"));
+		UpdateMusicStream(RESOURCE_MANAGER.getMusic("MUSIC1"));
 		ClearBackground(RAYWHITE);
 		BeginDrawing();
 		draw();
@@ -81,7 +79,7 @@ void Game::UpdateGame()
 		}
 
 	}
-	// tiles
+	// tiles (collision with character)
 	for (auto const& tile : *map1.getVectorTiles()) {
 		CollisionType PlayerCollision = mario.CheckCollision(*tile);
 		if (PlayerCollision != COLLISION_TYPE_NONE)
@@ -95,40 +93,27 @@ void Game::UpdateGame()
 		}
 	}
 	
-	//mario.Update();
-	startButton.update();
-	continueButton.update();
-	settingButton.update();
-	charSelectionButton.update();
-	mapSelectionButton.update();
+	mario.Update();
 }
 
 void Game::draw()
 {
 
-	//BeginMode2D(camera);
+	BeginMode2D(camera);
 	drawBackGround();
-	startButton.draw();
-	continueButton.draw();
-	settingButton.draw();
-	charSelectionButton.draw();
-	mapSelectionButton.draw();
-	//mario.draw();
-	//map1.drawMap();
-	//EndMode2D();
+	mario.draw();
+	map1.drawMap();
+	EndMode2D();
 }
 
 void Game::drawBackGround() 
 {
-	//ClearBackground(SKYBLUE);
-	DrawTexturePro(BackGroundTex, { 0, 0, (float)BackGroundTex.width, (float)BackGroundTex.height },
-		{ BackGroundPos[0].x, BackGroundPos[0].y, BgWidth, BgHeight},
-		{ 0, 0 }, 0.0f, WHITE);
-	/*for (int i = 0; i < 3; i++) {
+	ClearBackground(SKYBLUE);
+	for (int i = 0; i < 3; i++) {
 		DrawTexturePro(BackGroundTex, { 0, 0, (float)BackGroundTex.width, (float)BackGroundTex.height },
 			{ BackGroundPos[i].x, BackGroundPos[i].y, BgWidth, BgHeight },
 			{ 0, 0 }, 0.0f, WHITE);
-	}*/
+	}
 }
 
 

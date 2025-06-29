@@ -17,8 +17,7 @@ private:
 	int targetFPS;
 	
 	std::vector<Tile*> Tiles;
-	Mario mario;
-	Map map1;
+
 	Texture2D BackGroundTex;
 	std::map<string, Texture2D> backgroundTextures;
 	MediatorCollision mediatorCollision;
@@ -27,11 +26,7 @@ private:
 	std::vector<Vector2> BackGroundPos;
 	Camera2D camera;
 	std::vector<Button> Buttons;
-	Button startButton;
-	Button continueButton;
-	Button settingButton;
-	Button charSelectionButton;
-	Button mapSelectionButton;
+
 public:
 	Game();
 	Game(int nwidth, int nheight, int ntargetFPS);
@@ -51,5 +46,7 @@ public:
 	void setHeight(int height);
 	void setTargetFPS(int targetFPS);
 	//void setColor(Color color);
+	Mario mario;
+	Map map1;
 };
 #endif
