@@ -464,7 +464,7 @@ float Mario::getAccelerationX() const
 
 void Mario::reset()
 {
-	setPosition({ 16, 500 });
+	setPosition({ 16, 400 });
 	setVel({ 0, 0 });
 	direction = RIGHT;
 	texture = RESOURCE_MANAGER.getTexture("SmallMario_RIGHT_0");

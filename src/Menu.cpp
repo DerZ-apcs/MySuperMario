@@ -23,9 +23,42 @@ void MainMenuState::draw()
 void MainMenuState::handleInput()
 {
 	if (continueButton.isPressed()) {
-
+		if (globalGameEngine == nullptr) {
+			if (game->player == nullptr)
+				game->player = new Mario();
+			game->player->setPosition({ 16, 400 });
+			game->player->setVel({ 0, 0 });
+			game->player->setState(FALLING);
+			GameEngine* gameEngine = new GameEngine(1600, 800, *game->level, game->player);
+			globalGameEngine = gameEngine;
+		}
+		while (globalGameEngine != nullptr) {
+			if (globalGameEngine->run()) {
+				delete globalGameEngine;
+				globalGameEngine = nullptr;
+				if ((game->getSelectedMap() + 1) <= 4)
+				{
+					if (game->player == nullptr)
+						game->player = new Mario();
+					game->player->setPosition({ 16, 400 });
+					game->player->setVel({ 0,0 });
+					game->player->setState(FALLING);
+					game->selectMap(game->getSelectedMap() + 1);
+					GameEngine* gameEngine = new GameEngine(820.0f, 512.0f, *game->level, game->player);
+					globalGameEngine = gameEngine;
+				}
+				else break;
+			}
+			else {
+				if (globalGameEngine->isOver())
+					game->player->reset();
+				break;
+			}
+		}
 	}
 	else if (startButton.isPressed()) {
+		if (game->player == nullptr)
+			game->player = new Mario();
 		if (game->player) {
 			game->player->reset();
 		}
@@ -42,15 +75,20 @@ void MainMenuState::handleInput()
 				globalGameEngine = nullptr;
 
 				if ((game->getSelectedMap() + 1) <= 4) {
-					game->player->setPosition({ 16, 500 });
+					game->player->setPosition({ 16, 400 });
 					game->player->setVel({ 0, 0 });
 					game->selectMap(game->getSelectedMap() + 1);
+					game->player->setState(FALLING);
 					GameEngine* gameEngine = new GameEngine(1600, 800, *game->level, game->player);
 					globalGameEngine = gameEngine;
 				}
 				else break;
 			}
-			else break;
+			else {
+				if (globalGameEngine->isOver())
+					game->player->reset();
+				break;
+			}
 		}
 	}
 	else if (settingButton.isPressed())

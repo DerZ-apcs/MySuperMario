@@ -10,6 +10,8 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Mari
     Vector2 Msize = map.getMapSize();
     //camera.loadRenderTexture(Msize);
     // camera
+    //player = new Mario();
+
     camera.offset = Vector2{ (float)GetScreenWidth() / 2, (float)GetScreenHeight() / 2 };
     camera.target = player->getPosition();
     camera.rotation = 0.0f;
@@ -51,24 +53,24 @@ void GameEngine::update()
         }
         else camera.target.x = GetScreenWidth() / 2.0f;
 
-        //for (int i = 0; i < 3; i++) {
-        //    // wrap from left to far most right
-        //    if (BackGroundPos[i].x + map.BgWidth <= player->getX() - map.BgWidth / 2.0f) {
-        //        float maxX = BackGroundPos[0].x;
-        //        for (int j = 1; j < 3; j++) {
-        //            if (BackGroundPos[j].x > maxX) maxX = BackGroundPos[j].x;
-        //        }
-        //        BackGroundPos[i].x = maxX + map.BgWidth;
-        //    }
-        //    // wrap from right to left
-        //    if (BackGroundPos[i].x + map.BgWidth / 2.0f >= player->getX() + map.BgWidth * 2) {
-        //        float minX = BackGroundPos[i].x;
-        //        for (int j = 1; j < 3; j++) {
-        //            if (BackGroundPos[j].x < minX) minX = BackGroundPos[j].x;
-        //        }
-        //        BackGroundPos[i].x = minX - map.BgWidth;
-        //    }
-        //}
+        for (int i = 0; i < 3; i++) {
+            // wrap from left to far most right
+            if (BackGroundPos[i].x + map.BgWidth <= player->getX() - map.BgWidth / 2.0f) {
+                float maxX = BackGroundPos[0].x;
+                for (int j = 1; j < 3; j++) {
+                    if (BackGroundPos[j].x > maxX) maxX = BackGroundPos[j].x;
+                }
+                BackGroundPos[i].x = maxX + map.BgWidth;
+            }
+            // wrap from right to left
+            if (BackGroundPos[i].x + map.BgWidth / 2.0f >= player->getX() + map.BgWidth * 2) {
+                float minX = BackGroundPos[i].x;
+                for (int j = 1; j < 3; j++) {
+                    if (BackGroundPos[j].x < minX) minX = BackGroundPos[j].x;
+                }
+                BackGroundPos[i].x = minX - map.BgWidth;
+            }
+        }
         // tiles (collision with character)
         for (auto const& tile : *map.getVectorTiles()) {
             CollisionType PlayerCollision = player->CheckCollision(*tile);
@@ -84,7 +86,7 @@ void GameEngine::update()
         //camera.update(player->getX(), player->getY());
     }
     else
-        cout << "Null player" << endl;
+        cout << "Null player " << endl;
 }
 
 void GameEngine::handleCollision()
