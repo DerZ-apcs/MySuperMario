@@ -4,12 +4,11 @@ class MenuState;
 
 Game::Game(): backgroundTexture({0})
 {
-	//RESOURCE_MANAGER.LoadAllResources();
 	currentState = std::make_unique<MainMenuState>(this);
 	audioEnabled = true;
 	musicEnabled = true;
 	player = nullptr;
-	map = nullptr;
+	level = nullptr;
 	selectedCharacter = 1;
 	selectedMap = 1;
 }
@@ -20,8 +19,8 @@ Game::~Game()
 		UnloadTexture(backgroundTexture);
 		backgroundTexture.id = 0;
 	}
-	//RESOURCE_MANAGER.UnloadAllResources();
 }
+
 
 void Game::init()
 {
@@ -32,8 +31,15 @@ void Game::init()
 		backgroundTexture = RESOURCE_MANAGER.getTexture("MENU_SCREEN");
 	}
 	SetTargetFPS(140);
+	globalGameEngine = nullptr;
 
 	RESOURCE_MANAGER.playMusic("TITLE");
+	// load level
+	Level level1(Map::basePath + "MAP_1.1.json", "BACKGROUND_1", "MUSIC_1", "1-1");
+	loadedLevel.push_back(&level1);
+
+	selectMap(selectedMap);
+
 	while (!WindowShouldClose()) {
 		BeginDrawing();
 		ClearBackground(WHITE);
@@ -44,14 +50,20 @@ void Game::init()
 			{ 0, 0 },
 			0.0f,
 			WHITE);
-		//if (SETTING.isMusicEnabled())
+		if (SETTING.isMusicEnabled())
 			UpdateMusicStream(RESOURCE_MANAGER.getMusic("TITLE"));
 		if (currentState) {
-			currentState->draw();
 			currentState->update();
+			currentState->draw();
 			currentState->handleInput();
 		}
 		EndDrawing();
+
+	}
+	loadedLevel.clear();
+	if (globalGameEngine != nullptr) {
+		delete globalGameEngine;
+		globalGameEngine = nullptr;
 	}
 	RESOURCE_MANAGER.UnloadAllResources();
 	CloseWindow();
@@ -79,9 +91,22 @@ void Game::selectMap(int mapIndex)
 	if (mapIndex > 4 || mapIndex <= 0)
 		return;
 		
-	this->map = loadedLevel[static_cast<std::vector<Map*, std::allocator<Map*>>::size_type>(mapIndex) - 1];
+	switch (mapIndex)
+	{
+	case 1:
+		this->level = loadedLevel[0];
+		break;
+	case 2:
+		this->level = loadedLevel[1];
+		break;
+	case 3:
+		this->level = loadedLevel[2];
+		break;
+	case 4:
+		this->level = loadedLevel[3];
+		break;
+	}
 	this->selectedMap = mapIndex;
-
 }
 
 bool Game::isAudioEnabled() const

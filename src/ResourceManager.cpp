@@ -86,7 +86,7 @@ void ResourceManager::loadSounds()
 void ResourceManager::loadMusics()
 {
 	musics["TITLE"] = LoadMusicStream("resources/musics/Title.mp3");
-	musics["MUSIC1"] = LoadMusicStream("resources/musics/music1.mp3");
+	musics["MUSIC_1"] = LoadMusicStream("resources/musics/music1.mp3");
 }
 
 void ResourceManager::unloadTextures() {

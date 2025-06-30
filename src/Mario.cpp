@@ -3,7 +3,7 @@
 #include "raymath.h"
 
 Mario::Mario() : Mario(Vector2{ 0, 0 }, Vector2{ 32, 40 }, STATE_SMALL) {
-
+	cout << "Mario is created" << endl;
 }
 	
 Mario::Mario(Vector2 nposition, Vector2 nsize, MARIO_TYPE type) :
@@ -469,7 +469,8 @@ void Mario::reset()
 	direction = RIGHT;
 	texture = RESOURCE_MANAGER.getTexture("SmallMario_RIGHT_0");
 	isThrowing = isDucking = false;
-
+	Mario_State = STATE_SMALL;
+	state = FALLING;
 
 }
 
@@ -554,16 +555,14 @@ void Mario::draw()
 	UpdateTexture();
 	for (auto& fireball : fireballs) {
 		fireball->UpdateTexture();
-	}
-	for (auto& fireball : fireballs) {
 		fireball->draw();
 	}
 
 	DrawTexture(texture, position.x, position.y, WHITE);
 
 	// for debug
-	//CollEast.draw();
-	//CollSouth.draw();
-	//CollNorth.draw();
-	//CollWest.draw();
+	CollEast.draw();
+	CollSouth.draw();
+	CollNorth.draw();
+	CollWest.draw();
 }

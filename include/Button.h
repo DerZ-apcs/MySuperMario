@@ -16,6 +16,7 @@ public:
 	Vector2 getSize() const;
 	Vector2 getPosition() const;
 	void update();
+	void setText(const std::string text);
 	Color getNormalColor() const;
 	Color getHoveredColor() const;
 	std::string getText() const;

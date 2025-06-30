@@ -70,6 +70,11 @@ void Button::update()
 
 }
 
+void Button::setText(const std::string text)
+{
+	this->text = text;
+}
+
 Color Button::getNormalColor() const
 {
 	return NormalColor;

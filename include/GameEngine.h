@@ -23,7 +23,8 @@ private:
     std::vector<BaseBlock*> decor;
     std::vector<Shell*> shells;*/
     std::vector<Entity*> testEntities;
-    GameCamera camera;
+    //GameCamera camera;
+    Camera2D camera;
     bool isPaused;
     bool cleared = false;
     bool died = false;
@@ -33,6 +34,7 @@ private:
     std::vector<Tile*> Tiles;
     Texture2D BackGroundTex;
     std::map<string, Texture2D> backgroundTextures;
+    std::vector<Vector2> BackGroundPos;
     MediatorCollision mediatorCollision;
     //Camera2D camera;
 
@@ -46,9 +48,9 @@ public:
     /*void addEffect(Effect* effect);
     void addShell(Shell* shell);
     void addItem(Item* item);*/
-    void update(float deltaTime);
+    void update();
     void handleCollision();
-    void render(float deltaTime);
+    void draw(); // draw
     bool run();
     string getCurrentMapName();
     float getGlobalTime() const;

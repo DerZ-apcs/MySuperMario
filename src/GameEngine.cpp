@@ -4,11 +4,16 @@
 GameEngine* globalGameEngine = nullptr;
 
 GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Mario*& player)
-    : camera(screenWidth, screenHeight, 1.75f), level(&level), player(player) {
+    : /*camera(screenWidth, screenHeight, 1.75f),*/ level(&level), player(player) {
     map.LoadFromJsonFile(level.getMapPath());
     map.loadBackgroundTexture(level.getBackGroundName());
     Vector2 Msize = map.getMapSize();
-    camera.loadRenderTexture(Msize);
+    //camera.loadRenderTexture(Msize);
+    // camera
+    camera.offset = Vector2{ (float)GetScreenWidth() / 2, (float)GetScreenHeight() / 2 };
+    camera.target = player->getPosition();
+    camera.rotation = 0.0f;
+    camera.zoom = 1.0f;
     /*blocks = map.getBlocks();
     enemies = map.getEnemies();
     items = map.getItems();
@@ -17,6 +22,7 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Mari
     this->time = 300;
     resetTimer();
     deltaTime = 0.f;
+    BackGroundPos = { {0, 0}, {(float)GetScreenWidth(), 0}, {(float)GetScreenWidth() * 2, 0} };
 }
 
 GameEngine::~GameEngine() {
@@ -35,20 +41,87 @@ void GameEngine::addFireBall(FireBall* fireball) {
     this->fireball.push_back(fireball);
 }
 
-void GameEngine::update(float deltaTime) {
+// update
+void GameEngine::update()
+{
+    if (player != nullptr) {
+        camera.target.y = GetScreenHeight() / 2.0f;
+        if (player->getX() >= GetScreenWidth() / 2.0f) {
+            camera.target.x = player->getX();
+        }
+        else camera.target.x = GetScreenWidth() / 2.0f;
 
+        //for (int i = 0; i < 3; i++) {
+        //    // wrap from left to far most right
+        //    if (BackGroundPos[i].x + map.BgWidth <= player->getX() - map.BgWidth / 2.0f) {
+        //        float maxX = BackGroundPos[0].x;
+        //        for (int j = 1; j < 3; j++) {
+        //            if (BackGroundPos[j].x > maxX) maxX = BackGroundPos[j].x;
+        //        }
+        //        BackGroundPos[i].x = maxX + map.BgWidth;
+        //    }
+        //    // wrap from right to left
+        //    if (BackGroundPos[i].x + map.BgWidth / 2.0f >= player->getX() + map.BgWidth * 2) {
+        //        float minX = BackGroundPos[i].x;
+        //        for (int j = 1; j < 3; j++) {
+        //            if (BackGroundPos[j].x < minX) minX = BackGroundPos[j].x;
+        //        }
+        //        BackGroundPos[i].x = minX - map.BgWidth;
+        //    }
+        //}
+        // tiles (collision with character)
+        for (auto const& tile : *map.getVectorTiles()) {
+            CollisionType PlayerCollision = player->CheckCollision(*tile);
+            if (PlayerCollision != COLLISION_TYPE_NONE)
+                mediatorCollision.HandleCollision(player, tile);
+            for (auto& fireball : *player->getFireBalls()) {
+                CollisionType FireBallCollision = fireball->CheckCollision(*tile);
+                if (FireBallCollision != COLLISION_TYPE_NONE)
+                    mediatorCollision.HandleCollision(fireball, tile);
+            }
+        }
+        player->Update();
+        //camera.update(player->getX(), player->getY());
+    }
+    else
+        cout << "Null player" << endl;
+}
+
+void GameEngine::handleCollision()
+{
+
+}
+// draw
+void GameEngine::draw()
+{
+    BeginMode2D(camera);
+    //camera.beginDrawing();
+    map.drawBackGround();
+    if (player != nullptr) player->draw();
+    map.drawMap();
+
+    //ClearBackground(SKYBLUE);
+    /*camera.render();
+    camera.endDrawing();*/
+    EndMode2D();
 }
 
 // run
 bool GameEngine::run() {
-    bool flag = true;
     RESOURCE_MANAGER.stopCurrentMusic();
-    RESOURCE_MANAGER.playMusic("MUSIC1"); // temporary
+    RESOURCE_MANAGER.playMusic("MUSIC_1"); // temporary
     // load and play the new music
 
     // second game loop (main game loop)
     while (!WindowShouldClose()) {
-        
+        if (SETTING.isMusicEnabled()) {
+            UpdateMusicStream(RESOURCE_MANAGER.getMusic(level->getMusic()));
+        }
+        update();
+        ClearBackground(RAYWHITE);
+        BeginDrawing();
+        draw();
+        EndDrawing();
     }
     RESOURCE_MANAGER.stopCurrentMusic();
     RESOURCE_MANAGER.playMusic("TITLE");

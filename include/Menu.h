@@ -5,6 +5,7 @@
 #include <vector>
 #include "../include/Mario.h"
 #include "../include/Button.h"
+#include "../include/GameEngine.h"
 
 // forward declaration
 class MenuState;
@@ -41,6 +42,7 @@ public:
 	explicit SettingState(Game* game);
 	void draw() override;
 	void handleInput() override;
+	void update() override;
 private:
 	Button audioButton;
 	Button musicButton;
@@ -52,6 +54,7 @@ public:
 	explicit CharSelection(Game* game);
 	void draw() override;
 	void handleInput() override;
+	void update() override;
 private:
 	Button MarioButton;
 	Button LuigiButton;
@@ -63,6 +66,7 @@ public:
 	explicit MapSelection(Game* game);
 	void draw() override;
 	void handleInput() override;
+	void update() override;
 private:
 	Button map1Button,
 		map2Button,

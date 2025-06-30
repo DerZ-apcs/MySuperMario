@@ -3,6 +3,7 @@
 #include "../include/Menu.h"
 #include "../include/Mario.h"
 #include "../include/Map.h"
+#include "../include/GameEngine.h"
 #include <memory>
 #include <utility>
 class MenuState;
@@ -26,10 +27,10 @@ public:
     void returnToMainMenu();
     void setBackground(const std::string& imageName);
     Mario* player;
-    Map* map;
+    Level* level;
 
 private:
-    vector<Map*> loadedLevel;
+    vector<Level*> loadedLevel;
     bool audioEnabled;
     bool musicEnabled;
     int selectedCharacter;

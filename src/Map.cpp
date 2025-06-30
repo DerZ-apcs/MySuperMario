@@ -4,6 +4,9 @@ const std::string Map::basePath = std::string(GetWorkingDirectory()) + "/resourc
 
 Map::Map()
 {
+	BgWidth = (float)GetScreenWidth();
+	BgHeight = (float)GetScreenHeight();
+	BackGroundPos = { {0, 0}, {BgWidth, 0}, {BgWidth * 2, 0}};
 }
 
 Map::~Map()
@@ -41,6 +44,17 @@ void Map::drawMap()
 {
 	for (auto& tile : tiles) {
 		tile->draw();
+	}
+}
+
+void Map::drawBackGround()
+{
+	if (background.id > 0) {
+		for (int i = 0; i < 3; i++) {
+			DrawTexturePro(background, { 0, 0, (float)background.width, (float)background.height },
+				{ BackGroundPos[i].x, BackGroundPos[i].y, BgWidth, BgHeight },
+				{ 0, 0 }, 0.0f, WHITE);
+		}
 	}
 }
 
