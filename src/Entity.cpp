@@ -40,9 +40,6 @@ void Entity::draw() {
 void Entity::HandleInput() {
 
 }
-void Entity::UpdateTexture() {
-
-}
 void Entity::UpdatePhysics()
 {
 	/*position.x += velocity.x * Clock::getDeltaTimeUpdate();
@@ -68,6 +65,10 @@ void Entity::updateCollision()
 
 	CollWest.setX(position.x);
 	CollWest.setY(position.y + size.y / 2 - CollWest.getHeight() / 2);
+}
+
+void Entity::UpdateTexture()
+{
 }
 
 CollisionType Entity::CheckCollision(const Entity& entity) const
