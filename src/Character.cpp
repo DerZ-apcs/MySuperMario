@@ -60,15 +60,42 @@ EntityType Character::getEntityType() const
 	return CHARACTER;
 }
 
+// reset when die & continue with that level 
 void Character::resetInGame()
 {
+	setPosition({ 16, 400 });
+	setVel({ 0, 0 });
+	direction = RIGHT;
+	phase = DEFAULT_PHASE;
+	isjumping = false;
+	holding = false;
+	lostLife = false;
+	invicibleStarTime = 0.f;
+	countThrowTime = 0.f;
+	countImmortalTime = 0.f;
+	specificVelocity = { 0, 0 };
+	isThrowing = isducking = false;
+	Character_state = STATE_SMALL;
+	state = FALLING;
 }
 
+// reset when changing map (reset all)
 void Character::reset()
 {
 	setPosition({ 16, 400 });
 	setVel({ 0, 0 });
 	direction = RIGHT;
+	scores = 0;
+	coins = 0;
+	lives = 5;
+	phase = DEFAULT_PHASE;
+	isjumping = false;
+	holding = false;
+	lostLife = false;
+	invicibleStarTime = 0.f;
+	countThrowTime = 0.f;
+	countImmortalTime = 0.f;
+	specificVelocity = { 0, 0 };
 	isThrowing = isducking = false;
 	Character_state = STATE_SMALL;
 	state = FALLING;
@@ -301,10 +328,10 @@ void Character::draw()
 	DrawTexture(texture, position.x, position.y, WHITE);
 
 	// for debug
-	CollEast.draw();
+	/*CollEast.draw();
 	CollSouth.draw();
 	CollNorth.draw();
-	CollWest.draw();
+	CollWest.draw();*/
 }
 
 void Character::HandleInput()

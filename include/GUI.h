@@ -29,6 +29,11 @@ public:
 	static void drawLevelClear();
 	static void drawDeathScreen();
 	static void drawGameOverScreen();
+
+	static bool home_is_pressed;
+	static bool restart_is_pressed;
+	static bool sound_is_pressed;
+	static bool setting_is_pressed;
 };
 
 #endif

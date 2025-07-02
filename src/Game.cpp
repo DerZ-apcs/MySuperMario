@@ -30,10 +30,6 @@ void Game::init()
 	Texture gameIcon = LoadTexture("resources/images/icon/GameIcon.png");
 	Image gameIconImage = LoadImageFromTexture(gameIcon);
 	SetWindowIcon(gameIconImage);
-	if (backgroundTexture.id == 0)
-	{
-		backgroundTexture = LoadTexture("../assets/Background/Menuscreen.png");
-	}
 
 	RESOURCE_MANAGER.LoadAllResources();
 	if (backgroundTexture.id == 0) {

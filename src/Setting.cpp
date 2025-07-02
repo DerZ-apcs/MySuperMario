@@ -62,7 +62,7 @@ void Setting::setMusic(bool isEnabled)
 
 void Setting::resetToDefaults()
 {
-	screenWidth = 1280;
+	screenWidth = 1600;
 	screenHeight = 800;
 	scale = 1;
 	fullscreen = false;

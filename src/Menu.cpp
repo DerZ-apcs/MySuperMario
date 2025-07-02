@@ -135,14 +135,14 @@ void SettingState::draw()
 void SettingState::handleInput()
 {
 	if (audioButton.isPressed()) {
-		if (audioButton.getText() == "Audio: ON")
-			audioButton.setText("Audio: OFF");
-		else audioButton.setText("Audio: ON");
+		if (SETTING.isSoundEnabled())
+			audioButton.setText("Sound: OFF");
+		else audioButton.setText("Sound: ON");
 		SETTING.setSound(!game->isAudioEnabled());
 		game->configureSettings(!game->isAudioEnabled(), game->isMusicEnabled());
 	} 
 	else if (musicButton.isPressed()) {
-		if (musicButton.getText() == "Music: ON")
+		if (SETTING.isMusicEnabled())
 			musicButton.setText("Music: OFF");
 		else musicButton.setText("Music: ON");
 		SETTING.setMusic(!game->isMusicEnabled());
@@ -158,6 +158,13 @@ void SettingState::update()
 	audioButton.update();
 	musicButton.update();
 	backButton.update();
+
+	if (SETTING.isMusicEnabled() && musicButton.getText() == "Music: OFF")
+		musicButton.setText("Music: ON");
+	else if (!SETTING.isMusicEnabled() && musicButton.getText() == "Music: ON")
+		musicButton.setText("Music: OFF");
+	/*SETTING.setMusic(!game->isMusicEnabled());
+	game->configureSettings(game->isAudioEnabled(), !game->isMusicEnabled());*/
 }
 
 //CharSlection implementation

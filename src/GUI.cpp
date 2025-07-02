@@ -16,6 +16,10 @@ Texture2D GUI::setting;
 Texture2D GUI::sound_on;
 Texture2D GUI::sound_off;
 
+bool GUI::home_is_pressed = false;
+bool GUI::restart_is_pressed = false;
+bool GUI::sound_is_pressed = false;
+bool GUI::setting_is_pressed = false;
 
 void GUI::drawStatusBar(const Character* player) {
     Rectangle dest, source;
@@ -65,11 +69,11 @@ void GUI::drawStatusBar(const Character* player) {
     DrawText(to_string(timer).c_str(), 480.f + 1571.f / 8.f - MeasureTextEx(GetFontDefault(), to_string(timer).c_str(), 45.f, 0.f).x / 2.f, 145, 45, BLACK);
 
 
-    // draw Home, restart, sound_on/off
+    // draw setting button
     source = { 0, 0, (float)setting.width, (float)restart.height };
-    dest = { (float)GetScreenWidth() - 100, 30.f, 50.f, 50.f };
+    dest = { (float)GetScreenWidth() - 100, 30.f, 80.f, 80.f };
     DrawTexturePro(setting, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-
+    setting_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
 }
 
 void GUI::drawPauseMenu()
@@ -88,6 +92,31 @@ void GUI::drawPauseMenu()
 
     DrawText(text, textX, textY, fontSize, BLACK);
 
+    text = "Press Enter to continue";
+    fontSize = 45;
+    textWidth = MeasureText(text, fontSize);
+    textX = dest.x + (dest.width - textWidth) / 2;
+    textY = dest.y + 400;
+    DrawText(text, textX, textY, fontSize, BLACK);
+
+    // restart
+    source = { 0, 0, (float)restart.width, (float)restart.height };
+    dest = { textX + 100, textY - 170, 90, 90 };
+    DrawTexturePro(restart, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+    restart_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+
+    // sound_on
+    Texture2D sound = (SETTING.isMusicEnabled()) ? sound_on : sound_off;
+    source = { 0, 0, (float)sound.width, (float)sound.height };
+    dest = { textX + 350, textY - 170, 90, 90 };
+    DrawTexturePro(sound, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+    sound_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+
+    // home
+    source = { 0, 0, (float)home.width, (float)home.height };
+    dest = { textX + 225, textY - 170, 90, 90 };
+    DrawTexturePro(home, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+    home_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
 
 }
 

@@ -46,7 +46,9 @@ void GameEngine::addFireBall(FireBall* fireball) {
 // update
 void GameEngine::update()
 {
-    if (IsKeyPressed(KEY_ENTER)) {
+    if (IsKeyPressed(KEY_ENTER) || GUI::setting_is_pressed) {
+        if (GUI::setting_is_pressed) 
+            GUI::setting_is_pressed = false;
         isPaused = !isPaused;
         if (died)
         {
@@ -59,6 +61,12 @@ void GameEngine::update()
         else if (isPaused) {
             RESOURCE_MANAGER.playSound("pause.wav");
         }
+    }
+    if (GUI::restart_is_pressed) {
+        GUI::restart_is_pressed = false;
+        player->resetInGame();
+        resetGame();
+        resetTimer();
     }
     if (isPaused || cleared) {
         return;
@@ -141,8 +149,16 @@ void GameEngine::draw()
             }
             else if (died)
                 GUI::drawDeathScreen();
-            else
+            else {
                 GUI::drawPauseMenu();
+                if (GUI::sound_is_pressed) {
+                    GUI::sound_is_pressed = false;
+                    if (SETTING.isMusicEnabled()) {
+                        SETTING.setMusic(false);
+                    }
+                    else SETTING.setMusic(true);
+                }
+            }
         }
     }
 }
@@ -150,7 +166,7 @@ void GameEngine::draw()
 // run
 bool GameEngine::run() {
     RESOURCE_MANAGER.stopCurrentMusic();
-    RESOURCE_MANAGER.playMusic("MUSIC_1"); // temporary
+    RESOURCE_MANAGER.playMusic(level->getMusic());
     // load and play the new music
 
     // second game loop (main game loop)
@@ -169,7 +185,12 @@ bool GameEngine::run() {
             RESOURCE_MANAGER.playMusic("COURSECLEAR");
             return true;
         }
+
         if (gameover && !isPaused) break;
+        if (GUI::home_is_pressed) {
+            GUI::home_is_pressed = false;
+            break;
+        }
 
         if (this->time <= 0) player->setLostLife(true);
         if (player->getY() > getBound().y && player->getPhase() != Phase::CLEARLEVEL_PHASE)
@@ -244,6 +265,15 @@ bool GameEngine::isOver() const
 
 void GameEngine::resetGame()
 {
+    map.clear();
+
+    RESOURCE_MANAGER.stopCurrentMusic();
+    RESOURCE_MANAGER.playMusic(level->getMusic());
+    map.LoadFromJsonFile(level->getMapPath());
+    map.loadBackgroundTexture(level->getBackGroundName());
+    isPaused = false;
+    this->time = 300;
+    resetTimer();
 }
 
 Vector2 GameEngine::getBound()

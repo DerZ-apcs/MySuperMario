@@ -10,7 +10,6 @@
 #include "../include/MediatorCollision.h"
 #include <vector>
 
-
 class GameEngine {
 private:
     Level* level;

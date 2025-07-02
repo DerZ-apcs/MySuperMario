@@ -6,6 +6,9 @@ Map::Map()
 {
 	BgWidth = (float)GetScreenWidth();
 	BgHeight = (float)GetScreenHeight();
+	width = BgWidth;
+	height = BgHeight;
+	background = RESOURCE_MANAGER.getTexture("BACKGROUND_1");
 	BackGroundPos = { {0, 0}, {BgWidth, 0}, {BgWidth * 2, 0}};
 }
 
@@ -38,6 +41,7 @@ void Map::clear() {
 		tile = nullptr;
 	}
 	tiles.clear();
+	//safeUnload(background);
 }
 
 void Map::drawMap()
@@ -47,7 +51,7 @@ void Map::drawMap()
 	}
 }
 
-void Map::drawBackGround()
+void Map::drawBackGround() 
 {
 	if (background.id > 0) {
 		for (int i = 0; i < 3; i++) {
@@ -55,6 +59,9 @@ void Map::drawBackGround()
 				{ BackGroundPos[i].x, BackGroundPos[i].y, BgWidth, BgHeight },
 				{ 0, 0 }, 0.0f, WHITE);
 		}
+	}
+	else {
+		cout << "Background not found" << endl;
 	}
 }
 
@@ -90,8 +97,6 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 
 void Map::loadBackgroundTexture(const std::string& backgroundName)
 {
-	if (background.id > 0)
-		UnloadTexture(background);
 	background = RESOURCE_MANAGER.getTexture(backgroundName);
 	if (background.id == 0) {
 		throw std::runtime_error("Failed to load background texture: " + backgroundName);
