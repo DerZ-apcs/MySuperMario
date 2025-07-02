@@ -66,52 +66,89 @@ void GUI::drawStatusBar(const Character* player) {
 
 
     // draw Home, restart, sound_on/off
-    source = { 0.f, 0.f, (float)home.width, (float)home.height };
-    dest = {(float)GetScreenWidth() - 100, 100.f, 50.f, 50.f};
-    DrawTexturePro(home, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+    source = { 0, 0, (float)setting.width, (float)restart.height };
+    dest = { (float)GetScreenWidth() - 100, 30.f, 50.f, 50.f };
+    DrawTexturePro(setting, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+
 }
 
 void GUI::drawPauseMenu()
 {
-    Rectangle dest, source;
-    source = { 2043.f, 295.f, 1997.f, 1465.f };
-    dest = { 300.f, 200.f, 1997.f / 3.f, 1465.f / 3.f };
-    DrawTexturePro(board, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-    DrawText("PAUSED", 460, 370, 90, BLACK);
+    Rectangle source = { 0, 0, (float)largeBoard.width, (float)largeBoard.height};
+    Rectangle dest = { (float)GetScreenWidth() / 4.f , (float)GetScreenHeight() * 0.125f, (float)GetScreenWidth() / 2.f, (float)GetScreenHeight() * 0.75f};
+    DrawTexturePro(largeBoard, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+
+    const char* text = "PAUSED";
+    int fontSize = 90;
+    int textWidth = MeasureText(text, fontSize);
+
+    // Center the text inside the destination rectangle
+    float textX = dest.x + (dest.width - textWidth) / 2;
+    float textY = dest.y + 100;
+
+    DrawText(text, textX, textY, fontSize, BLACK);
+
+
 }
 
 void GUI::drawLevelClear()
 {
-    Rectangle dest, source;
-    source = { 2043.f, 295.f, 1997.f, 1465.f };
-    dest = { 300.f, 200.f, 1997.f / 3.f, 1465.f / 3.f };
-    DrawTexturePro(board, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-    DrawText("CLEARED", 440, 370, 90, BLACK);
-    DrawText("Press Enter to continue", 360, 550, 45, BLACK);
+    Rectangle source = { 0, 0, (float)largeBoard.width, (float)largeBoard.height };
+    Rectangle dest = { (float)GetScreenWidth() / 4.f , (float)GetScreenHeight() * 0.125f, (float)GetScreenWidth() / 2.f, (float)GetScreenHeight() * 0.75f };
+    DrawTexturePro(largeBoard, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+
+    const char* text = "CLEARED";
+    int fontSize = 90;
+    int textWidth = MeasureText(text, fontSize);
+
+    // Center the text inside the destination rectangle
+    float textX = dest.x + (dest.width - textWidth) / 2;
+    float textY = dest.y + 100;
+
+    DrawText(text, textX, textY, fontSize, BLACK);
+
+    text = "Press Enter to continue";
+    fontSize = 45;
+    textWidth = MeasureText(text, fontSize);
+    textX = dest.x + (dest.width - textWidth) / 2;
+    textY = dest.y + 400;
+    DrawText(text, textX, textY, fontSize, BLACK);
 }
 
 void GUI::drawDeathScreen()
 {
     const char* text = "YOU DIED";
     int fontSize = 90;
-    int screenWidth = 1280;
-    int screenHeight = 800;
 
     int textWidth = MeasureText(text, fontSize);
     int textHeight = fontSize;
 
-    int posX = (screenWidth - textWidth) / 2;
-    int posY = (screenHeight - textHeight) / 2;
+    int posX = ((float)GetScreenWidth() - textWidth) / 2;
+    int posY = ((float)GetScreenHeight() - textHeight) / 2;
 
     DrawText(text, posX, posY, fontSize, RED);
 }
 
 void GUI::drawGameOverScreen()
 {
-    Rectangle dest, source;
-    source = { 2043.f, 295.f, 1997.f, 1465.f };
-    dest = { 300.f, 200.f, 1997.f / 3.f, 1465.f / 3.f };
-    DrawTexturePro(board, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-    DrawText("Game Over", 420, 370, 90, BLACK);
-    DrawText("Press Enter to continue", 360, 550, 45, BLACK);
+    Rectangle source = { 0, 0, (float)largeBoard.width, (float)largeBoard.height };
+    Rectangle dest = { (float)GetScreenWidth() / 4.f , (float)GetScreenHeight() * 0.125f, (float)GetScreenWidth() / 2.f, (float)GetScreenHeight() * 0.75f };
+    DrawTexturePro(largeBoard, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+
+    const char* text = "GAME OVER";
+    int fontSize = 90;
+    int textWidth = MeasureText(text, fontSize);
+
+    // Center the text inside the destination rectangle
+    float textX = dest.x + (dest.width - textWidth) / 2;
+    float textY = dest.y + 100;
+
+    DrawText(text, textX, textY, fontSize, BLACK);
+
+    text = "Press Enter to continue";
+    fontSize = 45;
+    textWidth = MeasureText(text, fontSize);
+    textX = dest.x + (dest.width - textWidth) / 2;
+    textY = dest.y + 400;
+    DrawText(text, textX, textY, fontSize, BLACK);
 }

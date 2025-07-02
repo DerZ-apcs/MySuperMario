@@ -46,6 +46,23 @@ void GameEngine::addFireBall(FireBall* fireball) {
 // update
 void GameEngine::update()
 {
+    if (IsKeyPressed(KEY_ENTER)) {
+        isPaused = !isPaused;
+        if (died)
+        {
+            died = false;
+            player->setLostLife(false);
+            player->resetInGame();
+            resetGame();
+            resetTimer();
+        }
+        else if (isPaused) {
+            RESOURCE_MANAGER.playSound("pause.wav");
+        }
+    }
+    if (isPaused || cleared) {
+        return;
+    }
     if (player != nullptr) {
         camera.target.y = GetScreenHeight() / 2.0f;
         if (player->getX() >= GetScreenWidth() / 2.0f) {
@@ -104,9 +121,11 @@ void GameEngine::draw()
     //ClearBackground(SKYBLUE);
     /*camera.render();
     camera.endDrawing();*/
-    if (player != nullptr) {
+    if (player) 
         player->draw();
+    EndMode2D();
 
+    if (player) {
         bool lostLife = player->isLostLife();
 
         if (!lostLife) {
@@ -126,7 +145,6 @@ void GameEngine::draw()
                 GUI::drawPauseMenu();
         }
     }
-    EndMode2D();
 }
 
 // run

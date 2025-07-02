@@ -102,6 +102,12 @@ void ResourceManager::loadSounds()
 	sounds["PLAYER_JUMP"] = LoadSound("resources/sounds/smw_jump.wav");
 	sounds["PLAYER_FIREBALL"] = LoadSound("resources/sounds/smw_fireball.wav");
 	sounds["PLAYER_POWERUP"] = LoadSound("resources/sounds/smw_power-up.wav");
+	sounds["enter_level.wav"] = LoadSound("resources/sounds/enter_level.wav");
+	sounds["game_over.wav"] = LoadSound("resources/sounds/enter_level.wav");
+	sounds["level_clear.wav"] = LoadSound("resources/sounds/level_clear.wav");
+	sounds["lost_life.wav"] = LoadSound("resources/sounds/lost_life.wav");
+	sounds["lost_suit.wav"] = LoadSound("resources/sounds/lost_suit.wav");
+	sounds["pause.wav"] = LoadSound("resources/sounds/pause.wav");
 }
 
 void ResourceManager::loadMusics()
