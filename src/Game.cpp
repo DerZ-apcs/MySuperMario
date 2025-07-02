@@ -26,18 +26,31 @@ void Game::init()
 {
 	InitAudioDevice();
 	InitWindow(1600, 800, "Super Mario");
+	// game icon
+	Texture gameIcon = LoadTexture("resources/images/icon/GameIcon.png");
+	Image gameIconImage = LoadImageFromTexture(gameIcon);
+	SetWindowIcon(gameIconImage);
+	if (backgroundTexture.id == 0)
+	{
+		backgroundTexture = LoadTexture("../assets/Background/Menuscreen.png");
+	}
+
 	RESOURCE_MANAGER.LoadAllResources();
 	if (backgroundTexture.id == 0) {
 		backgroundTexture = RESOURCE_MANAGER.getTexture("MENU_SCREEN");
 	}
 	SetTargetFPS(140);
+
 	globalGameEngine = nullptr;
 
 	RESOURCE_MANAGER.playMusic("TITLE");
-	// load level
+	// load map&level
 	Level level1(Map::basePath + "MAP_1.1.json", "BACKGROUND_1", "MUSIC_1", "1-1");
 	loadedLevel.push_back(&level1);
+	// gui
+	loadGUI();
 
+	// map
 	selectMap(selectedMap);
 
 	while (!WindowShouldClose()) {
@@ -57,6 +70,7 @@ void Game::init()
 			currentState->draw();
 			currentState->handleInput();
 		}
+
 		EndDrawing();
 
 	}
@@ -149,4 +163,21 @@ void Game::setBackground(const std::string& imageName)
 	backgroundTexture = RESOURCE_MANAGER.getTexture(imageName);
 	if (backgroundTexture.id == 0)
 		throw std::runtime_error("Failed to load background texture: " + imageName);
+}
+
+void Game::loadGUI()
+{
+	GUI::heartTexture = RESOURCE_MANAGER.getTexture("HEART");
+	GUI::coinTexture = RESOURCE_MANAGER.getTexture("COIN");
+	GUI::multiplicationSign = RESOURCE_MANAGER.getTexture("MSIGN");
+	GUI::board = RESOURCE_MANAGER.getTexture("BOARD");
+	GUI::board1 = RESOURCE_MANAGER.getTexture("BOARD1");
+	GUI::board2 = RESOURCE_MANAGER.getTexture("BOARD2");
+	GUI::board3 = RESOURCE_MANAGER.getTexture("BOARD3");
+	GUI::largeBoard = RESOURCE_MANAGER.getTexture("LARGE_BOARD");
+	GUI::home = RESOURCE_MANAGER.getTexture("HOME_BUTTON");
+	GUI::restart = RESOURCE_MANAGER.getTexture("RESTART");
+	GUI::setting = RESOURCE_MANAGER.getTexture("SETTING");
+	GUI::sound_off = RESOURCE_MANAGER.getTexture("SOUND_OFF");
+	GUI::sound_on = RESOURCE_MANAGER.getTexture("SOUND_ON");
 }

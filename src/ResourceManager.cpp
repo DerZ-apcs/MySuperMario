@@ -1,4 +1,5 @@
 #include "../include/ResourceManager.h"
+#include <iostream>
 
 void ResourceManager::loadTextures() {
 	// move
@@ -54,6 +55,11 @@ void ResourceManager::loadTextures() {
 
 	textures["Fire_Mario_Ducking_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FireMario_Ducking_0.png");
 	textures["Fire_Mario_Ducking_LEFT_0"] = flipTexture(textures["Fire_Mario_Ducking_RIGHT_0"]);
+
+	// Luigi
+	/*textures["LUIGI"] = LoadTexture("resources/images/sprites/luigi/luigi1.png");
+	cutSpriteSheetToTextures("LUIGI", "resources/animation/luigi1.txt");*/
+
 	// fireball
 	textures["FlowerMarioFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FlowerMarioFireball_0.png");
 	textures["FlowerMarioFireball_RIGHT_1"] = LoadTexture("resources/images/sprites/mario/FlowerMarioFireball_1.png");
@@ -74,6 +80,21 @@ void ResourceManager::loadTextures() {
 	// background
 	textures["BACKGROUND_1"] = LoadTexture("resources/images/backgrounds/background1.png");
 	textures["MENU_SCREEN"] = LoadTexture("resources/images/backgrounds/Menuscreen.png");
+
+	// GUI
+	textures["HEART"] = LoadTexture("resources/images/backgrounds/heart.png");
+	textures["COIN"] = LoadTexture("resources/images/backgrounds/coin.png");
+	textures["BOARD"] = LoadTexture("resources/images/backgrounds/board.png");
+	textures["MSIGN"] = LoadTexture("resources/images/backgrounds/multiplicationSign.png");
+	textures["BOARD1"] = LoadTexture("resources/images/gui/board1.png");
+	textures["BOARD2"] = LoadTexture("resources/images/gui/board2.png");
+	textures["BOARD3"] = LoadTexture("resources/images/gui/board3.png");
+	textures["LARGE_BOARD"] = LoadTexture("resources/images/gui/LargeBoard.png");
+	textures["HOME_BUTTON"] = LoadTexture("resources/images/gui/home_button.png");
+	textures["RESTART"] = LoadTexture("resources/images/gui/restart.png");
+	textures["SETTING"] = LoadTexture("resources/images/gui/setting.png");
+	textures["SOUND_OFF"] = LoadTexture("resources/images/gui/sound_off.png");
+	textures["SOUND_ON"] = LoadTexture("resources/images/gui/sound_on.png");
 }
 
 void ResourceManager::loadSounds()
@@ -87,6 +108,65 @@ void ResourceManager::loadMusics()
 {
 	musics["TITLE"] = LoadMusicStream("resources/musics/Title.mp3");
 	musics["MUSIC_1"] = LoadMusicStream("resources/musics/music1.mp3");
+	musics["COURSECLEAR"] = LoadMusicStream("resources/musics/courseClear.mp3");
+
+}
+
+void ResourceManager::cutSpriteSheetToTextures(const std::string& sheetName, const std::string& animFilePath)
+{
+	Texture2D spriteSheet = textures[sheetName]; // Already loaded full texture
+	std::ifstream file(animFilePath);
+	if (!file.is_open()) {
+		std::cerr << "Failed to open animation file: " << animFilePath << '\n';
+		return;
+	}
+	std::string line;
+	std::string currentAnimName;
+	int frameIndex = 0;
+
+	while (std::getline(file, line)) {
+		if (line.empty() || line[0] == '#') continue;
+		if (line[0] == '$') {
+			currentAnimName = line.substr(1); // remove '$'
+			frameIndex = 0;
+			continue;
+		}
+
+		std::stringstream iss(line);
+		int x, y, width, height;
+		float duration;
+		float offsetX, offsetY, sizeX, sizeY;
+		if (!(iss >> x >> y >> width >> height >> duration >> offsetX >> offsetY >> sizeX >> sizeY)) {
+			std::cerr << "Invalid frame format: " << line << "\n";
+			continue;
+		}
+
+		// Create a render texture to store the cut frame
+		RenderTexture2D rt = LoadRenderTexture(width, height);
+		BeginTextureMode(rt);
+			ClearBackground(BLANK); // Transparent
+			DrawTextureRec(spriteSheet, Rectangle{ (float)x, (float)y, (float)width, (float)height }, Vector2{ 0, 0 }, WHITE);
+		EndTextureMode();
+
+		// Extract it as a new Texture2D
+		Image img = LoadImageFromTexture(rt.texture);
+		ImageFlipVertical(&img);
+
+		// resize
+		int targetWidth = 32;
+		int targetHeight = isSuperForm(currentAnimName) ? 56 : 40;
+		ImageResize(&img, targetWidth, targetHeight);
+		Texture2D frameTexture = LoadTextureFromImage(img);
+
+		std::string texName = currentAnimName + "_" + std::to_string(frameIndex++);
+		textures[texName] = frameTexture;
+
+		UnloadRenderTexture(rt);
+		UnloadImage(img);
+
+		std::cout << "Cut and loaded: " << texName << '\n';
+	}
+	file.close();
 }
 
 void ResourceManager::unloadTextures() {
@@ -127,6 +207,14 @@ void ResourceManager::unloadMusic(std::string key)
 	if (musics.find(key) != musics.end()) {
 		UnloadMusicStream(musics[key]);
 	}
+}
+
+bool ResourceManager::isSuperForm(const std::string& animName)
+{
+	return animName.compare(0, 11, "superluigi_") == 0 ||
+		animName.compare(0, 10, "fireluigi_") == 0 ||
+		animName.compare(0, 16, "superstarluigi_") == 0 ||
+		animName.compare(0, 15, "firestarluigi_") == 0;
 }
 
 ResourceManager::~ResourceManager()

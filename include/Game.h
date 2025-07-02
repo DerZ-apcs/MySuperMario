@@ -3,6 +3,7 @@
 #include "../include/Menu.h"
 #include "../include/Mario.h"
 #include "../include/Map.h"
+#include "../include/GUI.h"
 #include "../include/GameEngine.h"
 #include <memory>
 #include <utility>
@@ -26,6 +27,7 @@ public:
     void loadFromConfig(string filename);
     void returnToMainMenu();
     void setBackground(const std::string& imageName);
+    void loadGUI();
     Mario* player;
     Level* level;
 

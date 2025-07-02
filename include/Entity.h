@@ -93,5 +93,11 @@ public:
 	Rectangle getRect() const;
 	Color& getColor();
 
+	float getCenterX() const;
+	float getCenterY() const;
+	float getBottom() const;
+	float getLeft() const;
+	float getRight() const;
+	float getTop() const;
 };	
 #endif

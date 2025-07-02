@@ -4,6 +4,8 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <fstream>
+#include <sstream>
 
 Texture2D flipTexture(Texture2D& a);
 
@@ -23,6 +25,7 @@ private:
 	void loadTextures();
 	void loadSounds();
 	void loadMusics();
+	void cutSpriteSheetToTextures(const std::string& sheetName, const std::string& animFilePath);
 
 	void unloadTextures();
 	void unloadSounds();
@@ -31,6 +34,8 @@ private:
 	void unloadTexture(std::string key);
 	void unloadSound(std::string key);
 	void unloadMusic(std::string key);
+	// helper function to track super
+	bool isSuperForm(const std::string& animName);
 public:
 	~ResourceManager();
 	void LoadAllResources();
@@ -54,5 +59,7 @@ public:
 	void playSound(const std::string& soundName);
 	bool isPlayingSound(const std::string& soundName);
 	void stopSound(const std::string& soundName);
+
+
 };
 #endif

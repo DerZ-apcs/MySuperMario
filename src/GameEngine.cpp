@@ -99,12 +99,33 @@ void GameEngine::draw()
     BeginMode2D(camera);
     //camera.beginDrawing();
     map.drawBackGround();
-    if (player != nullptr) player->draw();
     map.drawMap();
 
     //ClearBackground(SKYBLUE);
     /*camera.render();
     camera.endDrawing();*/
+    if (player != nullptr) {
+        player->draw();
+
+        bool lostLife = player->isLostLife();
+
+        if (!lostLife) {
+            GUI::drawStatusBar(player);
+        }
+        if (isPaused) {
+            DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.5f));
+            if (cleared) {
+                GUI::drawLevelClear();
+            }
+            else if (gameover) {
+                GUI::drawGameOverScreen();
+            }
+            else if (died)
+                GUI::drawDeathScreen();
+            else
+                GUI::drawPauseMenu();
+        }
+    }
     EndMode2D();
 }
 
@@ -124,7 +145,54 @@ bool GameEngine::run() {
         BeginDrawing();
         draw();
         EndDrawing();
-    }
+        
+        if (cleared == true && isPaused == false) {
+            RESOURCE_MANAGER.stopCurrentMusic();
+            RESOURCE_MANAGER.playMusic("COURSECLEAR");
+            return true;
+        }
+        if (gameover && !isPaused) break;
+
+        if (this->time <= 0) player->setLostLife(true);
+        if (player->getY() > getBound().y && player->getPhase() != Phase::CLEARLEVEL_PHASE)
+            player->setLostLife(true);
+
+        if (player->getX() >= map.getMapSize().x && RESOURCE_MANAGER.isPlayingSound("level_clear.wav") == false) {
+            cleared = true;
+            isPaused = true;
+            player->setVel({ 0, 0 });
+        }
+        else if (player->getX() >= map.getMapSize().x - 100.f) {
+            if (player->getPhase() != Phase::CLEARLEVEL_PHASE) {
+                RESOURCE_MANAGER.stopCurrentMusic();
+                RESOURCE_MANAGER.playSound("level_clear.wav");
+                player->setPhase(Phase::CLEARLEVEL_PHASE);
+            }
+        }
+        else if (player->isLostLife() && player->getBottom() < 0.f) {
+            if (player->getLives() < 0) {
+                gameover = true;
+                isPaused = true;
+            }
+            else {
+                died = true;
+                isPaused = true;
+            }
+        }
+        else if (player->isLostLife()) {
+            if (player->getPhase() != DEAD_PHASE) {
+                RESOURCE_MANAGER.stopCurrentMusic();
+                player->setPhase(DEAD_PHASE);
+                if (player->getLives() < 0) {
+                    RESOURCE_MANAGER.playSound("game_over.wav");
+                }
+                else {
+                    RESOURCE_MANAGER.playSound("lost_life.wav");
+                }
+            }
+        }
+
+    } 
     RESOURCE_MANAGER.stopCurrentMusic();
     RESOURCE_MANAGER.playMusic("TITLE");
     return false;

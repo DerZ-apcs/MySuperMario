@@ -6,6 +6,7 @@
 #include "../include/FireBall.h"
 #include "../include/Map.h"
 #include "../include/Level.h"
+#include "../include/GUI.h"
 #include "../include/MediatorCollision.h"
 #include <vector>
 
