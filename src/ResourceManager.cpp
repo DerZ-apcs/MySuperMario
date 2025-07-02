@@ -1,4 +1,5 @@
 #include "../include/ResourceManager.h"
+#include <algorithm>
 
 //std::map<std::string, Texture2D> ResourceManager::textures;
 
@@ -91,14 +92,16 @@ void ResourceManager::loadTextures() {
 	textures["Koopa_Shell_2"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_Shell_2.png");
 	textures["Koopa_Shell_3"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_Shell_3.png");
 
-	textures["Bullet_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/BanzaiBill_0.png");
-	textures["Bullet_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/GreenKoopaTroopa_0.png");
+	textures["Bullet_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/BulletBill_0.png");
+	textures["Bullet_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/BanzaiBill_0.png");
 	textures["Bullet_LEFT_0"] = flipTexture(textures["Bullet_RIGHT_0"]);
 	textures["Bullet_LEFT_1"] = flipTexture(textures["Bullet_RIGHT_1"]);
-	/*textures["Bullet_Dead"] = LoadTexture("resources/images/sprites/baddies/Bullet_Dead.png");*/
+	textures["Bullet_Dead"] = LoadTexture("resources/images/sprites/baddies/Bullet_Dead.png");
 
+	textures["PiranhaPlant_OPEN"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_1.png");
+	textures["PiranhaPlant_CLOSED"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_0.png");
 	// tile
-	for (int i = 0; i <= 103; i++) {
+	for (int i = 0; i <= 112; i++) {
 		std::string path = "resources/images/tiles/AllTiles/tile_" + std::to_string(i) + ".png";
 		textures["TILE_" + std::to_string(i)] = LoadTexture(path.c_str());
 	}
@@ -111,6 +114,60 @@ void ResourceManager::loadSounds()
 	sounds["PLAYER_JUMP"] = LoadSound("resources/sounds/smw_jump.wav");
 	sounds["PLAYER_FIREBALL"] = LoadSound("resources/sounds/smw_fireball.wav");
 	sounds["PLAYER_POWERUP"] = LoadSound("resources/sounds/smw_power-up.wav");
+}
+
+void ResourceManager::drawAllTiles() const
+{
+	const int tileSize = 32;
+	const int tilesPerRow = 10;
+	int i = 0;
+
+	std::vector<std::pair<int, Texture2D>> sortedTiles;
+	for (const auto& kv : textures)
+	{
+		const std::string& key = kv.first;
+
+		if (key.find("TILE_") != 0)
+			continue;
+
+		// Extract numeric ID from key
+		int id = std::stoi(key.substr(5));
+
+		sortedTiles.emplace_back(id, kv.second);
+	}
+
+	// Sort by numeric ID
+	std::sort(sortedTiles.begin(), sortedTiles.end(),
+		[](const auto& a, const auto& b) {
+			return a.first < b.first;
+		});
+
+	// Draw 
+	for (const auto& pair : sortedTiles)
+	{
+		int id = pair.first;
+		const Texture2D& tex = pair.second;
+
+		int row = i / tilesPerRow;
+		int col = i % tilesPerRow;
+
+		int x = col * (tileSize + 16);
+		int y = row * (tileSize + 24);
+
+		if (tex.id != 0) {
+			DrawTexture(tex, x, y, WHITE);
+		}
+		else {
+			DrawRectangle(x, y, tileSize, tileSize, RED);
+			DrawText("Missing", x + 2, y + tileSize / 2 - 5, 10, WHITE);
+		}
+
+		char label[32];
+		snprintf(label, sizeof(label), "TILE_%d", id);
+		DrawText(label, x, y + tileSize + 2, 10, DARKGRAY);
+
+		i++;
+	}
 }
 
 void ResourceManager::loadMusics()

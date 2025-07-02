@@ -9,6 +9,10 @@
 #include "../include/Map.h"
 #include "../include/MediatorCollision.h"
 #include "../include/Enemy.h"
+#include "../include/Goomba.h"
+#include "../include/Koopa.h"
+#include "../include/Bullet.h"
+#include "../include/PiranhaPlant.h"
 
 class Game {
 private:

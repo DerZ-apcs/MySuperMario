@@ -10,6 +10,7 @@ Game::Game(int nwidth, int nheight, int ntargetFPS) :
     width(nwidth), height(nheight), targetFPS(ntargetFPS), Resource_manager(Singleton<ResourceManager>::getInstance()) {
     Resource_manager.LoadAllResources();
     map1.LoadFromJsonFile(Map::basePath + "MAP_1.1.json");
+ /* map1.LoadFromJsonFile(Map::basePath + "kmap_1.json");*/
     BgWidth = (float)GetScreenWidth();
     BgHeight = (float)GetScreenHeight();
     BackGroundTex = Singleton<ResourceManager>::getInstance().getTexture("BACKGROUND_1");
@@ -25,6 +26,7 @@ Game::Game(int nwidth, int nheight, int ntargetFPS) :
     enemies.push_back(new FlyingGoomba({ 800, 920 }, Resource_manager.getTexture("FlyingGoomba_LEFT_1")));
     enemies.push_back(new Bullet({ 400, 704 }, Resource_manager.getTexture("Bullet_LEFT_1"), LEFT)); 
     enemies.push_back(new Bullet({ 500, 704 }, Resource_manager.getTexture("Bullet_RIGHT_1"), RIGHT)); 
+    enemies.push_back(new PiranhaPlant({ 576, 448 }, Resource_manager.getTexture("PiranhaPlant_OPEN"),mario));
 }
 
 Game::~Game()
@@ -60,7 +62,6 @@ void Game::UpdateGame() {
     else {
         camera.target.x = GetScreenWidth() / 2.0f;
     }
-
     for (int i = 0; i < 3; i++) {
         if (BackGroundPos[i].x + BgWidth <= mario.getX() - BgWidth / 2.0f) {
             float maxX = BackGroundPos[0].x;
@@ -82,13 +83,11 @@ void Game::UpdateGame() {
     mario.Update();
 
     // Update enemies
-    for (auto it = enemies.begin(); it != enemies.end();) {
-        Enemy* enemy = *it;
-        if (!enemy) {
-            it = enemies.erase(it);
-            continue;
-        }
+    for (auto& enemy : enemies) {
+        if (!enemy) continue;
+
         enemy->Update();
+
         // Check collision with tiles
         for (auto const& tile : *map1.getVectorTiles()) {
             CollisionType enemyCollision = enemy->CheckCollision(*tile);
@@ -96,26 +95,28 @@ void Game::UpdateGame() {
                 enemy->HandleTileCollision(*tile, enemyCollision);
             }
         }
+
         // Check collision with Mario
         mediatorCollision.HandleCollision(&mario, enemy);
+
         // Check collision with other enemies
-        for (auto other = enemies.begin(); other != enemies.end(); ++other) {
-            if (enemy != *other) {
-                CollisionType enemyCollision = enemy->CheckCollision(**other);
+        for (auto& other : enemies) {
+            if (enemy != other) {
+                CollisionType enemyCollision = enemy->CheckCollision(*other);
                 if (enemyCollision != COLLISION_TYPE_NONE) {
-                    enemy->CollisionWithEnemy(**other, enemyCollision);
+                    enemy->CollisionWithEnemy(*other, enemyCollision);
                 }
             }
         }
-        // Remove dead enemies
-        if (enemy->isDying()) {
-            delete enemy;
-            it = enemies.erase(it);
-        }
-        else {
-            ++it;
-        }
     }
+
+    enemies.erase(std::remove_if(enemies.begin(), enemies.end(), [](Enemy* enemy) {
+        if (enemy && enemy->isReadyForRemoval()) {
+            delete enemy;
+            return true; // Trả về true để `remove_if` đánh dấu phần tử này cần xóa
+        }
+        return false;
+        }), enemies.end());
 
     // Tiles and Mario/Fireball collisions
     for (auto const& tile : *map1.getVectorTiles()) {

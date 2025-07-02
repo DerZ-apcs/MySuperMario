@@ -1,4 +1,5 @@
 ﻿#include "../include/MediatorCollision.h"
+#include "../include/Koopa.h"
 
 void MediatorCollision::HandlePlayerWithTiles(Mario*& mario, Tile*& tile, CollisionType Colltype)
 {
@@ -68,40 +69,6 @@ void MediatorCollision::HandleEnemyWithMario(Enemy*& enemy, Mario*& mario, Colli
     }
     enemy->CollisionWithCharacter(*mario, Colltype);
 }
-
-//void MediatorCollision::HandleCollision(Entity* entity1, Entity* entity2)
-//{
-//    Mario* isMario_1 = dynamic_cast<Mario*>(entity1);
-//    Mario* isMario_2 = dynamic_cast<Mario*>(entity2);
-//    FireBall* isFireBall_1 = dynamic_cast<FireBall*>(entity1);
-//    FireBall* isFireBall_2 = dynamic_cast<FireBall*>(entity2);
-//    Tile* isTile_1 = dynamic_cast<Tile*>(entity1);
-//    Tile* isTile_2 = dynamic_cast<Tile*>(entity2);
-//    Enemy* isEnemy_1 = dynamic_cast<Enemy*>(entity1);
-//    Enemy* isEnemy_2 = dynamic_cast<Enemy*>(entity2);
-//
-//    if ((isMario_1 && isTile_2) || (isMario_2 && isTile_1)) {
-//        CollisionType CollType = isMario_1 ? isMario_1->CheckCollision(*isTile_2) : isMario_2->CheckCollision(*isTile_1);
-//        if (isMario_1)
-//            HandlePlayerWithTiles(isMario_1, isTile_2, CollType);
-//        else
-//            HandlePlayerWithTiles(isMario_2, isTile_1, CollType);
-//    }
-//    else if ((isFireBall_1 && isTile_2) || (isFireBall_2 && isTile_1)) {
-//        CollisionType CollType = isFireBall_1 ? isFireBall_1->CheckCollision(*isTile_2) : isFireBall_2->CheckCollision(*isTile_1);
-//        if (isFireBall_1)
-//            HandleFireballWithTiles(isFireBall_1, isTile_2, CollType);
-//        else
-//            HandleFireballWithTiles(isFireBall_2, isTile_1, CollType);
-//    }
-//    else if ((isMario_1 && isEnemy_2) || (isMario_2 && isEnemy_1)) {
-//        CollisionType CollType = isMario_1 ? isMario_1->CheckCollision(*isEnemy_2) : isMario_2->CheckCollision(*isEnemy_1);
-//        if (isMario_1)
-//            HandleEnemyWithMario(isEnemy_2, isMario_1, CollType);
-//        else
-//            HandleEnemyWithMario(isEnemy_1, isMario_2, CollType);
-//    }
-//}
 
 void MediatorCollision::HandleCollision(Entity* entity1, Entity* entity2) {
     // Kiểm tra sớm để giảm dynamic_cast
