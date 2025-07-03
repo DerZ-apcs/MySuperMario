@@ -62,6 +62,9 @@ void GameEngine::update()
             RESOURCE_MANAGER.playSound("pause.wav");
         }
     }
+    if (IsKeyPressed(KEY_BACKSPACE) && !isPaused) {
+        player->setLostLife(true);
+    }
     if (GUI::restart_is_pressed) {
         GUI::restart_is_pressed = false;
         player->resetInGame();
@@ -99,8 +102,9 @@ void GameEngine::update()
         // tiles (collision with character)
         for (auto const& tile : *map.getVectorTiles()) {
             CollisionType PlayerCollision = player->CheckCollision(*tile);
-            if (PlayerCollision != COLLISION_TYPE_NONE)
+            if (PlayerCollision != COLLISION_TYPE_NONE && player->getCollisionAvailable() == true)
                 mediatorCollision.HandleCollision(player, tile);
+
             for (auto& fireball : *player->getFireBalls()) {
                 CollisionType FireBallCollision = fireball->CheckCollision(*tile);
                 if (FireBallCollision != COLLISION_TYPE_NONE)
@@ -121,6 +125,7 @@ void GameEngine::handleCollision()
 // draw
 void GameEngine::draw()
 {
+    BeginDrawing();
     BeginMode2D(camera);
     //camera.beginDrawing();
     map.drawBackGround();
@@ -161,6 +166,7 @@ void GameEngine::draw()
             }
         }
     }
+    EndDrawing();
 }
 
 // run
@@ -176,9 +182,7 @@ bool GameEngine::run() {
         }
         update();
         ClearBackground(RAYWHITE);
-        BeginDrawing();
         draw();
-        EndDrawing();
         
         if (cleared == true && isPaused == false) {
             RESOURCE_MANAGER.stopCurrentMusic();
@@ -192,23 +196,26 @@ bool GameEngine::run() {
             break;
         }
 
+        // out of time
         if (this->time <= 0) player->setLostLife(true);
+        // set lost life for falling out of bound
         if (player->getY() > getBound().y && player->getPhase() != Phase::CLEARLEVEL_PHASE)
             player->setLostLife(true);
 
+        // clear level
         if (player->getX() >= map.getMapSize().x && RESOURCE_MANAGER.isPlayingSound("level_clear.wav") == false) {
             cleared = true;
             isPaused = true;
             player->setVel({ 0, 0 });
         }
-        else if (player->getX() >= map.getMapSize().x - 100.f) {
+        else if (player->getX() >= map.getMapSize().x - 100.f) { // clear level (when character enter near the end of level)
             if (player->getPhase() != Phase::CLEARLEVEL_PHASE) {
                 RESOURCE_MANAGER.stopCurrentMusic();
                 RESOURCE_MANAGER.playSound("level_clear.wav");
                 player->setPhase(Phase::CLEARLEVEL_PHASE);
             }
         }
-        else if (player->isLostLife() && player->getBottom() < 0.f) {
+        else if (player->isLostLife() && player->getTop() > getBound().y) { // when finish the animation of dying (flying to the top)
             if (player->getLives() < 0) {
                 gameover = true;
                 isPaused = true;
@@ -218,7 +225,7 @@ bool GameEngine::run() {
                 isPaused = true;
             }
         }
-        else if (player->isLostLife()) {
+        else if (player->isLostLife()) { // set animation & sound when dying
             if (player->getPhase() != DEAD_PHASE) {
                 RESOURCE_MANAGER.stopCurrentMusic();
                 player->setPhase(DEAD_PHASE);

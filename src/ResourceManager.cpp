@@ -33,8 +33,7 @@ void ResourceManager::loadTextures() {
 	textures["SuperMarioDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SuperMarioDucking_0.png");
 	textures["SuperMarioDucking_LEFT_0"] = flipTexture(textures["SuperMarioDucking_RIGHT_0"]);
 	// dying
-	textures["SmallMarioDying_RIGHT"] = LoadTexture("resources/images/sprites/mario/SmallMarioDying_0.png");
-	textures["SmallMarioDying_LEFT"] = flipTexture(textures["SmallMarioDying_RIGHT"]);
+	textures["SmallMarioDying"] = LoadTexture("resources/images/sprites/mario/SmallMarioDying_0.png");
 
 	// victory
 	textures["SmallMarioVictory_RIGHT"] = LoadTexture("resources/images/sprites/mario/SmallMarioVictory_0.png");

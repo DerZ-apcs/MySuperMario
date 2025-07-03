@@ -67,6 +67,8 @@ void Character::resetInGame()
 	setVel({ 0, 0 });
 	direction = RIGHT;
 	phase = DEFAULT_PHASE;
+	collisionAvailable = true;
+	gravityAvailable = true;
 	isjumping = false;
 	holding = false;
 	lostLife = false;
@@ -106,6 +108,7 @@ void Character::setPhase(Phase phase)
 	if (phase == DEAD_PHASE) {
 		setVelX(0.f);
 		setVelY(-DEAD_PLAYER_INITIAL_VELOCITY);
+		setCollisionAvailable(false);
 		setHolding(false);
 		lives--;
 	}
@@ -275,6 +278,7 @@ void Character::HandleTileCollision(const Tile tile, CollisionType CollType)
 
 void Character::setLostLife(bool lostLife)
 {
+	this->lostLife = lostLife;
 }
 
 void Character::Jumping()
@@ -344,6 +348,8 @@ void Character::draw()
 
 void Character::HandleInput()
 {
+	if (IsKeyPressed(KEY_A))
+		setLostLife(true);
 	if (IsKeyDown(KEY_LEFT)) {
 		RunLeft();
 	}
@@ -673,6 +679,9 @@ void Character::UpdateTexture()
 			else if (transitionCurrentFrame == 2)
 				texture = RESOURCE_MANAGER.getTexture("Fire_Mario_LEFT_0");
 		}
+	}
+	if (isLostLife()) {
+		texture = RESOURCE_MANAGER.getTexture("SmallMarioDying");
 	}
 }
 

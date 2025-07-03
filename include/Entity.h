@@ -28,6 +28,9 @@ protected:
 	std::string Entity_name;
 
 	bool isjumping;
+	bool gravityAvailable;
+	bool collisionAvailable;
+
 	Collision CollNorth;
 	Collision CollSouth;
 	Collision CollEast;
@@ -100,5 +103,10 @@ public:
 	float getLeft() const;
 	float getRight() const;
 	float getTop() const;
+
+	void setCollisionAvailable(bool collisionAvailable);
+	void setGravityAvailable(bool gravityAvailable);
+	bool getCollisionAvailable();
+	bool getGravityAvailable();
 };	
 #endif
