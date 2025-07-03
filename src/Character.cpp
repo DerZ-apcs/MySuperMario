@@ -280,7 +280,7 @@ void Character::Standing()
 	else if (velocity.x < 0) {
 		velocity.x += accelerationX * deltaTime;
 	}
-	if (abs(velocity.x) < 100) velocity.x = 0;
+	if (abs(velocity.x) < 20) velocity.x = 0;
 }
 
 void Character::Ducking()
@@ -296,11 +296,10 @@ void Character::Update()
 	position.x += velocity.x * deltaTime;
 	position.y += velocity.y * deltaTime;
 
-	//if (state != ON_GROUND) 
 	if (velocity.y > 50)
 		state = FALLING;
-
-	velocity.y += GRAVITY * deltaTime;
+	
+	velocity.y += GRAVITY * deltaTime + 2;
 
 	for (auto i = fireballs.begin(); i != fireballs.end();) {
 		FireBall* fireball = *i;
@@ -321,7 +320,6 @@ void Character::Update()
 void Character::draw()
 {
 	for (auto& fireball : fireballs) {
-		fireball->UpdateTexture();
 		fireball->draw();
 	}
 
@@ -670,9 +668,9 @@ void Character::ThrowingFireBalls()
 	isThrowing = true;
 	RESOURCE_MANAGER.playSound("PLAYER_FIREBALL");
 	if (direction == RIGHT) 
-		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, Vector2{500, -300}, RIGHT, 2));
+		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, Vector2{400, -300}, RIGHT, 2));
 	else if (direction == LEFT) 
-		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, Vector2{-500, -300}, LEFT, 2));
+		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, Vector2{-400, -300}, LEFT, 2));
 }
 
 std::list<FireBall*>* Character::getFireBalls()

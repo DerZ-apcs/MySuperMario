@@ -23,7 +23,8 @@ protected:
 	float frameAcum;
 	Texture2D texture;
 	Rectangle rect;
-	const float GRAVITY = 800;
+	const float GRAVITY = 800; // Gravity for all 
+	const float accelerationX = 400;
 	std::string Entity_name;
 
 	bool isjumping;

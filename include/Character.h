@@ -118,8 +118,8 @@ protected:
 
 	CharacterState Character_state;
 	SPRITE_STATE Character_sprite_State;
-	const float GRAVITY = 800;
-	const float accelerationX = 600;
+	//const float GRAVITY = 800;
+	//const float accelerationX = 400;
 	std::list<FireBall*> fireballs;
 };
 #endif

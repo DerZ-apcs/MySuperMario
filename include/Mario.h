@@ -12,8 +12,8 @@ private:
 	/*CharacterState Mario_State;
 	SPRITE_STATE Mario_sprite;*/
 	//SPRITE_STATE LastStateb4Transition;
-	const float maxspeedX = 500;
-	const float maxSpeedY = 600;
+	const float maxspeedX = 550;
+	const float maxSpeedY = 550;
 
 	//std::list<FireBall*> fireballs;
 public:
