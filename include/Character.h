@@ -112,14 +112,23 @@ protected:
 	int transitionSteps;
 	int transitionCurrentFrame;
 	int transitionCurrentFramePos;
+	int throwFrameCounter = 6; // for throw
 	const int transitionFrameOrder[11] = { 0, 1, 0, 1, 0, 1, 2, 1, 2, 1, 2 };
 	const int reversedTransitionFrameOrder[11] = { 2, 1, 2, 1, 2, 1, 0, 1, 0, 1, 0 };
 	const int SuperToFlowerTransitionFrameOrder[10] = { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 };
 
 	CharacterState Character_state;
 	SPRITE_STATE Character_sprite_State;
-	//const float GRAVITY = 800;
-	//const float accelerationX = 400;
 	std::list<FireBall*> fireballs;
+
+	const float DEAD_PLAYER_INITIAL_VELOCITY = 200.f;
+	const float DEAD_PLAYER_GRAVITY = 1000.f;
+
+	const float Max_walk_velocity = 100.f;
+	const float jet_stomp_velocity = -200.f;
+
+	const float star_invicible_time = 12.f;
+	const float transform_time = 1.f;
+
 };
 #endif

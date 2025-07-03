@@ -24,6 +24,8 @@ CharacterType Mario::getCharacterType() const
 void Mario::RunLeft() {
 	float deltaTime = GetFrameTime();
 	if (direction == RIGHT) {
+		if (velocity.x > 70 && state == ON_GROUND)
+			RESOURCE_MANAGER.playSound("skid.wav");
 		direction = LEFT;
 		velocity.x = 0;
 	}
@@ -37,6 +39,8 @@ void Mario::RunLeft() {
 void Mario::RunRight() {
 	float deltaTime = GetFrameTime();
 	if (direction == LEFT) {
+		if (velocity.x < -70 && state == ON_GROUND)
+			RESOURCE_MANAGER.playSound("skid.wav");
 		direction = RIGHT;
 		velocity.x = 0;
 	}

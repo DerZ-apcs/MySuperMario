@@ -32,6 +32,19 @@ void ResourceManager::loadTextures() {
 	
 	textures["SuperMarioDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SuperMarioDucking_0.png");
 	textures["SuperMarioDucking_LEFT_0"] = flipTexture(textures["SuperMarioDucking_RIGHT_0"]);
+	// dying
+	textures["SmallMarioDying_RIGHT"] = LoadTexture("resources/images/sprites/mario/SmallMarioDying_0.png");
+	textures["SmallMarioDying_LEFT"] = flipTexture(textures["SmallMarioDying_RIGHT"]);
+
+	// victory
+	textures["SmallMarioVictory_RIGHT"] = LoadTexture("resources/images/sprites/mario/SmallMarioVictory_0.png");
+	textures["SmallMarioVictory_LEFT"] = flipTexture(textures["SmallMarioVictory_RIGHT"]);
+
+	textures["SuperMarioVictory_RIGHT"] = LoadTexture("resources/images/sprites/mario/SuperMarioVictory_0.png");
+	textures["SuperMarioVictory_LEFT"] = flipTexture(textures["SuperMarioVictory_RIGHT"]);
+
+	textures["FireMarioVictory_RIGHT"] = LoadTexture("resources/images/sprites/mario/FireMarioVictory.png");
+	textures["FireMarioVictory_LEFT"] = flipTexture(textures["FireMarioVictory_RIGHT"]);
 
 	// trasition
 	textures["TransitioningMario_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/TransitioningMario_1.png");
@@ -108,6 +121,7 @@ void ResourceManager::loadSounds()
 	sounds["lost_life.wav"] = LoadSound("resources/sounds/lost_life.wav");
 	sounds["lost_suit.wav"] = LoadSound("resources/sounds/lost_suit.wav");
 	sounds["pause.wav"] = LoadSound("resources/sounds/pause.wav");
+	sounds["skid.wav"] = LoadSound("resources/sounds/skid.wav");
 }
 
 void ResourceManager::loadMusics()

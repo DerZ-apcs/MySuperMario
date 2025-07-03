@@ -103,6 +103,16 @@ void Character::reset()
 
 void Character::setPhase(Phase phase)
 {
+	if (phase == DEAD_PHASE) {
+		setVelX(0.f);
+		setVelY(-DEAD_PLAYER_INITIAL_VELOCITY);
+		setHolding(false);
+		lives--;
+	}
+	else if (phase == CLEARLEVEL_PHASE) {
+		setVelY(0.f);
+		setVelX(Max_walk_velocity);
+	}
 	this->phase = phase;
 }
 
@@ -355,7 +365,7 @@ void Character::HandleInput()
 	}
 	if (IsKeyPressed(KEY_Z) && Character_state != STATE_FIRE_BALL)
 		TransitionToFire();
-	if (IsKeyPressed(KEY_LEFT_CONTROL) && Character_state == STATE_FIRE_BALL) {
+	if (IsKeyPressed(KEY_LEFT_CONTROL) && Character_state == STATE_FIRE_BALL && !isducking) {
 		ThrowingFireBalls();
 	}
 }
@@ -431,6 +441,9 @@ void Character::UpdateTexture()
 			else if (direction == LEFT)
 				texture = RESOURCE_MANAGER.getTexture("SmallMarioFalling_LEFT_0");
 		}
+		if (phase == DEAD_PHASE) {
+
+		}
 		break;
 	case STATE_SUPER:
 		maxFrame = 2;
@@ -487,27 +500,19 @@ void Character::UpdateTexture()
 			else if (direction == LEFT)
 				texture = RESOURCE_MANAGER.getTexture("SuperMarioFalling_LEFT_0");
 		}
-
-		if (isThrowing) {
-			if (direction == LEFT)
-				texture = RESOURCE_MANAGER.getTexture("SuperMarioThrowingFireball_LEFT_0");
-			else
-				texture = RESOURCE_MANAGER.getTexture("SuperMarioThrowingFireball_RIGHT_0");
-
-		}
 		break;
 
 	case STATE_FIRE_BALL: {
 		// on ground
 		maxFrame = 2;
+		frameAcum += deltaTime;
+		if (frameAcum > frameTime) {
+			currFrame++;
+			if (currFrame > maxFrame) currFrame = 0;
+			frameAcum -= frameTime;
+		}
 		if (state == ON_GROUND) {
 			if (velocity.x != 0 && !isducking) {
-				frameAcum += deltaTime;
-				if (frameAcum > frameTime) {
-					currFrame++;
-					if (currFrame > maxFrame) currFrame = 0;
-					frameAcum -= frameTime;
-				}
 				if (direction == RIGHT) {
 					if (currFrame == 0)
 						texture = RESOURCE_MANAGER.getTexture("Fire_Mario_RIGHT_0");
@@ -544,14 +549,26 @@ void Character::UpdateTexture()
 				texture = RESOURCE_MANAGER.getTexture("Fire_Mario_Jumping_RIGHT_0");
 			else if (direction == LEFT)
 				texture = RESOURCE_MANAGER.getTexture("Fire_Mario_Jumping_LEFT_0");
-		}
+			}
 		else if (state == FALLING) {
 			if (direction == RIGHT)
 				texture = RESOURCE_MANAGER.getTexture("Fire_Mario_Falling_RIGHT_0");
 			else if (direction == LEFT)
 				texture = RESOURCE_MANAGER.getTexture("Fire_Mario_Falling_LEFT_0");
+			}
 		}
-	}
+		if (isThrowing) {
+			if (throwFrameCounter > 0)
+				throwFrameCounter--;
+			else if (throwFrameCounter <= 0) {
+				throwFrameCounter = 6;
+				isThrowing = false;
+			}
+			if (direction == LEFT)
+				texture = RESOURCE_MANAGER.getTexture("FireMarioThrowingFireball_LEFT_0");
+			else if (direction == RIGHT)
+				texture = RESOURCE_MANAGER.getTexture("FireMarioThrowingFireball_RIGHT_0");
+		}
 	}
 
 	if (Character_sprite_State == STATE_TRANSITIONING_FROM_SMALL_TO_SUPER) {
