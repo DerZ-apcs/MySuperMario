@@ -36,14 +36,11 @@ void ResourceManager::loadTextures() {
 	textures["SmallMarioDying"] = LoadTexture("resources/images/sprites/mario/SmallMarioDying_0.png");
 
 	// victory
-	textures["SmallMarioVictory_RIGHT"] = LoadTexture("resources/images/sprites/mario/SmallMarioVictory_0.png");
-	textures["SmallMarioVictory_LEFT"] = flipTexture(textures["SmallMarioVictory_RIGHT"]);
+	textures["SmallMarioVictory"] = LoadTexture("resources/images/sprites/mario/SmallMarioVictory_0.png");
 
-	textures["SuperMarioVictory_RIGHT"] = LoadTexture("resources/images/sprites/mario/SuperMarioVictory_0.png");
-	textures["SuperMarioVictory_LEFT"] = flipTexture(textures["SuperMarioVictory_RIGHT"]);
+	textures["SuperMarioVictory"] = LoadTexture("resources/images/sprites/mario/SuperMarioVictory_0.png");
 
-	textures["FireMarioVictory_RIGHT"] = LoadTexture("resources/images/sprites/mario/FireMarioVictory.png");
-	textures["FireMarioVictory_LEFT"] = flipTexture(textures["FireMarioVictory_RIGHT"]);
+	textures["FireMarioVictory"] = LoadTexture("resources/images/sprites/mario/FireMarioVictory.png");
 
 	// trasition
 	textures["TransitioningMario_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/TransitioningMario_1.png");
@@ -91,6 +88,7 @@ void ResourceManager::loadTextures() {
 	}
 	// background
 	textures["BACKGROUND_1"] = LoadTexture("resources/images/backgrounds/background1.png");
+	textures["BACKGROUND_2"] = LoadTexture("resources/images/backgrounds/background2.png");
 	textures["MENU_SCREEN"] = LoadTexture("resources/images/backgrounds/Menuscreen.png");
 
 	// GUI
@@ -107,6 +105,16 @@ void ResourceManager::loadTextures() {
 	textures["SETTING"] = LoadTexture("resources/images/gui/setting.png");
 	textures["SOUND_OFF"] = LoadTexture("resources/images/gui/sound_off.png");
 	textures["SOUND_ON"] = LoadTexture("resources/images/gui/sound_on.png");
+}
+
+
+void ResourceManager::loadFonts()
+{
+	fonts["Vogue"] = LoadFont("resources/Font/Vogue.ttf");
+	fonts["HolenVintage"] = LoadFont("resources/Font/HolenVintage.otf");
+	fonts["Sawer"] = LoadFont("resources/Font/Sawer.ttf");
+	fonts["WinterMinie"] = LoadFont("resources/Font/WinterMinie.ttf");
+	fonts["TimesNewRoman"] = LoadFont("resources/Font/TimesNewRoman.ttf");
 }
 
 void ResourceManager::loadSounds()
@@ -127,65 +135,16 @@ void ResourceManager::loadMusics()
 {
 	musics["TITLE"] = LoadMusicStream("resources/musics/Title.mp3");
 	musics["MUSIC_1"] = LoadMusicStream("resources/musics/music1.mp3");
+	musics["MUSIC_2"] = LoadMusicStream("resources/musics/music2.mp3");
 	musics["COURSECLEAR"] = LoadMusicStream("resources/musics/courseClear.mp3");
-
 }
 
-void ResourceManager::cutSpriteSheetToTextures(const std::string& sheetName, const std::string& animFilePath)
+void ResourceManager::unloadFonts()
 {
-	Texture2D spriteSheet = textures[sheetName]; // Already loaded full texture
-	std::ifstream file(animFilePath);
-	if (!file.is_open()) {
-		std::cerr << "Failed to open animation file: " << animFilePath << '\n';
-		return;
+	for (auto const& [key, val] : fonts) {
+		unloadFont(key);
 	}
-	std::string line;
-	std::string currentAnimName;
-	int frameIndex = 0;
-
-	while (std::getline(file, line)) {
-		if (line.empty() || line[0] == '#') continue;
-		if (line[0] == '$') {
-			currentAnimName = line.substr(1); // remove '$'
-			frameIndex = 0;
-			continue;
-		}
-
-		std::stringstream iss(line);
-		int x, y, width, height;
-		float duration;
-		float offsetX, offsetY, sizeX, sizeY;
-		if (!(iss >> x >> y >> width >> height >> duration >> offsetX >> offsetY >> sizeX >> sizeY)) {
-			std::cerr << "Invalid frame format: " << line << "\n";
-			continue;
-		}
-
-		// Create a render texture to store the cut frame
-		RenderTexture2D rt = LoadRenderTexture(width, height);
-		BeginTextureMode(rt);
-			ClearBackground(BLANK); // Transparent
-			DrawTextureRec(spriteSheet, Rectangle{ (float)x, (float)y, (float)width, (float)height }, Vector2{ 0, 0 }, WHITE);
-		EndTextureMode();
-
-		// Extract it as a new Texture2D
-		Image img = LoadImageFromTexture(rt.texture);
-		ImageFlipVertical(&img);
-
-		// resize
-		int targetWidth = 32;
-		int targetHeight = isSuperForm(currentAnimName) ? 56 : 40;
-		ImageResize(&img, targetWidth, targetHeight);
-		Texture2D frameTexture = LoadTextureFromImage(img);
-
-		std::string texName = currentAnimName + "_" + std::to_string(frameIndex++);
-		textures[texName] = frameTexture;
-
-		UnloadRenderTexture(rt);
-		UnloadImage(img);
-
-		std::cout << "Cut and loaded: " << texName << '\n';
-	}
-	file.close();
+	fonts.clear();
 }
 
 void ResourceManager::unloadTextures() {
@@ -208,6 +167,12 @@ void ResourceManager::unloadMusics()
 	}
 	musics.clear();
 }
+void ResourceManager::unloadFont(std::string key)
+{
+	if (fonts.find(key) != fonts.end()) {
+		UnloadFont(fonts[key]);
+	}
+}
 void ResourceManager::unloadTexture(std::string key) {
 	if (textures.find(key) != textures.end()) {
 		UnloadTexture(textures[key]);
@@ -228,14 +193,6 @@ void ResourceManager::unloadMusic(std::string key)
 	}
 }
 
-bool ResourceManager::isSuperForm(const std::string& animName)
-{
-	return animName.compare(0, 11, "superluigi_") == 0 ||
-		animName.compare(0, 10, "fireluigi_") == 0 ||
-		animName.compare(0, 16, "superstarluigi_") == 0 ||
-		animName.compare(0, 15, "firestarluigi_") == 0;
-}
-
 ResourceManager::~ResourceManager()
 {
 	UnloadAllResources();
@@ -246,6 +203,7 @@ void ResourceManager::LoadAllResources()
 	loadTextures();
 	loadSounds();
 	loadMusics();
+	loadFonts();
 }
 
 std::map<std::string, Texture2D>  ResourceManager::getTextures() {
@@ -262,6 +220,11 @@ std::map<std::string, Music> ResourceManager::getMusics()
 	return musics;
 }
 
+std::map<std::string, Font> ResourceManager::getFonts()
+{
+	return std::map<std::string, Font>();
+}
+
 Texture2D& ResourceManager::getTexture(const std::string& name)
 {
 	return textures[name];
@@ -275,6 +238,11 @@ Sound& ResourceManager::getSound(const std::string& name)
 Music& ResourceManager::getMusic(const std::string& name)
 {
 	return musics[name];
+}
+
+Font& ResourceManager::getFont(const std::string& name)
+{
+	return fonts[name];
 }
 
 void ResourceManager::playMusic(const std::string& MusicName)
@@ -307,6 +275,14 @@ void ResourceManager::stopCurrentMusic()
 	}
 }
 
+std::string& ResourceManager::getCurrentMusic()
+{
+	std::string s = "";
+	if (!currentMusic.empty() && isMusicPlaying(currentMusic))
+		return currentMusic;
+	else return s;
+}
+
 void ResourceManager::playSound(const std::string& soundName) 
 {
 	if (isPlayingSound(soundName) == false)
@@ -329,6 +305,7 @@ void ResourceManager::UnloadAllResources()
 	unloadTextures();
 	unloadSounds();
 	unloadMusics();
+	unloadFonts();
 }
 Texture2D flipTexture(Texture2D& a) {
 	Image img = LoadImageFromTexture(a);

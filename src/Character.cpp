@@ -1,7 +1,7 @@
 #include "../include/Character.h"
 
 Character::Character():
-	Character({0, 0}, {32, 40})
+	Character({32, 400}, {32, 40})
 {
 }
 
@@ -34,7 +34,8 @@ Character::Character(Vector2 pos, Vector2 sz, CharacterState characterstate, Cha
 	transitionCurrentFramePos(0),
 	Character_state(characterstate),
 	characterType(characterType),
-	Character_sprite_State(NORMAL)
+	Character_sprite_State(NORMAL),
+	victory(false)
 {
 	if (characterstate == STATE_SMALL)
 		this->size = { 32, 40 };
@@ -63,7 +64,10 @@ EntityType Character::getEntityType() const
 // reset when die & continue with that level 
 void Character::resetInGame()
 {
-	setPosition({ 16, 400 });
+	setPosition({ 32, 400 });
+	if (Character_state == STATE_SMALL)
+		this->size = { 32, 40 };
+	else this->size = { 32, 56 };
 	setVel({ 0, 0 });
 	direction = RIGHT;
 	phase = DEFAULT_PHASE;
@@ -79,12 +83,22 @@ void Character::resetInGame()
 	isThrowing = isducking = false;
 	Character_state = STATE_SMALL;
 	state = FALLING;
+	CollNorth.setSize({ size.x / 2, 5 });
+	CollSouth.setSize({ size.x / 2, 5 });
+	CollWest.setSize({ 5, size.y - 5 });
+	CollEast.setSize({ 5, size.y - 5 });
+	updateCollision();
+	texture = RESOURCE_MANAGER.getTexture("SmallMario_RIGHT_0");
+	victory = false;
 }
 
 // reset when changing map (reset all)
 void Character::reset()
 {
-	setPosition({ 16, 400 });
+	if (Character_state == STATE_SMALL)
+		this->size = { 32, 40 };
+	else this->size = { 32, 56 };
+	setPosition({ 32, 400 });
 	setVel({ 0, 0 });
 	direction = RIGHT;
 	scores = 0;
@@ -101,6 +115,13 @@ void Character::reset()
 	isThrowing = isducking = false;
 	Character_state = STATE_SMALL;
 	state = FALLING;
+	CollNorth.setSize({ size.x / 2, 5 });
+	CollSouth.setSize({ size.x / 2, 5 });
+	CollWest.setSize({ 5, size.y - 5 });
+	CollEast.setSize({ 5, size.y - 5 });
+	updateCollision();
+	texture = RESOURCE_MANAGER.getTexture("SmallMario_RIGHT_0");
+	victory = false;
 }
 
 void Character::setPhase(Phase phase)
@@ -397,16 +418,17 @@ void Character::UpdateTexture()
 	const float deltaTime = GetFrameTime();
 	switch (Character_state) {
 	case STATE_SMALL:
+		maxFrame = 1;
+		frameTime = 0.1f;
+		frameAcum += deltaTime;
+		if (frameAcum > frameTime) {
+			currFrame++;
+			if (currFrame > maxFrame) currFrame = 0;
+			frameAcum -= frameTime;
+		}
 		if (state == ON_GROUND) {
 			if (velocity.x != 0 && !isducking) {
 				// moving
-				frameTime = 0.1f;
-				frameAcum += deltaTime;
-				if (frameAcum > frameTime) {
-					currFrame++;
-					if (currFrame > maxFrame) currFrame = 0;
-					frameAcum -= frameTime;
-				}
 				if (direction == RIGHT) {
 					if (currFrame == 0)
 						texture = RESOURCE_MANAGER.getTexture("SmallMario_RIGHT_0");
@@ -447,21 +469,19 @@ void Character::UpdateTexture()
 			else if (direction == LEFT)
 				texture = RESOURCE_MANAGER.getTexture("SmallMarioFalling_LEFT_0");
 		}
-		if (phase == DEAD_PHASE) {
-
-		}
 		break;
 	case STATE_SUPER:
 		maxFrame = 2;
+		frameAcum += deltaTime;
+		if (frameAcum > frameTime) {
+			currFrame++;
+			if (currFrame > maxFrame) currFrame = 0;
+			frameAcum -= frameTime;
+		}
 		if (state == ON_GROUND) {
 			if (velocity.x != 0 && !isducking) {
 				// moving
-				frameAcum += deltaTime;
-				if (frameAcum > frameTime) {
-					currFrame++;
-					if (currFrame > maxFrame) currFrame = 0;
-					frameAcum -= frameTime;
-				}
+
 				if (direction == RIGHT) {
 					if (currFrame == 0)
 						texture = RESOURCE_MANAGER.getTexture("SuperMario_RIGHT_0");
@@ -683,6 +703,20 @@ void Character::UpdateTexture()
 	if (isLostLife()) {
 		texture = RESOURCE_MANAGER.getTexture("SmallMarioDying");
 	}
+	if (victory) {
+		if (victoryFrameCounter > 0)
+			victoryFrameCounter--;
+		else if (victoryFrameCounter <= 0) {
+			victoryFrameCounter = 6;
+			victory = false;
+		}
+		if (Character_state == STATE_SMALL)
+			texture = RESOURCE_MANAGER.getTexture("SmallMarioVictory");
+		else if (Character_state == STATE_SUPER)
+			texture = RESOURCE_MANAGER.getTexture("SuperMarioVictory");
+		else if (Character_state == STATE_FIRE_BALL)
+			texture = RESOURCE_MANAGER.getTexture("FireMarioVictory");
+	}
 }
 
 float Character::getAcclerationX() const
@@ -702,6 +736,16 @@ void Character::ThrowingFireBalls()
 std::list<FireBall*>* Character::getFireBalls()
 {
 	return &fireballs;
+}
+
+void Character::setVictory(bool victory)
+{
+	this->victory = victory;
+}
+
+bool Character::getVictory()
+{
+	return victory;
 }
 
 

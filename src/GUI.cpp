@@ -153,9 +153,16 @@ void GUI::drawDeathScreen()
     int textHeight = fontSize;
 
     int posX = ((float)GetScreenWidth() - textWidth) / 2;
-    int posY = ((float)GetScreenHeight() - textHeight) / 2;
+    int posY = ((float)GetScreenHeight() - textHeight) / 2 - 200;
 
     DrawText(text, posX, posY, fontSize, RED);
+
+    text = "Press Enter to continue";
+    fontSize = 45;
+    textWidth = MeasureText(text, fontSize);
+    float textX = ((float)GetScreenWidth() - textWidth) / 2;
+    float textY = posY + 200;
+    DrawText(text, textX, textY, fontSize, BLACK);
 }
 
 void GUI::drawGameOverScreen()

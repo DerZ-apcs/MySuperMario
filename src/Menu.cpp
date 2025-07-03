@@ -191,7 +191,7 @@ void CharSelection::draw()
 void CharSelection::handleInput()
 {
 	if (MarioButton.isPressed()) {
-		delete game->player;
+		if (game->player) delete game->player;
 		game->player = new Mario();
 		if (globalGameEngine != nullptr) {
 			delete globalGameEngine;
@@ -200,7 +200,7 @@ void CharSelection::handleInput()
 		game->returnToMainMenu();
 	}
 	else if (LuigiButton.isPressed()) {
-		delete game->player;
+		if (game->player) delete game->player;
 		game->player = new Mario(); // new Luigi 
 		if (globalGameEngine != nullptr) {
 			delete globalGameEngine;
@@ -237,7 +237,6 @@ void MapSelection::draw()
 	map1Button.draw();
 	map2Button.draw();
 	map3Button.draw();
-	map4Button.draw();
 	backButton.draw();
 }
 
@@ -258,11 +257,11 @@ void MapSelection::handleInput()
 		game->player->reset();
 		game->returnToMainMenu();
 	}
-	else if (map4Button.isPressed()) {
-		game->selectMap(4);
-		game->player->reset();
-		game->returnToMainMenu();
-	}
+	//else if (map4Button.isPressed()) {
+	//	game->selectMap(4);
+	//	game->player->reset();
+	//	game->returnToMainMenu();
+	//}
 	else if (backButton.isPressed())
 		game->returnToMainMenu();
 }
@@ -272,7 +271,7 @@ void MapSelection::update()
 	map1Button.update();
 	map2Button.update();
 	map3Button.update();
-	map4Button.update();
+	//map4Button.update();
 	backButton.update();
 }
 

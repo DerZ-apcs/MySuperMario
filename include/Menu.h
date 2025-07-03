@@ -70,9 +70,9 @@ public:
 	void update() override;
 private:
 	Button map1Button,
-		map2Button,
-		map3Button,
-		map4Button;
+		   map2Button,
+		   map3Button;
+		//map4Button
 	Button backButton;
 };
 

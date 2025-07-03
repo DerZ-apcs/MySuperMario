@@ -44,6 +44,7 @@ public:
 	int getCoins() const;
 	int getScores() const;
 	bool isHolding() const;
+	bool getVictory();
 
 	void setLostLife(bool lostLife);
 	
@@ -54,6 +55,7 @@ public:
 	void setDucking(bool ducking);
 	void setHolding(bool holding);
 	void lostSuit();
+	void setVictory(bool victory);
 	
 	virtual void TransitionToSuper();
 	virtual void TransitionToSmall();
@@ -113,6 +115,7 @@ protected:
 	int transitionCurrentFrame;
 	int transitionCurrentFramePos;
 	int throwFrameCounter = 6; // for throw
+	int victoryFrameCounter = 6; // for victory
 	const int transitionFrameOrder[11] = { 0, 1, 0, 1, 0, 1, 2, 1, 2, 1, 2 };
 	const int reversedTransitionFrameOrder[11] = { 2, 1, 2, 1, 2, 1, 0, 1, 0, 1, 0 };
 	const int SuperToFlowerTransitionFrameOrder[10] = { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 };
@@ -121,14 +124,16 @@ protected:
 	SPRITE_STATE Character_sprite_State;
 	std::list<FireBall*> fireballs;
 
-	const float DEAD_PLAYER_INITIAL_VELOCITY = 200.f;
+	const float DEAD_PLAYER_INITIAL_VELOCITY = 500.f;
 	const float DEAD_PLAYER_GRAVITY = 1000.f;
 
-	const float Max_walk_velocity = 100.f;
+	const float Max_walk_velocity = 300.f;
 	const float jet_stomp_velocity = -200.f;
 
 	const float star_invicible_time = 12.f;
 	const float transform_time = 1.f;
+
+	bool victory;
 
 };
 #endif

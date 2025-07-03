@@ -32,7 +32,6 @@ GameEngine::~GameEngine() {
         delete fireball[i];
     player = nullptr;
     fireball.clear();
-
 }
 
 //void GameEngine::addScore(int amount) {
@@ -62,12 +61,9 @@ void GameEngine::update()
             RESOURCE_MANAGER.playSound("pause.wav");
         }
     }
-    if (IsKeyPressed(KEY_BACKSPACE) && !isPaused) {
-        player->setLostLife(true);
-    }
     if (GUI::restart_is_pressed) {
         GUI::restart_is_pressed = false;
-        player->resetInGame();
+        player->reset();
         resetGame();
         resetTimer();
     }
@@ -180,13 +176,14 @@ bool GameEngine::run() {
         if (SETTING.isMusicEnabled()) {
             UpdateMusicStream(RESOURCE_MANAGER.getMusic(level->getMusic()));
         }
+
         update();
         ClearBackground(RAYWHITE);
         draw();
         
         if (cleared == true && isPaused == false) {
             RESOURCE_MANAGER.stopCurrentMusic();
-            RESOURCE_MANAGER.playMusic("COURSECLEAR");
+            RESOURCE_MANAGER.playMusic("MUSIC_1");
             return true;
         }
 
@@ -203,15 +200,20 @@ bool GameEngine::run() {
             player->setLostLife(true);
 
         // clear level
-        if (player->getX() >= map.getMapSize().x && RESOURCE_MANAGER.isPlayingSound("level_clear.wav") == false) {
+        
+        if (player->getX() >= map.getMapSize().x - 20 && RESOURCE_MANAGER.isMusicPlaying("COURSECLEAR") == false) {
             cleared = true;
             isPaused = true;
             player->setVel({ 0, 0 });
         }
-        else if (player->getX() >= map.getMapSize().x - 100.f) { // clear level (when character enter near the end of level)
-            if (player->getPhase() != Phase::CLEARLEVEL_PHASE) {
-                RESOURCE_MANAGER.stopCurrentMusic();
-                RESOURCE_MANAGER.playSound("level_clear.wav");
+        else if (player->getX() >= map.getMapSize().x - 100.f && player->getState() == ON_GROUND) { // clear level (when character enter near the end of level)
+            player->setVictory(true);
+            player->setVel({ 0, 0 });
+            RESOURCE_MANAGER.stopCurrentMusic();
+            RESOURCE_MANAGER.playSound("level_clear.wav");
+            if ((!player->getVictory()) && (player->getPhase() != Phase::CLEARLEVEL_PHASE)) {
+                /*RESOURCE_MANAGER.stopCurrentMusic();
+                RESOURCE_MANAGER.playSound("level_clear.wav");*/
                 player->setPhase(Phase::CLEARLEVEL_PHASE);
             }
         }

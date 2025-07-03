@@ -42,7 +42,9 @@ void Game::init()
 	RESOURCE_MANAGER.playMusic("TITLE");
 	// load map&level
 	Level level1(Map::basePath + "MAP_1.1.json", "BACKGROUND_1", "MUSIC_1", "1-1");
+	Level level2(Map::basePath + "MAP_1.2.json", "BACKGROUND_2", "MUSIC_2", "1-2");
 	loadedLevel.push_back(&level1);
+	loadedLevel.push_back(&level2);
 	// gui
 	loadGUI();
 
@@ -98,7 +100,7 @@ void Game::selectCharacter(int characterIndex)
 
 void Game::selectMap(int mapIndex)
 {
-	if (mapIndex > 4 || mapIndex <= 0)
+	if (mapIndex > 3 || mapIndex <= 0)
 		return;
 		
 	switch (mapIndex)
@@ -112,9 +114,9 @@ void Game::selectMap(int mapIndex)
 	case 3:
 		this->level = loadedLevel[2];
 		break;
-	case 4:
-		this->level = loadedLevel[3];
-		break;
+	//case 4:
+	//	this->level = loadedLevel[3];
+	//	break;
 	}
 	this->selectedMap = mapIndex;
 }
