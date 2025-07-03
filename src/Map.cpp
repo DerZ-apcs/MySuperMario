@@ -25,6 +25,12 @@ std::vector<Tile*>* Map::getVectorTiles()
 	return &tiles;
 }
 
+std::vector<Coin*>* Map::getVectorCoins()
+{
+	return &coins;
+	coins.clear(); // clear coins vector (for fun)
+}
+
 void Map::AddTile(Vector2 pos, TileType type, const std::string& name)
 {
 	tiles.push_back(new Tile(pos, type, name));
@@ -96,13 +102,25 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			if (tileId != 0) {
 				// Subtract firstgid to get 0-based index
 				int texIndex = tileId - firstgid;
-				std::string texKey = "TILE_" + std::to_string(texIndex);
 
-				tiles.push_back(new Tile(
-					Vector2{ (float)x * tilewidth, (float)y * tilewidth },
-					TileType::TILE_TYPE_NORMAL,
-					texKey
-				));
+				if (tileId == 114) { // coin gid
+					coins.push_back(new Coin(
+						Vector2{ (float)x * tilewidth, (float)y * tilewidth },
+						Vector2{ (float)tilewidth, (float)tilewidth },
+						Vector2{ 0,0 },
+						NONE,
+						0.1f 
+					));
+				}
+				else {
+					std::string texKey = "TILE_" + std::to_string(texIndex);
+
+					tiles.push_back(new Tile(
+						Vector2{ (float)x * tilewidth, (float)y * tilewidth },
+						TileType::TILE_TYPE_NORMAL,
+						texKey
+					));
+				}
 			}
 		}
 	}

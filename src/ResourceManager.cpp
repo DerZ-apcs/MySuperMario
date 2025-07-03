@@ -69,8 +69,13 @@ void ResourceManager::loadTextures() {
 
 	textures["FireMarioThrowingFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FireMario_Firing_0.png");
 	textures["FireMarioThrowingFireball_LEFT_0"] = flipTexture(textures["FireMarioThrowingFireball_RIGHT_0"]);
+	// coin
+	textures["COIN_0"] = LoadTexture("resources/images/sprites/items/Coin_0.png");
+	textures["COIN_1"] = LoadTexture("resources/images/sprites/items/Coin_1.png");
+	textures["COIN_2"] = LoadTexture("resources/images/sprites/items/Coin_2.png");
+	textures["COIN_3"] = LoadTexture("resources/images/sprites/items/Coin_3.png");
 	// tile
-	for (int i = 0; i <= 112; i++) {
+	for (int i = 0; i <= 113; i++) {
 		std::string path = "resources/images/tiles/AllTiles/tile_" + std::to_string(i) + ".png";
 		textures["TILE_" + std::to_string(i)] = LoadTexture(path.c_str());
 	}

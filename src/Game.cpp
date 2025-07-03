@@ -10,7 +10,7 @@ Game::Game(int nwidth, int nheight, int ntargetFPS) :
 	width(nwidth), height(nheight), targetFPS(ntargetFPS), Resource_manager(Singleton<ResourceManager>::getInstance()) {
 	Resource_manager.LoadAllResources();
 	// map
-	map1.LoadFromJsonFile(Map::basePath + "kmap_3.json"); // change map hereeeeeeeeeee <<-------
+	map1.LoadFromJsonFile(Map::basePath + "kmap_1.json"); // change map hereeeeeeeeeee <<-------
 	// background
 	BgWidth = (float)GetScreenWidth();
 	BgHeight = (float)GetScreenHeight();
@@ -35,6 +35,7 @@ void Game::initGame()
 {
 	SetTargetFPS(targetFPS);
 	Resource_manager.playMusic("MUSIC1");
+	Coins = *map1.getVectorCoins();
 
 	while (!WindowShouldClose()) {
 		UpdateGame();
@@ -92,6 +93,18 @@ void Game::UpdateGame()
 				//fireball->HandleTileCollision(*tile, FireBallCollision);
 		}
 	}
+
+	// coins
+	for (auto& coin : Coins) {
+		if (coin->getCollected()) continue; 
+
+		CollisionType CoinCollision = mario.CheckCollision(*coin);
+		if (CoinCollision != COLLISION_TYPE_NONE) {
+			mediatorCollision.HandleCollision(&mario, coin);
+		}
+
+		coin->Update();
+	}
 	
 	mario.Update();
 }
@@ -103,6 +116,7 @@ void Game::draw()
 	drawBackGround();
 	mario.draw();
 	map1.drawMap();
+	for (auto& coin : Coins) { coin->draw(); }
 	//Resource_manager.drawAllTiles(); // debug function to draw all tiles
 	EndMode2D();
 }

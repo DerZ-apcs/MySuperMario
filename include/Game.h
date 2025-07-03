@@ -6,6 +6,7 @@
 #include "../include/ResourceManager.h"
 #include "../include/Tile.h"
 #include "../include/Map.h"
+#include "../include/Coin.h"
 #include "../include/MediatorCollision.h"
 
 class Game {
@@ -18,6 +19,7 @@ private:
 
 	//bool initialize;
 	std::vector<Tile*> Tiles;
+	std::vector<Coin*> Coins;
 	Mario mario;
 	Map map1;
 	Texture2D BackGroundTex;

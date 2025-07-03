@@ -3,10 +3,12 @@
 #include "../include/Entity.h"
 #include "../include/Mario.h"
 #include "../include/Tile.h"
+#include "../include/Coin.h"
 class MediatorCollision {
 private:
 	void HandlePlayerWithTiles(Mario*& mario, Tile*& tile, CollisionType Colltype);
 	void HandleFireballWithTIles(FireBall*& fireball, Tile*& tile, CollisionType Colltype);
+	void HandlePlayerWithCoins(Mario*& mario, Coin*& coin, CollisionType Colltype);
 public:
 	void HandleCollision(Entity* entity1, Entity* entity2);
 };
