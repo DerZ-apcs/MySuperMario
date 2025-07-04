@@ -3,6 +3,7 @@
 #include "../include/Entity.h"
 #include "../include/Mario.h"
 #include "../include/Tile.h"
+#include <raymath.h>
 
 // Điểm số
 const int SCORE_STOMP_GOOMBA = 100;
@@ -20,6 +21,8 @@ const float FLYINGGOOMBA_JUMP_INTERVAL = 1.0f;
 // Tốc độ
 const float MARIO_BOUNCE_VELOCITY = -300.0f;
 const float GOOMBA_SPEED = 100.0f;
+const float FLYINGGOOMBA_SPEED = 100.0f;
+const float FLYINGGOOMBA_JUMP_VELOCITY = -500.0f;
 const float KOOPA_SPEED = 80.0f;
 const float KOOPA_SHELL_SPEED = 300.0f;
 const float BULLET_SPEED = 300.0f;
@@ -31,6 +34,7 @@ protected:
     float squashScale; // Scale for squash effect when dying
     void updateSquashEffect(); // Update squash effect during death animation
     bool isDead; // Flag to mark enemy for removal
+    bool isFlipped;
 public:
     Enemy(Vector2 pos, Vector2 size, Vector2 vel, Direction direction, EntityState state, Texture2D texture, float frameTime, int maxFrame, Color color);
     virtual ~Enemy();

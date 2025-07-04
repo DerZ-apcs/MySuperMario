@@ -11,7 +11,11 @@ private:
     void HandlePlayerWithTiles(Mario*& mario, Tile*& tile, CollisionType Colltype);
     void HandleFireballWithTiles(FireBall*& fireball, Tile*& tile, CollisionType Colltype);
     void HandleEnemyWithMario(Enemy*& enemy, Mario*& mario, CollisionType Colltype);
+    Mario* mario;
 public:
+    void SetMario(Mario* m);
+    Mario* GetMario() const;
     void HandleCollision(Entity* entity1, Entity* entity2);
 };
+
 #endif

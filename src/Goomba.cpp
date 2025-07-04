@@ -2,17 +2,68 @@
 #include "../include/Koopa.h"
 
 // Goomba Class Implementation
-Goomba::Goomba(Vector2 pos, Texture2D texture)
-    : Enemy(pos, { 32, 48 }, { 0, 0 }, LEFT, ON_GROUND, texture, 0.2f, 1, BROWN) {
+Goomba::Goomba(Vector2 pos, Texture2D texture, MediatorCollision* mediator)
+    : Enemy(pos, { 32, 48 }, { 0, 0 }, LEFT, ON_GROUND, texture, 0.2f, 1, BROWN),
+    pauseTimer(0.0f), isPaused(false), detectMarioRange(200.0f), mediatorCollision(mediator), collisionTimer(0.0f) {
 }
 
 void Goomba::Update() {
-    if (state == ON_GROUND && !isDead) {
-        if (direction == LEFT) {
-            velocity.x = -100;
+    if (isReadyForRemoval() || state == STATE_IS_DYING) {
+        Enemy::Update();
+        return;
+    }
+	const float deltaTime = GetFrameTime();
+
+    if (collisionTimer > 0) {
+        collisionTimer -= deltaTime;
+    }
+
+    Mario* mario = mediatorCollision ? mediatorCollision->GetMario() : nullptr;
+    if (mario && mario->getState() != STATE_IS_DYING && collisionTimer <= 0) {
+        float distance = Vector2Distance(position, mario->getPosition());
+        if (distance <= detectMarioRange) {
+            // Mario trong phạm vi phát hiện, thay đổi hành vi
+            if (mario->getX() < position.x) {
+                direction = LEFT;
+                velocity.x = -GOOMBA_SPEED * 1.5f; // Tăng tốc độ khi đuổi
+            }
+            else {
+                direction = RIGHT;
+                velocity.x = GOOMBA_SPEED * 1.5f; // Tăng tốc độ khi đuổi
+            }
         }
         else {
-            velocity.x = 100;
+            // Mario ngoài phạm vi, di chuyển bình thường
+            if (state == ON_GROUND) {
+                velocity.x = (direction == LEFT) ? -GOOMBA_SPEED : GOOMBA_SPEED;
+            }
+        }
+    }
+    else {
+        if (isPaused) {
+            pauseTimer -= deltaTime;
+            if (pauseTimer <= 0) {
+                isPaused = false;
+                direction = (direction == LEFT) ? RIGHT : LEFT;
+                velocity.x = (direction == LEFT) ? -GOOMBA_SPEED : GOOMBA_SPEED;
+            }
+            velocity.x = 0;
+        }
+        else {
+            if (state == ON_GROUND) {
+                //velocity.x = (direction == LEFT) ? -GOOMBA_SPEED : GOOMBA_SPEED;
+                //if (GetRandomValue(0, 1000) < 3) { // 0.5% cơ hội dừng lại
+                //    isPaused = true;
+                //    pauseTimer = GetRandomValue(5, 15) / 10.0f; // Dừng 1-3 giây
+                //}
+                if (collisionTimer <= 0) {
+                    velocity.x = (direction == LEFT) ? -GOOMBA_SPEED : GOOMBA_SPEED;
+                }
+                if (GetRandomValue(0, 1000) < 3) { // 0.3% cơ hội dừng lại
+                    isPaused = true;
+                    pauseTimer = GetRandomValue(5, 15) / 10.0f; // Dừng 0.5-1.5 giây
+                }
+            }
         }
     }
     Enemy::Update();
@@ -23,8 +74,9 @@ void Goomba::draw() {
 }
 
 void Goomba::UpdateTexture() {
-    if (isDead || state == STATE_IS_DYING) {
+    if (state == STATE_IS_DYING) {
         texture = Singleton<ResourceManager>::getInstance().getTexture("Goomba_Dead");
+        isFlipped = true;
         return;
     }
     if (state == ON_GROUND) {
@@ -34,41 +86,34 @@ void Goomba::UpdateTexture() {
             frameAcum = 0;
         }
         if (direction == LEFT) {
-            if (currFrame == 0) {
-                texture = Singleton<ResourceManager>::getInstance().getTexture("Goomba_LEFT_0");
-            }
-            else {
-                texture = Singleton<ResourceManager>::getInstance().getTexture("Goomba_LEFT_1");
-            }
+            texture = Singleton<ResourceManager>::getInstance().getTexture(
+                currFrame == 0 ? "Goomba_LEFT_0" : "Goomba_LEFT_1");
         }
         else {
-            if (currFrame == 0) {
-                texture = Singleton<ResourceManager>::getInstance().getTexture("Goomba_RIGHT_0");
-            }
-            else {
-                texture = Singleton<ResourceManager>::getInstance().getTexture("Goomba_RIGHT_1");
-            }
+            texture = Singleton<ResourceManager>::getInstance().getTexture(
+                currFrame == 0 ? "Goomba_RIGHT_0" : "Goomba_RIGHT_1");
         }
     }
 }
 
 void Goomba::CollisionWithCharacter(Mario& mario, CollisionType collType) {
-    if (isDead || state == STATE_IS_DYING) return;
+    if (isReadyForRemoval() || state == STATE_IS_DYING) return;
     if (collType == COLLISION_TYPE_SOUTH && (mario.getState() == JUMPING || mario.getState() == FALLING)) {
         state = STATE_IS_DYING;
-        velocity.x = 0;
-        velocity.y = 0;
+        velocity.x = (mario.getX() > position.x) ? -50.0f : 50.0f; // Hiệu ứng đẩy nhẹ
+        velocity.y = -100.0f; // Nhảy nhẹ lên
         deathTimer = 0.3f;
-        mario.setVelY(-300);
-        mario.addScore(100);
+        mario.setVelY(MARIO_BOUNCE_VELOCITY);
+        mario.addScore(SCORE_STOMP_GOOMBA);
         Singleton<ResourceManager>::getInstance().playSound("STOMP");
         updateSquashEffect();
         UpdateTexture();
+        return;
     }
-    else if (collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_WEST || collType == COLLISION_TYPE_NORTH) {
+    if (collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_WEST || collType == COLLISION_TYPE_NORTH) {
         if (mario.getMarioState() == STATE_SUPER || mario.getMarioState() == STATE_FIRE_BALL) {
             mario.TransitionToSmall();
-            mario.setInvincibilityTimer(2.0f);
+            mario.setInvincibilityTimer(1.0f);
         }
         else {
             mario.setState(STATE_IS_DYING);
@@ -82,17 +127,18 @@ void Goomba::CollisionWithEnemy(Enemy& enemy, CollisionType collType) {
     Koopa* koopa = dynamic_cast<Koopa*>(&enemy);
     if (koopa && koopa->getState() == STATE_SHELL && (collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_WEST) && koopa->getVelX() != 0) {
         state = STATE_IS_DYING;
-        velocity.x = 0;
-        velocity.y = 0;
-        deathTimer = 0.5f;
+        velocity.x = (koopa->getX() > position.x) ? -100.0f : 100.0f; // Đẩy ra xa
+        velocity.y = -100.0f;
+        deathTimer = 0.3f;
         Singleton<ResourceManager>::getInstance().playSound("GOOMBA_SQUASH");
         updateSquashEffect();
         UpdateTexture();
+        return;
     }
 }
 
 void Goomba::HandleTileCollision(const Tile& tile, CollisionType collType) {
-    if (isDead) return;
+    if (isDead || state == STATE_IS_DYING) return;
     if (collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_WEST) {
         direction = (direction == LEFT) ? RIGHT : LEFT;
         if (collType == COLLISION_TYPE_EAST) {
@@ -101,7 +147,8 @@ void Goomba::HandleTileCollision(const Tile& tile, CollisionType collType) {
         else if (collType == COLLISION_TYPE_WEST) {
             setX(tile.getX() + tile.getWidth());
         }
-        velocity.x = -velocity.x;
+        velocity.x = (direction == LEFT) ? -GOOMBA_SPEED : GOOMBA_SPEED;
+        collisionTimer = 1.0f; // Tạm thời vô hiệu hóa logic đuổi Mario trong 0.5 giây
         UpdateTexture();
     }
     else if (collType == COLLISION_TYPE_SOUTH) {
@@ -116,14 +163,14 @@ void Goomba::HandleTileCollision(const Tile& tile, CollisionType collType) {
 }
 
 // FlyingGoomba Class Implementation
-FlyingGoomba::FlyingGoomba(Vector2 pos, Texture2D texture)
-    : Goomba(pos, texture), jumpTimer(0.0f) {
-    velocity.x = -100; // Di chuyển ngang ban đầu
-    state = ON_GROUND; // Bắt đầu trên mặt đất
+FlyingGoomba::FlyingGoomba(Vector2 pos, Texture2D texture, MediatorCollision* mediator)
+    : Goomba(pos, texture, nullptr), jumpTimer(0.0f), detectMarioRange(250.0f), mediatorCollision(mediator), collisionTimer(0.0f) {
+    velocity.x = -FLYINGGOOMBA_SPEED;
+    state = ON_GROUND;
 }
 
 void FlyingGoomba::Update() {
-    if (isDead || state == STATE_IS_DYING) {
+    if (isReadyForRemoval() || state == STATE_IS_DYING) {
         if (deathTimer > 0) {
             deathTimer -= GetFrameTime();
             updateSquashEffect();
@@ -135,20 +182,63 @@ void FlyingGoomba::Update() {
         return;
     }
 
-    const float deltaTime = GetFrameTime();
-    position.x += velocity.x * deltaTime;
+	const float deltaTime = GetFrameTime();
+
+    if (collisionTimer > 0) {
+		collisionTimer -= deltaTime;
+    }
+
+    Mario* mario = mediatorCollision ? mediatorCollision->GetMario() : nullptr;
+    if (mario && mario->getState() != STATE_IS_DYING && collisionTimer <= 0) {
+        float distance = Vector2Distance(position, mario->getPosition());
+        if (distance <= detectMarioRange) {
+            // Mario trong phạm vi phát hiện, thay đổi hướng và tốc độ
+            if (mario->getX() < position.x) {
+                direction = LEFT;
+                velocity.x = -FLYINGGOOMBA_SPEED * 1.5f; // Tăng tốc khi đuổi
+            }
+            else {
+                direction = RIGHT;
+                velocity.x = FLYINGGOOMBA_SPEED * 1.5f; // Tăng tốc khi đuổi
+            }
+            // Tăng tần suất nhảy khi gần Mario
+            if (distance < detectMarioRange * 0.5f && state == ON_GROUND && jumpTimer > FLYINGGOOMBA_JUMP_INTERVAL * 0.5f) {
+                velocity.y = -FLYINGGOOMBA_JUMP_VELOCITY;
+                state = JUMPING;
+                jumpTimer = 0.0f;
+            }
+        }
+        else {
+            // Mario ngoài phạm vi, di chuyển bình thường
+            velocity.x = (direction == LEFT) ? -FLYINGGOOMBA_SPEED : FLYINGGOOMBA_SPEED;
+        }
+    }
+    else {
+        // Không có Mario hoặc Mario đang chết, di chuyển bình thường
+        velocity.x = (direction == LEFT) ? -FLYINGGOOMBA_SPEED : FLYINGGOOMBA_SPEED;
+    }
+
+    static float hoverTimer = 0.0f;
+    hoverTimer += deltaTime;
+    float hoverOffset = sin(hoverTimer * 3.0f) * 50.0f; // Dao động ±10 pixel
+    position.y += hoverOffset * deltaTime;
 
     // Logic nhảy
     jumpTimer += deltaTime;
-    if (state == ON_GROUND && jumpTimer > 1.0f) { // Nhảy mỗi 1 giây
-        velocity.y = -300; // Nhảy lên
+    if (state == ON_GROUND && jumpTimer > FLYINGGOOMBA_JUMP_INTERVAL) {
+        velocity.y = -FLYINGGOOMBA_JUMP_VELOCITY; // Nhảy ngẫu nhiên
         state = JUMPING;
         jumpTimer = 0.0f;
+        // baseY = position.y;
     }
 
+    // Cập nhật vị trí
+    position.x += velocity.x * deltaTime;
+    position.y += velocity.y * deltaTime;
+
+    // Áp dụng trọng lực nhẹ
     if (state != ON_GROUND) {
-        position.y += velocity.y * deltaTime;
-        velocity.y += GRAVITY * deltaTime;
+        velocity.y += GRAVITY * deltaTime * 0.5f; // Trọng lực nhẹ hơ
         if (velocity.y > 0 && state == JUMPING) {
             state = FALLING;
         }
@@ -159,8 +249,9 @@ void FlyingGoomba::Update() {
 }
 
 void FlyingGoomba::UpdateTexture() {
-    if (isDead || state == STATE_IS_DYING) {
+    if (state == STATE_IS_DYING) {
         texture = Singleton<ResourceManager>::getInstance().getTexture("Goomba_Dead");
+        isFlipped = true;
         return;
     }
 
@@ -171,25 +262,17 @@ void FlyingGoomba::UpdateTexture() {
     }
 
     if (direction == LEFT) {
-        if (currFrame == 0) {
-            texture = Singleton<ResourceManager>::getInstance().getTexture("FlyingGoomba_LEFT_0");
-        }
-        else {
-            texture = Singleton<ResourceManager>::getInstance().getTexture("FlyingGoomba_LEFT_1");
-        }
+        texture = Singleton<ResourceManager>::getInstance().getTexture(
+            currFrame == 0 ? "FlyingGoomba_LEFT_0" : "FlyingGoomba_LEFT_1");
     }
     else {
-        if (currFrame == 0) {
-            texture = Singleton<ResourceManager>::getInstance().getTexture("FlyingGoomba_RIGHT_0");
-        }
-        else {
-            texture = Singleton<ResourceManager>::getInstance().getTexture("FlyingGoomba_RIGHT_1");
-        }
+        texture = Singleton<ResourceManager>::getInstance().getTexture(
+            currFrame == 0 ? "FlyingGoomba_RIGHT_0" : "FlyingGoomba_RIGHT_1");
     }
 }
 
 void FlyingGoomba::HandleTileCollision(const Tile& tile, CollisionType collType) {
-    if (isDead) return;
+    if (isDead || state == STATE_IS_DYING) return;
     if (collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_WEST) {
         direction = (direction == LEFT) ? RIGHT : LEFT;
         if (collType == COLLISION_TYPE_EAST) {
@@ -198,7 +281,8 @@ void FlyingGoomba::HandleTileCollision(const Tile& tile, CollisionType collType)
         else if (collType == COLLISION_TYPE_WEST) {
             setX(tile.getX() + tile.getWidth());
         }
-        velocity.x = -velocity.x;
+        velocity.x = (direction == LEFT) ? -FLYINGGOOMBA_SPEED : FLYINGGOOMBA_SPEED;
+        collisionTimer = 1.0f; // Tạm thời vô hiệu hóa logic đuổi Mario trong 1 giây
         UpdateTexture();
     }
     else if (collType == COLLISION_TYPE_SOUTH) {

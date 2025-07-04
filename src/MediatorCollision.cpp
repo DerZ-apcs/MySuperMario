@@ -134,3 +134,11 @@ void MediatorCollision::HandleCollision(Entity* entity1, Entity* entity2) {
         return;
     }
 }
+
+void MediatorCollision::SetMario(Mario* m) { 
+    mario = m; 
+}
+
+Mario* MediatorCollision::GetMario() const { 
+    return mario; 
+}

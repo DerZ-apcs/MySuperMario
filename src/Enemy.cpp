@@ -5,7 +5,7 @@
 
 // Enemy Class Implementation
 Enemy::Enemy(Vector2 pos, Vector2 size, Vector2 vel, Direction direction, EntityState state, Texture2D texture, float frameTime, int maxFrame, Color color)
-    : Entity(pos, size, vel, direction, state, texture, frameTime, maxFrame, color), deathTimer(0.0f), isDead(false), squashScale(1.0f) {
+    : Entity(pos, size, vel, direction, state, texture, frameTime, maxFrame, color), deathTimer(0.0f), isDead(false), squashScale(1.0f), isFlipped(false) {
     CollEast.setColor(BLACK);
     CollSouth.setColor(GREEN);
     CollNorth.setColor(RED);
@@ -42,9 +42,13 @@ void Enemy::Update() {
 void Enemy::draw() {
     if (!isDead) {
         Rectangle source = { 0, 0, (float)texture.width, (float)texture.height };
+        if (isFlipped) {
+            source.width *= -1; // Lật ngược texture
+        }
         Rectangle dest = { position.x, position.y, texture.width * squashScale, texture.height * squashScale };
         Vector2 origin = { (texture.width * squashScale) / 2, (texture.height * squashScale) / 2 };
         DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
+        // Thêm hiệu ứng hạt (cần hệ thống hạt riêng)
 #ifdef DEBUG
         CollNorth.draw();
         CollSouth.draw();
@@ -57,6 +61,7 @@ void Enemy::draw() {
 void Enemy::updateSquashEffect() {
     if (state == STATE_IS_DYING) {
         squashScale = 1.0f - (0.5f - deathTimer) / 0.5f;
+		isFlipped = true; // Lật ngược khi đang chết
         updateCollision();
     }
 }

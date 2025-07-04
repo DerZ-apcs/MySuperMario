@@ -1,10 +1,17 @@
 ﻿#ifndef GOOMBA_H
 #define GOOMBA_H
 #include "../include/Enemy.h"
+#include "../include/MediatorCollision.h"
 
 class Goomba : public Enemy {
+private:
+    float pauseTimer;
+    bool isPaused;
+    float detectMarioRange;
+    MediatorCollision* mediatorCollision;
+    float collisionTimer;
 public:
-    Goomba(Vector2 pos, Texture2D texture);
+    Goomba(Vector2 pos, Texture2D texture, MediatorCollision* mediator);
     void Update() override;
     void draw() override;
     void UpdateTexture() override;
@@ -16,8 +23,11 @@ public:
 class FlyingGoomba : public Goomba {
 private:
     float jumpTimer; // Timer để kiểm soát tần suất nhảy
+    float detectMarioRange;
+	MediatorCollision* mediatorCollision;
+    float collisionTimer;
 public:
-    FlyingGoomba(Vector2 pos, Texture2D texture);
+    FlyingGoomba(Vector2 pos, Texture2D texture, MediatorCollision* mediator);
     void Update() override;
     void UpdateTexture() override;
     void HandleTileCollision(const Tile& tile, CollisionType collType) override;

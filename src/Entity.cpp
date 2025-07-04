@@ -67,6 +67,9 @@ void Entity::updateCollision()
 
 CollisionType Entity::CheckCollision(const Entity& entity) const {
 	Rectangle rect = entity.getRect();
+	if (!CheckCollisionRecs(rect, entity.getRect())) {
+		return COLLISION_TYPE_NONE;
+	}
 	if (CollNorth.checkCollision(rect) == COLLISION_TYPE_COLLIDED) {
 		return COLLISION_TYPE_NORTH;
 	}

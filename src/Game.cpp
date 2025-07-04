@@ -19,14 +19,15 @@ Game::Game(int nwidth, int nheight, int ntargetFPS) :
     camera.target = mario.getPosition();
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
-    enemies.push_back(new Goomba({ 400, 900 }, Resource_manager.getTexture("Goomba_LEFT_0")));
-    enemies.push_back(new Goomba({ 400, 900 }, Resource_manager.getTexture("Goomba_LEFT_0")));
-    enemies.push_back(new Koopa({ 500, 912 }, Resource_manager.getTexture("Koopa_LEFT_1")));
-    enemies.push_back(new FlyingGoomba({ 700, 920 }, Resource_manager.getTexture("FlyingGoomba_LEFT_0")));
-    enemies.push_back(new FlyingGoomba({ 800, 920 }, Resource_manager.getTexture("FlyingGoomba_LEFT_1")));
-    enemies.push_back(new Bullet({ 400, 704 }, Resource_manager.getTexture("Bullet_LEFT_1"), LEFT)); 
-    enemies.push_back(new Bullet({ 500, 704 }, Resource_manager.getTexture("Bullet_RIGHT_1"), RIGHT)); 
-    enemies.push_back(new PiranhaPlant({ 576, 448 }, Resource_manager.getTexture("PiranhaPlant_OPEN"),mario));
+    mediatorCollision.SetMario(&mario);
+    enemies.push_back(new Goomba({ 400, 900 }, Resource_manager.getTexture("Goomba_LEFT_0"), &mediatorCollision));
+    enemies.push_back(new Goomba({ 401, 900 }, Resource_manager.getTexture("Goomba_RIGHT_0"), &mediatorCollision));
+  /*  enemies.push_back(new Koopa({ 500, 912 }, Resource_manager.getTexture("Koopa_LEFT_1")));*/
+    enemies.push_back(new FlyingGoomba({ 700, 900 }, Resource_manager.getTexture("Goomba_LEFT_0"), &mediatorCollision));
+    enemies.push_back(new FlyingGoomba({ 800, 920 }, Resource_manager.getTexture("FlyingGoomba_LEFT_1"), &mediatorCollision));
+    /*enemies.push_back(new Bullet({ 400, 704 }, Resource_manager.getTexture("Bullet_LEFT_1"), LEFT)); 
+    enemies.push_back(new Bullet({ 500, 930 }, Resource_manager.getTexture("Bullet_RIGHT_1"), RIGHT)); 
+    enemies.push_back(new PiranhaPlant({ 576, 448 }, Resource_manager.getTexture("PiranhaPlant_OPEN"),mario));*/
 }
 
 Game::~Game()
@@ -113,7 +114,7 @@ void Game::UpdateGame() {
     enemies.erase(std::remove_if(enemies.begin(), enemies.end(), [](Enemy* enemy) {
         if (enemy && enemy->isReadyForRemoval()) {
             delete enemy;
-            return true; // Trả về true để `remove_if` đánh dấu phần tử này cần xóa
+            return true;
         }
         return false;
         }), enemies.end());
