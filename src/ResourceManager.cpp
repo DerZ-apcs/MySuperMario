@@ -74,6 +74,11 @@ void ResourceManager::loadTextures() {
 	textures["COIN_1"] = LoadTexture("resources/images/sprites/items/Coin_1.png");
 	textures["COIN_2"] = LoadTexture("resources/images/sprites/items/Coin_2.png");
 	textures["COIN_3"] = LoadTexture("resources/images/sprites/items/Coin_3.png");
+	// question block
+	textures["QUESTION_0"] = LoadTexture("resources/images/sprites/blocks/Question_0.png");
+	textures["QUESTION_1"] = LoadTexture("resources/images/sprites/blocks/Question_1.png");
+	textures["QUESTION_2"] = LoadTexture("resources/images/sprites/blocks/Question_2.png");
+	textures["QUESTION_3"] = LoadTexture("resources/images/sprites/blocks/Question_3.png");	
 	// tile
 	for (int i = 0; i <= 113; i++) {
 		std::string path = "resources/images/tiles/AllTiles/tile_" + std::to_string(i) + ".png";

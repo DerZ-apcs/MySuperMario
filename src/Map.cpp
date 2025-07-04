@@ -28,7 +28,6 @@ std::vector<Tile*>* Map::getVectorTiles()
 std::vector<Coin*>* Map::getVectorCoins()
 {
 	return &coins;
-	coins.clear(); // clear coins vector (for fun)
 }
 
 void Map::AddTile(Vector2 pos, TileType type, const std::string& name)
@@ -66,6 +65,12 @@ void Map::clear() {
 		tile = nullptr;
 	}
 	tiles.clear();
+
+	for (auto& coin : coins) {
+		delete coin;
+		coin = nullptr;
+	}
+	coins.clear();
 }
 
 void Map::drawMap()
@@ -111,6 +116,12 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 						NONE,
 						0.1f 
 					));
+				}
+				else if (tileId == 105) { // brick gid
+					tiles.push_back(new Brick(Vector2{ (float)x * tilewidth, (float)y * tilewidth }));
+				}
+				else if (tileId == 106) { // question block gid
+					tiles.push_back(new QuestionBlock(Vector2{ (float)x * tilewidth, (float)y * tilewidth }));
 				}
 				else {
 					std::string texKey = "TILE_" + std::to_string(texIndex);

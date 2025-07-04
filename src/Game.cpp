@@ -10,7 +10,7 @@ Game::Game(int nwidth, int nheight, int ntargetFPS) :
 	width(nwidth), height(nheight), targetFPS(ntargetFPS), Resource_manager(Singleton<ResourceManager>::getInstance()) {
 	Resource_manager.LoadAllResources();
 	// map
-	map1.LoadFromJsonFile(Map::basePath + "kmap_1.json"); // change map hereeeeeeeeeee <<-------
+	map1.LoadFromJsonFile(Map::basePath + "kmap_2.json"); // change map hereeeeeeeeeee <<-------
 	// background
 	BgWidth = (float)GetScreenWidth();
 	BgHeight = (float)GetScreenHeight();
@@ -82,6 +82,8 @@ void Game::UpdateGame()
 	}
 	// tiles
 	for (auto const& tile : *map1.getVectorTiles()) {
+		if (QuestionBlock* ques_b = dynamic_cast<QuestionBlock*>(tile)) { ques_b->Update(); }
+
 		CollisionType PlayerCollision = mario.CheckCollision(*tile);
 		if (PlayerCollision != COLLISION_TYPE_NONE)
 			mediatorCollision.HandleCollision(&mario, tile);

@@ -2,8 +2,8 @@
 #include "../include/ResourceManager.h"
 
 Coin::Coin(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, float timeSpan)
-	: Entity(pos, sz, vel, dir, ON_GROUND, 0.2f, 3, YELLOW), timeSpan(timeSpan), timeSpanAcum(0) {
-	this->texture = Singleton<ResourceManager>::getInstance().getTexture("Coin_0");
+	: Entity(pos, sz, vel, dir, ON_GROUND, 0.2f, 4, YELLOW) {
+	this->texture = Singleton<ResourceManager>::getInstance().getTexture("COIN_0");
 	this->frameAcum = 0;
 	this->currFrame = 0;
 
@@ -12,8 +12,6 @@ Coin::Coin(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, float timeSpan)
 	this->CollEast.setSize(Vector2{ 1, size.y - 8 });
 	this->CollWest.setSize(Vector2{ 1, size.y - 8 });
 	this->updateCollision();
-
-	maxFrame = 3; // Number of frames in the coin animation
 }
 
 //------------------
@@ -36,16 +34,11 @@ void Coin::Update() {
 	}
 
 	UpdateTexture();
-	updateCollision();
 }
 
 void Coin::UpdateTexture() {
 	std::string textureName = "COIN_" + std::to_string(currFrame);
 	texture = Singleton<ResourceManager>::getInstance().getTexture(textureName);
-}
-
-void Coin::updateCollision() {
-	Entity::updateCollision();
 }
 
 void Coin::draw() {

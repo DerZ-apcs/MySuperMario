@@ -28,6 +28,41 @@ void MediatorCollision::HandlePlayerWithTiles(Mario*& mario, Tile*& tile, Collis
 	}
 }
 
+void MediatorCollision::HandlePlayerWithBrick(Mario*& mario, Brick*& brick, CollisionType Colltype)
+{
+	if (Colltype == COLLISION_TYPE_NONE) { return; }
+	if (brick->getBroken()) return; // If the brick is broken, no collision handling needed
+
+	switch (Colltype) {
+	case COLLISION_TYPE_SOUTH:
+		// lands on top of brick
+		mario->setPosition(Vector2{ mario->getX(), brick->getY() - mario->getHeight() });
+		mario->setVelY(0);
+		mario->setState(ON_GROUND);
+		break;
+
+	case COLLISION_TYPE_NORTH:
+		// hits brick from below
+		mario->setPosition(Vector2{ mario->getX(), brick->getY() + brick->getHeight() });
+		mario->setVelY(-0.1);
+		brick->setBroken(true);
+		break;
+
+	case COLLISION_TYPE_EAST:
+		mario->setPosition(Vector2{ brick->getX() - mario->getWidth(), mario->getY() });
+		mario->setVelX(0);
+		break;
+
+	case COLLISION_TYPE_WEST:
+		mario->setPosition(Vector2{ brick->getX() + brick->getWidth(), mario->getY() });
+		mario->setVelX(0);
+		break;
+
+	default:
+		break;
+	}
+}
+
 void MediatorCollision::HandleFireballWithTIles(FireBall*& fireball, Tile*& tile, CollisionType Colltype)
 {
 	if (Colltype == COLLISION_TYPE_NONE)
@@ -70,12 +105,21 @@ void MediatorCollision::HandleCollision(Entity* entity1, Entity* entity2)
 	Mario* isMario_2 = dynamic_cast<Mario*>(entity2);
 	FireBall* isFireBall_1 = dynamic_cast<FireBall*>(entity1);
 	FireBall* isFireBall_2 = dynamic_cast<FireBall*>(entity2);
+	Brick* isBrick_1 = dynamic_cast<Brick*>(entity1);
+	Brick* isBrick_2 = dynamic_cast<Brick*>(entity2);
 	Tile* isTile_1 = dynamic_cast<Tile*>(entity1);
 	Tile* isTile_2 = dynamic_cast<Tile*>(entity2);
 	Coin* isCoin_1 = dynamic_cast<Coin*>(entity1);
 	Coin* isCoin_2 = dynamic_cast<Coin*>(entity2);
 
-	if ((isMario_1 && isTile_2) || (isMario_2 && isTile_1)) {
+	if ((isMario_1 && isBrick_2) || (isMario_2 && isBrick_1)) {
+		CollisionType CollType = isMario_1 ? isMario_1->CheckCollision(*isBrick_2) : isMario_2->CheckCollision(*isBrick_1);
+		if (isMario_1)
+			HandlePlayerWithBrick(isMario_1, isBrick_2, CollType);
+		else
+			HandlePlayerWithBrick(isMario_2, isBrick_1, CollType);
+	}
+	else if ((isMario_1 && isTile_2) || (isMario_2 && isTile_1)) {
 		CollisionType CollType = isMario_1 ? isMario_1->CheckCollision(*isTile_2) : isMario_2->CheckCollision(*isTile_1);
 		if (isMario_1)
 			HandlePlayerWithTiles(isMario_1, isTile_2, CollType);

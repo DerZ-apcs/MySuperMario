@@ -3,6 +3,8 @@
 #include <raylib.h>
 #include "../include/Tile.h"
 #include "../include/Coin.h"
+#include "../include/Brick.h"
+#include "../include/QuestionBlock.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>

@@ -6,8 +6,6 @@
 
 class Coin : public Entity {
 private:
-	float timeSpan;
-	float timeSpanAcum;
 	bool isCollected = false;
 
 public:
@@ -20,7 +18,6 @@ public:
 	void Update() override;
 	void draw() override;
 	void UpdateTexture() override;
-	void updateCollision() override;
 
 };
 
