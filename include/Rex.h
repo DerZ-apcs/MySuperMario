@@ -1,14 +1,21 @@
-﻿#ifndef KOOPA_H
-#define KOOPA_H
+#ifndef REX_H
+#define REX_H
 #include "../include/Enemy.h"
+#include "../include/MediatorCollision.h"
 
-class Koopa : public Enemy {
+enum RexState {
+    REX_NORMAL,
+    REX_COMPRESSED
+};
+
+class Rex : public Enemy {
 private:
-    float reviveTimer;
-    bool isReviving; // Trạng thái rung trước khi hồi sinh
-    float reviveShakeTimer; // Timer cho hiệu ứng rung
+    RexState rexState;
+    float detectMarioRange;
+    MediatorCollision* mediatorCollision;
+    float collisionTimer;
 public:
-    Koopa(Vector2 pos, Texture2D texture);
+    Rex(Vector2 pos, Texture2D texture, MediatorCollision* mediator);
     void Update() override;
     void draw() override;
     void UpdateTexture() override;
@@ -16,6 +23,7 @@ public:
     void CollisionWithEnemy(Enemy& enemy, CollisionType collType) override;
     void CollisionWithFireball(FireBall& fireball) override;
     void HandleTileCollision(const Tile& tile, CollisionType collType) override;
+    void updateCollision() override;
 };
 
 #endif

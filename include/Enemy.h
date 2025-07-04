@@ -10,6 +10,7 @@ const int SCORE_STOMP_GOOMBA = 100;
 const int SCORE_STOMP_KOOPA = 100;
 const int SCORE_KICK_KOOPA = 200;
 const int SCORE_STOMP_BULLET = 200;
+const int SCORE_STOMP_REX = 200;
 
 // Thời gian
 const float ENEMY_DEATH_TIMER_DEFAULT = 0.3f;
@@ -26,13 +27,14 @@ const float FLYINGGOOMBA_JUMP_VELOCITY = -500.0f;
 const float KOOPA_SPEED = 80.0f;
 const float KOOPA_SHELL_SPEED = 300.0f;
 const float BULLET_SPEED = 300.0f;
+const float REX_SPEED = 120.0f;
+const float REX_COMPRESSED_SPEED = 180.0f;
 
 // Base class for enemies, inheriting from Entity
 class Enemy : public Entity {
 protected:
     float deathTimer; // Timer for death animation
     float squashScale; // Scale for squash effect when dying
-    void updateSquashEffect(); // Update squash effect during death animation
     bool isDead; // Flag to mark enemy for removal
     bool isFlipped;
 public:
@@ -40,10 +42,12 @@ public:
     virtual ~Enemy();
     virtual void CollisionWithCharacter(Mario& mario, CollisionType collType); // Handle collision with Mario
     virtual void CollisionWithEnemy(Enemy& enemy, CollisionType collType); // Handle collision with other enemies
+    virtual void CollisionWithFireball(FireBall& fireball);
     bool isDying(); // Check if enemy is dying or marked for removal
     bool isReadyForRemoval();
     void Update() override;
     void draw() override;
+    void updateSquashEffect();
     void updateCollision() override;
     virtual void UpdateTexture(); // Update enemy texture based on state
     virtual void HandleTileCollision(const Tile& tile, CollisionType collType); // Handle collision with tiles

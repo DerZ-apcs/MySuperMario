@@ -5,6 +5,7 @@
 Goomba::Goomba(Vector2 pos, Texture2D texture, MediatorCollision* mediator)
     : Enemy(pos, { 32, 48 }, { 0, 0 }, LEFT, ON_GROUND, texture, 0.2f, 1, BROWN),
     pauseTimer(0.0f), isPaused(false), detectMarioRange(200.0f), mediatorCollision(mediator), collisionTimer(0.0f) {
+    velocity.x = -GOOMBA_SPEED;
 }
 
 void Goomba::Update() {
@@ -76,7 +77,7 @@ void Goomba::draw() {
 void Goomba::UpdateTexture() {
     if (state == STATE_IS_DYING) {
         texture = Singleton<ResourceManager>::getInstance().getTexture("Goomba_Dead");
-        isFlipped = true;
+        /*isFlipped = true;*/
         return;
     }
     if (state == ON_GROUND) {
@@ -100,8 +101,8 @@ void Goomba::CollisionWithCharacter(Mario& mario, CollisionType collType) {
     if (isReadyForRemoval() || state == STATE_IS_DYING) return;
     if (collType == COLLISION_TYPE_SOUTH && (mario.getState() == JUMPING || mario.getState() == FALLING)) {
         state = STATE_IS_DYING;
-        velocity.x = (mario.getX() > position.x) ? -50.0f : 50.0f; // Hiệu ứng đẩy nhẹ
-        velocity.y = -100.0f; // Nhảy nhẹ lên
+        velocity.x = 0.0f; // Hiệu ứng đẩy nhẹ
+        velocity.y = 0.0f; // Nhảy nhẹ lên
         deathTimer = 0.3f;
         mario.setVelY(MARIO_BOUNCE_VELOCITY);
         mario.addScore(SCORE_STOMP_GOOMBA);
@@ -127,9 +128,9 @@ void Goomba::CollisionWithEnemy(Enemy& enemy, CollisionType collType) {
     Koopa* koopa = dynamic_cast<Koopa*>(&enemy);
     if (koopa && koopa->getState() == STATE_SHELL && (collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_WEST) && koopa->getVelX() != 0) {
         state = STATE_IS_DYING;
-        velocity.x = (koopa->getX() > position.x) ? -100.0f : 100.0f; // Đẩy ra xa
-        velocity.y = -100.0f;
-        deathTimer = 0.3f;
+        velocity.x = 0.0f; // Đẩy ra xa
+        velocity.y = 0.0f;
+        deathTimer = ENEMY_DEATH_TIMER_DEFAULT;
         Singleton<ResourceManager>::getInstance().playSound("GOOMBA_SQUASH");
         updateSquashEffect();
         UpdateTexture();
@@ -148,7 +149,7 @@ void Goomba::HandleTileCollision(const Tile& tile, CollisionType collType) {
             setX(tile.getX() + tile.getWidth());
         }
         velocity.x = (direction == LEFT) ? -GOOMBA_SPEED : GOOMBA_SPEED;
-        collisionTimer = 1.0f; // Tạm thời vô hiệu hóa logic đuổi Mario trong 0.5 giây
+        collisionTimer = 0.5f; // Tạm thời vô hiệu hóa logic đuổi Mario trong 0.5 giây
         UpdateTexture();
     }
     else if (collType == COLLISION_TYPE_SOUTH) {
@@ -251,7 +252,7 @@ void FlyingGoomba::Update() {
 void FlyingGoomba::UpdateTexture() {
     if (state == STATE_IS_DYING) {
         texture = Singleton<ResourceManager>::getInstance().getTexture("Goomba_Dead");
-        isFlipped = true;
+       /* isFlipped = true;*/
         return;
     }
 

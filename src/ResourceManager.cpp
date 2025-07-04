@@ -100,6 +100,16 @@ void ResourceManager::loadTextures() {
 
 	textures["PiranhaPlant_OPEN"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_1.png");
 	textures["PiranhaPlant_CLOSED"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_0.png");
+
+	textures["Rex_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/Rex_2_0.png");
+	textures["Rex_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/Rex_2_1.png");
+	textures["Rex_LEFT_0"] = flipTexture(textures["Rex_LEFT_0"]);
+	textures["Rex_LEFT_1"] = flipTexture(textures["Rex_LEFT_1"]);
+	textures["Rex_Compressed_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/Rex_1_0.png");
+	textures["Rex_Compressed_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/Rex_1_1.png");
+	textures["Rex_Compressed_LEFT_0"] = flipTexture(textures["Rex_Compressed_LEFT_0"]);
+	textures["Rex_Compressed_LEFT_1"] = flipTexture(textures["Rex_Compressed_LEFT_1"]);
+	textures["Rex_Dead"] = LoadTexture("resources/images/sprites/baddies/Goomba_1.png");
 	// tile
 	for (int i = 0; i <= 112; i++) {
 		std::string path = "resources/images/tiles/AllTiles/tile_" + std::to_string(i) + ".png";

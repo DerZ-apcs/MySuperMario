@@ -12,6 +12,7 @@ private:
 	float currDistance;
 	static const float FB_SpeedX;
 	static const float accelerationX;
+	bool isDestroyed;
 public:
 	FireBall(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, float timeSpan);
 	~FireBall();
@@ -22,6 +23,7 @@ public:
 	void UpdateTexture() override;
 	bool isMaxDistance() const;
 	void HandleTileCollision(const Tile tile, CollisionType Colltype);
-
+	void destroy(); 
+	bool IsDestroyed() { return isDestroyed; }
 };
 #endif

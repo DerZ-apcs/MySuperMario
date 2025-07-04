@@ -13,6 +13,7 @@
 #include "../include/Koopa.h"
 #include "../include/Bullet.h"
 #include "../include/PiranhaPlant.h"
+#include "../include/Rex.h"
 
 class Game {
 private:

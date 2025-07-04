@@ -1,6 +1,7 @@
 #include "../include/FireBall.h"
 #include "../include/ResourceManager.h"
 #include "../include/Mario.h"
+
 const float FireBall::maxDistance = 1200.0f;
 const float FireBall::FB_SpeedX = 500.0f;
 
@@ -25,7 +26,7 @@ FireBall::~FireBall() {
 
 void FireBall::Update()
 {
-	if (isMaxDistance()) return;
+	if (isMaxDistance() || isDestroyed) return;
 
 	const float deltaTime = GetFrameTime();
 	frameAcum += deltaTime;
@@ -49,8 +50,8 @@ void FireBall::Update()
 
 void FireBall::draw()
 {	
-	if (isMaxDistance()) return;
-	//UpdateTexture();
+	if (isMaxDistance() || isDestroyed) return;
+	UpdateTexture();
 	DrawTexture(texture, position.x, position.y, WHITE);
 }
 
@@ -95,4 +96,8 @@ void FireBall::HandleTileCollision(const Tile tile, CollisionType Colltype)
 	default:
 		break;
 	}
+}
+
+void FireBall::destroy() {
+	isDestroyed = true;
 }

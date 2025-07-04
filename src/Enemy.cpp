@@ -60,7 +60,8 @@ void Enemy::draw() {
 
 void Enemy::updateSquashEffect() {
     if (state == STATE_IS_DYING) {
-        squashScale = 1.0f - (0.5f - deathTimer) / 0.5f;
+        squashScale = 1.0f - (ENEMY_DEATH_TIMER_DEFAULT - deathTimer) / ENEMY_DEATH_TIMER_DEFAULT; // Thu nhỏ chiều dọc
+        updateCollision();
 		isFlipped = true; // Lật ngược khi đang chết
         updateCollision();
     }
@@ -72,6 +73,16 @@ void Enemy::CollisionWithCharacter(Mario& mario, CollisionType collType) {
 
 void Enemy::CollisionWithEnemy(Enemy& enemy, CollisionType collType) {
     // Virtual method, implemented in derived classes
+}
+
+void Enemy::CollisionWithFireball(FireBall& fireball) {
+    if (!isDead && state != STATE_IS_DYING) {
+        state = STATE_IS_DYING;
+        deathTimer = ENEMY_DEATH_TIMER_DEFAULT;
+        velocity.y = -250; // Nhảy lên nhẹ
+        velocity.x = (rand() % 100) - 50; // Văng ngang ngẫu nhiên
+        updateCollision();
+    }
 }
 
 bool Enemy::isDying() {

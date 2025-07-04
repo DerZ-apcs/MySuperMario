@@ -1,5 +1,6 @@
 ﻿#include "../include/MediatorCollision.h"
 #include "../include/Koopa.h"
+#include "../include/Rex.h"
 
 void MediatorCollision::HandlePlayerWithTiles(Mario*& mario, Tile*& tile, CollisionType Colltype)
 {
@@ -70,12 +71,40 @@ void MediatorCollision::HandleEnemyWithMario(Enemy*& enemy, Mario*& mario, Colli
     enemy->CollisionWithCharacter(*mario, Colltype);
 }
 
+void MediatorCollision::HandleFireballWithEnemy(FireBall*& fireball, Enemy*& enemy, CollisionType collType)
+{
+    if (collType == COLLISION_TYPE_NONE || fireball->IsDestroyed()) return;
+    enemy->CollisionWithFireball(*fireball);
+    fireball->destroy();
+    mario->addScore(100); // Cộng điểm khi FireBall tiêu diệt enemy
+}
+
 void MediatorCollision::HandleCollision(Entity* entity1, Entity* entity2) {
     // Kiểm tra sớm để giảm dynamic_cast
     if (entity1 == entity2) return;
 
-    Mario* mario = dynamic_cast<Mario*>(entity1);
+    // Kiểm tra va chạm FireBall với Enemy
+    FireBall* fireball = dynamic_cast<FireBall*>(entity1);
     Enemy* enemy = dynamic_cast<Enemy*>(entity2);
+    if (fireball && enemy) {
+        CollisionType collType = fireball->CheckCollision(*enemy);
+        if (collType != COLLISION_TYPE_NONE) {
+            HandleFireballWithEnemy(fireball, enemy, collType);
+        }
+        return;
+    }
+    fireball = dynamic_cast<FireBall*>(entity2);
+    enemy = dynamic_cast<Enemy*>(entity1);
+    if (fireball && enemy) {
+        CollisionType collType = fireball->CheckCollision(*enemy);
+        if (collType != COLLISION_TYPE_NONE) {
+            HandleFireballWithEnemy(fireball, enemy, collType);
+        }
+        return;
+    }
+
+    Mario* mario = dynamic_cast<Mario*>(entity1);
+    enemy = dynamic_cast<Enemy*>(entity2);
     if (mario && enemy) {
         CollisionType collType = mario->CheckCollision(*enemy);
         if (collType != COLLISION_TYPE_NONE) {
@@ -114,7 +143,7 @@ void MediatorCollision::HandleCollision(Entity* entity1, Entity* entity2) {
         return;
     }
 
-    FireBall* fireball = dynamic_cast<FireBall*>(entity1);
+    fireball = dynamic_cast<FireBall*>(entity1);
     tile = dynamic_cast<Tile*>(entity2);
     if (fireball && tile) {
         CollisionType collType = fireball->CheckCollision(*tile);
@@ -134,6 +163,7 @@ void MediatorCollision::HandleCollision(Entity* entity1, Entity* entity2) {
         return;
     }
 }
+
 
 void MediatorCollision::SetMario(Mario* m) { 
     mario = m; 

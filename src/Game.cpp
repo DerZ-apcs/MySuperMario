@@ -20,14 +20,15 @@ Game::Game(int nwidth, int nheight, int ntargetFPS) :
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
     mediatorCollision.SetMario(&mario);
-    enemies.push_back(new Goomba({ 400, 900 }, Resource_manager.getTexture("Goomba_LEFT_0"), &mediatorCollision));
-    enemies.push_back(new Goomba({ 401, 900 }, Resource_manager.getTexture("Goomba_RIGHT_0"), &mediatorCollision));
+    enemies.push_back(new Goomba({ 400, 920 }, Resource_manager.getTexture("Goomba_LEFT_0"), &mediatorCollision));
+    /*enemies.push_back(new Goomba({ 401, 900 }, Resource_manager.getTexture("Goomba_RIGHT_0"), &mediatorCollision));*/
   /*  enemies.push_back(new Koopa({ 500, 912 }, Resource_manager.getTexture("Koopa_LEFT_1")));*/
     enemies.push_back(new FlyingGoomba({ 700, 900 }, Resource_manager.getTexture("Goomba_LEFT_0"), &mediatorCollision));
     enemies.push_back(new FlyingGoomba({ 800, 920 }, Resource_manager.getTexture("FlyingGoomba_LEFT_1"), &mediatorCollision));
     /*enemies.push_back(new Bullet({ 400, 704 }, Resource_manager.getTexture("Bullet_LEFT_1"), LEFT)); 
     enemies.push_back(new Bullet({ 500, 930 }, Resource_manager.getTexture("Bullet_RIGHT_1"), RIGHT)); 
     enemies.push_back(new PiranhaPlant({ 576, 448 }, Resource_manager.getTexture("PiranhaPlant_OPEN"),mario));*/
+    enemies.push_back(new Rex({ 400, 920 }, Resource_manager.getTexture("Rex_LEFT_0"), &mediatorCollision));
 }
 
 Game::~Game()
@@ -109,6 +110,13 @@ void Game::UpdateGame() {
                 }
             }
         }
+
+        // Check collision with fireballs
+        for (auto& fireball : *mario.getFireBalls()) {
+            if (!fireball->IsDestroyed()) {
+                mediatorCollision.HandleCollision(fireball, enemy);
+            }
+        }
     }
 
     enemies.erase(std::remove_if(enemies.begin(), enemies.end(), [](Enemy* enemy) {
@@ -130,6 +138,16 @@ void Game::UpdateGame() {
                 mediatorCollision.HandleCollision(fireball, tile);
         }
     }
+
+    // Remove destroyed fireballs
+    auto& fireballs = *mario.getFireBalls();
+    fireballs.erase(std::remove_if(fireballs.begin(), fireballs.end(), [](FireBall* fireball) {
+        if (fireball && (fireball->isMaxDistance() || fireball->IsDestroyed())) {
+            delete fireball;
+            return true;
+        }
+        return false;
+        }), fireballs.end());
 }
 
 void Game::draw()

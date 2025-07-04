@@ -22,7 +22,6 @@ void Koopa::Update() {
 
     if (state == STATE_SHELL && velocity.x == 0) {
         reviveTimer += GetFrameTime(); // Bắt đầu đếm giờ
-        // Khi gần hết giờ, bật trạng thái "isReviving" để nhấp nháy
         if (reviveTimer > KOOPA_REVIVE_WARNING_TIME) {
             isReviving = true;
             reviveShakeTimer += GetFrameTime(); // Timer cho hiệu ứng nhấp nháy
@@ -191,6 +190,18 @@ void Koopa::CollisionWithEnemy(Enemy& enemy, CollisionType collType) {
         enemy.CollisionWithEnemy(*this, collType);
         Singleton<ResourceManager>::getInstance().playSound("STOMP");
     }
+}
+
+void Koopa::CollisionWithFireball(FireBall& fireball) {
+    if (isDead || state == STATE_IS_DYING) return;
+    state = STATE_IS_DYING;
+    velocity.y = -250; // Nhảy lên nhẹ
+    velocity.x = (rand() % 100) - 50; // Văng ngang ngẫu nhiên
+    deathTimer = ENEMY_DEATH_TIMER_LONG;
+    updateCollision();
+    Singleton<ResourceManager>::getInstance().playSound("FIREBALL_KILL");
+    // Giả định Mario được truy cập qua MediatorCollision hoặc cách khác
+    // mario->addScore(SCORE_FIREBALL_KOOPA); // Cần thêm cơ chế truyền Mario
 }
 
 void Koopa::HandleTileCollision(const Tile& tile, CollisionType collType) {
