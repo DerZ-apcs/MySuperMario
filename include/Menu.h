@@ -4,6 +4,7 @@
 #include <raylib.h>
 #include <vector>
 #include "../include/Mario.h"
+#include "../include/Luigi.h"
 #include "../include/Button.h"
 #include "../include/GameEngine.h"
 #include "../include/GUI.h"

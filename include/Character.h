@@ -61,7 +61,7 @@ public:
 	virtual void TransitionToSuper();
 	virtual void TransitionToSmall();
 	virtual void TransitionToFire();
-	virtual void TransitionMarioState();
+	virtual void TransitionState();
 
 	virtual void HandleTileCollision(const Tile tile, CollisionType CollType);
 	virtual void RunLeft() = 0;

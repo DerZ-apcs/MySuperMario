@@ -38,6 +38,7 @@ private:
 	void unloadSound(std::string key);
 	void unloadMusic(std::string key);
 	
+	void cutSpriteSheetToTextures(const std::string& key, const std::string& filePath);
 public:
 	~ResourceManager();
 	void LoadAllResources();

@@ -201,7 +201,7 @@ void CharSelection::handleInput()
 	}
 	else if (LuigiButton.isPressed()) {
 		if (game->player) delete game->player;
-		game->player = new Mario(); // new Luigi 
+		game->player = new Luigi(); // new Luigi 
 		if (globalGameEngine != nullptr) {
 			delete globalGameEngine;
 			globalGameEngine = nullptr;

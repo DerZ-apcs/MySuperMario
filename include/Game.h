@@ -28,7 +28,7 @@ public:
     void returnToMainMenu();
     void setBackground(const std::string& imageName);
     void loadGUI();
-    Mario* player;
+    Character* player;
     Level* level;
 
 private:

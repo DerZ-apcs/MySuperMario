@@ -2,6 +2,13 @@
 #include <iostream>
 
 void ResourceManager::loadTextures() {
+	// BASE MARIO
+	//textures["MARIO"] = LoadTexture("resources/images/sprites/mario/mario1.png");
+	//cutSpriteSheetToTextures("MARIO", "resources/animation/mario1.txt");
+	// Luigi
+	textures["LUIGI"] = LoadTexture("resources/images/sprites/luigi/luigi1.png");
+	cutSpriteSheetToTextures("LUIGI", "resources/animation/luigi1.txt");
+
 	// move
 	textures["SmallMario_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SmallMario_0.png");
 	textures["SmallMario_RIGHT_1"] = LoadTexture("resources/images/sprites/mario/SmallMario_1.png");
@@ -29,18 +36,20 @@ void ResourceManager::loadTextures() {
 	// duck
 	textures["SmallMarioDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SmallMarioDucking_0.png");
 	textures["SmallMarioDucking_LEFT_0"] = flipTexture(textures["SmallMarioDucking_RIGHT_0"]);
-	
 	textures["SuperMarioDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SuperMarioDucking_0.png");
 	textures["SuperMarioDucking_LEFT_0"] = flipTexture(textures["SuperMarioDucking_RIGHT_0"]);
+
 	// dying
 	textures["SmallMarioDying"] = LoadTexture("resources/images/sprites/mario/SmallMarioDying_0.png");
 
 	// victory
 	textures["SmallMarioVictory"] = LoadTexture("resources/images/sprites/mario/SmallMarioVictory_0.png");
-
 	textures["SuperMarioVictory"] = LoadTexture("resources/images/sprites/mario/SuperMarioVictory_0.png");
-
 	textures["FireMarioVictory"] = LoadTexture("resources/images/sprites/mario/FireMarioVictory.png");
+
+	textures["luigi_victory"] = LoadTexture("resources/images/sprites/luigi/luigi_victory.png");
+	textures["superluigi_victory"] = LoadTexture("resources/images/sprites/luigi/superluigi_victory.png");
+	textures["fireluigi_victory"] = LoadTexture("resources/images/sprites/luigi/fireluigi_victory.png");
 
 	// trasition
 	textures["TransitioningMario_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/TransitioningMario_1.png");
@@ -65,9 +74,7 @@ void ResourceManager::loadTextures() {
 	textures["Fire_Mario_Ducking_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FireMario_Ducking_0.png");
 	textures["Fire_Mario_Ducking_LEFT_0"] = flipTexture(textures["Fire_Mario_Ducking_RIGHT_0"]);
 
-	// Luigi
-	/*textures["LUIGI"] = LoadTexture("resources/images/sprites/luigi/luigi1.png");
-	cutSpriteSheetToTextures("LUIGI", "resources/animation/luigi1.txt");*/
+	
 
 	// fireball
 	textures["FlowerMarioFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FlowerMarioFireball_0.png");
@@ -191,6 +198,52 @@ void ResourceManager::unloadMusic(std::string key)
 	if (musics.find(key) != musics.end()) {
 		UnloadMusicStream(musics[key]);
 	}
+}
+
+void ResourceManager::cutSpriteSheetToTextures(const std::string& key, const std::string& filePath)
+{
+	if (textures.find(key) == textures.end()) {
+		std::cerr << "ERROR texture not found" << key << std::endl;
+		return;
+	}
+	Texture2D sheet = textures[key];
+	Image sheetImage = LoadImageFromTexture(sheet); // Load full image
+
+	std::ifstream file(filePath);
+	if (!file.is_open()) {
+		std::cerr << "ERROR Failed to open animation file: " << filePath << std::endl;
+		return;
+	}
+
+	std::string line, animationName;
+	int frameIndex = 0;
+	while (getline(file, line)) {
+		if (line.empty() || line[0] == '#') continue;
+		if (line[0] == '$') {
+			animationName = line.substr(1);
+			frameIndex = 0;
+		}
+		else {
+			std::istringstream iss(line);
+			float x, y, width, height, duration, offsetX, offsetY, sizeX, sizeY;
+			if (!(iss >> x >> y >> width >> height >> duration >> offsetX >> offsetY >> sizeX >> sizeY)) {
+				std::cerr << "ERROR invalid frame data in: " << filePath << std::endl;
+				continue;
+			}
+			Rectangle srcRect = { (float)x, (float)y, (float)width, (float)height };
+			// Extract sub-image from sprite sheet
+			Image frameImage = ImageFromImage(sheetImage, srcRect);
+
+			// Convert to Texture2D and store it
+			Texture2D frameTexture = LoadTextureFromImage(frameImage);
+			UnloadImage(frameImage);
+
+			std::string key = animationName + "_" + std::to_string(frameIndex++);
+			textures[key] = frameTexture;
+		}
+	}
+	UnloadImage(sheetImage);
+	file.close();
 }
 
 ResourceManager::~ResourceManager()

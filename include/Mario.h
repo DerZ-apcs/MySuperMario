@@ -13,7 +13,7 @@ private:
 	SPRITE_STATE Mario_sprite;*/
 	//SPRITE_STATE LastStateb4Transition;
 	const float maxspeedX = 550;
-	const float maxSpeedY = 550;
+	const float maxSpeedY = 500;
 
 	//std::list<FireBall*> fireballs;
 public:
@@ -31,7 +31,7 @@ public:
 	//void draw() override;
 	//void HandleInput() override;
 	//void updateCollision() override;
-	//void UpdateTexture() override;
+	void UpdateTexture() override;
 
 	//void TransitionToSuper() override;
 	//void TransitionToSmall() override;

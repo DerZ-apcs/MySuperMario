@@ -14,7 +14,7 @@ class GameEngine {
 private:
     Level* level;
     Map map;
-    Mario* player;
+    Character* player;
     /*std::vector<BaseBlock*> blocks;
     std::vector<Enemy*> enemies;
     std::vector<Item*> items;*/
@@ -40,7 +40,7 @@ private:
     //Camera2D camera;
 
 public:
-    GameEngine(float screenWidth, float screenHeight, Level& level, Mario*& player);
+    GameEngine(float screenWidth, float screenHeight, Level& level, Character*& player);
     ~GameEngine();
     void resolveCollision();
     void addScore(int amount);

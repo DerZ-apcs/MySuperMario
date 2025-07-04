@@ -3,7 +3,7 @@
 
 GameEngine* globalGameEngine = nullptr;
 
-GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Mario*& player)
+GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Character*& player)
     : /*camera(screenWidth, screenHeight, 1.75f),*/ level(&level), player(player) {
     map.LoadFromJsonFile(level.getMapPath());
     map.loadBackgroundTexture(level.getBackGroundName());
@@ -34,9 +34,9 @@ GameEngine::~GameEngine() {
     fireball.clear();
 }
 
-//void GameEngine::addScore(int amount) {
-//    player->setScores(player->getScores() + amount);
-//}
+void GameEngine::addScore(int amount) {
+    player->setScores(player->getScores() + amount);
+}
 
 void GameEngine::addFireBall(FireBall* fireball) {
     this->fireball.push_back(fireball);
