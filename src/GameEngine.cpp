@@ -200,22 +200,19 @@ bool GameEngine::run() {
             player->setLostLife(true);
 
         // clear level
-        
-        if (player->getX() >= map.getMapSize().x - 20 && RESOURCE_MANAGER.isMusicPlaying("COURSECLEAR") == false) {
-            cleared = true;
-            isPaused = true;
-            player->setVel({ 0, 0 });
-        }
-        else if (player->getX() >= map.getMapSize().x - 100.f && player->getState() == ON_GROUND) { // clear level (when character enter near the end of level)
+        if (!player->getExitLevel() && player->getX() >= map.getMapSize().x - 100.f && player->getState() == ON_GROUND) { // clear level (when character enter near the end of level)
             player->setVictory(true);
             player->setVel({ 0, 0 });
             RESOURCE_MANAGER.stopCurrentMusic();
             RESOURCE_MANAGER.playSound("level_clear.wav");
-            if ((!player->getVictory()) && (player->getPhase() != Phase::CLEARLEVEL_PHASE)) {
-                /*RESOURCE_MANAGER.stopCurrentMusic();
-                RESOURCE_MANAGER.playSound("level_clear.wav");*/
-                player->setPhase(Phase::CLEARLEVEL_PHASE);
-            }
+        }
+        if ((player->getExitLevel()) && (player->getPhase() != Phase::CLEARLEVEL_PHASE)) {
+            player->setPhase(Phase::CLEARLEVEL_PHASE);
+        }
+        if (player->getX() >= map.getMapSize().x - 10 && player->getPhase() == CLEARLEVEL_PHASE) {
+            cleared = true;
+            isPaused = true;
+            player->setVel({ 0, 0 });
         }
         else if (player->isLostLife() && player->getTop() > getBound().y) { // when finish the animation of dying (flying to the top)
             if (player->getLives() < 0) {

@@ -27,6 +27,7 @@ private:
     Camera2D camera;
     bool isPaused;
     bool cleared = false;
+    bool isvictory = false;
     bool died = false;
     bool gameover = false;
     float time;

@@ -73,7 +73,7 @@ void GUI::drawStatusBar(const Character* player) {
     source = { 0, 0, (float)setting.width, (float)restart.height };
     dest = { (float)GetScreenWidth() - 100, 30.f, 80.f, 80.f };
     DrawTexturePro(setting, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-    setting_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+    setting_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsKeyPressed(KEY_S);
 }
 
 void GUI::drawPauseMenu()
@@ -103,20 +103,20 @@ void GUI::drawPauseMenu()
     source = { 0, 0, (float)restart.width, (float)restart.height };
     dest = { textX + 100, textY - 170, 90, 90 };
     DrawTexturePro(restart, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-    restart_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+    restart_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsKeyPressed(KEY_R);
 
     // sound_on
     Texture2D sound = (SETTING.isMusicEnabled()) ? sound_on : sound_off;
     source = { 0, 0, (float)sound.width, (float)sound.height };
     dest = { textX + 350, textY - 170, 90, 90 };
     DrawTexturePro(sound, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-    sound_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+    sound_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsKeyPressed(KEY_V);
 
     // home
     source = { 0, 0, (float)home.width, (float)home.height };
     dest = { textX + 225, textY - 170, 90, 90 };
     DrawTexturePro(home, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-    home_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+    home_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsKeyPressed(KEY_H);
 
 }
 

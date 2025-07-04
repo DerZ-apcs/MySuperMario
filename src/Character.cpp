@@ -35,7 +35,8 @@ Character::Character(Vector2 pos, Vector2 sz, CharacterState characterstate, Cha
 	Character_state(characterstate),
 	characterType(characterType),
 	Character_sprite_State(NORMAL),
-	victory(false)
+	victory(false),
+	exitlevel(false)
 {
 	if (characterstate == STATE_SMALL)
 		this->size = { 32, 40 };
@@ -90,6 +91,7 @@ void Character::resetInGame()
 	updateCollision();
 	texture = RESOURCE_MANAGER.getTexture("SmallMario_RIGHT_0");
 	victory = false;
+	exitlevel = false;
 }
 
 // reset when changing map (reset all)
@@ -122,6 +124,7 @@ void Character::reset()
 	updateCollision();
 	texture = RESOURCE_MANAGER.getTexture("SmallMario_RIGHT_0");
 	victory = false;
+	exitlevel = false;
 }
 
 void Character::setPhase(Phase phase)
@@ -707,8 +710,8 @@ void Character::UpdateTexture()
 		if (victoryFrameCounter > 0)
 			victoryFrameCounter--;
 		else if (victoryFrameCounter <= 0) {
-			victoryFrameCounter = 6;
 			victory = false;
+			exitlevel = true;
 		}
 		if (Character_state == STATE_SMALL)
 			texture = RESOURCE_MANAGER.getTexture("SmallMarioVictory");
@@ -743,9 +746,14 @@ void Character::setVictory(bool victory)
 	this->victory = victory;
 }
 
-bool Character::getVictory()
+bool Character::getVictory() const
 {
 	return victory;
+}
+
+bool Character::getExitLevel() const
+{
+	return exitlevel;
 }
 
 
