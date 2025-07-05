@@ -9,6 +9,7 @@ private:
     bool isPoppingUp; // Trạng thái trồi lên hay rút xuống
     float popUpHeight; // Độ cao tối đa khi trồi lên
     float baseY; // Vị trí Y ban đầu (đáy ống)
+    float invincibilityTimer;
     Mario& mario;
     float delayTimer;
     static const float POP_UP_DURATION; // Thời gian trồi lên/rút xuống

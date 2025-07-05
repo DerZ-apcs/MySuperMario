@@ -162,10 +162,10 @@ void Rex::HandleTileCollision(const Tile& tile, CollisionType collType) {
     if (collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_WEST) {
         direction = (direction == LEFT) ? RIGHT : LEFT;
         if (collType == COLLISION_TYPE_EAST) {
-            setX(tile.getX() - getWidth());
+            setX(tile.getX() - getWidth() - 0.1f);
         }
         else if (collType == COLLISION_TYPE_WEST) {
-            setX(tile.getX() + tile.getWidth());
+            setX(tile.getX() + tile.getWidth() + 0.1f);
         }
         velocity.x = (direction == LEFT) ? ((rexState == REX_NORMAL) ? -REX_SPEED : -REX_COMPRESSED_SPEED) :
             ((rexState == REX_NORMAL) ? REX_SPEED : REX_COMPRESSED_SPEED);
@@ -176,28 +176,28 @@ void Rex::HandleTileCollision(const Tile& tile, CollisionType collType) {
         setY(tile.getY() - getHeight());
         velocity.y = 0;
         state = ON_GROUND;
-       // updateCollision();
+        updateCollision();
     }
     else if (collType == COLLISION_TYPE_NORTH) {
         setY(tile.getY() + tile.getHeight());
         velocity.y = 0;
-       // updateCollision();
+        updateCollision();
     }
 }
 
 void Rex::updateCollision() {
     // Cập nhật kích thước hộp va chạm dựa trên trạng thái của Rex
     if (rexState == REX_NORMAL) {
-        CollNorth.setSize({ size.x * 0.8f, 5 });
-        CollSouth.setSize({ size.x * 0.8f, 5 });
-        CollEast.setSize({ 5, size.y * 0.8f });
-        CollWest.setSize({ 5, size.y * 0.8f });
+        CollNorth.setSize({ size.x * 0.9f, 5 });
+        CollSouth.setSize({ size.x * 0.9f, 5 });
+        CollEast.setSize({ 5, size.y * 0.9f });
+        CollWest.setSize({ 5, size.y * 0.9f });
     }
     else if (rexState == REX_COMPRESSED) {
-        CollNorth.setSize({ size.x * 0.8f, 5 });
-        CollSouth.setSize({ size.x * 0.8f, 5 });
-        CollEast.setSize({ 5, size.y * 0.8f });
-        CollWest.setSize({ 5, size.y * 0.8f });
+        CollNorth.setSize({ size.x * 0.9f, 4 });
+        CollSouth.setSize({ size.x * 0.9f, 4 });
+        CollEast.setSize({ 4, size.y * 0.9f });
+        CollWest.setSize({ 4, size.y * 0.9f });
     }
 
     // Cập nhật vị trí hộp va chạm (không sử dụng squashScale khi không ở trạng thái chết)

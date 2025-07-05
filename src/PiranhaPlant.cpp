@@ -6,7 +6,7 @@ const float PiranhaPlant::STAY_UP_DURATION = 2.0f; // Thời gian ở trạng th
 
 PiranhaPlant::PiranhaPlant(Vector2 pos, Texture2D texture, Mario& mario)
     : Enemy(pos, { 32, 48 }, { 0, 0 }, RIGHT, ON_GROUND, texture, 0.2f, 1, RED),
-    popUpTimer(0.0f), isPoppingUp(true), popUpHeight(48.0f), baseY(pos.y), mario(mario), delayTimer(0.2f) { // Độ trễ 0.5 giây
+    popUpTimer(0.0f), isPoppingUp(true), popUpHeight(48.0f), baseY(pos.y), mario(mario), delayTimer(0.5f), invincibilityTimer(0.0f) { 
 }
 
 void PiranhaPlant::Update() {
@@ -24,19 +24,8 @@ void PiranhaPlant::Update() {
 
     const float deltaTime = GetFrameTime();
 
-    // Kiểm tra khoảng cách đến Mario
-    float distanceX = std::abs(mario.getX() - position.x);
-    const float ACTIVATION_DISTANCE = 96.0f; // 3 ô (3 * 32 pixel)
-
-    if (distanceX > ACTIVATION_DISTANCE) {
-        // Mario ở xa: rút xuống và reset timer
-        position.y = baseY; // Ẩn hoàn toàn trong ống
-        popUpTimer = 0.0f; // Reset chu kỳ
-        delayTimer = 0.2f; // Reset độ trễ
-        isPoppingUp = false;
-        UpdateTexture();
-        UpdatePhysics();
-        return;
+    if (invincibilityTimer > 0) {
+        invincibilityTimer -= deltaTime;
     }
 
     // Xử lý độ trễ trước khi trồi lên
@@ -53,7 +42,7 @@ void PiranhaPlant::Update() {
         }
     }
 
-    // Mario ở gần và đã qua độ trễ: thực hiện chu kỳ trồi/rút
+    // Thực hiện chu kỳ trồi/rút mà không phụ thuộc vào vị trí Mario
     popUpTimer += deltaTime;
 
     // Tổng chu kỳ: trồi lên (1s) + ở trên (2s) + rút xuống (1s) = 4s
@@ -99,7 +88,6 @@ void PiranhaPlant::draw() {
         return;
     }
 
-    // Giới hạn emergedHeight để không vượt quá chiều cao tối đa
     if (emergedHeight > popUpHeight) {
         emergedHeight = popUpHeight;
     }
@@ -149,7 +137,10 @@ void PiranhaPlant::UpdateTexture() {
 }
 
 void PiranhaPlant::CollisionWithCharacter(Mario& mario, CollisionType collType) {
-    if (isDead || state == STATE_IS_DYING || mario.getInvincibilityTimer() > 0) return;
+    if (isDead || state == STATE_IS_DYING || mario.getInvincibilityTimer() > 0 || invincibilityTimer > 0) return;
+
+    // Chỉ gây sát thương khi ở trạng thái trồi lên hoàn toàn
+    bool isFullyPoppedUp = (popUpTimer >= POP_UP_DURATION && popUpTimer < POP_UP_DURATION + STAY_UP_DURATION);
 
     // Mario nhảy lên đầu (stomp)
     if (collType == COLLISION_TYPE_SOUTH && (mario.getState() == JUMPING || mario.getState() == FALLING)) {
@@ -157,14 +148,14 @@ void PiranhaPlant::CollisionWithCharacter(Mario& mario, CollisionType collType) 
         velocity.x = 0;
         velocity.y = 0;
         deathTimer = ENEMY_DEATH_TIMER_DEFAULT;
+        invincibilityTimer = 0.5f;
         mario.setVelY(MARIO_BOUNCE_VELOCITY);
-        mario.addScore(SCORE_STOMP_GOOMBA); // Điểm tương tự Goomba
+        mario.addScore(SCORE_STOMP_GOOMBA);
         Singleton<ResourceManager>::getInstance().playSound("STOMP");
         updateSquashEffect();
         UpdateTexture();
     }
-    else if (collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_WEST || collType == COLLISION_TYPE_NORTH) {
-        // Va chạm từ các phía khác gây sát thương cho Mario
+    else if ((collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_WEST || collType == COLLISION_TYPE_NORTH) && isFullyPoppedUp) {
         if (mario.getMarioState() == STATE_SUPER || mario.getMarioState() == STATE_FIRE_BALL) {
             mario.TransitionToSmall();
             mario.setInvincibilityTimer(2.0f);
