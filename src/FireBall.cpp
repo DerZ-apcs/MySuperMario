@@ -7,8 +7,8 @@ const float FireBall::FB_SpeedX = 500.0f;
 FireBall::FireBall(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, float timeSpan) :
 	Entity(pos, sz, vel, dir, ON_GROUND, 0.1f, 3, BLACK), timeSpan(timeSpan), timeSpanAcum(0), currDistance(0)
 {
-	this->texture = direction == RIGHT ? Singleton<ResourceManager>::getInstance().getTexture("FlowerMarioFireball_RIGHT_0") :
-		Singleton<ResourceManager>::getInstance().getTexture("FlowerMarioFireball_LEFT_0");
+	this->texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("FlowerMarioFireball_RIGHT_0") :
+		RESOURCE_MANAGER.getTexture("FlowerMarioFireball_LEFT_0");
 	this->frameAcum = 0;
 	this->currFrame = 0;
 	/*this->velocity = direction == RIGHT ? Vector2{ FB_SpeedX, -500 } : Vector2{ -FB_SpeedX, -500 };*/
@@ -45,6 +45,7 @@ void FireBall::Update()
 	velocity.y += GRAVITY * deltaTime;
 
 	updateCollision();
+	UpdateTexture();
 }
 
 void FireBall::draw()
@@ -63,7 +64,7 @@ void FireBall::UpdateTexture()
 {
 	const std::string dir = direction == LEFT ? "_LEFT_" : "_RIGHT_";
 	std::string textureName = "FlowerMarioFireball" + dir + std::to_string(currFrame);
-	texture = Singleton<ResourceManager>::getInstance().getTexture(textureName);
+	texture = RESOURCE_MANAGER.getTexture(textureName);
 }
 
 bool FireBall::isMaxDistance() const
@@ -78,7 +79,7 @@ void FireBall::HandleTileCollision(const Tile tile, CollisionType Colltype)
 	switch (Colltype) {
 	case COLLISION_TYPE_EAST:
 		setPosition({ tile.getX() - size.x, position.y });
-		velocity.x *= -1;
+		velocity.x *= -0.9;
 		break;
 	case COLLISION_TYPE_NORTH:
 		setPosition({ position.x, tile.getY() + tile.getHeight() });
@@ -86,11 +87,11 @@ void FireBall::HandleTileCollision(const Tile tile, CollisionType Colltype)
 		break;
 	case COLLISION_TYPE_SOUTH:
 		setPosition({ position.x, tile.getY() - size.y });
-		velocity.y *= -1;
+		velocity.y *= -0.9;
 		break;
 	case COLLISION_TYPE_WEST:
 		setPosition({ tile.getX() + tile.getWidth(), position.y });
-		velocity.x *= -1;
+		velocity.x *= -0.9;
 		break;
 	default:
 		break;

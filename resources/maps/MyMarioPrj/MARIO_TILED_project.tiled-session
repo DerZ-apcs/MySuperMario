@@ -1,0 +1,80 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "maps/MAP_1.2.tmx",
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
+        "maps/MAP_1.1.json": {
+            "scale": 0.75,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 639.3333333333333,
+                "y": 495.33333333333326
+            }
+        },
+        "maps/MAP_1.1.tmx": {
+            "scale": 0.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1250,
+                "y": 585
+            }
+        },
+        "maps/MAP_1.2.tmx": {
+            "scale": 0.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1384,
+                "y": 545
+            }
+        },
+        "maps/MAP_1.tmx": {
+            "scale": 0.75,
+            "selectedLayer": -1,
+            "viewCenter": {
+                "x": 648.6666666666667,
+                "y": 408.66666666666674
+            }
+        },
+        "tilesets/MARIO_TILESETS.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "tilesets/MarioTileset.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.exportedFilePath": "D:/Project/MySuperMario/resources/maps",
+    "last.imagePath": "D:/Project/TiledMapEditor/MyMarioPrj/resources/tiles/AllTiles",
+    "map.height": 31,
+    "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
+    "map.lastUsedFormat": "tmx",
+    "map.width": 80,
+    "openFiles": [
+        "tilesets/MarioTileset.tsx",
+        "maps/MAP_1.1.tmx",
+        "maps/MAP_1.2.tmx"
+    ],
+    "project": "MARIO_TILED_project.tiled-project",
+    "recentFiles": [
+        "tilesets/MarioTileset.tsx",
+        "maps/MAP_1.1.tmx",
+        "maps/MAP_1.2.tmx",
+        "maps/MAP_1.1.json",
+        "maps/MAP_1.tmx",
+        "tilesets/MARIO_TILESETS.tsx"
+    ],
+    "tileset.embedInMap": false,
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.type": 1
+}

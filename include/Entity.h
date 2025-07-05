@@ -3,9 +3,9 @@
 #include "../include/Singleton.h"
 #include "../include/ResourceManager.h"
 #include "../include/Direction.h"
-#include "../include/EntityState.h"
 #include "../include/Clock.h"
 #include "../include/Collision.h"
+#include "../include/Global.h"
 #include <string>
 #include <raylib.h>
 
@@ -23,8 +23,13 @@ protected:
 	float frameAcum;
 	Texture2D texture;
 	Rectangle rect;
-	const float GRAVITY = 800;
+	const float GRAVITY = 800; // Gravity for all 
+	const float accelerationX = 400;
 	std::string Entity_name;
+
+	bool isjumping;
+	bool gravityAvailable;
+	bool collisionAvailable;
 
 	Collision CollNorth;
 	Collision CollSouth;
@@ -40,9 +45,9 @@ public:
 	virtual void Update();
 	virtual void draw();
 	virtual void HandleInput();
-	virtual void UpdateTexture();
 	virtual void UpdatePhysics();
 	virtual void updateCollision();
+	virtual void UpdateTexture();
 	virtual CollisionType CheckCollision(const Entity& entity) const;
 
 	bool isOnGround() const;
@@ -92,5 +97,16 @@ public:
 	Rectangle getRect() const;
 	Color& getColor();
 
+	float getCenterX() const;
+	float getCenterY() const;
+	float getBottom() const;
+	float getLeft() const;
+	float getRight() const;
+	float getTop() const;
+
+	void setCollisionAvailable(bool collisionAvailable);
+	void setGravityAvailable(bool gravityAvailable);
+	bool getCollisionAvailable();
+	bool getGravityAvailable();
 };	
 #endif

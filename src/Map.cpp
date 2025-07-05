@@ -1,10 +1,15 @@
-#include "Map.h"
 #include "../include/Map.h"
 
 const std::string Map::basePath = std::string(GetWorkingDirectory()) + "/resources/maps/";
 
 Map::Map()
 {
+	BgWidth = (float)GetScreenWidth();
+	BgHeight = (float)GetScreenHeight();
+	width = BgWidth;
+	height = BgHeight;
+	background = RESOURCE_MANAGER.getTexture("BACKGROUND_1");
+	BackGroundPos = { {0, 0}, {BgWidth, 0}, {BgWidth * 2, 0}};
 }
 
 Map::~Map()
@@ -30,42 +35,33 @@ void Map::AddTile(Vector2 pos, TileType type, const std::string& name)
 	tiles.push_back(new Tile(pos, type, name));
 }
 
-void Map::loadFromFile(const std::string& filepath)
-{
-	clear();
-	std::ifstream fin(filepath);
-	if (!fin) {
-		std::cerr << "Failed to open" << filepath << "for reading" << std::endl;
-		return;
-	}
-	std::string line;
-	while (std::getline(fin, line)) {
-		if (line.empty() || line[0] == '/' || line[0] == '$')
-			continue;
-		std::istringstream iss(line);
-		std::string name, typeStr;
-		int x, y;
-		if (!(iss >> name >> x >> y >> typeStr)) {
-			std::cerr << "Invalid line: " << line << "\n";
-			continue;
-		}
-		AddTile(Vector2{(float)x, (float)y}, StringToTileType(typeStr), name);
-	}
-	fin.close();
-}
-
 void Map::clear() {
 	for (auto& tile : tiles) {
 		delete tile;
 		tile = nullptr;
 	}
 	tiles.clear();
+	//safeUnload(background);
 }
 
 void Map::drawMap()
 {
 	for (auto& tile : tiles) {
 		tile->draw();
+	}
+}
+
+void Map::drawBackGround() 
+{
+	if (background.id > 0) {
+		for (int i = 0; i < 3; i++) {
+			DrawTexturePro(background, { 0, 0, (float)background.width, (float)background.height },
+				{ BackGroundPos[i].x, BackGroundPos[i].y, BgWidth, BgHeight },
+				{ 0, 0 }, 0.0f, WHITE);
+		}
+	}
+	else {
+		cout << "Background not found" << endl;
 	}
 }
 
@@ -95,4 +91,25 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			}
 		}
 	}
+	setMapSize(Vector2{(float) width * tilewidth, (float) height * tilewidth});
+
+}
+
+void Map::loadBackgroundTexture(const std::string& backgroundName)
+{
+	background = RESOURCE_MANAGER.getTexture(backgroundName);
+	if (background.id == 0) {
+		throw std::runtime_error("Failed to load background texture: " + backgroundName);
+	}
+}
+
+Vector2 Map::getMapSize() const
+{
+	return Vector2{ width, height };
+}
+
+void Map::setMapSize(Vector2 size)
+{
+	width = size.x;
+	height = size.y;
 }

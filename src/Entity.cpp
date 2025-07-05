@@ -24,7 +24,10 @@ Entity::Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState 
 	CollNorth(Vector2{ pos.x + size.x / 2 - 5, pos.y }, Vector2{ size.x, 5 }, color),
 	CollSouth(Vector2{ pos.x + size.x / 2 - 5, pos.y + size.y - 5 }, Vector2{ size.x, 5 }, color),
 	CollWest(Vector2{ pos.x , pos.y + size.y / 2 - 5 }, Vector2{ 5, size.y }, color),
-	CollEast(Vector2{ pos.x + size.x - 5, pos.y + size.y / 2 - 5 }, Vector2{ 5, size.y }, color)
+	CollEast(Vector2{ pos.x + size.x - 5, pos.y + size.y / 2 - 5 }, Vector2{ 5, size.y }, color),
+	collisionAvailable(true),
+	gravityAvailable(true),
+	isjumping(false)
 {
 	currFrame = 0;
 	frameAcum = 0;
@@ -38,9 +41,6 @@ void Entity::draw() {
 
 }
 void Entity::HandleInput() {
-
-}
-void Entity::UpdateTexture() {
 
 }
 void Entity::UpdatePhysics()
@@ -68,6 +68,10 @@ void Entity::updateCollision()
 
 	CollWest.setX(position.x);
 	CollWest.setY(position.y + size.y / 2 - CollWest.getHeight() / 2);
+}
+
+void Entity::UpdateTexture()
+{
 }
 
 CollisionType Entity::CheckCollision(const Entity& entity) const
@@ -219,4 +223,48 @@ Rectangle Entity::getRect() const
 Color& Entity::getColor()
 {
 	return color;
+}
+
+float Entity::getCenterX() const {
+	return position.x + size.x / 2.f;
+}
+
+float Entity::getCenterY() const {
+	return position.y + size.y / 2.f;
+}
+
+float Entity::getBottom() const {
+	return position.y + size.y;
+}
+
+float Entity::getLeft() const {
+	return position.x;
+}
+
+float Entity::getRight() const {
+	return position.x + size.x;
+}
+
+float Entity::getTop() const {
+	return position.y;
+}
+
+void Entity::setCollisionAvailable(bool collisionAvailable)
+{
+	this->collisionAvailable = collisionAvailable;
+}
+
+void Entity::setGravityAvailable(bool gravityAvailable)
+{
+	this->gravityAvailable = gravityAvailable;
+}
+
+bool Entity::getCollisionAvailable()
+{
+	return collisionAvailable;
+}
+
+bool Entity::getGravityAvailable()
+{
+	return gravityAvailable;
 }
