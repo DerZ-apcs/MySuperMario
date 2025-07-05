@@ -47,4 +47,65 @@ enum CharacterState {
 	STATE_FIRE_BALL
 };
 
+//Block
+enum BLOCK_TYPE {
+	FLOOR,
+	BRICK, // breakable
+	SOLIDBLOCK, // unmovable, unbreakable
+	MOVINGBLOCK,
+	ITEMBLOCK,
+	HIDDEN,
+	SPIKE,
+	PIPE,
+	TEMPBLOCK,
+	DECOR
+};
+
+
+enum ITEM_TYPE {
+	COIN,
+	MUSHROOM,
+	SUPERLEAF,
+	FLOWER,
+	STAR
+};
+
+enum ENEMY_TYPE {
+	GOOMBA,
+	KOOPATROOPA,
+	PIRANHA,
+	SHELL
+};
+
+enum GOOMBA_TYPE {
+	BROWN_GOOMBA,
+	RED_GOOMBA,
+	REDPARA_GOOMBA,
+	BROWNPARA_GOOMBA,
+	MICRO_GOOMBA,
+};
+
+enum KOOPA_TROOPA_TYPE {
+	GREEN_KoopaTroopa,
+	RED_KoopaTroopa,
+	GREENPARA_KoopaTroopa,
+	REDPARA_KoopaTroopa
+};
+
+enum PIRANHA_TYPE {
+	RED_PIRANHA,
+	RED_FIRE_PIRANHA,
+	GREEN_PIRANHA,
+	GREEN_FIRE_PIRANHA
+};
+
+enum SHELL_TYPE {
+	GREEN_SHELL,
+	RED_SHELL
+};
+
+enum FireBallType {
+	CHARACTER_FIREBALL,
+	ENEMY_FIREBALL
+};
 #endif

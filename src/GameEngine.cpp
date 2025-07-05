@@ -12,14 +12,11 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Char
     // camera
     if (!player) player = new Mario();
 
-    /*camera.offset = Vector2{ (float)GetScreenWidth() / 2, (float)GetScreenHeight() / 2 };
-    camera.target = player->getPosition();
-    camera.rotation = 0.0f;
-    camera.zoom = 1.0f;*/
-    /*blocks = map.getBlocks();
+
+    blocks = map.getBlocks();
     enemies = map.getEnemies();
     items = map.getItems();
-    decor = map.getDecor();*/
+    decor = map.getDecor();
     isPaused = false;
     this->time = 300;
     resetTimer();
@@ -30,8 +27,27 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Char
 GameEngine::~GameEngine() {
     for (size_t i = 0; i < fireball.size(); i++)
         delete fireball[i];
+    for (size_t i = 0; i < enemies.size(); i++)
+        delete enemies[i];
+    for (size_t i = 0; i < items.size(); ++i) {
+        delete items[i];
+    }
+    for (size_t i = 0; i < decor.size(); ++i) {
+        delete decor[i];
+    }
+    for (size_t i = 0; i < effects.size(); ++i) {
+        delete effects[i];
+    }
+    for (size_t i = 0; i < blocks.size(); ++i) {
+        delete blocks[i];
+    }
     player = nullptr;
     fireball.clear();
+    blocks.clear();
+    enemies.clear();
+    items.clear();
+    effects.clear();
+    decor.clear();
 }
 
 void GameEngine::addScore(int amount) {
@@ -40,6 +56,21 @@ void GameEngine::addScore(int amount) {
 
 void GameEngine::addFireBall(FireBall* fireball) {
     this->fireball.push_back(fireball);
+}
+
+void GameEngine::addEnemy(Enemy* enemy)
+{
+    this->enemies.push_back(enemy);
+}
+
+void GameEngine::addEffect(Effect* effect)
+{
+    this->effects.push_back(effect);
+}
+
+void GameEngine::addItem(Item* item)
+{
+    this->items.push_back(item);
 }
 
 // update
@@ -67,17 +98,54 @@ void GameEngine::update()
         resetGame();
         resetTimer();
     }
+    // let the pause and clear screen idling
     if (isPaused || cleared) {
         return;
     }
-    if (player != nullptr) {
-        /*camera.target.y = GetScreenHeight() / 2.0f;
-        if (player->getX() >= GetScreenWidth() / 2.0f && player->getX() + (float)GetScreenWidth() / 2.f < map.getMapSize().x) {
-            camera.target.x = player->getX();
+
+    for (size_t i = 0; i < blocks.size(); i++) {
+        if (blocks[i]->isDead()) {
+            delete blocks[i];
+            blocks.erase(blocks.begin() + i);
+            i--;
         }
-        else camera.target.x = GetScreenWidth() / 2.0f;*/
+        else
+            blocks[i]->Update();
+    }
 
+    for (size_t i = 0; i < items.size(); i++) {
+        if (items[i]->isDead()) {
+            delete items[i];
+            items.erase(items.begin() + i);
+            i--;
+        }
+        else
+            items[i]->Update();
+    }
 
+    for (size_t i = 0; i < effects.size(); i++) {
+        if (effects[i]->isDead()) {
+            delete effects[i];
+            effects.erase(effects.begin() + i);
+            i--;
+        }
+        else
+            effects[i]->Update();
+    }
+
+    for (size_t i = 0; i < enemies.size(); i++) {
+        if (enemies[i]->isDead()) {
+            delete enemies[i];
+            enemies[i] = nullptr;
+            enemies.erase(enemies.begin() + i);
+            i--;
+        }
+        else
+            enemies[i]->Update();
+    }
+
+    if (player != nullptr) {
+        // update background
         for (int i = 0; i < 3; i++) {
             // wrap from left to far most right
             if (BackGroundPos[i].x + map.BgWidth <= player->getX() - map.BgWidth / 2.0f) {
@@ -108,7 +176,9 @@ void GameEngine::update()
                     mediatorCollision.HandleCollision(fireball, tile);
             }
         }
+        // player udpate
         player->Update();
+        // camera update
         camera.update(player->getX(), player->getY());
     }
     else
@@ -126,27 +196,38 @@ void GameEngine::draw()
     ClearBackground(SKYBLUE);
     map.drawBackGround(camera.getSize(), camera.getScale());
     map.drawMap();
+    if (!player) return;
+    bool lostLife = player->isLostLife();
+
+    for (size_t i = 0; i < blocks.size(); i++) {
+        blocks[i]->draw();
+    }
+    for (size_t i = 0; i < enemies.size(); i++) {
+        enemies[i]->draw();
+    }
+    for (size_t i = 0; i < items.size(); i++) {
+        items[i]->draw();
+    }
+
+    player->draw();
     
-    //BeginMode2D(camera);
-    
-    //ClearBackground(SKYBLUE);
-    /*camera.render();
-    camera.endDrawing();*/
-    if (player) 
-        player->draw();
-    //EndMode2D();
+    for (size_t i = 0; i < effects.size(); i++) {
+        effects[i]->draw();
+    }
+    for (Entity* dec : decor) {
+        dec->draw();
+    }
+
     camera.endDrawing();
 
     BeginDrawing();
 
     camera.render();
 
-    bool lostLife = false;
-    if (player) lostLife = player->isLostLife();
 
-    if (!lostLife) {
+    if (!lostLife) 
         GUI::drawStatusBar(player);
-    }
+
     if (isPaused) {
         DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.5f));
         if (cleared) {
@@ -278,12 +359,37 @@ bool GameEngine::isOver() const
 
 void GameEngine::resetGame()
 {
+    for (size_t i = 0; i < blocks.size(); ++i) {
+        delete blocks[i];
+    }
+    for (size_t i = 0; i < enemies.size(); ++i) {
+        delete enemies[i];
+    }
+    for (size_t i = 0; i < items.size(); ++i) {
+        delete items[i];
+    }
+    for (size_t i = 0; i < decor.size(); ++i) {
+        delete decor[i];
+    }
+    for (size_t i = 0; i < effects.size(); ++i) {
+        delete effects[i];
+    }
+    blocks.clear();
+    enemies.clear();
+    items.clear();
+    effects.clear();
+    decor.clear();
+    player->getFireBalls()->clear();
     map.clear();
 
     RESOURCE_MANAGER.stopCurrentMusic();
     RESOURCE_MANAGER.playMusic(level->getMusic());
     map.LoadFromJsonFile(level->getMapPath());
     map.loadBackgroundTexture(level->getBackGroundName());
+    blocks = map.getBlocks();
+    enemies = map.getEnemies();
+    items = map.getItems();
+    decor = map.getDecor();
     isPaused = false;
     this->time = 300;
     resetTimer();

@@ -7,33 +7,40 @@
 #include "../include/Map.h"
 #include "../include/Level.h"
 #include "../include/GUI.h"
+#include "../include/Item.h"
+#include "../include/Blocks.h"
 #include "../include/MediatorCollision.h"
+#include "../include/Effect.h"
+#include "../include/Enemy.h"
 #include <vector>
+
+class Enemy;
+class Effect;
 
 class GameEngine {
 private:
     Level* level;
     Map map;
     Character* player;
-    /*std::vector<BaseBlock*> blocks;
+    std::vector<Blocks*> blocks;
     std::vector<Enemy*> enemies;
-    std::vector<Item*> items;*/
+    std::vector<Item*> items;
     std::vector<FireBall*> fireball;
-   /* std::vector<Effect*> effects;
-    std::vector<BaseBlock*> decor;
-    std::vector<Shell*> shells;*/
+    std::vector<Effect*> effects;
+    std::vector<Blocks*> decor;
+    //std::vector<Shell*> shells;
     std::vector<Entity*> testEntities;
     GameCamera camera;
-    //Camera2D camera;
-    bool isPaused;
-    bool cleared = false;
     bool isvictory = false;
     bool died = false;
     bool gameover = false;
+    bool isPaused;
+    bool cleared = false;
     float time;
     float deltaTime;
-    std::vector<Tile*> Tiles;
     Texture2D BackGroundTex;
+
+    std::vector<Tile*> Tiles;
     std::map<string, Texture2D> backgroundTextures;
     std::vector<Vector2> BackGroundPos;
     MediatorCollision mediatorCollision;
@@ -44,10 +51,10 @@ public:
     void resolveCollision();
     void addScore(int amount);
     void addFireBall(FireBall* fireball);
-    //void addEnemy(Enemy* enemy);
-    /*void addEffect(Effect* effect);
-    void addShell(Shell* shell);
-    void addItem(Item* item);*/
+    void addEnemy(Enemy* enemy);
+    void addEffect(Effect* effect);
+    //void addShell(Shell* shell);
+    void addItem(Item* item);
     void update();
     void handleCollision();
     void draw(); // draw

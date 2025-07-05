@@ -7,7 +7,7 @@
 
 class Luigi: public Character {
 private:
-	const float maxspeedX = 450;
+	const float maxspeedX = 500;
 	const float maxSpeedY = 600;
 public:
 	Luigi();

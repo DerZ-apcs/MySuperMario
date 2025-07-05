@@ -2,6 +2,9 @@
 #define MAP_H
 #include <raylib.h>
 #include "../include/Tile.h"
+#include "../include/Blocks.h"
+#include "../include/Item.h"
+#include "../include/Enemy.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -16,6 +19,11 @@ private:
 	std::vector<Vector2> BackGroundPos;
 	float width;
 	float height;
+
+	std::vector<Blocks*> blockArray;
+	std::vector<Enemy*> enemies;
+	std::vector<Item*> items;
+	std::vector<Blocks*> decors;
 	
 public:
 	static const std::string basePath;
@@ -33,6 +41,16 @@ public:
 	void loadBackgroundTexture(const std::string& backgroundName);
 	Vector2 getMapSize() const;
 	void setMapSize(Vector2 size);
+
+	bool LoadFromJsonFile(std::ifstream& file, std::vector<Blocks*>& blocks,
+		std::vector<Enemy*>& enemies, std::vector<Item*>& items, std::vector<Blocks*>& decors);
+	//bool stringToEnemyType(std::string& enemyTypeStr, std::string& subtype, ENEMY);
+
+	std::vector<Blocks*> getBlocks() const;
+	std::vector<Enemy*> getEnemies() const;
+	std::vector<Item*> getItems() const;
+	std::vector<Blocks*> getDecor() const;
+
 	float BgWidth;
 	float BgHeight;
 };

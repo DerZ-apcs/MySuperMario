@@ -17,6 +17,11 @@ Map::~Map()
 	clear();
 }
 
+std::string Map::TileTypeToString(TileType type)
+{
+	return std::string();
+}
+
 TileType Map::StringToTileType(const std::string& str)
 {
 	if (str == "TILE_TYPE_NORMAL") return TileType::TILE_TYPE_NORMAL;
@@ -41,7 +46,11 @@ void Map::clear() {
 		tile = nullptr;
 	}
 	tiles.clear();
-	//safeUnload(background);
+	blockArray.clear();
+	items.clear();
+	decors.clear();
+	enemies.clear();
+	
 }
 
 void Map::drawMap()
@@ -49,6 +58,8 @@ void Map::drawMap()
 	for (auto& tile : tiles) {
 		tile->draw();
 	}
+	for (Entity* entity : blockArray)
+		entity->draw();
 }
 
 void Map::drawBackGround() 
@@ -127,4 +138,29 @@ void Map::setMapSize(Vector2 size)
 {
 	width = size.x;
 	height = size.y;
+}
+
+bool Map::LoadFromJsonFile(std::ifstream& file, std::vector<Blocks*>& blocks, std::vector<Enemy*>& enemies, std::vector<Item*>& items, std::vector<Blocks*>& decors)
+{
+	return false;
+}
+
+std::vector<Blocks*> Map::getBlocks() const
+{
+	return blockArray;
+}
+
+std::vector<Enemy*> Map::getEnemies() const
+{
+	return enemies;
+}
+
+std::vector<Item*> Map::getItems() const
+{
+	return items;
+}
+
+std::vector<Blocks*> Map::getDecor() const
+{
+	return decors;
 }

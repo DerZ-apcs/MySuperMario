@@ -11,7 +11,8 @@ Entity::Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState 
 Entity::Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState state,
 	Texture2D tex, float FrameTime, int MaxFrame, Color color):
 	position(pos), size(sz), velocity(vel), direction(dir), state(state), texture(tex),
-	frameTime(FrameTime), maxFrame(MaxFrame), frameAcum(0), currFrame(0), color(color)
+	frameTime(FrameTime), maxFrame(MaxFrame), frameAcum(0), currFrame(0), color(color),
+	dead(false)
 {
 	CollNorth.setColor(color);
 	CollEast.setColor(color);
@@ -27,7 +28,8 @@ Entity::Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState 
 	CollEast(Vector2{ pos.x + size.x - 5, pos.y + size.y / 2 - 5 }, Vector2{ 5, size.y }, color),
 	collisionAvailable(true),
 	gravityAvailable(true),
-	isjumping(false)
+	isjumping(false),
+	dead(false)
 {
 	currFrame = 0;
 	frameAcum = 0;
@@ -151,6 +153,15 @@ void Entity::setColor(Color color)
 {
 	this->color = color;
 }
+bool Entity::isDead() const
+{
+	return dead;
+}
+void Entity::setEntityDead()
+{
+	this->dead = true;
+}
+
 // Getter
 Vector2& Entity::getPosition() {
 	return position;

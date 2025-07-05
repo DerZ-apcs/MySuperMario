@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "maps/MAP_1.2.tmx",
+    "activeFile": "maps/MAP_1.1.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -21,10 +21,10 @@
         },
         "maps/MAP_1.1.tmx": {
             "scale": 0.5,
-            "selectedLayer": 0,
+            "selectedLayer": -1,
             "viewCenter": {
-                "x": 1266,
-                "y": 1309
+                "x": 1156,
+                "y": 599
             }
         },
         "maps/MAP_1.2.tmx": {
@@ -72,10 +72,10 @@
     ],
     "project": "MARIO_TILED_project.tiled-project",
     "recentFiles": [
-        "tilesets/background6.tsx",
         "tilesets/MarioTileset.tsx",
-        "maps/MAP_1.1.tmx",
         "maps/MAP_1.2.tmx",
+        "maps/MAP_1.1.tmx",
+        "tilesets/background6.tsx",
         "maps/MAP_1.1.json",
         "maps/MAP_1.tmx",
         "tilesets/MARIO_TILESETS.tsx"

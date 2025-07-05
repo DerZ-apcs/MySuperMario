@@ -28,8 +28,9 @@ protected:
 	std::string Entity_name;
 
 	bool isjumping;
-	bool gravityAvailable;
+	bool gravityAvailable = true;
 	bool collisionAvailable;
+	bool dead;
 
 	Collision CollNorth;
 	Collision CollSouth;
@@ -70,6 +71,9 @@ public:
 
 	void setState(EntityState state);
 	void setColor(Color color);
+
+	bool isDead() const;
+	void setEntityDead();
 	// Getter
 	Vector2& getPosition();
 	float getX() const;
