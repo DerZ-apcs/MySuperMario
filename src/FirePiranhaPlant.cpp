@@ -161,9 +161,20 @@ void FirePiranhaPlant::UpdateTexture() {
 void FirePiranhaPlant::ShootFireBall() {
     Direction dir = (mario.getX() > position.x) ? RIGHT : LEFT;
     Vector2 fireBallPos = { position.x, position.y + 10 };
-    Vector2 fireBallVel = (dir == RIGHT) ? Vector2{ 400.0f, -200.0f } : Vector2{ -400.0f, -200.0f };
-    EnemyFireBall* fireball = new EnemyFireBall(fireBallPos, { 16, 16 }, fireBallVel, dir, 2.0f);
-    fireballs.push_back(fireball);
+    const int numFireballs = 3; // Số fireball bắn ra mỗi lần
+    const float angleSpread = 15.0f; // Góc lệch giữa các fireball (độ)
+    const float baseSpeed = 400.0f; // Tốc độ cơ bản
+
+    for (int i = 0; i < numFireballs; ++i) {
+        // Tính góc lệch: -angleSpread, 0, +angleSpread
+        float angle = (i - (numFireballs - 1) / 2.0f) * angleSpread;
+        float rad = angle * DEG2RAD;
+        float velX = baseSpeed * cosf(rad) * (dir == RIGHT ? 1.0f : -1.0f);
+        float velY = -200.0f + baseSpeed * sinf(rad); // Thêm thành phần Y để tạo quỹ đạo cong
+        Vector2 fireBallVel = { velX, velY };
+        EnemyFireBall* fireball = new EnemyFireBall(fireBallPos, { 16, 16 }, fireBallVel, dir, 2.0f);
+        fireballs.push_back(fireball);
+    }
     Singleton<ResourceManager>::getInstance().playSound("FIREBALL");
 }
 

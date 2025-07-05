@@ -23,5 +23,4 @@ public:
     void destroy();
     bool IsDestroyed() { return isDestroyed; }
 };
-
 #endif

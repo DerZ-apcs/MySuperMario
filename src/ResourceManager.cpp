@@ -103,7 +103,15 @@ void ResourceManager::loadTextures() {
 	textures["FirePiranhaPlant_OPEN"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_1.png");
 	textures["FirePiranhaPlant_CLOSED"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_0.png");
 	textures["EnemyFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FlowerMarioFireball_0.png");
-	textures["EnemyFireball_LEFT_0"] = flipTexture(textures["EnemyFireball_RIGHT_0"]);
+	textures["EnemyFireball_RIGHT_1"] = LoadTexture("resources/images/sprites/mario/FlowerMarioFireball_1.png");
+	textures["EnemyFireball_RIGHT_2"] = LoadTexture("resources/images/sprites/mario/FlowerMarioFireball_2.png");
+	textures["EnemyFireball_RIGHT_3"] = LoadTexture("resources/images/sprites/mario/FlowerMarioFireball_3.png");
+	textures["EnemyFireball_LEFT_0"] = flipTexture(textures["FlowerMarioFireball_RIGHT_0"]);
+	textures["EnemyFireball_LEFT_1"] = flipTexture(textures["FlowerMarioFireball_RIGHT_1"]);
+	textures["EnemyFireball_LEFT_2"] = flipTexture(textures["FlowerMarioFireball_RIGHT_2"]);
+	textures["EnemyFireball_LEFT_3"] = flipTexture(textures["FlowerMarioFireball_RIGHT_3"]);
+
+
 
 	textures["Rex_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/GreenKoopaTroopa_0.png");
 	textures["Rex_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/GreenKoopaTroopa_1.png");

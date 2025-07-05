@@ -1,4 +1,4 @@
-#include "../include/EnemyFireBall.h"
+﻿#include "../include/EnemyFireBall.h"
 #include "../include/ResourceManager.h"
 
 const float EnemyFireBall::maxDistance = 1000.0f;
@@ -28,8 +28,7 @@ void EnemyFireBall::Update() {
     maxFrame = 3;
     if (frameAcum >= frameTime) {
         frameAcum = 0;
-        currFrame++;
-        if (currFrame > maxFrame) currFrame = 0;
+        currFrame = (currFrame + 1) % (maxFrame + 1); // Đảm bảo lặp đúng số frame
     }
     timeSpanAcum += deltaTime;
     if (velocity.x > 0)
@@ -41,11 +40,11 @@ void EnemyFireBall::Update() {
     velocity.y += GRAVITY * deltaTime;
 
     updateCollision();
+    UpdateTexture(); // Gọi UpdateTexture trong Update để đảm bảo texture luôn hợp lệ
 }
 
 void EnemyFireBall::draw() {
     if (isMaxDistance() || isDestroyed) return;
-    UpdateTexture();
     DrawTexture(texture, position.x, position.y, WHITE);
 }
 
@@ -57,6 +56,12 @@ void EnemyFireBall::UpdateTexture() {
     const std::string dir = direction == LEFT ? "_LEFT_" : "_RIGHT_";
     std::string textureName = "EnemyFireball" + dir + std::to_string(currFrame);
     texture = Singleton<ResourceManager>::getInstance().getTexture(textureName);
+    // Kiểm tra texture hợp lệ
+    if (texture.id == 0) {
+        // Sử dụng texture mặc định nếu không tải được
+        texture = direction == RIGHT ? Singleton<ResourceManager>::getInstance().getTexture("EnemyFireball_RIGHT_0") :
+            Singleton<ResourceManager>::getInstance().getTexture("EnemyFireball_LEFT_0");
+    }
 }
 
 bool EnemyFireBall::isMaxDistance() const {
