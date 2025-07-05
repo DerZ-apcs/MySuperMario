@@ -27,7 +27,8 @@ Game::Game(int nwidth, int nheight, int ntargetFPS) :
     enemies.push_back(new FlyingGoomba({ 800, 920 }, Resource_manager.getTexture("FlyingGoomba_LEFT_1"), &mediatorCollision));
     enemies.push_back(new Bullet({ 400, 704 }, Resource_manager.getTexture("Bullet_LEFT_1"), LEFT)); 
     enemies.push_back(new Bullet({ 500, 930 }, Resource_manager.getTexture("Bullet_RIGHT_1"), RIGHT)); */
-    enemies.push_back(new PiranhaPlant({ 576, 448 }, Resource_manager.getTexture("PiranhaPlant_OPEN"),mario));
+   /* enemies.push_back(new PiranhaPlant({ 576, 448 }, Resource_manager.getTexture("PiranhaPlant_OPEN"),mario));*/
+    enemies.push_back(new FirePiranhaPlant({ 576, 448 }, Resource_manager.getTexture("FirePiranhaPlant_OPEN"), mario));
     /*enemies.push_back(new Rex({ 400, 920 }, Resource_manager.getTexture("Rex_LEFT_0"), &mediatorCollision)); */
 }
 
@@ -56,7 +57,6 @@ void Game::initGame()
 }
 
 void Game::UpdateGame() {
-    // Camera & background
     camera.target.y = GetScreenHeight() / 2.0f;
     if (mario.getX() >= GetScreenWidth() / 2.0f) {
         camera.target.x = mario.getX();
@@ -81,16 +81,13 @@ void Game::UpdateGame() {
         }
     }
 
-    // Update Mario
     mario.Update();
 
-    // Update enemies
     for (auto& enemy : enemies) {
         if (!enemy) continue;
 
         enemy->Update();
 
-        // Check collision with tiles
         for (auto const& tile : *map1.getVectorTiles()) {
             CollisionType enemyCollision = enemy->CheckCollision(*tile);
             if (enemyCollision != COLLISION_TYPE_NONE) {
@@ -98,10 +95,8 @@ void Game::UpdateGame() {
             }
         }
 
-        // Check collision with Mario
         mediatorCollision.HandleCollision(&mario, enemy);
 
-        // Check collision with other enemies
         for (auto& other : enemies) {
             if (enemy != other) {
                 CollisionType enemyCollision = enemy->CheckCollision(*other);
@@ -111,10 +106,24 @@ void Game::UpdateGame() {
             }
         }
 
-        // Check collision with fireballs
         for (auto& fireball : *mario.getFireBalls()) {
             if (!fireball->IsDestroyed()) {
                 mediatorCollision.HandleCollision(fireball, enemy);
+            }
+        }
+
+        FirePiranhaPlant* firePiranha = dynamic_cast<FirePiranhaPlant*>(enemy);
+        if (firePiranha) {
+            for (auto& fireball : *firePiranha->getFireBalls()) {
+                if (!fireball->IsDestroyed()) {
+                    mediatorCollision.HandleCollision(fireball, &mario);
+                    for (auto const& tile : *map1.getVectorTiles()) {
+                        CollisionType tileColl = fireball->CheckCollision(*tile);
+                        if (tileColl != COLLISION_TYPE_NONE) {
+                            mediatorCollision.HandleCollision(fireball, tile);
+                        }
+                    }
+                }
             }
         }
     }
@@ -127,7 +136,6 @@ void Game::UpdateGame() {
         return false;
         }), enemies.end());
 
-    // Tiles and Mario/Fireball collisions
     for (auto const& tile : *map1.getVectorTiles()) {
         CollisionType PlayerCollision = mario.CheckCollision(*tile);
         if (PlayerCollision != COLLISION_TYPE_NONE)
@@ -139,7 +147,6 @@ void Game::UpdateGame() {
         }
     }
 
-    // Remove destroyed fireballs
     auto& fireballs = *mario.getFireBalls();
     fireballs.erase(std::remove_if(fireballs.begin(), fireballs.end(), [](FireBall* fireball) {
         if (fireball && (fireball->isMaxDistance() || fireball->IsDestroyed())) {

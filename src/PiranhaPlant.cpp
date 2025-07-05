@@ -6,7 +6,7 @@ const float PiranhaPlant::STAY_UP_DURATION = 2.0f; // Thời gian ở trạng th
 
 PiranhaPlant::PiranhaPlant(Vector2 pos, Texture2D texture, Mario& mario)
     : Enemy(pos, { 32, 48 }, { 0, 0 }, RIGHT, ON_GROUND, texture, 0.2f, 1, RED),
-    popUpTimer(0.0f), isPoppingUp(true), popUpHeight(48.0f), baseY(pos.y), mario(mario), delayTimer(0.5f), invincibilityTimer(0.0f) { 
+    popUpTimer(0.0f), isPoppingUp(true), popUpHeight(48.0f), baseY(pos.y), mario(mario), delayTimer(0.2f), invincibilityTimer(0.0f) { 
 }
 
 void PiranhaPlant::Update() {
@@ -58,12 +58,10 @@ void PiranhaPlant::Update() {
         isPoppingUp = true;
         float t = popUpTimer / POP_UP_DURATION; // Tỷ lệ hoàn thành (0 đến 1)
         position.y = baseY - popUpHeight * t; // Di chuyển lên
-    }
-    else if (popUpTimer < POP_UP_DURATION + STAY_UP_DURATION) {
+    } else if (popUpTimer < POP_UP_DURATION + STAY_UP_DURATION) {
         // Giai đoạn ở trên
         position.y = baseY - popUpHeight; // Ở vị trí cao nhất
-    }
-    else {
+    } else {
         // Giai đoạn rút xuống
         isPoppingUp = false;
         float t = (popUpTimer - POP_UP_DURATION - STAY_UP_DURATION) / POP_UP_DURATION; // Tỷ lệ hoàn thành (0 đến 1)
@@ -141,6 +139,7 @@ void PiranhaPlant::CollisionWithCharacter(Mario& mario, CollisionType collType) 
 
     // Chỉ gây sát thương khi ở trạng thái trồi lên hoàn toàn
     bool isFullyPoppedUp = (popUpTimer >= POP_UP_DURATION && popUpTimer < POP_UP_DURATION + STAY_UP_DURATION);
+
 
     // Mario nhảy lên đầu (stomp)
     if (collType == COLLISION_TYPE_SOUTH && (mario.getState() == JUMPING || mario.getState() == FALLING)) {

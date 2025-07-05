@@ -4,7 +4,7 @@
 #include "../include/Enemy.h"
 
 class PiranhaPlant : public Enemy {
-private:
+protected:
     float popUpTimer; // Timer để kiểm soát chu kỳ trồi/rút
     bool isPoppingUp; // Trạng thái trồi lên hay rút xuống
     float popUpHeight; // Độ cao tối đa khi trồi lên

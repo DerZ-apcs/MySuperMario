@@ -14,6 +14,7 @@
 #include "../include/Bullet.h"
 #include "../include/PiranhaPlant.h"
 #include "../include/Rex.h"
+#include "../include/FirePiranhaPlant.h"
 
 class Game {
 private:

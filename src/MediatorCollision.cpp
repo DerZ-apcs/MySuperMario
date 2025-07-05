@@ -54,6 +54,32 @@ void MediatorCollision::HandleFireballWithTiles(FireBall*& fireball, Tile*& tile
     }
 }
 
+void MediatorCollision::HandleEnemyFireballWithTiles(EnemyFireBall*& fireball, Tile*& tile, CollisionType Colltype)
+{
+    if (Colltype == COLLISION_TYPE_NONE) return;
+    switch (Colltype)
+    {
+    case COLLISION_TYPE_NORTH:
+        fireball->setPosition(Vector2{ fireball->getX(), tile->getY() + tile->getHeight() });
+        fireball->setVelY(0);
+        break;
+    case COLLISION_TYPE_SOUTH:
+        fireball->setPosition(Vector2{ fireball->getX(), tile->getY() - fireball->getHeight() });
+        fireball->setVelY(fireball->getVelY() * -1);
+        break;
+    case COLLISION_TYPE_EAST:
+        fireball->setPosition(Vector2{ tile->getX() - fireball->getWidth(), fireball->getY() });
+        fireball->setVelX(fireball->getVelX() * -1);
+        break;
+    case COLLISION_TYPE_WEST:
+        fireball->setPosition(Vector2{ tile->getX() + tile->getWidth(), fireball->getY() });
+        fireball->setVelX(fireball->getVelX() * -1);
+        break;
+    default:
+        break;
+    }
+}
+
 void MediatorCollision::HandleEnemyWithMario(Enemy*& enemy, Mario*& mario, CollisionType Colltype)
 {
     if (Colltype == COLLISION_TYPE_NONE) {
@@ -76,14 +102,28 @@ void MediatorCollision::HandleFireballWithEnemy(FireBall*& fireball, Enemy*& ene
     if (collType == COLLISION_TYPE_NONE || fireball->IsDestroyed()) return;
     enemy->CollisionWithFireball(*fireball);
     fireball->destroy();
-    mario->addScore(100); // Cộng điểm khi FireBall tiêu diệt enemy
+    mario->addScore(100);
+}
+
+void MediatorCollision::HandleEnemyFireballWithMario(EnemyFireBall*& fireball, Mario*& mario, CollisionType collType)
+{
+    if (collType == COLLISION_TYPE_NONE || fireball->IsDestroyed()) return;
+    if (mario->getInvincibilityTimer() <= 0) {
+        if (mario->getMarioState() == STATE_SUPER || mario->getMarioState() == STATE_FIRE_BALL) {
+            mario->TransitionToSmall();
+            mario->setInvincibilityTimer(2.0f);
+        }
+        else {
+            mario->setState(STATE_IS_DYING);
+            Singleton<ResourceManager>::getInstance().playSound("MARIO_DIE");
+        }
+    }
+    fireball->destroy();
 }
 
 void MediatorCollision::HandleCollision(Entity* entity1, Entity* entity2) {
-    // Kiểm tra sớm để giảm dynamic_cast
     if (entity1 == entity2) return;
 
-    // Kiểm tra va chạm FireBall với Enemy
     FireBall* fireball = dynamic_cast<FireBall*>(entity1);
     Enemy* enemy = dynamic_cast<Enemy*>(entity2);
     if (fireball && enemy) {
@@ -103,7 +143,26 @@ void MediatorCollision::HandleCollision(Entity* entity1, Entity* entity2) {
         return;
     }
 
-    Mario* mario = dynamic_cast<Mario*>(entity1);
+    EnemyFireBall* enemyFireball = dynamic_cast<EnemyFireBall*>(entity1);
+    Mario* mario = dynamic_cast<Mario*>(entity2);
+    if (enemyFireball && mario) {
+        CollisionType collType = enemyFireball->CheckCollision(*mario);
+        if (collType != COLLISION_TYPE_NONE) {
+            HandleEnemyFireballWithMario(enemyFireball, mario, collType);
+        }
+        return;
+    }
+    enemyFireball = dynamic_cast<EnemyFireBall*>(entity2);
+    mario = dynamic_cast<Mario*>(entity1);
+    if (enemyFireball && mario) {
+        CollisionType collType = enemyFireball->CheckCollision(*mario);
+        if (collType != COLLISION_TYPE_NONE) {
+            HandleEnemyFireballWithMario(enemyFireball, mario, collType);
+        }
+        return;
+    }
+
+    mario = dynamic_cast<Mario*>(entity1);
     enemy = dynamic_cast<Enemy*>(entity2);
     if (mario && enemy) {
         CollisionType collType = mario->CheckCollision(*enemy);
@@ -162,13 +221,32 @@ void MediatorCollision::HandleCollision(Entity* entity1, Entity* entity2) {
         }
         return;
     }
+
+    enemyFireball = dynamic_cast<EnemyFireBall*>(entity1);
+    tile = dynamic_cast<Tile*>(entity2);
+    if (enemyFireball && tile) {
+        CollisionType collType = enemyFireball->CheckCollision(*tile);
+        if (collType != COLLISION_TYPE_NONE) {
+            HandleEnemyFireballWithTiles(enemyFireball, tile, collType);
+        }
+        return;
+    }
+
+    enemyFireball = dynamic_cast<EnemyFireBall*>(entity2);
+    tile = dynamic_cast<Tile*>(entity1);
+    if (enemyFireball && tile) {
+        CollisionType collType = enemyFireball->CheckCollision(*tile);
+        if (collType != COLLISION_TYPE_NONE) {
+            HandleEnemyFireballWithTiles(enemyFireball, tile, collType);
+        }
+        return;
+    }
 }
 
-
-void MediatorCollision::SetMario(Mario* m) { 
-    mario = m; 
+void MediatorCollision::SetMario(Mario* m) {
+    mario = m;
 }
 
-Mario* MediatorCollision::GetMario() const { 
-    return mario; 
+Mario* MediatorCollision::GetMario() const {
+    return mario;
 }
