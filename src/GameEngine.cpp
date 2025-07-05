@@ -4,18 +4,18 @@
 GameEngine* globalGameEngine = nullptr;
 
 GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Character*& player)
-    : /*camera(screenWidth, screenHeight, 1.75f),*/ level(&level), player(player) {
+    : camera(screenWidth, screenHeight, 1.25f), level(&level), player(player) {
     map.LoadFromJsonFile(level.getMapPath());
     map.loadBackgroundTexture(level.getBackGroundName());
     Vector2 Msize = map.getMapSize();
-    //camera.loadRenderTexture(Msize);
+    camera.loadRenderTexture(Msize);
     // camera
-    //player = new Mario();
+    if (!player) player = new Mario();
 
-    camera.offset = Vector2{ (float)GetScreenWidth() / 2, (float)GetScreenHeight() / 2 };
+    /*camera.offset = Vector2{ (float)GetScreenWidth() / 2, (float)GetScreenHeight() / 2 };
     camera.target = player->getPosition();
     camera.rotation = 0.0f;
-    camera.zoom = 1.0f;
+    camera.zoom = 1.0f;*/
     /*blocks = map.getBlocks();
     enemies = map.getEnemies();
     items = map.getItems();
@@ -71,11 +71,12 @@ void GameEngine::update()
         return;
     }
     if (player != nullptr) {
-        camera.target.y = GetScreenHeight() / 2.0f;
-        if (player->getX() >= GetScreenWidth() / 2.0f) {
+        /*camera.target.y = GetScreenHeight() / 2.0f;
+        if (player->getX() >= GetScreenWidth() / 2.0f && player->getX() + (float)GetScreenWidth() / 2.f < map.getMapSize().x) {
             camera.target.x = player->getX();
         }
-        else camera.target.x = GetScreenWidth() / 2.0f;
+        else camera.target.x = GetScreenWidth() / 2.0f;*/
+
 
         for (int i = 0; i < 3; i++) {
             // wrap from left to far most right
@@ -108,7 +109,7 @@ void GameEngine::update()
             }
         }
         player->Update();
-        //camera.update(player->getX(), player->getY());
+        camera.update(player->getX(), player->getY());
     }
     else
         cout << "Null player " << endl;
@@ -121,48 +122,54 @@ void GameEngine::handleCollision()
 // draw
 void GameEngine::draw()
 {
-    BeginDrawing();
-    BeginMode2D(camera);
-    //camera.beginDrawing();
-    map.drawBackGround();
+    camera.beginDrawing();
+    ClearBackground(SKYBLUE);
+    map.drawBackGround(camera.getSize(), camera.getScale());
     map.drawMap();
-
+    
+    //BeginMode2D(camera);
+    
     //ClearBackground(SKYBLUE);
     /*camera.render();
     camera.endDrawing();*/
     if (player) 
         player->draw();
-    EndMode2D();
+    //EndMode2D();
+    camera.endDrawing();
 
-    if (player) {
-        bool lostLife = player->isLostLife();
+    BeginDrawing();
 
-        if (!lostLife) {
-            GUI::drawStatusBar(player);
+    camera.render();
+
+    bool lostLife = false;
+    if (player) lostLife = player->isLostLife();
+
+    if (!lostLife) {
+        GUI::drawStatusBar(player);
+    }
+    if (isPaused) {
+        DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.5f));
+        if (cleared) {
+            GUI::drawLevelClear();
         }
-        if (isPaused) {
-            DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.5f));
-            if (cleared) {
-                GUI::drawLevelClear();
-            }
-            else if (gameover) {
-                GUI::drawGameOverScreen();
-            }
-            else if (died)
-                GUI::drawDeathScreen();
-            else {
-                GUI::drawPauseMenu();
-                if (GUI::sound_is_pressed) {
-                    GUI::sound_is_pressed = false;
-                    if (SETTING.isMusicEnabled()) {
-                        SETTING.setMusic(false);
-                    }
-                    else SETTING.setMusic(true);
+        else if (gameover) {
+            GUI::drawGameOverScreen();
+        }
+        else if (died)
+            GUI::drawDeathScreen();
+        else {
+            GUI::drawPauseMenu();
+            if (GUI::sound_is_pressed) {
+                GUI::sound_is_pressed = false;
+                if (SETTING.isMusicEnabled()) {
+                    SETTING.setMusic(false);
                 }
+                else SETTING.setMusic(true);
             }
         }
     }
     EndDrawing();
+
 }
 
 // run
@@ -224,7 +231,7 @@ bool GameEngine::run() {
                 isPaused = true;
             }
         }
-        else if (player->isLostLife()) { // set animation & sound when dying
+        if (player->isLostLife()) { // set animation & sound when dying
             if (player->getPhase() != DEAD_PHASE) {
                 RESOURCE_MANAGER.stopCurrentMusic();
                 player->setPhase(DEAD_PHASE);

@@ -10,6 +10,7 @@ private:
 	float cameraY;
 	float cameraWidth;
 	float cameraHeight;
+	float verticalOffset = 100.f; // to make the ground up
 	float scale; // Scaling factor
 	RenderTexture2D renderTexture;
 public:
@@ -21,5 +22,8 @@ public:
 	void beginDrawing();
 	void endDrawing();
 	void setScale(float newScale);
+	Vector2& getSize() const;
+	Vector2& getPos() const;
+	float getScale() const;
 };
 #endif

@@ -20,7 +20,7 @@ void GameCamera::update(float characterX, float characterY) {
     float scaledHeight = cameraHeight / scale;
 
     cameraX = characterX - scaledWidth / 2;
-    cameraY = renderTexture.texture.height - (characterY + cameraHeight / scale) + 100;
+    cameraY = renderTexture.texture.height - (characterY + cameraHeight / scale) + verticalOffset + 200 ;
 
     // Clamp the camera to ensure it stays within the map bounds
     if (cameraX < 0) cameraX = 0;
@@ -61,3 +61,20 @@ void GameCamera::setScale(float newScale) {
     scale = newScale;
     if (scale < 0.1f) scale = 0.1f; // Prevent too small scale
 }
+
+Vector2& GameCamera::getSize() const
+{
+    return Vector2{cameraWidth, cameraHeight};
+}
+
+float GameCamera::getScale() const
+{
+    return scale;
+}
+
+Vector2& GameCamera::getPos() const
+{
+    return Vector2{ cameraX, cameraY };
+}
+
+

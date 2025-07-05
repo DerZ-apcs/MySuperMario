@@ -23,16 +23,16 @@
             "scale": 0.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1250,
-                "y": 585
+                "x": 1266,
+                "y": 1309
             }
         },
         "maps/MAP_1.2.tmx": {
             "scale": 0.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1384,
-                "y": 545
+                "x": 1280,
+                "y": 495
             }
         },
         "maps/MAP_1.tmx": {
@@ -52,10 +52,15 @@
             "dynamicWrapping": true,
             "scaleInDock": 1,
             "scaleInEditor": 1
+        },
+        "tilesets/background6.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 0.33,
+            "scaleInEditor": 0.5
         }
     },
     "last.exportedFilePath": "D:/Project/MySuperMario/resources/maps",
-    "last.imagePath": "D:/Project/TiledMapEditor/MyMarioPrj/resources/tiles/AllTiles",
+    "last.imagePath": "D:/Project/TiledMapEditor/MyMarioPrj/resources/backgrounds",
     "map.height": 31,
     "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
     "map.lastUsedFormat": "tmx",
@@ -67,6 +72,7 @@
     ],
     "project": "MARIO_TILED_project.tiled-project",
     "recentFiles": [
+        "tilesets/background6.tsx",
         "tilesets/MarioTileset.tsx",
         "maps/MAP_1.1.tmx",
         "maps/MAP_1.2.tmx",
@@ -76,5 +82,9 @@
     ],
     "tileset.embedInMap": false,
     "tileset.lastUsedFormat": "tsx",
-    "tileset.type": 1
+    "tileset.tileSize": {
+        "height": 40,
+        "width": 50
+    },
+    "tileset.type": 0
 }

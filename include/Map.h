@@ -28,6 +28,7 @@ public:
 	void clear();
 	void drawMap();
 	void drawBackGround();
+	void drawBackGround(Vector2 cameraPos, float scale);
 	void LoadFromJsonFile(const std::string& filepath);
 	void loadBackgroundTexture(const std::string& backgroundName);
 	Vector2 getMapSize() const;

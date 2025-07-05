@@ -75,17 +75,45 @@ void Luigi::UpdateTexture()
 		if (state == ON_GROUND) {
 			if (velocity.x != 0 && !isducking) {
 				// moving
-				if (currFrame == 0)
-					texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("luigi_walk_right_0") : RESOURCE_MANAGER.getTexture("luigi_walk_left_0");
-				else if (currFrame == 1)
-					texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("luigi_walk_right_1") : RESOURCE_MANAGER.getTexture("luigi_walk_left_1");
+				if (direction == RIGHT) {
+					if (currFrame == 0)
+						texture = RESOURCE_MANAGER.getTexture("SmallLuigi_RIGHT_0");
+					else
+						texture = RESOURCE_MANAGER.getTexture("SmallLuigi_RIGHT_1");
+				}
+				else if (direction == LEFT) {
+					if (currFrame == 0)
+						texture = RESOURCE_MANAGER.getTexture("SmallLuigi_LEFT_0");
+					else
+						texture = RESOURCE_MANAGER.getTexture("SmallLuigi_LEFT_1");
+				}
 
 			}
-			if (velocity.x == 0 && !isducking)
-				texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("luigi_idle_right_0") : RESOURCE_MANAGER.getTexture("luigi_idle_left_0");
+			if (velocity.x == 0 && !isducking) {
+				if (direction == RIGHT)
+					texture = RESOURCE_MANAGER.getTexture("SmallLuigi_RIGHT_0");
+				else if (direction == LEFT)
+					texture = RESOURCE_MANAGER.getTexture("SmallLuigi_LEFT_0");
+			}
+			if (isducking) {
+				velocity.x = 0;
+				if (direction == RIGHT)
+					texture = RESOURCE_MANAGER.getTexture("SmallLuigiDucking_RIGHT_0");
+				else if (direction == LEFT)
+					texture = RESOURCE_MANAGER.getTexture("SmallLuigiDucking_LEFT_0");
+			}
 		}
-		else if (state == JUMPING || state == FALLING ) {
-			texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("luigi_jump_right_0") : RESOURCE_MANAGER.getTexture("luigi_jump_left_0");
+		else if (state == JUMPING) {
+			if (direction == RIGHT)
+				texture = RESOURCE_MANAGER.getTexture("SmallLuigiJumping_RIGHT_0");
+			else if (direction == LEFT)
+				texture = RESOURCE_MANAGER.getTexture("SmallLuigiJumping_LEFT_0");
+		}
+		else if (state == FALLING) {
+			if (direction == RIGHT)
+				texture = RESOURCE_MANAGER.getTexture("SmallLuigiFalling_RIGHT_0");
+			else if (direction == LEFT)
+				texture = RESOURCE_MANAGER.getTexture("SmallLuigiFalling_LEFT_0");
 		}
 		break;
 	case STATE_SUPER:
@@ -99,27 +127,50 @@ void Luigi::UpdateTexture()
 		if (state == ON_GROUND) {
 			if (velocity.x != 0 && !isducking) {
 				// moving
-				if (currFrame == 0) 
-					texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("superluigi_walk_right_0") : RESOURCE_MANAGER.getTexture("superluigi_walk_left_0");
-				else if (currFrame == 1) 
-					texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("superluigi_walk_right_1") : RESOURCE_MANAGER.getTexture("superluigi_walk_left_1");
-				else if (currFrame == 2)
-					texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("superluigi_walk_right_2") : RESOURCE_MANAGER.getTexture("superluigi_walk_left_2");
+
+				if (direction == RIGHT) {
+					if (currFrame == 0)
+						texture = RESOURCE_MANAGER.getTexture("SuperLuigi_RIGHT_0");
+					else if (currFrame == 1)
+						texture = RESOURCE_MANAGER.getTexture("SuperLuigi_RIGHT_1");
+					else
+						texture = RESOURCE_MANAGER.getTexture("SuperLuigi_RIGHT_2");
+				}
+				else if (direction == LEFT) {
+					if (currFrame == 0)
+						texture = RESOURCE_MANAGER.getTexture("SuperLuigi_LEFT_0");
+					else if (currFrame == 1)
+						texture = RESOURCE_MANAGER.getTexture("SuperLuigi_LEFT_1");
+					else
+						texture = RESOURCE_MANAGER.getTexture("SuperLuigi_LEFT_2");
+				}
 
 			}
 			if (velocity.x == 0 && !isducking) {
-				texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("superluigi_idle_right_0") : RESOURCE_MANAGER.getTexture("superluigi_idle_left_0");
+				if (direction == RIGHT)
+					texture = RESOURCE_MANAGER.getTexture("SuperLuigi_RIGHT_0");
+				else if (direction == LEFT)
+					texture = RESOURCE_MANAGER.getTexture("SuperLuigi_LEFT_0");
 			}
 			if (isducking) {
 				velocity.x = 0;
-				texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("superluigi_sit_right_0") : RESOURCE_MANAGER.getTexture("superluigi_sit_left_0");
+				if (direction == RIGHT)
+					texture = RESOURCE_MANAGER.getTexture("SuperLuigiDucking_RIGHT_0");
+				else if (direction == LEFT)
+					texture = RESOURCE_MANAGER.getTexture("SuperLuigiDucking_LEFT_0");
 			}
 		}
 		else if (state == JUMPING) {
-			texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("superluigi_jump_right_0") : RESOURCE_MANAGER.getTexture("superluigi_jump_left_0");
+			if (direction == RIGHT)
+				texture = RESOURCE_MANAGER.getTexture("SuperLuigiJumping_RIGHT_0");
+			else if (direction == LEFT)
+				texture = RESOURCE_MANAGER.getTexture("SuperLuigiJumping_LEFT_0");
 		}
 		else if (state == FALLING) {
-			texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("superluigi_fall_right_0") : RESOURCE_MANAGER.getTexture("superluigi_fall_left_0");
+			if (direction == RIGHT)
+				texture = RESOURCE_MANAGER.getTexture("SuperLuigiFalling_RIGHT_0");
+			else if (direction == LEFT)
+				texture = RESOURCE_MANAGER.getTexture("SuperLuigiFalling_LEFT_0");
 		}
 		break;
 
@@ -134,26 +185,48 @@ void Luigi::UpdateTexture()
 		}
 		if (state == ON_GROUND) {
 			if (velocity.x != 0 && !isducking) {
-				if (currFrame == 0)
-					texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("fireluigi_walk_right_0") : RESOURCE_MANAGER.getTexture("fireluigi_walk_left_0");
-				else if (currFrame == 1)
-					texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("fireluigi_walk_right_1") : RESOURCE_MANAGER.getTexture("fireluigi_walk_left_1");
-				else if (currFrame == 2)
-					texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("fireluigi_walk_right_2") : RESOURCE_MANAGER.getTexture("fireluigi_walk_left_2");
+				if (direction == RIGHT) {
+					if (currFrame == 0)
+						texture = RESOURCE_MANAGER.getTexture("Fire_Luigi_RIGHT_0");
+					else if (currFrame == 1)
+						texture = RESOURCE_MANAGER.getTexture("Fire_Luigi_RIGHT_1");
+					else
+						texture = RESOURCE_MANAGER.getTexture("Fire_Luigi_RIGHT_2");
+				}
+				else if (direction == LEFT) {
+					if (currFrame == 0)
+						texture = RESOURCE_MANAGER.getTexture("Fire_Luigi_LEFT_0");
+					else if (currFrame == 1)
+						texture = RESOURCE_MANAGER.getTexture("Fire_Luigi_LEFT_1");
+					else
+						texture = RESOURCE_MANAGER.getTexture("Fire_Luigi_LEFT_2");
+				}
 			}
 			if (velocity.x == 0 && !isducking) {
-				texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("fireluigi_idle_right_0") : RESOURCE_MANAGER.getTexture("fireluigi_idle_left_0");
+				if (direction == RIGHT)
+					texture = RESOURCE_MANAGER.getTexture("Fire_Luigi_RIGHT_0");
+				else if (direction == LEFT)
+					texture = RESOURCE_MANAGER.getTexture("Fire_Luigi_LEFT_0");
 			}
 			if (isducking) {
 				velocity.x = 0;
-				texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("fireluigi_sit_right_0") : RESOURCE_MANAGER.getTexture("fireluigi_sit_left_0");
+				if (direction == RIGHT)
+					texture = RESOURCE_MANAGER.getTexture("Fire_Luigi_Ducking_RIGHT_0");
+				else if (direction == LEFT)
+					texture = RESOURCE_MANAGER.getTexture("Fire_Luigi_Ducking_LEFT_0");
 			}
 		}
 		else if (state == JUMPING) {
-			texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("fireluigi_jump_right_0") : RESOURCE_MANAGER.getTexture("fireluigi_jump_left_0");
+			if (direction == RIGHT)
+				texture = RESOURCE_MANAGER.getTexture("Fire_Luigi_Jumping_RIGHT_0");
+			else if (direction == LEFT)
+				texture = RESOURCE_MANAGER.getTexture("Fire_Luigi_Jumping_LEFT_0");
 		}
 		else if (state == FALLING) {
-			texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("fireluigi_fall_right_0") : RESOURCE_MANAGER.getTexture("fireluigi_fall_left_0");
+			if (direction == RIGHT)
+				texture = RESOURCE_MANAGER.getTexture("Fire_Luigi_Falling_RIGHT_0");
+			else if (direction == LEFT)
+				texture = RESOURCE_MANAGER.getTexture("Fire_Luigi_Falling_LEFT_0");
 		}
 		if (isThrowing) {
 			if (throwFrameCounter > 0)
@@ -162,9 +235,12 @@ void Luigi::UpdateTexture()
 				throwFrameCounter = 6;
 				isThrowing = false;
 			}
-			texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("fireluigi_throw_right_0") : RESOURCE_MANAGER.getTexture("fireluigi_throw_left_0");
+			if (direction == LEFT)
+				texture = RESOURCE_MANAGER.getTexture("FireLuigiThrowingFireball_LEFT_0");
+			else if (direction == RIGHT)
+				texture = RESOURCE_MANAGER.getTexture("FireLuigiThrowingFireball_RIGHT_0");
 		}
-	}		
+	}
 	}
 
 	if (Character_sprite_State == STATE_TRANSITIONING_FROM_SMALL_TO_SUPER) {
@@ -182,14 +258,19 @@ void Luigi::UpdateTexture()
 				return;
 			}
 		}
-		if (transitionCurrentFrame == 0 || transitionCurrentFrame == 1) {
-			texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("luigi_idle_right_0") : RESOURCE_MANAGER.getTexture("luigi_idle_left_0");
+		if (transitionCurrentFrame == 0) {
+			texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("SmallLuigi_RIGHT_0") : RESOURCE_MANAGER.getTexture("SmallLuigi_LEFT_0");
 			this->setSize({ 32, 40 });
 			this->Character_state = STATE_SMALL;
 			updateCollision();
 		}
+		else if (transitionCurrentFrame == 1) {
+			texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("TransitioningLuigi_RIGHT_0") : RESOURCE_MANAGER.getTexture("TransitioningLuigi_LEFT_0");
+			this->setSize({ 32, 56 });
+			updateCollision();
+		}
 		else if (transitionCurrentFrame == 2) {
-			texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("superluigi_idle_right_0") : RESOURCE_MANAGER.getTexture("superluigi_idle_left_0");
+			texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("SuperLuigi_RIGHT_0") : RESOURCE_MANAGER.getTexture("SuperLuigi_LEFT_0");
 			this->setSize({ 32, 56 });
 			this->Character_state = STATE_SUPER;
 			updateCollision();
@@ -210,10 +291,14 @@ void Luigi::UpdateTexture()
 				return;
 			}
 		}
-		if (transitionCurrentFrame == 0) 
-			texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("superluigi_idle_right_0") : RESOURCE_MANAGER.getTexture("superluigi_idle_right_0");
-		else if (transitionCurrentFrame == 1) 
-			texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("fireluigi_idle_right_0") : RESOURCE_MANAGER.getTexture("fireluigi_idle_right_0");
+		if (transitionCurrentFrame == 0) {
+			texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("SuperLuigi_RIGHT_0") : RESOURCE_MANAGER.getTexture("SuperLuigi_LEFT_0");
+
+		}
+		else if (transitionCurrentFrame == 1) {
+			texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("Fire_Luigi_RIGHT_0") : RESOURCE_MANAGER.getTexture("Fire_Luigi_LEFT_0");
+		}
+
 	}
 	else if (Character_sprite_State == STATE_TRANSITIONING_FROM_FIREBALL_TO_SMALL) {
 		transitioningFrameAcum += deltaTime;
@@ -229,21 +314,26 @@ void Luigi::UpdateTexture()
 				return;
 			}
 		}
-		if (transitionCurrentFrame == 2) {
-			texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("fireluigi_idle_right_0") : RESOURCE_MANAGER.getTexture("fireluigi_idle_left_0");
-			this->setSize({ 32, 56 });
-			this->Character_state = STATE_SUPER;
-			updateCollision();
-		}
-		else if (transitionCurrentFrame == 0 || transitionCurrentFrame == 1) {
-			texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("luigi_idle_right_0") : RESOURCE_MANAGER.getTexture("luigi_idle_left_0");
+		if (transitionCurrentFrame == 0) {
+			texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("SmallLuigi_RIGHT_0") : RESOURCE_MANAGER.getTexture("SmallLuigi_LEFT_0");
 			this->setSize({ 32, 40 });
 			this->Character_state = STATE_SMALL;
 			updateCollision();
 		}
+		else if (transitionCurrentFrame == 1) {
+			texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("TransitioningFireLuigi_RIGHT_0") : RESOURCE_MANAGER.getTexture("TransitioningFireLuigi_LEFT_0");
+			this->setSize({ 32, 56 });
+			updateCollision();
+		}
+		else if (transitionCurrentFrame == 2) {
+			texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("Fire_Luigi_RIGHT_0") : RESOURCE_MANAGER.getTexture("Fire_Luigi_LEFT_0");
+			this->setSize({ 32, 56 });
+			this->Character_state = STATE_SUPER;
+			updateCollision();
+		}
 	}
 	if (isLostLife()) {
-		texture = RESOURCE_MANAGER.getTexture("luigi_dead_0");
+		texture = RESOURCE_MANAGER.getTexture("SmallLuigiDying");
 	}
 	if (victory) {
 		if (victoryFrameCounter > 0)
@@ -253,11 +343,11 @@ void Luigi::UpdateTexture()
 			exitlevel = true;
 		}
 		if (Character_state == STATE_SMALL)
-			texture = RESOURCE_MANAGER.getTexture("luigi_victory");
+			texture = RESOURCE_MANAGER.getTexture("SmallLuigiVictory");
 		else if (Character_state == STATE_SUPER)
-			texture = RESOURCE_MANAGER.getTexture("superluigi_victory");
+			texture = RESOURCE_MANAGER.getTexture("SuperLuigiVictory");
 		else if (Character_state == STATE_FIRE_BALL)
-			texture = RESOURCE_MANAGER.getTexture("fireluigi_victory");
+			texture = RESOURCE_MANAGER.getTexture("FireLuigiVictory");
 	}
 }
 

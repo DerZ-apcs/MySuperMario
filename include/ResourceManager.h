@@ -9,6 +9,15 @@
 
 Texture2D flipTexture(Texture2D& a);
 
+const Color MARIO_RED = { 248, 64, 112, 255 };  // Main red
+const Color MARIO_RED_DARK = { 176, 40, 96, 255 };   // Shadow red
+// Corresponding greens for Luigi
+const Color LUIGI_GREEN = { 80, 192, 56, 255 };  // Light green
+const Color LUIGI_GREEN_DARK = { 64, 128, 48, 255 };  // Darker green
+// FIRE MARIO Colors
+const Color FIRE_RED = { 248, 0, 0, 255 };
+const Color FIRE_RED_DARK = { 184, 0, 0, 255 };
+
 class ResourceManager {
 	template <class T>
 	friend class Singleton;
@@ -65,5 +74,10 @@ public:
 	void playSound(const std::string& soundName);
 	bool isPlayingSound(const std::string& soundName);
 	void stopSound(const std::string& soundName);
+
+	void loadLuigiFromMario(const std::string& marioKey, const std::string& luigiKey, Texture2D(*converter)(Texture2D));
+	static Texture2D ConvertFireMarioToFireLuigi(Texture2D marioTexture);
+	static Texture2D ConvertMarioToLuigi(Texture2D marioTexture);
+	static bool IsColorNear(Color c, Color target, int tolerance = 20);
 };
 #endif

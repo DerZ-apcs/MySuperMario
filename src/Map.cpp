@@ -56,7 +56,22 @@ void Map::drawBackGround()
 	if (background.id > 0) {
 		for (int i = 0; i < 3; i++) {
 			DrawTexturePro(background, { 0, 0, (float)background.width, (float)background.height },
-				{ BackGroundPos[i].x, BackGroundPos[i].y, BgWidth, BgHeight },
+				{ BackGroundPos[i].x, BackGroundPos[i].y + 200, (float)GetScreenWidth(), (float)GetScreenHeight()},
+				{ 0, 0 }, 0.0f, WHITE);
+		}
+	}
+	else {
+		cout << "Background not found" << endl;
+	}
+}
+
+void Map::drawBackGround(Vector2 cameraSize, float scale)
+{
+	if (background.id > 0) {
+		for (int i = 0; i < 3; i++) {
+			DrawTexturePro(background, 
+				{ 0, 0, (float)background.width, (float)background.height },
+				{ BackGroundPos[i].x, BackGroundPos[i].y + 200, (float)cameraSize.x, (float)cameraSize.y},
 				{ 0, 0 }, 0.0f, WHITE);
 		}
 	}

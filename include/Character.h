@@ -128,7 +128,7 @@ protected:
 	const float DEAD_PLAYER_INITIAL_VELOCITY = 500.f;
 	const float DEAD_PLAYER_GRAVITY = 1000.f;
 
-	const float Max_walk_velocity = 200.f;
+	const float Max_walk_velocity = 400.f;
 	const float jet_stomp_velocity = -200.f;
 
 	const float star_invicible_time = 12.f;

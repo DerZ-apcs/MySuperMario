@@ -23,8 +23,8 @@ private:
     std::vector<BaseBlock*> decor;
     std::vector<Shell*> shells;*/
     std::vector<Entity*> testEntities;
-    //GameCamera camera;
-    Camera2D camera;
+    GameCamera camera;
+    //Camera2D camera;
     bool isPaused;
     bool cleared = false;
     bool isvictory = false;
@@ -37,7 +37,6 @@ private:
     std::map<string, Texture2D> backgroundTextures;
     std::vector<Vector2> BackGroundPos;
     MediatorCollision mediatorCollision;
-    //Camera2D camera;
 
 public:
     GameEngine(float screenWidth, float screenHeight, Level& level, Character*& player);
