@@ -7,7 +7,7 @@ Game::Game(): backgroundTexture({0})
 	currentState = std::make_unique<MainMenuState>(this);
 	audioEnabled = true;
 	musicEnabled = true;
-	player = nullptr;
+	player = new Mario();
 	level = nullptr;
 	selectedCharacter = 1;
 	selectedMap = 1;
@@ -19,8 +19,9 @@ Game::~Game()
 		UnloadTexture(backgroundTexture);
 		backgroundTexture.id = 0;
 	}
+	if (player)
+		delete player;
 }
-
 
 void Game::init()
 {
@@ -43,8 +44,10 @@ void Game::init()
 	// load map&level
 	Level level1(Map::basePath + "MAP_1.1.json", "BACKGROUND_1", "MUSIC_1", "1-1");
 	Level level2(Map::basePath + "MAP_1.2.json", "BACKGROUND_2", "MUSIC_2", "1-2");
+	Level level3(Map::basePath + "kmap_3.json", "BACKGROUND_3", "MUSIC_3", "1-3");
 	loadedLevel.push_back(&level1);
 	loadedLevel.push_back(&level2);
+	loadedLevel.push_back(&level3);
 	// gui
 	loadGUI();
 

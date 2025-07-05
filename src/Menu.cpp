@@ -257,11 +257,6 @@ void MapSelection::handleInput()
 		game->player->reset();
 		game->returnToMainMenu();
 	}
-	//else if (map4Button.isPressed()) {
-	//	game->selectMap(4);
-	//	game->player->reset();
-	//	game->returnToMainMenu();
-	//}
 	else if (backButton.isPressed())
 		game->returnToMainMenu();
 }

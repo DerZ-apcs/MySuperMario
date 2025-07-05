@@ -2,6 +2,7 @@
 #define ANIMATION_H
 
 #include <raylib.h>
+#include <vector>
 using namespace std;
 
 //A class to manage sprite-based animations using Raylib.
@@ -49,10 +50,11 @@ public:
 
 private:
     const Texture2D& texture; ///< The texture containing the animation frames.
-    vector<Frame> frames; ///< List of frames in the animation.
+    std::vector<Frame> frames; ///< List of frames in the animation.
     int currentFrame; ///< Index of the current frame.
     float frameTimeCounter; ///< Time counter for the current frame.
     float scale;
     float rotate;
 };
 
+#endif

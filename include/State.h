@@ -21,3 +21,5 @@ public:
 	virtual void setCharacter(Character* character = nullptr);
 	virtual Character* getCharacter() const;
 };
+
+#endif
