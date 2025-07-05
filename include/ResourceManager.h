@@ -17,6 +17,9 @@ const Color LUIGI_GREEN_DARK = { 64, 128, 48, 255 };  // Darker green
 // FIRE MARIO Colors
 const Color FIRE_RED = { 248, 0, 0, 255 };
 const Color FIRE_RED_DARK = { 184, 0, 0, 255 };
+// Star colors
+const Color STAR_YELLOW = { 255, 255, 0, 255 };
+const Color STAR_GOLD = { 255, 204, 0, 255 };
 
 class ResourceManager {
 	template <class T>
@@ -47,7 +50,8 @@ private:
 	void unloadSound(std::string key);
 	void unloadMusic(std::string key);
 	
-	void cutSpriteSheetToTextures(const std::string& key, const std::string& filePath);
+	void generateStarMarioVariants();
+	void generateStarLuigiVariants();
 public:
 	~ResourceManager();
 	void LoadAllResources();
@@ -78,6 +82,10 @@ public:
 	void loadLuigiFromMario(const std::string& marioKey, const std::string& luigiKey, Texture2D(*converter)(Texture2D));
 	static Texture2D ConvertFireMarioToFireLuigi(Texture2D marioTexture);
 	static Texture2D ConvertMarioToLuigi(Texture2D marioTexture);
+	static Color getRainbowTint(float time);
 	static bool IsColorNear(Color c, Color target, int tolerance = 20);
+	static Texture2D ConvertMarioToStarMario(Texture2D marioTexture);
+	static Texture2D ConvertFireStarMarioToFireStarLuigi(Texture2D marioTexture);
+
 };
 #endif

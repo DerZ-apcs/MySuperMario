@@ -1,4 +1,4 @@
-#include "../include/ResourceManager.h"
+﻿#include "../include/ResourceManager.h"
 #include <iostream>
 
 void ResourceManager::loadTextures() {
@@ -135,7 +135,9 @@ void ResourceManager::loadTextures() {
 	textures["FireLuigiThrowingFireball_LEFT_0"] = flipTexture(textures["FireLuigiThrowingFireball_RIGHT_0"]);
 	// fire luigi
 
-
+	// star state (small, super, fire)
+	generateStarMarioVariants();
+	generateStarLuigiVariants();
 
 	// fireball
 	textures["FlowerMarioFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FlowerMarioFireball_0.png");
@@ -261,50 +263,46 @@ void ResourceManager::unloadMusic(std::string key)
 	}
 }
 
-void ResourceManager::cutSpriteSheetToTextures(const std::string& key, const std::string& filePath)
+void ResourceManager::generateStarMarioVariants()
 {
-	if (textures.find(key) == textures.end()) {
-		std::cerr << "ERROR texture not found" << key << std::endl;
-		return;
-	}
-	Texture2D sheet = textures[key];
-	Image sheetImage = LoadImageFromTexture(sheet); // Load full image
-
-	std::ifstream file(filePath);
-	if (!file.is_open()) {
-		std::cerr << "ERROR Failed to open animation file: " << filePath << std::endl;
-		return;
-	}
-
-	std::string line, animationName;
-	int frameIndex = 0;
-	while (getline(file, line)) {
-		if (line.empty() || line[0] == '#') continue;
-		if (line[0] == '$') {
-			animationName = line.substr(1);
-			frameIndex = 0;
+	for (const auto& [key, tex] : textures) {
+		if (key.find("Mario") != std::string::npos &&
+			key.find("Star") == std::string::npos) {
+			
+			Texture2D star = ConvertMarioToStarMario(tex);
+			std::string starKey = "Star" + key;
+			textures[starKey] = star;
 		}
-		else {
-			std::istringstream iss(line);
-			float x, y, width, height, duration, offsetX, offsetY, sizeX, sizeY;
-			if (!(iss >> x >> y >> width >> height >> duration >> offsetX >> offsetY >> sizeX >> sizeY)) {
-				std::cerr << "ERROR invalid frame data in: " << filePath << std::endl;
-				continue;
+	}
+}
+
+void ResourceManager::generateStarLuigiVariants()
+{
+	for (const auto& [key, tex] : textures) {
+		// skip non-mario or already star textures
+		if (key.find("Mario") == std::string::npos || key.find("Star") != std::string::npos)
+			continue;
+		// Extract Mario type from key (e.g. "SmallMario", "Fire_Mario", etc.)
+		std::string marioType = key.substr(0, key.find("Mario"));
+		std::string suffix = key.substr(key.find("Mario") + 5); // Skip "Mario"
+
+		// Build Luigi key
+		std::string starLuigiKey = "StarLuigi" + marioType + suffix;
+
+		// ---- Case 1: Small or Super Mario → reuse Star Mario directly
+		if (marioType == "Small" || marioType == "Super") {
+			std::string starMarioKey = "Star" + key;
+			if (textures.count(starMarioKey)) {
+				textures[starLuigiKey] = textures[starMarioKey]; // Share texture
 			}
-			Rectangle srcRect = { (float)x, (float)y, (float)width, (float)height };
-			// Extract sub-image from sprite sheet
-			Image frameImage = ImageFromImage(sheetImage, srcRect);
+		}
 
-			// Convert to Texture2D and store it
-			Texture2D frameTexture = LoadTextureFromImage(frameImage);
-			UnloadImage(frameImage);
-
-			std::string key = animationName + "_" + std::to_string(frameIndex++);
-			textures[key] = frameTexture;
+		// ---- Case 2: Fire Mario → use special conversion
+		else if (marioType == "Fire_" || marioType == "Fire") {
+			Texture2D starLuigi = ConvertFireStarMarioToFireStarLuigi(tex);
+			textures[starLuigiKey] = starLuigi;
 		}
 	}
-	UnloadImage(sheetImage);
-	file.close();
 }
 
 ResourceManager::~ResourceManager()
@@ -443,6 +441,50 @@ bool ResourceManager::IsColorNear(Color c, Color target, int tolerance) {
 	return (dr * dr + dg * dg + db * db) <= (tolerance * tolerance);
 }
 
+Texture2D ResourceManager::ConvertMarioToStarMario(Texture2D marioTexture)
+{
+	Image image = LoadImageFromTexture(marioTexture);
+	Color* pixels = LoadImageColors(image);
+	int count = image.width * image.height;
+
+	for (int i = 0; i < count; i++) {
+		Color& c = pixels[i];
+
+		if (c.a == 0) continue; // skip transparent
+
+		if (IsColorNear(c, MARIO_RED)) {
+			c = Color{ 255, 255, 0, 255 };
+		}
+		else if (IsColorNear(c, MARIO_RED_DARK)) {
+			c = Color{ 255, 204, 0, 255 };
+		}
+		// Outlines → white
+		else if (
+			IsColorNear(c, Color{ 0, 0, 0 }) ||               // black
+			IsColorNear(c, Color{ 80, 0, 0 }) ||              // dark brown/red
+			IsColorNear(c, Color{ 136, 88, 24 }) ||           // dark yellow
+			IsColorNear(c, Color{ 32, 48, 136 })              // dark blue
+			) {
+			c = Color{ 255, 255, 255, 255 }; // turn to white
+		}
+	}
+
+	MemFree(image.data);
+	image.data = pixels;
+
+	Texture2D starTex = LoadTextureFromImage(image);
+	UnloadImage(image);
+	return starTex;
+}
+
+Texture2D ResourceManager::ConvertFireStarMarioToFireStarLuigi(Texture2D marioTexture)
+{
+	Texture2D fireStarMario = ConvertMarioToStarMario(marioTexture);
+	Texture2D fireStarLuigi = ConvertFireMarioToFireLuigi(fireStarMario);
+	UnloadTexture(fireStarMario); // optional
+	return fireStarLuigi;
+}
+
 Texture2D ResourceManager::ConvertFireMarioToFireLuigi(Texture2D marioTexture) {
 	Image image = LoadImageFromTexture(marioTexture);
 	Color* pixels = LoadImageColors(image);
@@ -486,3 +528,11 @@ Texture2D ResourceManager::ConvertMarioToLuigi(Texture2D marioTexture) {
 	UnloadImage(image);
 	return luigiTexture;
 }
+
+Color ResourceManager::getRainbowTint(float time) {
+	unsigned char r = (unsigned char)(128 + 127 * sinf(time * 2));
+	unsigned char g = (unsigned char)(128 + 127 * sinf(time * 2 + 2));
+	unsigned char b = (unsigned char)(128 + 127 * sinf(time * 2 + 4));
+	return Color { r, g, b, 255 };
+}
+

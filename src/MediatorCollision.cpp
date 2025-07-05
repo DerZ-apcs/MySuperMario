@@ -56,6 +56,7 @@ void MediatorCollision::HandleFireballWithTIles(FireBall*& fireball, Tile*& tile
 	}
 }
 
+// Check Fireball vs Tile, Character vs Fire
 void MediatorCollision::HandleCollision(Entity* entity1, Entity* entity2)
 {
 	/*Mario* isMario_1 = dynamic_cast<Mario*>(entity1);
