@@ -17,7 +17,6 @@ public:
 	void RunLeft() override;
 	void RunRight() override;
 	void Jumping() override;
-	void UpdateTexture() override;
 	void reset() override;
 };
 #endif

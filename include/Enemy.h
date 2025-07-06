@@ -11,8 +11,9 @@ public:
 	~Enemy();
 	virtual void CollisionWithCharacter();
 	bool isDying();
-	void Update() override;
-	void draw() override;
+	virtual void Update() override;
+	virtual void draw() override;
+	virtual void UpdateTexture() override;
 	void updateCollision() override;
 	//virtual void AutoMoving();
 };

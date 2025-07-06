@@ -9,11 +9,6 @@ void ResourceManager::loadTextures() {
 	textures["SmallMario_RIGHT_1"] = LoadTexture("resources/images/sprites/mario/SmallMario_1.png");
 	textures["SmallMario_LEFT_0"] = flipTexture(textures["SmallMario_RIGHT_0"]);
 	textures["SmallMario_LEFT_1"] = flipTexture(textures["SmallMario_RIGHT_1"]);
-	// small luigi
-	loadLuigiFromMario("SmallMario_RIGHT_0", "SmallLuigi_RIGHT_0", ConvertMarioToLuigi);
-	loadLuigiFromMario("SmallMario_RIGHT_1", "SmallLuigi_RIGHT_1", ConvertMarioToLuigi);
-	textures["SmallLuigi_LEFT_0"] = flipTexture(textures["SmallLuigi_RIGHT_0"]);
-	textures["SmallLuigi_LEFT_1"] = flipTexture(textures["SmallLuigi_RIGHT_1"]);
 
 	// super mario
 	textures["SuperMario_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SuperMario_0.png");
@@ -23,42 +18,19 @@ void ResourceManager::loadTextures() {
 	textures["SuperMario_LEFT_1"] = flipTexture(textures["SuperMario_RIGHT_1"]);
 	textures["SuperMario_LEFT_2"] = flipTexture(textures["SuperMario_RIGHT_2"]);
 
-	// Super Luigi
-	loadLuigiFromMario("SuperMario_RIGHT_0", "SuperLuigi_RIGHT_0", ConvertMarioToLuigi);
-	loadLuigiFromMario("SuperMario_RIGHT_1", "SuperLuigi_RIGHT_1", ConvertMarioToLuigi);
-	loadLuigiFromMario("SuperMario_RIGHT_2", "SuperLuigi_RIGHT_2", ConvertMarioToLuigi);
-	textures["SuperLuigi_LEFT_0"] = flipTexture(textures["SuperLuigi_RIGHT_0"]);
-	textures["SuperLuigi_LEFT_1"] = flipTexture(textures["SuperLuigi_RIGHT_1"]);
-	textures["SuperLuigi_LEFT_2"] = flipTexture(textures["SuperLuigi_RIGHT_2"]);
-
 	// FireMario
-	textures["Fire_Mario_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FireMario_0.png");
-	textures["Fire_Mario_RIGHT_1"] = LoadTexture("resources/images/sprites/mario/FireMario_1.png");
-	textures["Fire_Mario_RIGHT_2"] = LoadTexture("resources/images/sprites/mario/FireMario_2.png");
-	textures["Fire_Mario_LEFT_0"] = flipTexture(textures["Fire_Mario_RIGHT_0"]);
-	textures["Fire_Mario_LEFT_1"] = flipTexture(textures["Fire_Mario_RIGHT_1"]);
-	textures["Fire_Mario_LEFT_2"] = flipTexture(textures["Fire_Mario_RIGHT_2"]);
-	// Fire Luigi
-	loadLuigiFromMario("Fire_Mario_RIGHT_0", "Fire_Luigi_RIGHT_0", ConvertFireMarioToFireLuigi);
-	loadLuigiFromMario("Fire_Mario_RIGHT_1", "Fire_Luigi_RIGHT_1", ConvertFireMarioToFireLuigi);
-	loadLuigiFromMario("Fire_Mario_RIGHT_2", "Fire_Luigi_RIGHT_2", ConvertFireMarioToFireLuigi);
-	textures["Fire_Luigi_LEFT_0"] = flipTexture(textures["Fire_Luigi_RIGHT_0"]);
-	textures["Fire_Luigi_LEFT_1"] = flipTexture(textures["Fire_Luigi_RIGHT_1"]);
-	textures["Fire_Luigi_LEFT_2"] = flipTexture(textures["Fire_Luigi_RIGHT_2"]);
+	textures["FireMario_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FireMario_0.png");
+	textures["FireMario_RIGHT_1"] = LoadTexture("resources/images/sprites/mario/FireMario_1.png");
+	textures["FireMario_RIGHT_2"] = LoadTexture("resources/images/sprites/mario/FireMario_2.png");
+	textures["FireMario_LEFT_0"] = flipTexture(textures["FireMario_RIGHT_0"]);
+	textures["FireMario_LEFT_1"] = flipTexture(textures["FireMario_RIGHT_1"]);
+	textures["FireMario_LEFT_2"] = flipTexture(textures["FireMario_RIGHT_2"]);
 
-
-	// jump //
-		// mario
+	// jump 
 	textures["SmallMarioJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SmallMarioJumping_0.png");
 	textures["SmallMarioJumping_LEFT_0"] = flipTexture(textures["SmallMarioJumping_RIGHT_0"]);
 	textures["SuperMarioJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SuperMarioJumping_0.png");
 	textures["SuperMarioJumping_LEFT_0"] = flipTexture(textures["SuperMarioJumping_RIGHT_0"]);
-		// luigi
-	loadLuigiFromMario("SmallMarioJumping_RIGHT_0", "SmallLuigiJumping_RIGHT_0", ConvertMarioToLuigi);
-	textures["SmallLuigiJumping_LEFT_0"] = flipTexture(textures["SmallLuigiJumping_RIGHT_0"]);
-	loadLuigiFromMario("SuperMarioJumping_RIGHT_0", "SuperLuigiJumping_RIGHT_0", ConvertMarioToLuigi);
-	textures["SuperLuigiJumping_LEFT_0"] = flipTexture(textures["SuperLuigiJumping_RIGHT_0"]);
-
 
 	// fall
 		// mario
@@ -67,77 +39,45 @@ void ResourceManager::loadTextures() {
 	textures["SuperMarioFalling_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SuperMarioFalling_0.png");
 	textures["SuperMarioFalling_LEFT_0"] = flipTexture(textures["SuperMarioFalling_RIGHT_0"]);
 
-		// luigi
-	loadLuigiFromMario("SmallMarioFalling_RIGHT_0", "SmallLuigiFalling_RIGHT_0", ConvertMarioToLuigi);
-	textures["SmallLuigiFalling_LEFT_0"] = flipTexture(textures["SmallLuigiFalling_RIGHT_0"]);
-	loadLuigiFromMario("SuperMarioFalling_RIGHT_0", "SuperLuigiFalling_RIGHT_0", ConvertMarioToLuigi);
-	textures["SuperLuigiFalling_LEFT_0"] = flipTexture(textures["SuperLuigiFalling_RIGHT_0"]);
-
-
 	// duck
-		// mario
 	textures["SmallMarioDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SmallMarioDucking_0.png");
 	textures["SmallMarioDucking_LEFT_0"] = flipTexture(textures["SmallMarioDucking_RIGHT_0"]);
 	textures["SuperMarioDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SuperMarioDucking_0.png");
 	textures["SuperMarioDucking_LEFT_0"] = flipTexture(textures["SuperMarioDucking_RIGHT_0"]);
-		// luigi
-	loadLuigiFromMario("SmallMarioDucking_RIGHT_0", "SmallLuigiDucking_RIGHT_0", ConvertMarioToLuigi);
-	textures["SmallLuigiDucking_LEFT_0"] = flipTexture(textures["SmallLuigiDucking_RIGHT_0"]);
-	loadLuigiFromMario("SuperMarioDucking_RIGHT_0", "SuperLuigiDucking_RIGHT_0", ConvertMarioToLuigi);
-	textures["SuperLuigiDucking_LEFT_0"] = flipTexture(textures["SuperLuigiDucking_RIGHT_0"]);
 
 	// dying
 	textures["SmallMarioDying"] = LoadTexture("resources/images/sprites/mario/SmallMarioDying_0.png");
-	loadLuigiFromMario("SmallMarioDying", "SmallLuigiDying", ConvertMarioToLuigi);
+	textures["SuperMarioDying"] = textures["SmallMarioDying"];
+	textures["FireMarioDying"] = LoadTexture("resources/images/sprites/mario/FireMarioDying_0.png");
 
 	// victory
-		// mario
 	textures["SmallMarioVictory"] = LoadTexture("resources/images/sprites/mario/SmallMarioVictory_0.png");
 	textures["SuperMarioVictory"] = LoadTexture("resources/images/sprites/mario/SuperMarioVictory_0.png");
 	textures["FireMarioVictory"] = LoadTexture("resources/images/sprites/mario/FireMarioVictory.png");
-		// luigi
-	loadLuigiFromMario("SmallMarioVictory", "SmallLuigiVictory", ConvertMarioToLuigi);
-	loadLuigiFromMario("SuperMarioVictory", "SuperLuigiVictory", ConvertMarioToLuigi);
-	loadLuigiFromMario("FireMarioVictory", "FireLuigiVictory", ConvertFireMarioToFireLuigi);
-
+		
 	// trasition
-		// mario
+
 	textures["TransitioningMario_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/TransitioningMario_1.png");
 	textures["TransitioningMario_LEFT_0"] = flipTexture(textures["TransitioningMario_RIGHT_0"]);
 	textures["TransitioningFireMario_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/TransitioningFireMario.png");
 	textures["TransitioningFireMario_LEFT_0"] = flipTexture(textures["TransitioningFireMario_RIGHT_0"]);
-		// luigi
-	loadLuigiFromMario("TransitioningMario_RIGHT_0", "TransitioningLuigi_RIGHT_0", ConvertMarioToLuigi);
-	textures["TransitioningLuigi_LEFT_0"] = flipTexture(textures["TransitioningLuigi_RIGHT_0"]);
-	loadLuigiFromMario("TransitioningFireMario_RIGHT_0", "TransitioningFireLuigi_RIGHT_0", ConvertFireMarioToFireLuigi);
-	textures["TransitioningFireLuigi_LEFT_0"] = flipTexture(textures["TransitioningFireLuigi_RIGHT_0"]);
-
 	// fire mario 
 
-	textures["Fire_Mario_Jumping_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FireMarioJumping_0.png");
-	textures["Fire_Mario_Jumping_LEFT_0"] = flipTexture(textures["Fire_Mario_Jumping_RIGHT_0"]);
-	loadLuigiFromMario("Fire_Mario_Jumping_RIGHT_0", "Fire_Luigi_Jumping_RIGHT_0", ConvertFireMarioToFireLuigi);
-	textures["Fire_Luigi_Jumping_LEFT_0"] = flipTexture(textures["Fire_Luigi_Jumping_RIGHT_0"]);
+	textures["FireMarioJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FireMarioJumping_0.png");
+	textures["FireMarioJumping_LEFT_0"] = flipTexture(textures["FireMarioJumping_RIGHT_0"]);
 
-	textures["Fire_Mario_Falling_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FireMarioFalling_0.png");
-	textures["Fire_Mario_Falling_LEFT_0"] = flipTexture(textures["Fire_Mario_Falling_RIGHT_0"]);
-	loadLuigiFromMario("Fire_Mario_Falling_RIGHT_0", "Fire_Luigi_Falling_RIGHT_0", ConvertFireMarioToFireLuigi);
-	textures["Fire_Luigi_Falling_LEFT_0"] = flipTexture(textures["Fire_Luigi_Falling_RIGHT_0"]);
+	textures["FireMarioFalling_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FireMarioFalling_0.png");
+	textures["FireMarioFalling_LEFT_0"] = flipTexture(textures["FireMarioFalling_RIGHT_0"]);
 
-	textures["Fire_Mario_Ducking_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FireMario_Ducking_0.png");
-	textures["Fire_Mario_Ducking_LEFT_0"] = flipTexture(textures["Fire_Mario_Ducking_RIGHT_0"]);
-	loadLuigiFromMario("Fire_Mario_Ducking_RIGHT_0", "Fire_Luigi_Ducking_RIGHT_0", ConvertFireMarioToFireLuigi);
-	textures["Fire_Luigi_Ducking_LEFT_0"] = flipTexture(textures["Fire_Luigi_Ducking_RIGHT_0"]);
+	textures["FireMarioDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FireMario_Ducking_0.png");
+	textures["FireMarioDucking_LEFT_0"] = flipTexture(textures["FireMarioDucking_RIGHT_0"]);
 
 	textures["FireMarioThrowingFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FireMario_Firing_0.png");
 	textures["FireMarioThrowingFireball_LEFT_0"] = flipTexture(textures["FireMarioThrowingFireball_RIGHT_0"]);
-	loadLuigiFromMario("FireMarioThrowingFireball_RIGHT_0", "FireLuigiThrowingFireball_RIGHT_0", ConvertFireMarioToFireLuigi);
-	textures["FireLuigiThrowingFireball_LEFT_0"] = flipTexture(textures["FireLuigiThrowingFireball_RIGHT_0"]);
-	// fire luigi
 
 	// star state for mario & luigi (small, super, fire)
-	generateStarMarioVariants();
-	generateStarLuigiVariants();
+	generateStarMarioVariants(); // for star mario
+	generateLuigiVariants(); // generate all textures of luigi
 
 	// fireball
 	textures["FlowerMarioFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FlowerMarioFireball_0.png");
@@ -282,7 +222,7 @@ void ResourceManager::generateStarLuigiVariants()
 		// skip non-mario or already star textures
 		if (key.find("Mario") == std::string::npos || key.find("Star") != std::string::npos)
 			continue;
-		// Extract Mario type from key (e.g. "SmallMario", "Fire_Mario", etc.)
+		// Extract Mario type from key (e.g. "SmallMario", "FireMario", etc.)
 		size_t marioPos = key.find("Mario");
 		std::string marioType = key.substr(0, marioPos); // eg. "Small", "Super", "Fire_"
 		std::string suffix = key.substr(marioPos + 5); // after "Mario"
@@ -299,11 +239,31 @@ void ResourceManager::generateStarLuigiVariants()
 		}
 
 		// ---- Case 2: Fire Mario → use special conversion
-		else if (marioType == "Fire_" || marioType == "Fire") {
+		else if (marioType == "Fire") {
 			Texture2D starLuigi = ConvertFireStarMarioToFireStarLuigi(tex);
 			textures[starLuigiKey] = starLuigi;
 		}
 	}
+}
+
+void ResourceManager::generateLuigiVariants()
+{
+	for (const auto& [key, tex] : textures) {
+		if (key.find("Mario") == std::string::npos || key.find("Luigi") != std::string::npos) continue; // skip non-mario or already luigi
+
+		size_t marioPos = key.find("Mario");
+		std::string CState = key.substr(0, marioPos);
+		std::string suffix = key.substr(marioPos + 5);
+
+		std::string LuigiKey = CState + "Luigi" + suffix;
+		// Case 1: normal & super mario convert to luigi
+		if (CState == "Small" || CState == "Super" || CState == "Transitioning")
+			loadLuigiFromMario(key, LuigiKey, ConvertMarioToLuigi);
+		// Case 2: fire mario convert to luigi
+		else if (CState == "Fire" || CState == "TransitioningFire")
+			loadLuigiFromMario(key, LuigiKey, ConvertFireMarioToFireLuigi);
+	}
+	generateStarLuigiVariants();
 }
 
 ResourceManager::~ResourceManager()
@@ -318,6 +278,7 @@ void ResourceManager::LoadAllResources()
 	loadMusics();
 	loadFonts();
 }
+
 
 std::map<std::string, Texture2D>  ResourceManager::getTextures() {
 	return textures;

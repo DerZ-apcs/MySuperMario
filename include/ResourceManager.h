@@ -52,6 +52,7 @@ private:
 	
 	void generateStarMarioVariants();
 	void generateStarLuigiVariants();
+	void generateLuigiVariants();
 public:
 	~ResourceManager();
 	void LoadAllResources();

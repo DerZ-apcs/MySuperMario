@@ -32,6 +32,7 @@ public:
 	virtual void setPhase(Phase phase);
 	virtual const Phase& getPhase() const;
 	virtual CharacterState& getCharacterState();
+	virtual CharacterState& getPrevCharacterState();
 
 	bool isInvicible() const;
 	bool isDucking() const;
@@ -49,7 +50,7 @@ public:
 
 	void setLostLife(bool lostLife);
 	
-	void transform(CharacterState newState);
+	//void transform(CharacterState newState);
 	void setLives(int lives);
 	void setCoins(int coins);
 	void setScores(int scores);
@@ -57,10 +58,12 @@ public:
 	void setHolding(bool holding);
 	void lostSuit();
 	void setVictory(bool victory);
+	void eatGreenMushrooms();
+	void eatRedMushrooms();
+	void eatStar();
+	void eatFireFlower();
 	
-	virtual void TransitionToSuper();
-	virtual void TransitionToSmall();
-	virtual void TransitionToFire();
+	void StartTransition(const std::vector<int>& frameOrder, int steps);
 	virtual void TransitionState();
 
 	virtual void HandleTileCollision(const Tile tile, CollisionType CollType);
@@ -74,6 +77,7 @@ public:
 	virtual void HandleInput() override;
 	virtual void updateCollision() override;
 	virtual void UpdateTexture() override;
+	virtual void UpdateTransitioningTexture();
 	float getAcclerationX() const;
 	virtual void ThrowingFireBalls();
 	
@@ -91,6 +95,13 @@ public:
 		}
 	};
 protected:
+	struct TransitionFrame {
+		std::string textureKey;
+		Vector2 size;
+		CharacterState FinalState;
+		int Max_frame;
+	};
+	std::vector<TransitionFrame> transitionFrames;
 	Phase phase;
 	CharacterType characterType;
 	bool lostLife;
@@ -117,11 +128,10 @@ protected:
 	int transitionCurrentFramePos;
 	int throwFrameCounter = 6; // for throw
 	int victoryFrameCounter = 30; // for victory
-	const int transitionFrameOrder[11] = { 0, 1, 0, 1, 0, 1, 2, 1, 2, 1, 2 };
-	const int reversedTransitionFrameOrder[11] = { 2, 1, 2, 1, 2, 1, 0, 1, 0, 1, 0 };
-	const int SuperToFlowerTransitionFrameOrder[10] = { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 };
+	std::vector<int> transitionFrameOrder;
 
 	CharacterState Character_state;
+	CharacterState PrevCharacter_state;
 	SPRITE_STATE Character_sprite_State;
 	std::list<FireBall*> fireballs;
 
