@@ -88,7 +88,7 @@ void ResourceManager::loadTextures() {
 
 	// dying
 	textures["SmallMarioDying"] = LoadTexture("resources/images/sprites/mario/SmallMarioDying_0.png");
-	loadLuigiFromMario("SmallMarioDying_RIGHT_0", "SmallLuigiDying_RIGHT_0", ConvertMarioToLuigi);
+	loadLuigiFromMario("SmallMarioDying", "SmallLuigiDying", ConvertMarioToLuigi);
 
 	// victory
 		// mario
@@ -135,7 +135,7 @@ void ResourceManager::loadTextures() {
 	textures["FireLuigiThrowingFireball_LEFT_0"] = flipTexture(textures["FireLuigiThrowingFireball_RIGHT_0"]);
 	// fire luigi
 
-	// star state (small, super, fire)
+	// star state for mario & luigi (small, super, fire)
 	generateStarMarioVariants();
 	generateStarLuigiVariants();
 
@@ -283,11 +283,12 @@ void ResourceManager::generateStarLuigiVariants()
 		if (key.find("Mario") == std::string::npos || key.find("Star") != std::string::npos)
 			continue;
 		// Extract Mario type from key (e.g. "SmallMario", "Fire_Mario", etc.)
-		std::string marioType = key.substr(0, key.find("Mario"));
-		std::string suffix = key.substr(key.find("Mario") + 5); // Skip "Mario"
+		size_t marioPos = key.find("Mario");
+		std::string marioType = key.substr(0, marioPos); // eg. "Small", "Super", "Fire_"
+		std::string suffix = key.substr(marioPos + 5); // after "Mario"
 
 		// Build Luigi key
-		std::string starLuigiKey = "StarLuigi" + marioType + suffix;
+		std::string starLuigiKey = "Star" + marioType + "Luigi" + suffix;
 
 		// ---- Case 1: Small or Super Mario → reuse Star Mario directly
 		if (marioType == "Small" || marioType == "Super") {
