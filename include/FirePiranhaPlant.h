@@ -9,6 +9,8 @@ class FirePiranhaPlant : public PiranhaPlant {
 private:
     float fireBallTimer; // Timer để bắn fireball
     static const float FIREBALL_INTERVAL; // Khoảng thời gian giữa các lần bắn
+protected:
+    static const int MAX_FIREBALLS = 10;
     std::list<EnemyFireBall*> fireballs; // Danh sách fireball
 public:
     FirePiranhaPlant(Vector2 pos, Texture2D texture, Mario& mario);
@@ -16,8 +18,25 @@ public:
     void Update() override;
     void draw() override;
     void UpdateTexture() override;
-    void ShootFireBall(); // Bắn fireball
+    virtual void ShootFireBall(); // Bắn fireball
     std::list<EnemyFireBall*>* getFireBalls(); // Lấy danh sách fireball
+};
+
+class RapidFirePiranha : public FirePiranhaPlant {
+private:
+    static const float FIREBALL_INTERVAL; // Bắn nhanh hơn
+public:
+    RapidFirePiranha(Vector2 pos, Texture2D texture, Mario& mario);
+    void ShootFireBall() override; // Ghi đè để bắn một fireball
+};
+
+class HomingFirePiranha : public FirePiranhaPlant {
+private:
+    static const float FIREBALL_INTERVAL; // Bắn nhanh hơn
+    static const float DETECTION_RANGE; // Phạm vi phát hiện Mario
+public:
+    HomingFirePiranha(Vector2 pos, Texture2D texture, Mario& mario);
+    void ShootFireBall() override; // Ghi đè để bắn fireball nhắm mục tiêu
 };
 
 #endif

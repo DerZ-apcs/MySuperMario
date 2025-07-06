@@ -49,6 +49,10 @@ public:
 	void setWidth(int width);
 	void setHeight(int height);
 	void setTargetFPS(int targetFPS);
+
+	Mario* getMario() {
+		return &mario;
+	}
 };
 
 #endif

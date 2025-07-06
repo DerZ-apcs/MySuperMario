@@ -26,10 +26,13 @@ Game::Game(int nwidth, int nheight, int ntargetFPS) :
     enemies.push_back(new FlyingGoomba({ 700, 900 }, Resource_manager.getTexture("Goomba_LEFT_0"), &mediatorCollision));
     enemies.push_back(new FlyingGoomba({ 800, 920 }, Resource_manager.getTexture("FlyingGoomba_LEFT_1"), &mediatorCollision));
     enemies.push_back(new Bullet({ 400, 704 }, Resource_manager.getTexture("Bullet_LEFT_1"), LEFT)); 
-    enemies.push_back(new Bullet({ 500, 930 }, Resource_manager.getTexture("Bullet_RIGHT_1"), RIGHT)); */
-   /* enemies.push_back(new PiranhaPlant({ 576, 448 }, Resource_manager.getTexture("PiranhaPlant_OPEN"),mario));*/
+    enemies.push_back(new PiranhaPlant({ 576, 448 }, Resource_manager.getTexture("PiranhaPlant_OPEN"),mario));
     enemies.push_back(new FirePiranhaPlant({ 576, 448 }, Resource_manager.getTexture("FirePiranhaPlant_OPEN"), mario));
-    /*enemies.push_back(new Rex({ 400, 920 }, Resource_manager.getTexture("Rex_LEFT_0"), &mediatorCollision)); */
+	enemies.push_back(new RapidFirePiranha({ 800, 448 }, Resource_manager.getTexture("FirePiranhaPlant_OPEN"), mario));
+    enemies.push_back(new HomingFirePiranha({ 576, 448 }, Resource_manager.getTexture("FirePiranhaPlant_OPEN"), mario));
+    enemies.push_back(new Rex({ 400, 920 }, Resource_manager.getTexture("Rex_LEFT_0"), &mediatorCollision)); */
+	enemies.push_back(new Bullet({ 2000, 448 }, Resource_manager.getTexture("Bullet_LEFT_1"), LEFT));
+    enemies.push_back(new FireBullet({ 2000, 350 }, Resource_manager.getTexture("Bullet_LEFT_1"), LEFT, mario));
 }
 
 Game::~Game()
@@ -57,6 +60,26 @@ void Game::initGame()
 }
 
 void Game::UpdateGame() {
+    static const int MAX_TOTAL_FIREBALLS = 50;
+    int totalFireballs = 0;
+    for (auto& enemy : enemies) {
+        Bullet* bullet = dynamic_cast<Bullet*>(enemy);
+        if (bullet) {
+            totalFireballs += bullet->getFireBalls()->size();
+        }
+    }
+    if (totalFireballs > MAX_TOTAL_FIREBALLS) {
+        for (auto& enemy : enemies) {
+            Bullet* bullet = dynamic_cast<Bullet*>(enemy);
+            if (bullet && !bullet->getFireBalls()->empty()) {
+                auto* fireball = bullet->getFireBalls()->front();
+                bullet->getFireBalls()->pop_front();
+                delete fireball;
+                break;
+            }
+        }
+    }
+
     camera.target.y = GetScreenHeight() / 2.0f;
     if (mario.getX() >= GetScreenWidth() / 2.0f) {
         camera.target.x = mario.getX();
@@ -112,9 +135,9 @@ void Game::UpdateGame() {
             }
         }
 
-        FirePiranhaPlant* firePiranha = dynamic_cast<FirePiranhaPlant*>(enemy);
-        if (firePiranha) {
-            for (auto& fireball : *firePiranha->getFireBalls()) {
+        Bullet* bullet = dynamic_cast<Bullet*>(enemy);
+        if (bullet) {
+            for (auto& fireball : *bullet->getFireBalls()) {
                 if (!fireball->IsDestroyed()) {
                     mediatorCollision.HandleCollision(fireball, &mario);
                     for (auto const& tile : *map1.getVectorTiles()) {

@@ -1,11 +1,13 @@
 ﻿#include "../include/EnemyFireBall.h"
 #include "../include/ResourceManager.h"
+#include "../include/Game.h"
+#include <raymath.h>
 
 const float EnemyFireBall::maxDistance = 1000.0f;
 const float EnemyFireBall::FB_SpeedX = 400.0f;
 
-EnemyFireBall::EnemyFireBall(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, float timeSpan)
-    : Entity(pos, sz, vel, dir, ON_GROUND, 0.1f, 3, BLACK), timeSpan(timeSpan), timeSpanAcum(0), isDestroyed(false) {
+EnemyFireBall::EnemyFireBall(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, float timeSpan, Mario* mario, bool homing)
+    : Entity(pos, sz, vel, dir, ON_GROUND, 0.1f, 3, BLACK), timeSpan(timeSpan), timeSpanAcum(0), isDestroyed(false), mario(mario), isHoming(homing) {
     this->texture = direction == RIGHT ? Singleton<ResourceManager>::getInstance().getTexture("EnemyFireball_RIGHT_0") :
         Singleton<ResourceManager>::getInstance().getTexture("EnemyFireball_LEFT_0");
     this->frameAcum = 0;
@@ -28,19 +30,26 @@ void EnemyFireBall::Update() {
     maxFrame = 3;
     if (frameAcum >= frameTime) {
         frameAcum = 0;
-        currFrame = (currFrame + 1) % (maxFrame + 1); // Đảm bảo lặp đúng số frame
+        currFrame = (currFrame + 1) % (maxFrame + 1);
     }
     timeSpanAcum += deltaTime;
-    if (velocity.x > 0)
-        direction = RIGHT;
-    else if (velocity.x < 0)
-        direction = LEFT;
+
+    if (isHoming && mario) {
+        Vector2 toMario = Vector2Subtract(mario->getPosition(), position);
+        float homingStrength = 0.1f; // Sức mạnh nhắm mục tiêu
+        Vector2 targetVel = Vector2Scale(Vector2Normalize(toMario), FB_SpeedX);
+        velocity = Vector2Lerp(velocity, targetVel, homingStrength);
+    }
+
     position.x += velocity.x * deltaTime;
     position.y += velocity.y * deltaTime;
     velocity.y += GRAVITY * deltaTime;
 
+    if (velocity.x > 0) direction = RIGHT;
+    else if (velocity.x < 0) direction = LEFT;
+
     updateCollision();
-    UpdateTexture(); // Gọi UpdateTexture trong Update để đảm bảo texture luôn hợp lệ
+    UpdateTexture();
 }
 
 void EnemyFireBall::draw() {
@@ -56,9 +65,7 @@ void EnemyFireBall::UpdateTexture() {
     const std::string dir = direction == LEFT ? "_LEFT_" : "_RIGHT_";
     std::string textureName = "EnemyFireball" + dir + std::to_string(currFrame);
     texture = Singleton<ResourceManager>::getInstance().getTexture(textureName);
-    // Kiểm tra texture hợp lệ
     if (texture.id == 0) {
-        // Sử dụng texture mặc định nếu không tải được
         texture = direction == RIGHT ? Singleton<ResourceManager>::getInstance().getTexture("EnemyFireball_RIGHT_0") :
             Singleton<ResourceManager>::getInstance().getTexture("EnemyFireball_LEFT_0");
     }
