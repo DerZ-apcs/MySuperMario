@@ -110,4 +110,21 @@ enum FireBallType {
 	CHARACTER_FIREBALL,
 	ENEMY_FIREBALL
 };
+
+enum MushroomType {
+	GREENMUSHROOM, // Lives
+	REDMUSHROOM, // Super
+};
+
+enum FlowerType {
+	FIRE_FLOWER
+};
+enum StarType {
+	YELLOW_STAR
+};
+
+enum CoinType {
+	BLOCK_COIN,
+	STATIC_COIN
+};
 #endif

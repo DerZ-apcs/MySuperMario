@@ -3,6 +3,7 @@
 #include "../include/GUI.h"
 #include "../include/Effect.h"
 #include "../include/Enemy.h"
+#include "../include/Coin.h"
 #include "../include/Map.h"
 #include "../include/Level.h"
 #include <iostream>
@@ -28,7 +29,11 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Char
     resetTimer();
     deltaTime = 0.f;
     BackGroundPos = { {0, 0}, {(float)GetScreenWidth(), 0}, {(float)GetScreenWidth() * 2, 0} };
-   
+    //items.push_back();
+    for (int i = 0; i < 10; i++) {
+        Coin* coin = new Coin(STATIC_COIN, { (float)i * 50, 600 });
+        items.push_back(coin);
+    }
 }
 
 GameEngine::~GameEngine() {
@@ -114,6 +119,9 @@ void GameEngine::update()
     if (isPaused || cleared) {
         return;
     }
+    // set Time 
+    const float deltaTime = GetFrameTime();
+    this->time -= deltaTime;
 
     // update background
 
@@ -186,14 +194,22 @@ void GameEngine::update()
     // tiles (collision with character)
     for (auto const& tile : *map.getVectorTiles()) {
         CollisionType PlayerCollision = player->CheckCollision(*tile);
-        if (PlayerCollision != COLLISION_TYPE_NONE && player->getCollisionAvailable() == true)
-            mediatorCollision.HandleCollision(player, tile);
-
+        if (PlayerCollision != COLLISION_TYPE_NONE) {
+            PlayerBlockInfo Infor;
+            Infor.HandleCollision(player, tile);
+        }
+            //mediatorCollision.HandleCollision(player, tile);
+            
         for (auto& fireball : *player->getFireBalls()) {
             CollisionType FireBallCollision = fireball->CheckCollision(*tile);
-            if (FireBallCollision != COLLISION_TYPE_NONE)
-            mediatorCollision.HandleCollision(fireball, tile);
+            if (FireBallCollision != COLLISION_TYPE_NONE) {
+                FireBallBlockInfo Infor;
+                Infor.HandleCollision(fireball, tile);
+            }
+
+            //mediatorCollision.HandleCollision(fireball, tile);
         }
+
     }
     // player udpate
     player->Update();

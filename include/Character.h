@@ -5,11 +5,12 @@
 #include "../include/Global.h"
 #include "../include/Tile.h"
 #include <../include/TextEffect.h>
-#include "../include/MediatorCollision.h"
+//#include "../include/MediatorCollision.h"
 #include <../include/Item.h>
 #include "raymath.h"
 #include <list>
 
+class MediatorCollision;
 class Item;
 class Enemy;
 class Blocks;
@@ -33,7 +34,7 @@ public:
 	Character(Vector2 pos, Vector2 sz, CharacterState characterstate);
 	Character(Vector2 pos, Vector2 sz, CharacterState characterstate, CharacterType characterType);
 	virtual ~Character();
-	virtual EntityType getEntityType() const;
+	EntityType getEntityType() const override;
 	virtual CharacterType getCharacterType() const = 0;
 	virtual void resetInGame();
 	virtual void reset();

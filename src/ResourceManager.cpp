@@ -114,6 +114,23 @@ void ResourceManager::loadTextures() {
 	textures["SETTING"] = LoadTexture("resources/images/gui/setting.png");
 	textures["SOUND_OFF"] = LoadTexture("resources/images/gui/sound_off.png");
 	textures["SOUND_ON"] = LoadTexture("resources/images/gui/sound_on.png");
+
+	// coin
+	textures["Coin_0"] = LoadTexture("resources/images/sprites/items/Coin_0.png");
+	textures["Coin_1"] = LoadTexture("resources/images/sprites/items/Coin_1.png");
+	textures["Coin_2"] = LoadTexture("resources/images/sprites/items/Coin_2.png");
+	textures["Coin_3"] = LoadTexture("resources/images/sprites/items/Coin_3.png");
+
+	// fireflower
+	textures["FireFlower_0"] = LoadTexture("resources/images/sprites/items/FireFlower_0.png");
+	textures["FireFlower_1"] = LoadTexture("resources/images/sprites/items/FireFlower_1.png");
+	// mushroom 
+	textures["1UpMushroom"] = LoadTexture("resources/images/sprites/items/1UpMushroom.png");
+	textures["SuperMushroom"] = LoadTexture("resources/images/sprites/items/Mushroom.png");
+	// star
+	textures["Star"] = LoadTexture("resources/images/sprites/items/Star.png");
+	textures["moon"] = LoadTexture("resources/images/sprites/items/3UpMoon.png");
+	
 }
 
 
@@ -138,6 +155,8 @@ void ResourceManager::loadSounds()
 	sounds["lost_suit.wav"] = LoadSound("resources/sounds/lost_suit.wav");
 	sounds["pause.wav"] = LoadSound("resources/sounds/pause.wav");
 	sounds["skid.wav"] = LoadSound("resources/sounds/skid.wav");
+	sounds["1-up.wav"] = LoadSound("resources/sounds/smw_1-up.wav");
+	sounds["coin.wav"] = LoadSound("resources/sounds/smw_coin.wav");
 }
 
 void ResourceManager::loadMusics()

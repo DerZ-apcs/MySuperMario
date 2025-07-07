@@ -30,7 +30,7 @@ Effect::Effect(Vector2 position, bool destroyWhenFinish, float delay, float dura
 	setGravityAvailable(true);
 }
 
-EntityType Effect::getType() const
+EntityType Effect::getEntityType() const
 {
 	return EFFECT;
 }

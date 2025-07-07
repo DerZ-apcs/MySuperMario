@@ -64,7 +64,7 @@ void Entity::UpdatePhysics()
 }
 void Entity::updateCollision()
 {
-	// update collision
+	// update the hitbox collision 
 	CollNorth.setX(position.x + size.x / 2 - CollNorth.getWidth() / 2);
 	CollNorth.setY(position.y);
 

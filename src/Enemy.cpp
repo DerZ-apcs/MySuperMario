@@ -8,18 +8,49 @@ Enemy::Enemy(Vector2 pos, Vector2 size, Vector2 vel, Direction dirction, EntityS
 {
 }
 
-Enemy::~Enemy()
+Enemy::Enemy(Vector2 pos, Vector2 size)
 {
 }
 
-void Enemy::CollisionWithCharacter()
+EntityType Enemy::getEntityType() const
+{
+    return ENEMY;
+}
+
+Direction Enemy::getRandomDirection()
+{
+    return Direction();
+}
+
+void Enemy::setBoundary(Vector2 boundary)
 {
 }
 
-bool Enemy::isDying()
+const Vector2& Enemy::getBoundary() const
 {
-	return false;
+    return boundary;
 }
+
+void Enemy::stomped()
+{
+}
+
+void Enemy::attacked(Direction direction)
+{
+}
+
+void Enemy::CollisionWithFireBall(FireBall* fireball)
+{
+}
+
+//void Enemy::CollisionWithCharacter()
+//{
+//}
+//
+//bool Enemy::isDying()
+//{
+//	return false;
+//}
 
 void Enemy::Update()
 {

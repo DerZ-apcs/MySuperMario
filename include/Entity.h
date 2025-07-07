@@ -87,6 +87,7 @@ public:
 	float getVelX() const;
 	float getVelY() const;
 
+	virtual EntityType getEntityType() const = 0;
 	EntityState getState() const;
 	Direction getDir() const;
 	// frame control

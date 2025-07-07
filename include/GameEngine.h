@@ -8,7 +8,7 @@
 #include "../include/GUI.h"
 #include "../include/Item.h"
 #include "../include/Blocks.h"
-#include "../include/MediatorCollision.h"
+#include "../include/CollisionInfo.h"
 //#include "../include/Effect.h"
 //#include "../include/Enemy.h"
 #include <vector>
@@ -45,7 +45,7 @@ private:
     std::vector<Tile*> Tiles;
     std::map<std::string, Texture2D> backgroundTextures;
     std::vector<Vector2> BackGroundPos;
-    MediatorCollision mediatorCollision;
+    //MediatorCollision mediatorCollision;
 
 public:
     GameEngine(float screenWidth, float screenHeight, Level& level, Character*& player);

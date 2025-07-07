@@ -22,6 +22,6 @@ public:
 	void UpdateTexture() override;
 	bool isMaxDistance() const;
 	void HandleTileCollision(const Tile tile, CollisionType Colltype);
-
+	EntityType getEntityType() const override;
 };
 #endif

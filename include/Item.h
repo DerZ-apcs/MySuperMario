@@ -2,6 +2,7 @@
 #define ITEM_H
 
 #include "../include/Entity.h"
+#include "../include/Tile.h"
 
 class Item : public Entity {
 private:
@@ -23,12 +24,11 @@ public:
 	virtual bool isAppear() const;
 
 
-	virtual void Update() override = 0;
-	void draw() override;
-	void updateCollision() override;
-	void UpdateTexture() override;
-	bool isMaxDistance() const;
-	void HandleTileCollision(const Tile tile, CollisionType Colltype);
+	virtual void Update() override;
+	virtual void draw() override;
+	virtual void updateCollision() override;
+	virtual void UpdateTexture() override;
+	virtual void HandleTileCollision(const Tile tile, CollisionType Colltype);
 };
 
 #endif

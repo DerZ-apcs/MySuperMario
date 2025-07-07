@@ -17,7 +17,7 @@ public:
 
 	Effect(Vector2 position = { 0.f, 0.f }, bool destroyWhenFinish = true, float delay = 0.f, float duration = 0.f);
 
-	virtual EntityType getType() const;
+	EntityType getEntityType() const override;
 
 	virtual void Update() override;
 	virtual void draw() override;

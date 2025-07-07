@@ -5,6 +5,10 @@
 #include "../include/TextEffect.h"
 #include "../include/GameEngine.h"
 #include "../include/Blocks.h"
+#include"../include/Mushroom.h"
+#include"../include/Flower.h"
+#include"../include/Star.h"
+#include"../include/Coin.h"
 
 Character::Character():
 	Character({32, 400}, {32, 40})
@@ -607,18 +611,44 @@ void Character::collisionWithItem(const Item* item)
 {
 	TextEffect* text = nullptr;
 	if (item->getType() == MUSHROOM) {
-		
-		
+		const Mushroom* mushroom = dynamic_cast<const Mushroom*>(item);
+		if (mushroom->getMushroomType() == REDMUSHROOM) {
+			scores += mushroom->getPoint();
+			eatRedMushrooms();
+			text = new TextEffect(to_string(mushroom->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
+			text->setTextColor(WHITE);
+			text->setOutlineColor(BLACK);
+		}
+		else if (mushroom->getMushroomType() == GREENMUSHROOM) {
+			eatGreenMushrooms();
+			text = new TextEffect("1 UP", Vector2{ getCenterX(), getTop() });
+			text->setTextColor(WHITE);
+			text->setOutlineColor(BLACK);
+		}	
 	}
 	else if (item->getType() == STAR) {
-
+		const Star* star = dynamic_cast<const Star*>(item);
+		if (star->getStarType() == YELLOW_STAR) {
+			eatStar();
+			scores += star->getPoint();
+			text = new TextEffect(to_string(star->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
+		}
 	}
 	else if (item->getType() == FLOWER) {
-
+		const Flower* flower = dynamic_cast<const Flower*>(item);
+		if (flower->getFlowerType() == FIRE_FLOWER) {
+			scores += flower->getPoint();
+			eatFireFlower();
+			text = new TextEffect(to_string(flower->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
+		}
 	}
 	else if (item->getType() == COIN) {
-
-
+		const Coin* coin = dynamic_cast<const Coin*>(item);
+		if (coin->getCoinType() == STATIC_COIN) {
+			coins++;
+			scores += coin->getPoint();
+			RESOURCE_MANAGER.playSound("coin.wav");
+		}
 	}
 	if (text != nullptr) {
 		globalGameEngine->addEffect(text);
@@ -631,6 +661,12 @@ void Character::collisionWithEnemy(Enemy* enemy, CollisionType CollType)
 
 void Character::CollisionWithFireball(FireBall* fireball)
 {
+	if (countImmortalTime > 0.f) return;
+	if (Character_state == STATE_STAR || Character_state == STATE_SUPERSTAR || Character_state == STATE_FIRESTAR) {
+		return;
+	}
+	lostSuit();
+	fireball->setEntityDead();
 }
 
 std::list<FireBall*>* Character::getFireBalls()
@@ -645,6 +681,7 @@ void Character::setVictory(bool victory)
 
 void Character::eatGreenMushrooms() // +1 health
 {
+	RESOURCE_MANAGER.playSound("1-up.wav");
 	this->lives++;
 }
 
@@ -672,7 +709,7 @@ void Character::eatStar() // transform to star
 	else if (Character_state == STATE_FIRE) {
 		StartTransition({ 4, 9, 4, 9, 4, 9, 4, 9 }, 8);
 	}
-	invicibleStarTime = 5.f;
+	invicibleStarTime = 12.f;
 }
 
 void Character::eatFireFlower() // transform to fire

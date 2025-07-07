@@ -11,9 +11,9 @@
 class Blocks : public Entity {
 public:
     Blocks(Vector2 pos = { 0, 0 }, Vector2 size = { 1, 1 });
-    virtual ~Blocks();
+    virtual ~Blocks() = default;
 
-    EntityType getType() const;
+    EntityType getEntityType() const override;
     virtual BLOCK_TYPE getBlockType() const = 0;
     virtual void Update() override;
     virtual void draw() override;

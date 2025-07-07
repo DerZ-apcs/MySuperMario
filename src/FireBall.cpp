@@ -97,3 +97,8 @@ void FireBall::HandleTileCollision(const Tile tile, CollisionType Colltype)
 		break;
 	}
 }
+
+EntityType FireBall::getEntityType() const
+{
+	return FIREBALL;
+}
