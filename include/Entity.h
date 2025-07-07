@@ -3,7 +3,6 @@
 #include "../include/Singleton.h"
 #include "../include/ResourceManager.h"
 #include "../include/Direction.h"
-#include "../include/Clock.h"
 #include "../include/Collision.h"
 #include "../include/Global.h"
 #include <string>

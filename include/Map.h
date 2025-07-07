@@ -4,18 +4,22 @@
 #include "../include/Tile.h"
 #include "../include/Blocks.h"
 #include "../include/Item.h"
-#include "../include/Enemy.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include "../include/json.hpp"
+#include <string>
+#include <map>
+
 using json = nlohmann::json; // to load file json
+
+class Enemy;
 
 class Map {
 private:
 	std::vector<Tile*> tiles;
 	Texture2D background;
-	std::map<string, Texture2D> backgroundTextures;
+	std::map<std::string, Texture2D> backgroundTextures;
 	std::vector<Vector2> BackGroundPos;
 	float width;
 	float height;

@@ -1,4 +1,5 @@
 #include "../include/Entity.h"
+#include "../include/GameEngine.h"
 
 Entity::Entity():
 	Entity(Vector2{0, 0}, Vector2{0, 0}, Vector2{0, 0}, RIGHT, IDLING, texture, 0.1f, 0, BLACK)
@@ -37,7 +38,12 @@ Entity::Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState 
 }
 
 void Entity::Update() {
-
+	if (isDead()) return;
+	if (globalGameEngine) {
+		Vector2 bound = globalGameEngine->getBound();
+		if (this->getX() > bound.x || this->getY() > bound.y)
+			setEntityDead();
+	}
 }
 void Entity::draw() {
 

@@ -4,9 +4,17 @@
 #include "../include/Entity.h"
 #include "../include/Global.h"
 #include "../include/Tile.h"
+#include <../include/TextEffect.h>
 #include "../include/MediatorCollision.h"
+#include <../include/Item.h>
 #include "raymath.h"
 #include <list>
+
+class Item;
+class Enemy;
+class Blocks;
+class FireBall;
+class GameEngine;
 
 enum Phase {
 	DEFAULT_PHASE,
@@ -64,7 +72,6 @@ public:
 	void eatFireFlower();
 	
 	void StartTransition(const std::vector<int>& frameOrder, int steps);
-	virtual void TransitionState();
 
 	virtual void HandleTileCollision(const Tile tile, CollisionType CollType);
 	virtual void RunLeft() = 0;
@@ -81,6 +88,9 @@ public:
 	float getAcclerationX() const;
 	virtual void ThrowingFireBalls();
 	
+	void collisionWithItem(const Item* item);
+	void collisionWithEnemy(Enemy* enemy, CollisionType CollType = COLLISION_TYPE_NORTH);
+	void CollisionWithFireball(FireBall* fireball);
 	virtual std::list<FireBall*>* getFireBalls();
 	
 	// helper struct to control texture
@@ -146,5 +156,6 @@ protected:
 
 	bool victory = false;
 	bool exitlevel;
+	bool lostSuitTrigger = false;
 };
 #endif

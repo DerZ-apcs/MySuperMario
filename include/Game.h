@@ -8,6 +8,7 @@
 #include <memory>
 #include <utility>
 class MenuState;
+class Level;
 
 class Game {
 public:

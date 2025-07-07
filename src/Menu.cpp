@@ -26,7 +26,7 @@ void MainMenuState::handleInput()
 		if (globalGameEngine == nullptr) {
 			if (game->player == nullptr)
 				game->player = new Mario();
-			game->player->setPosition({ 16, 400 });
+			game->player->setPosition({ 32, 400 });
 			game->player->setVel({ 0, 0 });
 			game->player->setState(FALLING);
 			GameEngine* gameEngine = new GameEngine(1600, 800, *game->level, game->player);
@@ -40,7 +40,7 @@ void MainMenuState::handleInput()
 				{
 					if (game->player == nullptr)
 						game->player = new Mario();
-					game->player->setPosition({ 16, 400 });
+					game->player->setPosition({ 32, 400 });
 					game->player->setVel({ 0,0 });
 					game->player->setState(FALLING);
 					game->selectMap(game->getSelectedMap() + 1);

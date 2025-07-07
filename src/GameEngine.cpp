@@ -1,4 +1,10 @@
 #include "../include/GameEngine.h"
+#include"../include/Character.h"
+#include "../include/GUI.h"
+#include "../include/Effect.h"
+#include "../include/Enemy.h"
+#include "../include/Map.h"
+#include "../include/Level.h"
 #include <iostream>
 
 GameEngine* globalGameEngine = nullptr;
@@ -22,6 +28,7 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Char
     resetTimer();
     deltaTime = 0.f;
     BackGroundPos = { {0, 0}, {(float)GetScreenWidth(), 0}, {(float)GetScreenWidth() * 2, 0} };
+   
 }
 
 GameEngine::~GameEngine() {
@@ -76,6 +83,11 @@ void GameEngine::addItem(Item* item)
 // update
 void GameEngine::update()
 {
+    if (!player) {
+        cout << "NULL player" << endl;
+        return;
+    }
+
     if (IsKeyPressed(KEY_ENTER) || GUI::setting_is_pressed) {
         if (GUI::setting_is_pressed) 
             GUI::setting_is_pressed = false;
@@ -103,6 +115,33 @@ void GameEngine::update()
         return;
     }
 
+    // update background
+
+    for (int i = 0; i < 3; i++) {
+        // wrap from left to far most right
+        if (BackGroundPos[i].x + map.BgWidth <= player->getX() - map.BgWidth / 2.0f) {
+            float maxX = BackGroundPos[0].x;
+            for (int j = 1; j < 3; j++) {
+                if (BackGroundPos[j].x > maxX) maxX = BackGroundPos[j].x;
+            }
+            BackGroundPos[i].x = maxX + map.BgWidth;
+        }
+        // wrap from right to left
+        if (BackGroundPos[i].x + map.BgWidth / 2.0f >= player->getX() + map.BgWidth * 2) {
+            float minX = BackGroundPos[i].x;
+            for (int j = 1; j < 3; j++) {
+                if (BackGroundPos[j].x < minX) minX = BackGroundPos[j].x;
+            }
+            BackGroundPos[i].x = minX - map.BgWidth;
+        }
+    }
+    // test the text effect
+    if ((int)player->getX() % 100 == 0) {
+        TextEffect* text = new TextEffect("Hello this is my super mario", Vector2{player->getCenterX(), player->getTop()});
+        text->setTextColor(WHITE);
+        text->setOutlineColor(BLACK);
+        addEffect(text);
+    }
     for (size_t i = 0; i < blocks.size(); i++) {
         if (blocks[i]->isDead()) {
             delete blocks[i];
@@ -144,45 +183,22 @@ void GameEngine::update()
             enemies[i]->Update();
     }
 
-    if (player != nullptr) {
-        // update background
-        for (int i = 0; i < 3; i++) {
-            // wrap from left to far most right
-            if (BackGroundPos[i].x + map.BgWidth <= player->getX() - map.BgWidth / 2.0f) {
-                float maxX = BackGroundPos[0].x;
-                for (int j = 1; j < 3; j++) {
-                    if (BackGroundPos[j].x > maxX) maxX = BackGroundPos[j].x;
-                }
-                BackGroundPos[i].x = maxX + map.BgWidth;
-            }
-            // wrap from right to left
-            if (BackGroundPos[i].x + map.BgWidth / 2.0f >= player->getX() + map.BgWidth * 2) {
-                float minX = BackGroundPos[i].x;
-                for (int j = 1; j < 3; j++) {
-                    if (BackGroundPos[j].x < minX) minX = BackGroundPos[j].x;
-                }
-                BackGroundPos[i].x = minX - map.BgWidth;
-            }
-        }
-        // tiles (collision with character)
-        for (auto const& tile : *map.getVectorTiles()) {
-            CollisionType PlayerCollision = player->CheckCollision(*tile);
-            if (PlayerCollision != COLLISION_TYPE_NONE && player->getCollisionAvailable() == true)
-                mediatorCollision.HandleCollision(player, tile);
+    // tiles (collision with character)
+    for (auto const& tile : *map.getVectorTiles()) {
+        CollisionType PlayerCollision = player->CheckCollision(*tile);
+        if (PlayerCollision != COLLISION_TYPE_NONE && player->getCollisionAvailable() == true)
+            mediatorCollision.HandleCollision(player, tile);
 
-            for (auto& fireball : *player->getFireBalls()) {
-                CollisionType FireBallCollision = fireball->CheckCollision(*tile);
-                if (FireBallCollision != COLLISION_TYPE_NONE)
-                    mediatorCollision.HandleCollision(fireball, tile);
-            }
+        for (auto& fireball : *player->getFireBalls()) {
+            CollisionType FireBallCollision = fireball->CheckCollision(*tile);
+            if (FireBallCollision != COLLISION_TYPE_NONE)
+            mediatorCollision.HandleCollision(fireball, tile);
         }
-        // player udpate
-        player->Update();
-        // camera update
-        camera.update(player->getX(), player->getY());
     }
-    else
-        cout << "Null player " << endl;
+    // player udpate
+    player->Update();
+    // camera update
+    camera.update(player->getX(), player->getY());
 }
 
 void GameEngine::handleCollision()

@@ -13,14 +13,13 @@ protected:
 public:
 	virtual ~Effect();
 	Effect() = default;
-	Effect(Vector2 pos, Vector2 size, float delay = 0.f, float timespan = 0.f);
+	Effect(Vector2 pos = {0.f, 0.f}, float delay = 0.f, float duration = 0.f);
 
-	Effect(Vector2 position = { 0.f, 0.f }, bool destroyWhenFinish = true, float delay = 0.f, float timespan = 0.f);
+	Effect(Vector2 position = { 0.f, 0.f }, bool destroyWhenFinish = true, float delay = 0.f, float duration = 0.f);
 
 	virtual EntityType getType() const;
 
 	virtual void Update() override;
 	virtual void draw() override;
-	virtual void UpdateTexture() override;
 };
 #endif

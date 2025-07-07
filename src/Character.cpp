@@ -1,4 +1,10 @@
 #include "../include/Character.h"
+#include"../include/Item.h"
+#include"../include/Enemy.h"
+#include "../include/Effect.h"
+#include "../include/TextEffect.h"
+#include "../include/GameEngine.h"
+#include "../include/Blocks.h"
 
 Character::Character():
 	Character({32, 400}, {32, 40})
@@ -252,7 +258,10 @@ void Character::lostSuit()
 		setLostLife(true);
 		return;
 	}
-	else if (Character_state == STATE_SUPER) {
+
+	countImmortalTime = 15.f * transitioningFrameTime;
+	//lostSuitTrigger = false;
+	if (Character_state == STATE_SUPER) {
 		StartTransition({ 2, 1, 2, 1, 2, 1, 2, 1, 0, 1, 0, 1, 0, 1, 0 }, 15);
 	}
 	else if (Character_state == STATE_FIRE) {
@@ -267,17 +276,6 @@ void Character::lostSuit()
 	else if (Character_state == STATE_FIRESTAR) {
 		StartTransition({ 9, 4, 9, 4, 9, 4, 9, 4, 9, 4, 9, 4, 9, 4 }, 14);
 	}
-}
-
-void Character::TransitionState()
-{
-	RESOURCE_MANAGER.playSound("PLAYER_POWERUP");
-	if (Character_state == STATE_SMALL)
-		Character_sprite_State = SMALL_TO_SUPER;
-	else if (Character_state == STATE_SUPER)
-		Character_sprite_State = SUPER_TO_FIRE;
-	else if (Character_state == STATE_FIRE)
-		Character_sprite_State = FIRE_TO_SMALL;
 }
 
 void Character::HandleTileCollision(const Tile tile, CollisionType CollType)
@@ -339,14 +337,27 @@ void Character::Update()
 {
 	HandleInput();
 	const float deltaTime = GetFrameTime();
+
+	if (isInvicible()) {
+		invicibleStarTime -= deltaTime;
+		if (invicibleStarTime <= 0.f)
+			invicibleStarTime = 0.f;
+	}
+	else {
+		
+		if (!lostSuitTrigger && (Character_state == STATE_STAR || Character_state == STATE_SUPERSTAR || Character_state == STATE_FIRESTAR)) {
+			lostSuit();
+			lostSuitTrigger = true;
+		}
+	}
+
+	// physics
 	position.x += velocity.x * deltaTime;
 	position.y += velocity.y * deltaTime;
-
 	if (velocity.y > 50)
 		state = FALLING;
-	
 	velocity.y += GRAVITY * deltaTime + 2;
-
+	// fireball
 	for (auto i = fireballs.begin(); i != fireballs.end();) {
 		FireBall* fireball = *i;
 		if (fireball->isMaxDistance()) {
@@ -359,6 +370,13 @@ void Character::Update()
 			++i;
 		}
 	}
+	if (phase == DEFAULT_PHASE) {
+		if (countImmortalTime > 0.f) {
+			countImmortalTime = max(0.f, countImmortalTime - deltaTime);
+			RESOURCE_MANAGER.playSound("lost_suit.wav");
+		}
+	}
+
 	updateCollision();
 	UpdateTexture();
 }
@@ -585,6 +603,36 @@ void Character::ThrowingFireBalls()
 		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, Vector2{-400, -300}, LEFT, 2));
 }
 
+void Character::collisionWithItem(const Item* item)
+{
+	TextEffect* text = nullptr;
+	if (item->getType() == MUSHROOM) {
+		
+		
+	}
+	else if (item->getType() == STAR) {
+
+	}
+	else if (item->getType() == FLOWER) {
+
+	}
+	else if (item->getType() == COIN) {
+
+
+	}
+	if (text != nullptr) {
+		globalGameEngine->addEffect(text);
+	}
+}
+
+void Character::collisionWithEnemy(Enemy* enemy, CollisionType CollType)
+{
+}
+
+void Character::CollisionWithFireball(FireBall* fireball)
+{
+}
+
 std::list<FireBall*>* Character::getFireBalls()
 {
 	return &fireballs;
@@ -613,6 +661,7 @@ void Character::eatRedMushrooms() // transform to super
 
 void Character::eatStar() // transform to star
 {
+	lostSuitTrigger = false;
 	RESOURCE_MANAGER.playSound("PLAYER_POWERUP");
 	if (Character_state == STATE_SMALL) {
 		StartTransition({ 0, 5, 0, 5, 0, 5, 0, 5 }, 8);
@@ -623,6 +672,7 @@ void Character::eatStar() // transform to star
 	else if (Character_state == STATE_FIRE) {
 		StartTransition({ 4, 9, 4, 9, 4, 9, 4, 9 }, 8);
 	}
+	invicibleStarTime = 5.f;
 }
 
 void Character::eatFireFlower() // transform to fire

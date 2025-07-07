@@ -119,11 +119,11 @@ void ResourceManager::loadTextures() {
 
 void ResourceManager::loadFonts()
 {
-	/*fonts["Vogue"] = LoadFont("resources/Font/Vogue.ttf");
+	fonts["Vogue"] = LoadFont("resources/Font/Vogue.ttf");
 	fonts["HolenVintage"] = LoadFont("resources/Font/HolenVintage.otf");
 	fonts["Sawer"] = LoadFont("resources/Font/Sawer.ttf");
 	fonts["WinterMinie"] = LoadFont("resources/Font/WinterMinie.ttf");
-	fonts["TimesNewRoman"] = LoadFont("resources/Font/TimesNewRoman.ttf");*/
+	fonts["TimesNewRoman"] = LoadFont("resources/Font/TimesNewRoman.ttf");
 }
 
 void ResourceManager::loadSounds()

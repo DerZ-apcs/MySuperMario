@@ -5,17 +5,19 @@
 #include "../include/Mario.h"
 #include "../include/FireBall.h"
 #include "../include/Map.h"
-#include "../include/Level.h"
 #include "../include/GUI.h"
 #include "../include/Item.h"
 #include "../include/Blocks.h"
 #include "../include/MediatorCollision.h"
-#include "../include/Effect.h"
-#include "../include/Enemy.h"
+//#include "../include/Effect.h"
+//#include "../include/Enemy.h"
 #include <vector>
+#include <string>
+#include <map>
 
 class Enemy;
 class Effect;
+class Level;
 
 class GameEngine {
 private:
@@ -41,7 +43,7 @@ private:
     Texture2D BackGroundTex;
 
     std::vector<Tile*> Tiles;
-    std::map<string, Texture2D> backgroundTextures;
+    std::map<std::string, Texture2D> backgroundTextures;
     std::vector<Vector2> BackGroundPos;
     MediatorCollision mediatorCollision;
 
