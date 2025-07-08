@@ -1,7 +1,8 @@
 #include "../include/QuestionBlock.h"
 #include "../include/ResourceManager.h"
 
-QuestionBlock::QuestionBlock(Vector2 pos) : Tile(pos, TileType::TILE_TYPE_NORMAL, "QUESTION_0"), isActive(true) {
+QuestionBlock::QuestionBlock(Vector2 pos, PowerUpType type) 
+	: Tile(pos, TileType::TILE_TYPE_NORMAL, "QUESTION_0"), isActive(true), holdedPowerUp(type) {
 	this->frameAcum = 0;
 	this->currFrame = 0;
 	this->frameTime = 0.2f;
@@ -16,6 +17,33 @@ bool QuestionBlock::getActive() const {
 
 void QuestionBlock::setActive(bool active) {
 	isActive = active;
+}
+
+void QuestionBlock::Activate(std::vector<PowerItem*>& PowerItems) {
+	if (!isActive) return;
+
+	texture = Singleton<ResourceManager>::getInstance().getTexture("TILE_110");
+
+	isActive = false;
+	switch (holdedPowerUp) 	{
+	case POWERUP_MUSHROOM: {
+		PowerItems.push_back(new Mushroom(Vector2{ position.x + size.x / 2 - 16, position.y + size.y - 32 }, Vector2{ 32, 32 }, RIGHT));
+		break;
+	}
+
+	case POWERUP_FLOWER: {
+		PowerItems.push_back(new Flower(Vector2{ position.x + size.x / 2 - 16, position.y + size.y - 32 }, Vector2{ 32, 32 }, RIGHT));
+		break;
+	}
+
+	case POWERUP_STAR: {
+		PowerItems.push_back(new Star(Vector2{ position.x + size.x / 2 - 16, position.y + size.y - 32 }, Vector2{ 32, 32 }, RIGHT));
+		break;
+	}
+
+	default:
+		break;
+	}
 }
 
 //-----------------

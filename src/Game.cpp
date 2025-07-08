@@ -10,7 +10,7 @@ Game::Game(int nwidth, int nheight, int ntargetFPS) :
 	width(nwidth), height(nheight), targetFPS(ntargetFPS), Resource_manager(Singleton<ResourceManager>::getInstance()) {
 	Resource_manager.LoadAllResources();
 	// map
-	map1.LoadFromJsonFile(Map::basePath + "kmap_2.json"); // change map hereeeeeeeeeee <<-------
+	map1.LoadFromJsonFile(Map::basePath + "kmap_1.json"); // change map hereeeeeeeeeee <<-------
 	// background
 	BgWidth = (float)GetScreenWidth();
 	BgHeight = (float)GetScreenHeight();
@@ -28,6 +28,12 @@ Game::Game(int nwidth, int nheight, int ntargetFPS) :
 Game::~Game()
 {
 	Singleton<ResourceManager>::getInstance().UnloadAllResources();
+
+	for (auto& item : PowerItems) {
+		delete item;
+		item = nullptr;
+	}
+	PowerItems.clear();
 
 }
 
@@ -82,9 +88,11 @@ void Game::UpdateGame()
 	}
 	// tiles
 	for (auto const& tile : *map1.getVectorTiles()) {
-		if (QuestionBlock* ques_b = dynamic_cast<QuestionBlock*>(tile)) { ques_b->Update(); }
+		QuestionBlock* ques_b = dynamic_cast<QuestionBlock*>(tile);
+		if (ques_b) { ques_b->Update(); }
 
 		CollisionType PlayerCollision = mario.CheckCollision(*tile);
+		if (PlayerCollision == COLLISION_TYPE_NORTH && ques_b) { ques_b->Activate(PowerItems); }
 		if (PlayerCollision != COLLISION_TYPE_NONE)
 			mediatorCollision.HandleCollision(&mario, tile);
 		//mario.HandleTileCollision(*tile, MarioCollision);
@@ -94,6 +102,25 @@ void Game::UpdateGame()
 				mediatorCollision.HandleCollision(fireball, tile);
 				//fireball->HandleTileCollision(*tile, FireBallCollision);
 		}
+	}
+
+	// power items 
+	for (auto& item : PowerItems) {
+		if (item->getItemState() == CONSUMED) continue; 
+
+		CollisionType ItemPlayerCollision = mario.CheckCollision(*item);
+		if (ItemPlayerCollision != COLLISION_TYPE_NONE) {
+			mediatorCollision.HandleCollision(&mario, item);
+		}
+
+		for (auto const& tile : *map1.getVectorTiles()) {
+			CollisionType ItemTileCollision = item->CheckCollision(*tile);
+			if (ItemTileCollision != COLLISION_TYPE_NONE) {
+				mediatorCollision.HandleCollision(item, tile);
+			}
+		}
+
+		item->Update();
 	}
 
 	// coins
@@ -113,13 +140,13 @@ void Game::UpdateGame()
 
 void Game::draw()
 {
-
+	//Resource_manager.drawAllTiles(); // debug function to draw all tiles
 	BeginMode2D(camera);
 	drawBackGround();
 	mario.draw();
-	map1.drawMap();
 	for (auto& coin : Coins) { coin->draw(); }
-	//Resource_manager.drawAllTiles(); // debug function to draw all tiles
+	for (auto& item : PowerItems) { item->draw(); }
+	map1.drawMap();
 	EndMode2D();
 }
 

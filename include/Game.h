@@ -7,6 +7,7 @@
 #include "../include/Tile.h"
 #include "../include/Map.h"
 #include "../include/Coin.h"
+#include "../include/PowerItem.h"
 #include "../include/MediatorCollision.h"
 
 class Game {
@@ -20,6 +21,7 @@ private:
 	//bool initialize;
 	std::vector<Tile*> Tiles;
 	std::vector<Coin*> Coins;
+	std::vector<PowerItem*> PowerItems;
 	Mario mario;
 	Map map1;
 	Texture2D BackGroundTex;

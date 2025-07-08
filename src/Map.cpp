@@ -121,7 +121,8 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 					tiles.push_back(new Brick(Vector2{ (float)x * tilewidth, (float)y * tilewidth }));
 				}
 				else if (tileId == 106) { // question block gid
-					tiles.push_back(new QuestionBlock(Vector2{ (float)x * tilewidth, (float)y * tilewidth }));
+					//tiles.push_back(new QuestionBlock(Vector2{ (float)x * tilewidth, (float)y * tilewidth }));
+					//std::cout << "QuestionBlock at (" << x << ", " << y << ") with texture index: " << texIndex << std::endl;
 				}
 				else {
 					std::string texKey = "TILE_" + std::to_string(texIndex);
@@ -132,6 +133,37 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 						texKey
 					));
 				}
+			}
+		}
+	}
+	
+	nlohmann::json objectLayer = mapJson["layers"][1];
+	nlohmann::json objects = objectLayer["objects"];
+
+	for (auto& obj : objects) {
+		int gid = obj["gid"];
+		int x = obj["x"] / 32;
+		int y = obj["y"] / 32 - 1;
+		int width = obj["width"];
+		int height = obj["height"];
+
+		std::string name;
+		std::string power;
+
+		for (auto& prop : obj["properties"]) {
+			if (prop["name"] == "Name") name = prop["value"];
+			else if (prop["name"] == "Power") power = prop["value"];
+		}
+
+		if (name == "QuestionBlock") {
+			if (power == "Mushroom") {
+				tiles.push_back(new QuestionBlock(Vector2{ (float)x * tilewidth, (float)y * tilewidth }, POWERUP_MUSHROOM));
+			}
+			else if (power == "Flower") {
+				tiles.push_back(new QuestionBlock(Vector2{ (float)x * tilewidth, (float)y * tilewidth }, POWERUP_FLOWER));
+			}
+			else if (power == "Star") {
+				tiles.push_back(new QuestionBlock(Vector2{ (float)x * tilewidth, (float)y * tilewidth }, POWERUP_STAR));
 			}
 		}
 	}

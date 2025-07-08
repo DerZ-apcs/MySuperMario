@@ -19,4 +19,9 @@ enum SPRITE_STATE {
 	STATE_IS_ACTIVE,
 	STATE_IS_DYING
 };
+enum PowerUpState {
+	EMERGING,
+	ACTIVE,
+	CONSUMED
+};
 #endif
