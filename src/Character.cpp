@@ -282,34 +282,6 @@ void Character::lostSuit()
 	}
 }
 
-void Character::HandleTileCollision(const Tile tile, CollisionType CollType)
-{
-	if (CollType == COLLISION_TYPE_NONE)
-		return;
-	switch (CollType) {
-	case COLLISION_TYPE_EAST:
-		setPosition({ tile.getX() - size.x, position.y });
-		velocity.x = 0;
-		break;
-	case COLLISION_TYPE_NORTH:
-		setPosition({ position.x, tile.getY() + tile.getHeight() });
-		velocity.y = 0;
-		//state = FALLING;
-		break;
-	case COLLISION_TYPE_SOUTH:
-		setPosition({ position.x, tile.getY() - size.y });
-		velocity.y = 0;
-		state = ON_GROUND;
-		break;
-	case COLLISION_TYPE_WEST:
-		setPosition({ tile.getX() + tile.getWidth(), position.y });
-		velocity.x = 0;
-		break;
-	default:
-		break;
-	}
-}
-
 void Character::setLostLife(bool lostLife)
 {
 	this->lostLife = lostLife;
@@ -317,6 +289,9 @@ void Character::setLostLife(bool lostLife)
 
 void Character::Jumping()
 {
+	RESOURCE_MANAGER.playSound("jump.wav");
+	velocity.y = Character_state == MARIO ? -MARIO_MAXSPEEDY : -LUIGI_MAXSPEEDY;
+	state = JUMPING;
 }
 
 void Character::Standing()
@@ -437,12 +412,12 @@ void Character::HandleInput()
 		eatStar();
 	if (IsKeyPressed(KEY_L))
 		lostSuit();
-	if (IsKeyPressed(KEY_LEFT_CONTROL) && Character_state == STATE_FIRE && !isducking) {
+	if (IsKeyPressed(KEY_LEFT_CONTROL) && (Character_state == STATE_FIRE || Character_state == STATE_FIRESTAR) && !isducking) {
 		ThrowingFireBalls();
 	}
 }
 
-void Character::updateCollision()
+void Character::updateCollision() // update the hitbox (4 rectangle in 4 side of character)
 {
 	if (isducking) {
 		CollNorth.setPos({ position.x + size.x / 2 - CollNorth.getWidth() / 2, position.y + size.y / 2 - CollNorth.getHeight() });
@@ -562,6 +537,43 @@ void Character::StartTransition(const std::vector<int>& frameOrder, int steps) {
 	transitionCurrentFramePos = 0;
 }
 
+void Character::RunLeft()
+{
+	float deltaTime = GetFrameTime();
+	if (direction == RIGHT) {
+		if (velocity.x > 70 && state == ON_GROUND)
+			RESOURCE_MANAGER.playSound("skid.wav");
+		direction = LEFT;
+		velocity.x = 0;
+	}
+
+	float speed = Character_state == MARIO ? MARIO_MAXSPEEDX : LUIGI_MAXSPEEDX;
+	if (abs(velocity.x) + accelerationX * deltaTime >= speed) {
+		velocity.x = -speed;
+	}
+	else {
+		velocity.x -= accelerationX * deltaTime;
+	}
+}
+
+void Character::RunRight()
+{
+	float deltaTime = GetFrameTime();
+	if (direction == LEFT) {
+		if (velocity.x < -70 && state == ON_GROUND)
+			RESOURCE_MANAGER.playSound("skid.wav");
+		direction = RIGHT;
+		velocity.x = 0;
+	}
+	float speed = Character_state == MARIO ? MARIO_MAXSPEEDX : LUIGI_MAXSPEEDX;
+	if (velocity.x + accelerationX * deltaTime >= speed) {
+		velocity.x = speed;
+	}
+	else {
+		velocity.x += accelerationX * deltaTime;
+	}
+}
+
 void Character::UpdateTransitioningTexture()
 {
 	if (transitionFrameOrder.empty()) return;
@@ -600,7 +612,7 @@ float Character::getAcclerationX() const
 void Character::ThrowingFireBalls()
 {
 	isThrowing = true;
-	RESOURCE_MANAGER.playSound("PLAYER_FIREBALL");
+	RESOURCE_MANAGER.playSound("fireball.wav");
 	if (direction == RIGHT) 
 		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, Vector2{400, -300}, RIGHT, 2));
 	else if (direction == LEFT) 
@@ -610,7 +622,7 @@ void Character::ThrowingFireBalls()
 void Character::collisionWithItem(const Item* item)
 {
 	TextEffect* text = nullptr;
-	if (item->getType() == MUSHROOM) {
+	if (item->getItemType() == MUSHROOM) {
 		const Mushroom* mushroom = dynamic_cast<const Mushroom*>(item);
 		if (mushroom->getMushroomType() == REDMUSHROOM) {
 			scores += mushroom->getPoint();
@@ -626,7 +638,7 @@ void Character::collisionWithItem(const Item* item)
 			text->setOutlineColor(BLACK);
 		}	
 	}
-	else if (item->getType() == STAR) {
+	else if (item->getItemType() == STAR) {
 		const Star* star = dynamic_cast<const Star*>(item);
 		if (star->getStarType() == YELLOW_STAR) {
 			eatStar();
@@ -634,7 +646,7 @@ void Character::collisionWithItem(const Item* item)
 			text = new TextEffect(to_string(star->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
 		}
 	}
-	else if (item->getType() == FLOWER) {
+	else if (item->getItemType() == FLOWER) {
 		const Flower* flower = dynamic_cast<const Flower*>(item);
 		if (flower->getFlowerType() == FIRE_FLOWER) {
 			scores += flower->getPoint();
@@ -642,7 +654,7 @@ void Character::collisionWithItem(const Item* item)
 			text = new TextEffect(to_string(flower->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
 		}
 	}
-	else if (item->getType() == COIN) {
+	else if (item->getItemType() == COIN) {
 		const Coin* coin = dynamic_cast<const Coin*>(item);
 		if (coin->getCoinType() == STATIC_COIN) {
 			coins++;
@@ -687,7 +699,7 @@ void Character::eatGreenMushrooms() // +1 health
 
 void Character::eatRedMushrooms() // transform to super
 {
-	RESOURCE_MANAGER.playSound("PLAYER_POWERUP");
+	RESOURCE_MANAGER.playSound("power_up.wav");
 	if (Character_state == STATE_SMALL) {
 		StartTransition({ 0, 1, 0, 1, 0, 1, 2, 1, 2, 1, 2 }, 11);
 	}
@@ -699,7 +711,7 @@ void Character::eatRedMushrooms() // transform to super
 void Character::eatStar() // transform to star
 {
 	lostSuitTrigger = false;
-	RESOURCE_MANAGER.playSound("PLAYER_POWERUP");
+	RESOURCE_MANAGER.playSound("power_up.wav");
 	if (Character_state == STATE_SMALL) {
 		StartTransition({ 0, 5, 0, 5, 0, 5, 0, 5 }, 8);
 	}
@@ -714,7 +726,7 @@ void Character::eatStar() // transform to star
 
 void Character::eatFireFlower() // transform to fire
 {
-	RESOURCE_MANAGER.playSound("PLAYER_POWERUP");
+	RESOURCE_MANAGER.playSound("power_up.wav");
 	if (Character_state == STATE_SMALL) {
 		StartTransition({0, 3, 0, 3, 0, 3, 4, 3, 4, 3, 4}, 11);
 	}

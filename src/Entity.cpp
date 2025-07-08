@@ -51,18 +51,8 @@ void Entity::draw() {
 void Entity::HandleInput() {
 
 }
-void Entity::UpdatePhysics()
-{
-	/*position.x += velocity.x * Clock::getDeltaTimeUpdate();
-	position.y += velocity.y * Clock::getDeltaTimeUpdate();*/
 
-	rect.width = size.x;
-	rect.height = size.y;
-	rect.x = position.x;
-	rect.y = position.y;
-	updateCollision();
-}
-void Entity::updateCollision()
+void Entity::updateCollision() // update 4 rects in 4 sides of entity
 {
 	// update the hitbox collision 
 	CollNorth.setX(position.x + size.x / 2 - CollNorth.getWidth() / 2);
@@ -166,6 +156,11 @@ bool Entity::isDead() const
 void Entity::setEntityDead()
 {
 	this->dead = true;
+}
+
+void Entity::setDirection(Direction dir)
+{
+	this->direction = dir;
 }
 
 // Getter

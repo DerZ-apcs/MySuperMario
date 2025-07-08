@@ -12,6 +12,7 @@ Coin::Coin(CoinType type, Vector2 position): Item(POINT)
 	this->type = type;
 	this->lifeTime = 0.f;
 	texture = RESOURCE_MANAGER.getTexture("Coin_0");
+	this->size = { (float)texture.width, (float)texture.height };
 
 	if (type == BLOCK_COIN) {
 		setVelY(-COIN_UP_VELOCITY);
@@ -21,6 +22,7 @@ Coin::Coin(CoinType type, Vector2 position): Item(POINT)
 	}
 	setPosition(position);
 	setGravityAvailable(false);
+	setCollisionAvailable(true);
 }
 
 Coin::~Coin()

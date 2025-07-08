@@ -3,6 +3,7 @@
 #include <raylib.h>
 #include "../include/Tile.h"
 #include "../include/Blocks.h"
+#include "../include/Floor.h"
 #include "../include/Item.h"
 #include <iostream>
 #include <fstream>
@@ -24,7 +25,7 @@ private:
 	float width;
 	float height;
 
-	std::vector<Blocks*> blockArray;
+	std::vector<Blocks*> blockArray; // replace tile
 	std::vector<Enemy*> enemies;
 	std::vector<Item*> items;
 	std::vector<Blocks*> decors;
@@ -41,11 +42,11 @@ public:
 	void drawMap();
 	void drawBackGround();
 	void drawBackGround(Vector2 cameraPos, float scale);
-	void LoadFromJsonFile(const std::string& filepath);
 	void loadBackgroundTexture(const std::string& backgroundName);
 	Vector2 getMapSize() const;
 	void setMapSize(Vector2 size);
 
+	void LoadFromJsonFile(const std::string& filepath);
 	bool LoadFromJsonFile(std::ifstream& file, std::vector<Blocks*>& blocks,
 		std::vector<Enemy*>& enemies, std::vector<Item*>& items, std::vector<Blocks*>& decors);
 	//bool stringToEnemyType(std::string& enemyTypeStr, std::string& subtype, ENEMY);

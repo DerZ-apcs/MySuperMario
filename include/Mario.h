@@ -16,9 +16,6 @@ public:
 	Mario(Vector2 nposition, Vector2 nsize, CharacterState type);
 	~Mario();
 	CharacterType getCharacterType() const override;
-	void RunLeft() override;
-	void RunRight() override;
-	void Jumping() override;
 	void reset() override;
 };
 #endif

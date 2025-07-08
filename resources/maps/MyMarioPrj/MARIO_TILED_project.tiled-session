@@ -20,11 +20,11 @@
             }
         },
         "maps/MAP_1.1.tmx": {
-            "scale": 0.5,
-            "selectedLayer": -1,
+            "scale": 0.75,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 1156,
-                "y": 599
+                "x": 3350.6666666666665,
+                "y": 600.6666666666667
             }
         },
         "maps/MAP_1.2.tmx": {

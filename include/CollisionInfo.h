@@ -13,63 +13,119 @@ class FireBall;
 class Tile;
 class Enemy;
 
+inline Rectangle getProximityRect(Entity& entity, float radius);
+
 class CollisionInfo {
 public:
-	virtual void HandleCollision(Entity* entityA, Entity* entityB) = 0;
+	virtual bool HandleCollision(Entity* entityA, Entity* entityB) = 0;
 	virtual ~CollisionInfo() = default;
 };
-
+//  player vs block
+class PlayerFloorInfo : public CollisionInfo {
+public:
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
+};
+class PlayerMovingBlockInfo : public CollisionInfo {
+public:
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
+};
+class PlayerItemBlockInfo : public CollisionInfo {
+public:
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
+};
+class PlayerBrickInfo : public CollisionInfo {
+public:
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
+};
 class PlayerBlockInfo : public CollisionInfo {
 public:
-	void HandleCollision(Entity* entityA, Entity* entityB) override;
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
 };
 
+// enemy vs block
+class EnemyFloorInfo : public CollisionInfo {
+public:
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
+};
+class EnemyBrickInfo : public CollisionInfo {
+public:
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
+};
+class EnemyItemBlockInfo : public CollisionInfo {
+public:
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
+};
 class EnemyBlockInfo : public CollisionInfo {
 public:
-	void HandleCollision(Entity* entityA, Entity* entityB) override;
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
 };
+
+// player vs enemy
 class PlayerEnemyInfo : public CollisionInfo {
 public:
-	void HandleCollision(Entity* entityA, Entity* entityB) override;
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
 };
 
+// player vs item
 class PlayerItemInfo : public CollisionInfo {
 public:
-	void HandleCollision(Entity* entityA, Entity* entityB) override;
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
 };
-
+// item vs block
+class ItemFloorInfo : public CollisionInfo {
+public:
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
+};
 class ItemBlockInfo: public CollisionInfo {
 public:
-	void HandleCollision(Entity* entityA, Entity* entityB) override;
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
 };
 
-class PlayerFireBallInfo : public CollisionInfo {
+// player vs fireball
+class FireBallPlayerInfo : public CollisionInfo {
 public:
-	void HandleCollision(Entity* entityA, Entity* entityB) override;
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
 };
 
-class EnemyFireBallInfo : public CollisionInfo {
+// fireball vs enemy
+class FireBallEnemyInfo : public CollisionInfo {
 public:
-	void HandleCollision(Entity* entityA, Entity* entityB) override;
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
 };
 
+// fireball
+class FireBallFloorInfo : public CollisionInfo {
+public:
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
+};
+class FireBallItemBlockInfo : public CollisionInfo {
+public:
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
+};
+class FireBallBrickInfo : public CollisionInfo {
+public:
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
+};
 class FireBallBlockInfo : public CollisionInfo {
 public:
-	void HandleCollision(Entity* entityA, Entity* entityB) override;
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
 };
 
+// enemy vs enemy
 class EnemyEnemyInfo : public CollisionInfo {
 public:
-	void HandleCollision(Entity* entityA, Entity* entityB) override;
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
 };
 
 
+
+// select the corresponding Info
 class CollisionInfoSelector {
 public:
 	static std::unique_ptr<CollisionInfo> getInfor(EntityType typeA, EntityType typeB, Blocks* block = nullptr);
 };
-
+// Interface
 class CollisionIterface {
 public:
-	void HandleCollision(Entity* entityA, Entity* entityB);
+	bool HandleCollision(Entity* entityA, Entity* entityB);
 };

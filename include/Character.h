@@ -74,10 +74,9 @@ public:
 	
 	void StartTransition(const std::vector<int>& frameOrder, int steps);
 
-	virtual void HandleTileCollision(const Tile tile, CollisionType CollType);
-	virtual void RunLeft() = 0;
-	virtual void RunRight() = 0;
-	virtual void Jumping() = 0;
+	virtual void RunLeft();
+	virtual void RunRight();
+	virtual void Jumping();
 	virtual void Standing();
 	virtual void Ducking();
 	virtual void Update() override;
@@ -154,6 +153,11 @@ protected:
 
 	const float star_invicible_time = 12.f;
 	const float transform_time = 1.f;
+
+	const float MARIO_MAXSPEEDY = 550;
+	const float MARIO_MAXSPEEDX = 550;
+	const float LUIGI_MAXSPEEDY = 650;
+	const float LUIGI_MAXSPEEDX = 500;
 
 	bool victory = false;
 	bool exitlevel;

@@ -10,7 +10,8 @@
 
 class Blocks : public Entity {
 public:
-    Blocks(Vector2 pos = { 0, 0 }, Vector2 size = { 1, 1 });
+    Blocks(Vector2 pos = { 0, 0 }, Vector2 size = { 32, 32 });
+    Blocks(Vector2 pos, Vector2 size, std::string textureName);
     virtual ~Blocks() = default;
 
     EntityType getEntityType() const override;
@@ -18,8 +19,5 @@ public:
     virtual void Update() override;
     virtual void draw() override;
     virtual void UpdateTexture() override;
-protected:
-    float timeSpan;
-    float timeSpanAcum;
 };
 #endif

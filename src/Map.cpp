@@ -17,19 +17,6 @@ Map::~Map()
 	clear();
 }
 
-std::string Map::TileTypeToString(TileType type)
-{
-	return std::string();
-}
-
-TileType Map::StringToTileType(const std::string& str)
-{
-	if (str == "TILE_TYPE_NORMAL") return TileType::TILE_TYPE_NORMAL;
-	if (str == "TILE_TYPE_LEFT_EDGE") return TileType::TILE_TYPE_LEFT_EDGE;
-	if (str == "TILE_TYPE_RIGHT_EDGE") return TileType::TILE_TYPE_RIGHT_EDGE;
-	return TileType::TILE_TYPE_NORMAL;
-}
-
 std::vector<Tile*>* Map::getVectorTiles()
 {
 	return &tiles;
@@ -50,14 +37,13 @@ void Map::clear() {
 	items.clear();
 	decors.clear();
 	enemies.clear();
-	
 }
 
 void Map::drawMap()
 {
-	for (auto& tile : tiles) {
+	/*for (auto& tile : tiles) {
 		tile->draw();
-	}
+	}*/
 	for (Entity* entity : blockArray)
 		entity->draw();
 }
@@ -105,19 +91,19 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 
 	int width = mapJson["width"];
 	int height = mapJson["height"];
-	int tilewidth = mapJson["tilewidth"];
+	int blockwidth = mapJson["tilewidth"];
 	std::vector<int> data = mapJson["layers"][0]["data"];
 
 	for (int y = 0; y < height; ++y) {
 		for (int x = 0; x < width; ++x) {
-			int tileId = data[static_cast<std::vector<int, std::allocator<int>>::size_type>(y) * width + x];
-			if (tileId != 0) {
-				tiles.push_back(new Tile(Vector2{ (float)x * tilewidth,(float)y * tilewidth },
-					TileType::TILE_TYPE_NORMAL, "TILE_" + std::to_string(tileId - 2)));
+			int blockId = data[static_cast<std::vector<int, std::allocator<int>>::size_type>(y) * width + x];
+			if (blockId != 0) {
+				Floor* floor = new Floor({ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }, "TILE_" + std::to_string(blockId - 2));
+				blockArray.push_back(floor);
 			}
 		}
 	}
-	setMapSize(Vector2{(float) width * tilewidth, (float) height * tilewidth});
+	setMapSize(Vector2{(float) width * blockwidth, (float) height * blockwidth});
 
 }
 

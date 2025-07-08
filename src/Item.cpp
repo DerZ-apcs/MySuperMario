@@ -12,7 +12,7 @@ const int& Item::getPoint() const
 	return this->point;
 }
 
-EntityType Item::getType() const
+EntityType Item::getEntityType() const
 {
 	return ITEM;
 }

@@ -45,15 +45,13 @@ public:
 	virtual void Update();
 	virtual void draw();
 	virtual void HandleInput();
-	virtual void UpdatePhysics();
-	virtual void updateCollision();
+	virtual void updateCollision(); // update 4 rect in 4 sides
 	virtual void UpdateTexture();
-	virtual CollisionType CheckCollision(const Entity& entity) const;
+	virtual CollisionType CheckCollision(const Entity& entity) const; // check the collision of 4 rects with others
 
 	bool isOnGround() const;
 	virtual void RunLeft();
-	virtual void RunRight(
-	);
+	virtual void RunRight();
 	virtual void Jumping();
 	// Setter
 	void setPosition(Vector2 pos);
@@ -73,6 +71,7 @@ public:
 
 	bool isDead() const;
 	void setEntityDead();
+	void setDirection(Direction dir);
 	// Getter
 	Vector2& getPosition();
 	float getX() const;

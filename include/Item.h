@@ -14,7 +14,7 @@ public:
 	Item(int point = 0);
 
 	const int& getPoint() const;
-	virtual EntityType getType() const;
+	virtual EntityType getEntityType() const;
 	virtual ITEM_TYPE getItemType() const = 0;
 
 	virtual void setAppearBottom(float bottom);

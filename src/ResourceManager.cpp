@@ -90,11 +90,12 @@ void ResourceManager::loadTextures() {
 	textures["FlowerMarioFireball_LEFT_3"] = flipTexture(textures["FlowerMarioFireball_RIGHT_3"]);
 
 	//tile
-	for (int i = 0; i <= 103; i++) {
+	for (int i = 0; i <= 113; i++) {
 		std::string path = "resources/images/tiles/AllTiles/tile_" + std::to_string(i) + ".png";
 		textures["TILE_" + std::to_string(i)] = LoadTexture(path.c_str());
 	}
 	// background
+
 	textures["BACKGROUND_1"] = LoadTexture("resources/images/backgrounds/background1.png");
 	textures["BACKGROUND_2"] = LoadTexture("resources/images/backgrounds/background2.png");
 	textures["BACKGROUND_3"] = LoadTexture("resources/images/backgrounds/background3.png");
@@ -145,18 +146,21 @@ void ResourceManager::loadFonts()
 
 void ResourceManager::loadSounds()
 {
-	sounds["PLAYER_JUMP"] = LoadSound("resources/sounds/smw_jump.wav");
-	sounds["PLAYER_FIREBALL"] = LoadSound("resources/sounds/smw_fireball.wav");
-	sounds["PLAYER_POWERUP"] = LoadSound("resources/sounds/smw_power-up.wav");
-	sounds["enter_level.wav"] = LoadSound("resources/sounds/enter_level.wav");
-	sounds["game_over.wav"] = LoadSound("resources/sounds/enter_level.wav");
-	sounds["level_clear.wav"] = LoadSound("resources/sounds/level_clear.wav");
-	sounds["lost_life.wav"] = LoadSound("resources/sounds/lost_life.wav");
-	sounds["lost_suit.wav"] = LoadSound("resources/sounds/lost_suit.wav");
-	sounds["pause.wav"] = LoadSound("resources/sounds/pause.wav");
-	sounds["skid.wav"] = LoadSound("resources/sounds/skid.wav");
-	sounds["1-up.wav"] = LoadSound("resources/sounds/smw_1-up.wav");
-	sounds["coin.wav"] = LoadSound("resources/sounds/smw_coin.wav");
+	std::string soundfolder = std::string(GetWorkingDirectory()) + "/resources/sounds/";
+	try {
+		for (const auto& entry : fs::directory_iterator(soundfolder)) {
+			if (entry.is_regular_file() && entry.path().extension() == ".wav") {
+				std::string filename = entry.path().filename().string(); // e.g., "jump.wav"
+				std::string fullPath = entry.path().string();             // full path for raylib
+
+				sounds[filename] = LoadSound(fullPath.c_str());
+			}
+		}
+	}
+	catch (const std::filesystem::filesystem_error& e) {
+		std::cerr << "[Filesystem error]" << e.what() << std::endl;
+		std::cerr << "-> Path: " << soundfolder << std::endl;
+	}
 }
 
 void ResourceManager::loadMusics()

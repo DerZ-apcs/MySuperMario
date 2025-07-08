@@ -144,12 +144,12 @@ void GameEngine::update()
         }
     }
     // test the text effect
-    if ((int)player->getX() % 100 == 0) {
+    /*if ((int)player->getX() % 100 == 0) {
         TextEffect* text = new TextEffect("Hello this is my super mario", Vector2{player->getCenterX(), player->getTop()});
         text->setTextColor(WHITE);
         text->setOutlineColor(BLACK);
         addEffect(text);
-    }
+    }*/
     for (size_t i = 0; i < blocks.size(); i++) {
         if (blocks[i]->isDead()) {
             delete blocks[i];
@@ -191,35 +191,37 @@ void GameEngine::update()
             enemies[i]->Update();
     }
 
-    // tiles (collision with character)
-    for (auto const& tile : *map.getVectorTiles()) {
-        CollisionType PlayerCollision = player->CheckCollision(*tile);
-        if (PlayerCollision != COLLISION_TYPE_NONE) {
-            PlayerBlockInfo Infor;
-            Infor.HandleCollision(player, tile);
-        }
-            //mediatorCollision.HandleCollision(player, tile);
-            
-        for (auto& fireball : *player->getFireBalls()) {
-            CollisionType FireBallCollision = fireball->CheckCollision(*tile);
-            if (FireBallCollision != COLLISION_TYPE_NONE) {
-                FireBallBlockInfo Infor;
-                Infor.HandleCollision(fireball, tile);
-            }
-
-            //mediatorCollision.HandleCollision(fireball, tile);
-        }
-
-    }
     // player udpate
     player->Update();
+    // all collision
+    handleCollision();
     // camera update
     camera.update(player->getX(), player->getY());
 }
 
 void GameEngine::handleCollision()
-{
+{    
+    // tiles (collision with character)
+    for (auto const& block : map.getBlocks()) {
+        CollisionType PlayerCollision = player->CheckCollision(*block);
+        if (PlayerCollision != COLLISION_TYPE_NONE) {
+            PlayerBlockInfo Infor;
+            Infor.HandleCollision(player, block);
+        }
 
+        for (auto& fireball : *player->getFireBalls()) {
+            CollisionType FireBallCollision = fireball->CheckCollision(*block);
+            if (FireBallCollision != COLLISION_TYPE_NONE) {
+                FireBallBlockInfo Infor;
+                Infor.HandleCollision(fireball, block);
+            }
+        }
+    }
+    // for items
+    for (size_t i = 0; i < items.size(); i++) {
+        PlayerItemInfo Infor;
+        Infor.HandleCollision(player, items[i]);   
+    }
 }
 // draw
 void GameEngine::draw()
@@ -227,7 +229,7 @@ void GameEngine::draw()
     camera.beginDrawing();
     ClearBackground(SKYBLUE);
     map.drawBackGround(camera.getSize(), camera.getScale());
-    map.drawMap();
+    //map.drawMap();
     if (!player) return;
     bool lostLife = player->isLostLife();
 

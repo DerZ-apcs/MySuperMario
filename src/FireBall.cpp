@@ -72,31 +72,31 @@ bool FireBall::isMaxDistance() const
 	return currDistance >= maxDistance;
 }
 
-void FireBall::HandleTileCollision(const Tile tile, CollisionType Colltype)
-{
-	if (Colltype == COLLISION_TYPE_NONE)
-		return;
-	switch (Colltype) {
-	case COLLISION_TYPE_EAST:
-		setPosition({ tile.getX() - size.x, position.y });
-		velocity.x *= -0.9;
-		break;
-	case COLLISION_TYPE_NORTH:
-		setPosition({ position.x, tile.getY() + tile.getHeight() });
-		velocity.y = 0;
-		break;
-	case COLLISION_TYPE_SOUTH:
-		setPosition({ position.x, tile.getY() - size.y });
-		velocity.y *= -0.9;
-		break;
-	case COLLISION_TYPE_WEST:
-		setPosition({ tile.getX() + tile.getWidth(), position.y });
-		velocity.x *= -0.9;
-		break;
-	default:
-		break;
-	}
-}
+//void FireBall::HandleTileCollision(const Tile tile, CollisionType Colltype)
+//{
+//	if (Colltype == COLLISION_TYPE_NONE)
+//		return;
+//	switch (Colltype) {
+//	case COLLISION_TYPE_EAST:
+//		setPosition({ tile.getX() - size.x, position.y });
+//		velocity.x *= -0.9;
+//		break;
+//	case COLLISION_TYPE_NORTH:
+//		setPosition({ position.x, tile.getY() + tile.getHeight() });
+//		velocity.y = 0;
+//		break;
+//	case COLLISION_TYPE_SOUTH:
+//		setPosition({ position.x, tile.getY() - size.y });
+//		velocity.y *= -0.9;
+//		break;
+//	case COLLISION_TYPE_WEST:
+//		setPosition({ tile.getX() + tile.getWidth(), position.y });
+//		velocity.x *= -0.9;
+//		break;
+//	default:
+//		break;
+//	}
+//}
 
 EntityType FireBall::getEntityType() const
 {
