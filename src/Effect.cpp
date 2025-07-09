@@ -30,6 +30,19 @@ Effect::Effect(Vector2 position, bool destroyWhenFinish, float delay, float dura
 	setGravityAvailable(true);
 }
 
+Effect::Effect(Vector2 pos, float duration, std::vector<Texture2D> animations, float delay)
+{
+	this->position = pos;
+	this->duration = duration;
+	if (!animations.empty()) this->texture = animations[0];
+	this->delayed = delay;
+	this->destroyWhenFinish = destroyWhenFinish;
+	setCollisionAvailable(false);
+	setGravityAvailable(true);
+	maxFrame = animations.size() - 1;
+	this->animations = animations;
+}
+
 EntityType Effect::getEntityType() const
 {
 	return EFFECT;
@@ -43,8 +56,19 @@ void Effect::Update()
 	if (gravityAvailable) setVelY(getVelY() + GRAVITY * deltaTime);
 	//std::cout << "velo y: " << velocity.y << endl;
 	duration -= deltaTime;
+
+	if (maxFrame > 0) {
+		frameAcum += deltaTime;
+		if (frameAcum > frameTime) {
+			currFrame++;
+			if (currFrame > maxFrame) currFrame = 0;
+			frameAcum = 0;
+		}
+		texture = animations[currFrame];
+	}	
 }
 
 void Effect::draw()
 {
+	DrawTexture(texture, position.x, position.y, WHITE);
 }

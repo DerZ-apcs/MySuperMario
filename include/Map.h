@@ -4,6 +4,7 @@
 #include "../include/Tile.h"
 #include "../include/Blocks.h"
 #include "../include/Floor.h"
+#include "../include/SolidBlock.h"
 #include "../include/Item.h"
 #include <iostream>
 #include <fstream>

@@ -23,7 +23,7 @@ inline Rectangle getProximityRect(Entity& entity, float radius)
 	};
 }
 
-static bool shouldCheckCollision(Entity* entityA, Entity* entityB, float proximityRadius = 10.f)
+static bool shouldCheckCollision(Entity* entityA, Entity* entityB, float proximityRadius = 5.f)
 {
 	if (!entityA || !entityB) return false;
 
@@ -44,9 +44,11 @@ bool PlayerFloorInfo::HandleCollision(Entity* entityA, Entity* entityB)
 
 	if (Colltype != COLLISION_TYPE_SOUTH)
 		return false;
-	character->setPosition(Vector2{ character->getX(), floor->getY() - character->getHeight() });
-	character->setState(ON_GROUND);
-	character->setVelY(0);
+	if (character->getVelocity().y > 0) {
+		character->setState(ON_GROUND);
+		character->setVelY(0);
+		character->setPosition(Vector2{ character->getX(), floor->getY() - character->getHeight() });
+	}
 	return true;
 }
 
@@ -170,7 +172,6 @@ bool PlayerBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	case COLLISION_TYPE_NORTH:
 		character->setPosition(Vector2{ character->getX(), block->getY() + block->getHeight() });
 		character->setVelY(0);
-		//state = FALLING;
 		break;
 	case COLLISION_TYPE_SOUTH:
 		character->setPosition(Vector2{ character->getX(), block->getY() - character->getHeight() });
@@ -248,11 +249,11 @@ bool EnemyBrickInfo::HandleCollision(Entity* entityA, Entity* entityB)
 			break;
 		}
 
-		if (Shell* shell = dynamic_cast<Shell*>(enemy)) {
+		/*if (Shell* shell = dynamic_cast<Shell*>(enemy)) {
 			if (!shell->getIsHold()) {
 				block->breakBrick();
 			}
-		}
+		}*/
 	}
 	return true;
 }
@@ -296,11 +297,11 @@ bool EnemyItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 			break;
 		}
 
-		if (Shell* shell = dynamic_cast<Shell*>(enemy)) {
+		/*if (Shell* shell = dynamic_cast<Shell*>(enemy)) {
 			if (!shell->getIsHold()) {
 				block->releaseItem(enemy);
 			}
-		}
+		}*/
 	}
 	return true;
 }
@@ -309,17 +310,17 @@ bool EnemyBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	Enemy* enemy = dynamic_cast<Enemy*>(entityA);
 	Blocks* block = dynamic_cast<Blocks*>(entityB);
 
-	if (!enemy || !block || !enemy->getCollisionAvailable())
+	if (!enemy || !block || !enemy->getCollisionAvailable() || !block->getCollisionAvailable())
 		return false;
 	CollisionType Colltype = enemy->CheckCollision(*block);
 
 	if (Colltype == COLLISION_TYPE_NONE)
 		return false;
+
 	switch (Colltype) {
 	case COLLISION_TYPE_NORTH:
 		enemy->setPosition(Vector2{ enemy->getX(), block->getY() + block->getHeight() });
 		enemy->setVelY(0);
-		//state = FALLING;
 		break;
 	case COLLISION_TYPE_SOUTH:
 		enemy->setPosition(Vector2{ enemy->getX(), block->getY() - enemy->getHeight() });
@@ -330,7 +331,6 @@ bool EnemyBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 		enemy->setPosition(Vector2{ block->getX() - enemy->getWidth(), enemy->getY() });
 		enemy->setVelX(enemy->getVelX() * -1);
 		enemy->setDirection(LEFT);
-
 		break;
 	case COLLISION_TYPE_WEST:
 		enemy->setPosition(Vector2{ block->getX() + block->getWidth(), enemy->getY() });
@@ -434,6 +434,17 @@ bool FireBallBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 
 bool PlayerEnemyInfo::HandleCollision(Entity* entityA, Entity* entityB)
 {
+	Character* character = dynamic_cast<Character*>(entityA);
+	Enemy* enemy = dynamic_cast<Enemy*>(entityB);
+
+	if (!character || !enemy || !character->getCollisionAvailable() || !enemy->getCollisionAvailable())
+		return false;
+	CollisionType Colltype = character->CheckCollision(*enemy);
+
+	if (Colltype == COLLISION_TYPE_NONE) return false;
+
+	character->collisionWithEnemy(enemy, Colltype);
+
 	return true;
 }
 
@@ -529,25 +540,25 @@ bool FireBallEnemyInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	CollisionType Colltype = fireball->CheckCollision(*enemy);
 	if (Colltype == COLLISION_TYPE_NONE)
 		return false;
-	enemy->CollisionWithFireBall(fireball);
+	enemy->CollisionWithFireball(fireball);
 	return true;
 }
 
 bool EnemyEnemyInfo::HandleCollision(Entity* entityA, Entity* entityB)
 {
-	Enemy* enemy1 = dynamic_cast<Enemy*>(entityA);
-	Enemy* enemy2 = dynamic_cast<Enemy*>(entityB);
+	//Enemy* enemy1 = dynamic_cast<Enemy*>(entityA);
+	//Enemy* enemy2 = dynamic_cast<Enemy*>(entityB);
 
-	if (!enemy1 || !enemy2 || enemy1->getCollisionAvailable() == false || enemy2->getCollisionAvailable() == false)
-		return false;
-	if (enemy1->getEnemyType() != SHELL)
-		return false;
-	CollisionType Colltype = enemy1->CheckCollision(*enemy2);
-	if (Colltype == COLLISION_TYPE_NONE)
-		return false;
-	enemy2->attacked(enemy1->getDir()); // enemy1 (shell) attack enemy2
-	if (enemy2->getEnemyType() == SHELL)
-		enemy1->attacked(enemy2->getDir());
+	//if (!enemy1 || !enemy2 || enemy1->getCollisionAvailable() == false || enemy2->getCollisionAvailable() == false)
+	//	return false;
+	//if (enemy1->getEnemyType() != SHELL)
+	//	return false;
+	//CollisionType Colltype = enemy1->CheckCollision(*enemy2);
+	//if (Colltype == COLLISION_TYPE_NONE)
+	//	return false;
+	//enemy2->attacked(enemy1->getDir()); // enemy1 (shell) attack enemy2
+	//if (enemy2->getEnemyType() == SHELL)
+	//	enemy1->attacked(enemy2->getDir());
 	return true;
 }
 
@@ -569,8 +580,6 @@ std::unique_ptr<CollisionInfo> CollisionInfoSelector::getInfor(EntityType typeA,
 	{
 		if (block && block->getBlockType() == FLOOR)
 			return std::make_unique<PlayerFloorInfo>();
-		if (block && block->getBlockType() == SOLIDBLOCK)
-			return make_unique<EnemyBlockInfo>();
 		if (block && block->getBlockType() == BRICK)
 			return std::make_unique<EnemyBrickInfo>();
 		if (block && block->getBlockType() == ITEMBLOCK)
@@ -597,10 +606,10 @@ std::unique_ptr<CollisionInfo> CollisionInfoSelector::getInfor(EntityType typeA,
 		return std::make_unique<FireBallEnemyInfo>();
 	}
 	if (typeA == FIREBALL && typeB == BLOCK) {
-		/*if (block && block->getBlockType() == ITEMBLOCK)
+		if (block && block->getBlockType() == ITEMBLOCK)
 			return std::make_unique<FireBallItemBlockInfo>();
 		if (block && block->getBlockType() == BRICK)
-			return std::make_unique<FireBallBrickInfo>();*/
+			return std::make_unique<FireBallBrickInfo>();
 
 		return std::make_unique<FireBallBlockInfo>();
 	}
@@ -613,11 +622,11 @@ std::unique_ptr<CollisionInfo> CollisionInfoSelector::getInfor(EntityType typeA,
 }
 
 
-bool CollisionIterface::HandleCollision(Entity* entityA, Entity* entityB)
+bool CollisionInterface::HandleCollision(Entity* entityA, Entity* entityB)
 {
-	if (!shouldCheckCollision(entityA, entityB)) {
+
+	if (!CheckCollisionRecs(entityA->getRect(), entityB->getRect()))
 		return false;
-	}
 	auto typeA = entityA->getEntityType();
 	auto typeB = entityB->getEntityType();
 
@@ -635,5 +644,3 @@ bool CollisionIterface::HandleCollision(Entity* entityA, Entity* entityB)
 	}
 	return false;
 }
-
-

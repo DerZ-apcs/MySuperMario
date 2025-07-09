@@ -132,6 +132,59 @@ void ResourceManager::loadTextures() {
 	textures["Star"] = LoadTexture("resources/images/sprites/items/Star.png");
 	textures["moon"] = LoadTexture("resources/images/sprites/items/3UpMoon.png");
 	
+
+	// Enemies
+	textures["Goomba_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/Goomba_0.png");
+	textures["Goomba_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/Goomba_1.png");
+	textures["Goomba_LEFT_0"] = flipTexture(textures["Goomba_RIGHT_0"]);
+	textures["Goomba_LEFT_1"] = flipTexture(textures["Goomba_RIGHT_1"]);
+	textures["Goomba_Dead"] = LoadTexture("resources/images/sprites/baddies/FlyingGoomba_0.png");
+
+	textures["FlyingGoomba_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/FlyingGoomba_0.png");
+	textures["FlyingGoomba_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/FlyingGoomba_1.png");
+	textures["FlyingGoomba_LEFT_0"] = flipTexture(textures["FlyingGoomba_RIGHT_0"]);
+	textures["FlyingGoomba_LEFT_1"] = flipTexture(textures["FlyingGoomba_RIGHT_1"]);
+
+	/*textures["Koopa_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_0.png");
+	textures["Koopa_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_1.png");
+	textures["Koopa_LEFT_0"] = flipTexture(textures["Koopa_RIGHT_0"]);
+	textures["Koopa_LEFT_1"] = flipTexture(textures["Koopa_RIGHT_1"]);
+	textures["Koopa_Shell"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_Shell.png");
+	textures["Koopa_Shell_0"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_Shell_0.png");
+	textures["Koopa_Shell_1"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_Shell_1.png");
+	textures["Koopa_Shell_2"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_Shell_2.png");
+	textures["Koopa_Shell_3"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_Shell_3.png");
+
+	textures["Bullet_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/BulletBill_0.png");
+	textures["Bullet_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/BanzaiBill_0.png");
+	textures["Bullet_LEFT_0"] = flipTexture(textures["Bullet_RIGHT_0"]);
+	textures["Bullet_LEFT_1"] = flipTexture(textures["Bullet_RIGHT_1"]);
+	textures["Bullet_Dead"] = LoadTexture("resources/images/sprites/baddies/Bullet_Dead.png");
+
+	textures["PiranhaPlant_OPEN"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_1.png");
+	textures["PiranhaPlant_CLOSED"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_0.png");
+	textures["FirePiranhaPlant_OPEN"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_1.png");
+	textures["FirePiranhaPlant_CLOSED"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_0.png");
+	textures["EnemyFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FlowerMarioFireball_0.png");
+	textures["EnemyFireball_RIGHT_1"] = LoadTexture("resources/images/sprites/mario/FlowerMarioFireball_1.png");
+	textures["EnemyFireball_RIGHT_2"] = LoadTexture("resources/images/sprites/mario/FlowerMarioFireball_2.png");
+	textures["EnemyFireball_RIGHT_3"] = LoadTexture("resources/images/sprites/mario/FlowerMarioFireball_3.png");
+	textures["EnemyFireball_LEFT_0"] = flipTexture(textures["FlowerMarioFireball_RIGHT_0"]);
+	textures["EnemyFireball_LEFT_1"] = flipTexture(textures["FlowerMarioFireball_RIGHT_1"]);
+	textures["EnemyFireball_LEFT_2"] = flipTexture(textures["FlowerMarioFireball_RIGHT_2"]);
+	textures["EnemyFireball_LEFT_3"] = flipTexture(textures["FlowerMarioFireball_RIGHT_3"]);
+
+
+
+	textures["Rex_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/GreenKoopaTroopa_0.png");
+	textures["Rex_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/GreenKoopaTroopa_1.png");
+	textures["Rex_LEFT_0"] = flipTexture(textures["Rex_LEFT_0"]);
+	textures["Rex_LEFT_1"] = flipTexture(textures["Rex_LEFT_1"]);
+	textures["Rex_Compressed_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/Rex_1_0.png");
+	textures["Rex_Compressed_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/Rex_1_1.png");
+	textures["Rex_Compressed_LEFT_0"] = flipTexture(textures["Rex_Compressed_LEFT_0"]);
+	textures["Rex_Compressed_LEFT_1"] = flipTexture(textures["Rex_Compressed_LEFT_1"]);
+	textures["Rex_Dead"] = LoadTexture("resources/images/sprites/baddies/Goomba_1.png");*/
 }
 
 

@@ -6,6 +6,7 @@
 #include "../include/Coin.h"
 #include "../include/Map.h"
 #include "../include/Level.h"
+#include "../include/Goomba.h"
 #include <iostream>
 
 GameEngine* globalGameEngine = nullptr;
@@ -33,6 +34,11 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Char
     for (int i = 0; i < 10; i++) {
         Coin* coin = new Coin(STATIC_COIN, { (float)i * 50, 600 });
         items.push_back(coin);
+    }
+    for (int i = 7; i < 10; i++) {
+        Goomba* goomba = new Goomba({(float) 100 * i, 300 }, RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0"));
+        goomba->setState(FALLING);
+        enemies.push_back(goomba);
     }
 }
 
@@ -143,13 +149,7 @@ void GameEngine::update()
             BackGroundPos[i].x = minX - map.BgWidth;
         }
     }
-    // test the text effect
-    /*if ((int)player->getX() % 100 == 0) {
-        TextEffect* text = new TextEffect("Hello this is my super mario", Vector2{player->getCenterX(), player->getTop()});
-        text->setTextColor(WHITE);
-        text->setOutlineColor(BLACK);
-        addEffect(text);
-    }*/
+
     for (size_t i = 0; i < blocks.size(); i++) {
         if (blocks[i]->isDead()) {
             delete blocks[i];
@@ -202,22 +202,33 @@ void GameEngine::update()
 void GameEngine::handleCollision()
 {    
     // tiles (collision with character)
-    for (auto const& block : map.getBlocks()) {
-        CollisionType PlayerCollision = player->CheckCollision(*block);
-        if (PlayerCollision != COLLISION_TYPE_NONE) {
-            PlayerBlockInfo Infor;
-            Infor.HandleCollision(player, block);
-        }
+    CollisionInterface CollI;
+    bool isGrounded = false;
+    for (size_t j = 0; j < blocks.size(); j++) {
+        if (CollI.HandleCollision(player, blocks[j]))
+            isGrounded = true;
+        //PlayerBlockInfo Infor;
+        //Infor.HandleCollision(player, blocks[j]);
+        for (size_t i = 0; i < enemies.size(); i++)
+            CollI.HandleCollision(enemies[i], blocks[j]);
 
+        for (size_t i = 0; i < items.size(); i++) 
+            CollI.HandleCollision(items[i], blocks[j]);
+       /* for (size_t i = 0; i < fireball.size(); i++) {
+            if (fireball[i]->getFireballType() == CHARACTER_FIREBALL) 
+            IColl.resolve(fireball[i], blocks[j]);
+        }*/
         for (auto& fireball : *player->getFireBalls()) {
-            CollisionType FireBallCollision = fireball->CheckCollision(*block);
-            if (FireBallCollision != COLLISION_TYPE_NONE) {
-                FireBallBlockInfo Infor;
-                Infor.HandleCollision(fireball, block);
-            }
+            CollI.HandleCollision(fireball, blocks[j]);
         }
     }
     // for items
+    for (size_t i = 0; i < enemies.size(); i++) {
+        for (auto& fireball : *player->getFireBalls()) {
+            CollI.HandleCollision(fireball, enemies[i]);
+        }
+        CollI.HandleCollision(player, enemies[i]);
+    }
     for (size_t i = 0; i < items.size(); i++) {
         PlayerItemInfo Infor;
         Infor.HandleCollision(player, items[i]);   
@@ -432,5 +443,10 @@ void GameEngine::resetGame()
 Vector2 GameEngine::getBound()
 {
     return map.getMapSize();
+}
+
+Character*& GameEngine::getCharacter()
+{
+    return player;
 }
 

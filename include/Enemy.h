@@ -1,45 +1,107 @@
-#ifndef ENEMY_H
+﻿#ifndef ENEMY_H
 #define ENEMY_H
 #include "../include/Entity.h"
 #include "../include/Mario.h"
+#include <random>
 
 class Character;
 class FireBall;
+static std::mt19937 gen(static_cast<unsigned int>(std::time(nullptr)));
 
+// Score
+const int SCORE_STOMP_GOOMBA = 100;
+const int SCORE_STOMP_KOOPA = 100;
+const int SCORE_KICK_KOOPA = 200;
+const int SCORE_STOMP_BULLET = 200;
+const int SCORE_STOMP_REX = 200;
+
+// Time
+const float ENEMY_DEATH_TIMER_DEFAULT = 0.3f;
+const float ENEMY_DEATH_TIMER_LONG = 0.5f;
+const float KOOPA_REVIVE_TIME = 5.0f;
+const float KOOPA_REVIVE_WARNING_TIME = 4.0f;
+const float FLYINGGOOMBA_JUMP_INTERVAL = 1.0f;
+// Speed
+const float MARIO_BOUNCE_VELOCITY = -300.0f;
+const float GOOMBA_SPEED = 100.0f;
+const float FLYINGGOOMBA_SPEED = 100.0f;
+const float FLYINGGOOMBA_JUMP_VELOCITY = -500.0f;
+const float KOOPA_SPEED = 80.0f;
+const float KOOPA_SHELL_SPEED = 300.0f;
+const float BULLET_SPEED = 300.0f;
+const float REX_SPEED = 120.0f;
+const float REX_COMPRESSED_SPEED = 180.0f;
+
+//class Enemy : public Entity {
+//protected:
+//	Vector2 boundary; // The x-axis range that enemy can move, y-axis for vertical plant
+//	float randomMoveTimer;
+//
+//	float deathTimer; // Timer for death animation
+//	float squashScale; // Scale for squash effect when dying
+//	bool isFlipped;
+//	const float DEAD_TIME = 0.5f;
+//	const float DEAD_INITIAL_VELOCITY_Y = 200.f;
+//	const float DEAD_INITIAL_VELOCITY_X = 100.f;
+//	const int ENEMY_POINT = 100;
+//	const float TIME_RANDOM_MOVE = 3.f;
+//
+//public:
+//	Enemy();
+//	Enemy(Vector2 pos, Vector2 size, Vector2 vel, Direction dirction, EntityState state, Texture2D texture, float frameTime, int maxFrame, Color color);
+//	Enemy(Vector2 pos, Vector2 size);
+//	virtual ~Enemy() = default;
+//
+//	EntityType getEntityType() const override;
+//
+//	virtual ENEMY_TYPE getEnemyType() const = 0;
+//
+//	Direction getRandomDirection();
+//	virtual void setBoundary(Vector2 boundary);
+//	virtual const Vector2& getBoundary() const;
+//
+//	//bool isDying(); // Check if enemy is dying or marked for removal
+//	//bool isReadyForRemoval();
+//	//void updateSquashEffect();
+//	//void updateCollision() override;
+//
+//	virtual void stomped();
+//	virtual void attacked(Direction direction = RIGHT);
+//	virtual void kicked(Direction direction) {};
+//	void CollisionWithFireBall(FireBall* fireball);
+//
+//	//virtual void CollisionWithCharacter();
+//	virtual void Update() override;
+//	virtual void draw() override;
+//	virtual void UpdateTexture() override;
+//};
+
+
+// Base class for enemies, inheriting from Entity
 class Enemy : public Entity {
 protected:
-	Vector2 boundary; // The x-axis range that enemy can move, y-axis for vertical plant
-	float randomMoveTimer;
-
-	const float DEAD_TIME = 0.5f;
-	const float DEAD_INITIAL_VELOCITY_Y = 200.f;
-	const float DEAD_INITIAL_VELOCITY_X = 100.f;
-	const int ENEMY_POINT = 100;
-	const float TIME_RANDOM_MOVE = 3.f;
-
+    float deathTimer; // Timer for death animation
+    float squashScale; // Scale for squash effect when dying
+    bool isdead; // Flag to mark enemy for removal
+    bool isFlipped;
 public:
-	Enemy();
-	Enemy(Vector2 pos, Vector2 size, Vector2 vel, Direction dirction, EntityState state, Texture2D texture, float frameTime, int maxFrame, Color color);
-	Enemy(Vector2 pos, Vector2 size);
-	virtual ~Enemy() = default;
-
-	EntityType getEntityType() const override;
-
-	virtual ENEMY_TYPE getEnemyType() const = 0;
-
-	Direction getRandomDirection();
-	virtual void setBoundary(Vector2 boundary);
-	virtual const Vector2& getBoundary() const;
-
-	virtual void stomped();
-	virtual void attacked(Direction direction = RIGHT);
-	virtual void kicked(Direction direction) {};
-	void CollisionWithFireBall(FireBall* fireball);
-
-	//virtual void CollisionWithCharacter();
-	virtual void Update() override;
-	virtual void draw() override;
-	virtual void UpdateTexture() override;
-	void updateCollision() override;
+    Enemy(Vector2 pos, Vector2 size, Vector2 vel, Direction direction, EntityState state, Texture2D texture, float frameTime, int maxFrame, Color color);
+    virtual ~Enemy();
+    virtual void stomped(); // Handle collision with Mario
+    //virtual void CollisionWithEnemy(Enemy& enemy, CollisionType collType); // Handle collision with other enemies
+    virtual void CollisionWithFireball(FireBall* fireball);
+    virtual ENEMY_TYPE getEnemyType() const = 0;
+    EntityType getEntityType() const override;
+    bool isDying(); // Check if enemy is dying or marked for removal
+    bool isReadyForRemoval();
+    bool isDead();
+    void Update() override;
+    void draw() override;
+    void updateSquashEffect();
+    void updateCollision() override;
+    virtual void UpdateTexture(); // Update enemy texture based on state
+    virtual void attacked(Direction direction = RIGHT);
+    virtual float getScores() const = 0;
 };
+
 #endif

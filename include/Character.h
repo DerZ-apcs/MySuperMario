@@ -88,6 +88,7 @@ public:
 	float getAcclerationX() const;
 	virtual void ThrowingFireBalls();
 	
+
 	void collisionWithItem(const Item* item);
 	void collisionWithEnemy(Enemy* enemy, CollisionType CollType = COLLISION_TYPE_NORTH);
 	void CollisionWithFireball(FireBall* fireball);
@@ -149,7 +150,7 @@ protected:
 	const float DEAD_PLAYER_GRAVITY = 1000.f;
 
 	const float Max_walk_velocity = 400.f;
-	const float jet_stomp_velocity = -200.f;
+	const float jet_stomp_velocity = -300.f;
 
 	const float star_invicible_time = 12.f;
 	const float transform_time = 1.f;

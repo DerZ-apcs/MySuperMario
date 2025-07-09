@@ -371,12 +371,11 @@ void Character::draw()
 		DrawTexture(texture, position.x, position.y, rainbowTint);
 	}
 	else DrawTexture(texture, position.x, position.y, WHITE);
-
-	// for debug
-	/*CollEast.draw();
-	CollSouth.draw();
-	CollNorth.draw();
-	CollWest.draw();*/
+	//// for debug
+	//CollEast.draw();
+	//CollSouth.draw();
+	//CollNorth.draw();
+	//CollWest.draw();
 }
 
 void Character::HandleInput()
@@ -659,6 +658,7 @@ void Character::collisionWithItem(const Item* item)
 		if (coin->getCoinType() == STATIC_COIN) {
 			coins++;
 			scores += coin->getPoint();
+			text = new TextEffect(to_string(coin->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
 			RESOURCE_MANAGER.playSound("coin.wav");
 		}
 	}
@@ -669,6 +669,32 @@ void Character::collisionWithItem(const Item* item)
 
 void Character::collisionWithEnemy(Enemy* enemy, CollisionType CollType)
 {
+	if (!enemy) return;
+	if (Character_state == STATE_STAR || Character_state == STATE_SUPERSTAR || Character_state == STATE_FIRESTAR) {
+		// attacked
+		scores += enemy->getScores();
+		RESOURCE_MANAGER.playSound("stomp.wav");
+
+		//enemy->attacked(this->direction); for attacked
+		enemy->stomped();
+		
+	}
+	else if (enemy->getEnemyType() != SHELL) {
+		if (CollType == COLLISION_TYPE_SOUTH && enemy->getEnemyType() != PIRANHA) {
+			// stomped
+			scores += enemy->getScores();
+			setVelY(jet_stomp_velocity);
+			setJumping(true);
+			RESOURCE_MANAGER.playSound("stomp.wav");
+			enemy->stomped();
+		}
+		else if (countImmortalTime > 0.f)
+			return;
+		else lostSuit();
+	}
+	else if (enemy->getEnemyType() == SHELL) {
+
+	}
 }
 
 void Character::CollisionWithFireball(FireBall* fireball)

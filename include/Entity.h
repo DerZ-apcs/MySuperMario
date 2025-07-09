@@ -71,6 +71,7 @@ public:
 
 	bool isDead() const;
 	void setEntityDead();
+	void setJumping(bool value);
 	void setDirection(Direction dir);
 	// Getter
 	Vector2& getPosition();

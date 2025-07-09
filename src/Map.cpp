@@ -41,9 +41,6 @@ void Map::clear() {
 
 void Map::drawMap()
 {
-	/*for (auto& tile : tiles) {
-		tile->draw();
-	}*/
 	for (Entity* entity : blockArray)
 		entity->draw();
 }
@@ -98,8 +95,8 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 		for (int x = 0; x < width; ++x) {
 			int blockId = data[static_cast<std::vector<int, std::allocator<int>>::size_type>(y) * width + x];
 			if (blockId != 0) {
-				Floor* floor = new Floor({ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }, "TILE_" + std::to_string(blockId - 2));
-				blockArray.push_back(floor);
+				Blocks* solidBlocks = new SolidBlock({ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }, "TILE_" + std::to_string(blockId - 2));
+				blockArray.push_back(solidBlocks);
 			}
 		}
 	}

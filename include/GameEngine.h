@@ -68,6 +68,7 @@ public:
     bool isOver() const;
     void resetGame();
     Vector2 getBound();
+    Character*& getCharacter();
 };
 extern GameEngine* globalGameEngine;
 

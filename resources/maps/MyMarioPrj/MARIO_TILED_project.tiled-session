@@ -3,8 +3,9 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "maps/MAP_1.1.tmx",
+    "activeFile": "tilesets/MarioTileset.tsx",
     "expandedProjectPaths": [
+        "resources"
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
@@ -20,19 +21,19 @@
             }
         },
         "maps/MAP_1.1.tmx": {
-            "scale": 0.75,
-            "selectedLayer": 2,
+            "scale": 1.5,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 3350.6666666666665,
-                "y": 600.6666666666667
+                "x": 2954.6666666666665,
+                "y": 648.3333333333333
             }
         },
         "maps/MAP_1.2.tmx": {
             "scale": 0.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1280,
-                "y": 495
+                "x": 2730,
+                "y": 505
             }
         },
         "maps/MAP_1.tmx": {
@@ -57,10 +58,14 @@
             "dynamicWrapping": false,
             "scaleInDock": 0.33,
             "scaleInEditor": 0.5
+        },
+        "tilesets/tileset_mario_2.tsx": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 1
         }
     },
     "last.exportedFilePath": "D:/Project/MySuperMario/resources/maps",
-    "last.imagePath": "D:/Project/TiledMapEditor/MyMarioPrj/resources/backgrounds",
+    "last.imagePath": "D:/Project/MySuperMario/resources/maps/MyMarioPrj/resources/tiles/AllTiles",
     "map.height": 31,
     "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
     "map.lastUsedFormat": "tmx",
@@ -68,13 +73,15 @@
     "openFiles": [
         "tilesets/MarioTileset.tsx",
         "maps/MAP_1.1.tmx",
-        "maps/MAP_1.2.tmx"
+        "maps/MAP_1.2.tmx",
+        "tilesets/tileset_mario_2.tsx"
     ],
     "project": "MARIO_TILED_project.tiled-project",
     "recentFiles": [
-        "tilesets/MarioTileset.tsx",
+        "tilesets/tileset_mario_2.tsx",
         "maps/MAP_1.2.tmx",
         "maps/MAP_1.1.tmx",
+        "tilesets/MarioTileset.tsx",
         "tilesets/background6.tsx",
         "maps/MAP_1.1.json",
         "maps/MAP_1.tmx",
@@ -86,5 +93,5 @@
         "height": 40,
         "width": 50
     },
-    "tileset.type": 0
+    "tileset.type": 1
 }

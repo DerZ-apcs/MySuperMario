@@ -125,7 +125,7 @@ public:
 	static std::unique_ptr<CollisionInfo> getInfor(EntityType typeA, EntityType typeB, Blocks* block = nullptr);
 };
 // Interface
-class CollisionIterface {
+class CollisionInterface {
 public:
 	bool HandleCollision(Entity* entityA, Entity* entityB);
 };

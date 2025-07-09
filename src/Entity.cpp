@@ -158,6 +158,11 @@ void Entity::setEntityDead()
 	this->dead = true;
 }
 
+void Entity::setJumping(bool value)
+{
+	isjumping = value;
+}
+
 void Entity::setDirection(Direction dir)
 {
 	this->direction = dir;
