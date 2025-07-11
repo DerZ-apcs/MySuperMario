@@ -3,7 +3,6 @@
 
 #include <raylib.h>
 #include "../include/Entity.h"
-#include "../include/EntityState.h"
 #include "../include/Mario.h"
 
 class PowerItem : public Entity {
@@ -23,6 +22,10 @@ public:
 	void setItemState(PowerUpState state);
 	PowerUpState getItemState() const;
 	virtual void onConsume(Mario& mario) = 0;
+
+	const int& getPoint() const {
+		return 100;
+	} // to be destroyed after merge
 
 	void Update() override;
 	void draw() override;

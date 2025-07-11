@@ -13,5 +13,6 @@ private:
 public:
     Tile(Vector2 pos, TileType type, std::string name);
     void draw() override;
+    EntityType getEntityType() const override;
 };
 #endif

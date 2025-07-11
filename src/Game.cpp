@@ -1,181 +1,185 @@
 #include "../include/Game.h"
-#include "../include/Map.h"
-#include <iostream>
+#include "../include/Level.h"
 
-Game::Game(): Game(1200, 800, 140)
+class MenuState;
+
+Game::Game(): backgroundTexture({0})
 {
-}
-
-Game::Game(int nwidth, int nheight, int ntargetFPS) :
-	width(nwidth), height(nheight), targetFPS(ntargetFPS), Resource_manager(Singleton<ResourceManager>::getInstance()) {
-	Resource_manager.LoadAllResources();
-	// map
-	map1.LoadFromJsonFile(Map::basePath + "kmap_1.json"); // change map hereeeeeeeeeee <<-------
-	// background
-	BgWidth = (float)GetScreenWidth();
-	BgHeight = (float)GetScreenHeight();
-	BackGroundTex = Singleton<ResourceManager>::getInstance().getTexture("BACKGROUND_1");
-	BackGroundPos = {{0, 0}, {BgWidth, 0}, {BgWidth*2, 0}};
-	// camera
-	camera.offset = Vector2{ (float)GetScreenWidth() / 2, (float)GetScreenHeight() / 2 };
-	camera.target = mario.getPosition();
-	camera.rotation = 0.0f;
-	camera.zoom = 1.0f;
-
-	//Resource_manager.playMusic("MUSIC1");
+	currentState = std::make_unique<MainMenuState>(this);
+	audioEnabled = true;
+	musicEnabled = true;
+	player = new Mario();
+	level = nullptr;
+	selectedCharacter = 1;
+	selectedMap = 1;
 }
 
 Game::~Game()
 {
-	Singleton<ResourceManager>::getInstance().UnloadAllResources();
-
-	for (auto& item : PowerItems) {
-		delete item;
-		item = nullptr;
+	if (backgroundTexture.id != 0) {
+		UnloadTexture(backgroundTexture);
+		backgroundTexture.id = 0;
 	}
-	PowerItems.clear();
-
+	if (player)
+		delete player;
 }
 
-void Game::initGame()
+void Game::init()
 {
-	SetTargetFPS(targetFPS);
-	Resource_manager.playMusic("MUSIC1");
-	Coins = *map1.getVectorCoins();
+	InitAudioDevice();
+	InitWindow(1600, 800, "Super Mario");
+	// game icon
+	Texture gameIcon = LoadTexture("resources/images/icon/GameIcon.png");
+	Image gameIconImage = LoadImageFromTexture(gameIcon);
+	SetWindowIcon(gameIconImage);
+
+	RESOURCE_MANAGER.LoadAllResources();
+	if (backgroundTexture.id == 0) {
+		backgroundTexture = RESOURCE_MANAGER.getTexture("MENU_SCREEN");
+	}
+	SetTargetFPS(140);
+
+	globalGameEngine = nullptr;
+
+	RESOURCE_MANAGER.playMusic("TITLE");
+	// load map&level
+	Level level1(Map::basePath + "MAP_1.1.json", "BACKGROUND_1", "MUSIC_1", "1-1");
+	Level level2(Map::basePath + "MAP_1.2.json", "BACKGROUND_2", "MUSIC_2", "1-2");
+	Level level3(Map::basePath + "kmap_3.json", "BACKGROUND_3", "MUSIC_3", "1-3");
+	loadedLevel.push_back(&level1);
+	loadedLevel.push_back(&level2);
+	loadedLevel.push_back(&level3);
+	// gui
+	loadGUI();
+
+	// map
+	selectMap(selectedMap);
 
 	while (!WindowShouldClose()) {
-		UpdateGame();
-		UpdateMusicStream(Resource_manager.getMusic("MUSIC1"));
-		ClearBackground(RAYWHITE);
 		BeginDrawing();
-		draw();
+		ClearBackground(WHITE);
+		DrawTexturePro(
+			backgroundTexture,
+			{ 0, 0, (float)backgroundTexture.width, (float)backgroundTexture.height },
+			{ 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() },
+			{ 0, 0 },
+			0.0f,
+			WHITE);
+		if (SETTING.isMusicEnabled())
+			UpdateMusicStream(RESOURCE_MANAGER.getMusic("TITLE"));
+		if (currentState) {
+			currentState->update();
+			currentState->draw();
+			currentState->handleInput();
+		}
+
 		EndDrawing();
+
 	}
+	loadedLevel.clear();
+	if (globalGameEngine != nullptr) {
+		delete globalGameEngine;
+		globalGameEngine = nullptr;
+	}
+	RESOURCE_MANAGER.UnloadAllResources();
+	CloseWindow();
+	CloseAudioDevice();
 }
 
-void Game::UpdateGame()
+void Game::setState(std::unique_ptr<MenuState> newState)
 {
-	// cemera & background
-	camera.target.x = mario.getX();
-	camera.target.y = mario.getY();
-
-	if (camera.target.x < GetScreenWidth() / 2.0f) {
-		camera.target.x = GetScreenWidth() / 2.0f;
-	}
-
-	if (camera.target.y < GetScreenHeight() / 2.0f) {
-		camera.target.y = GetScreenHeight() / 2.0f;
-	}
-
-	for (int i = 0; i < 3; i++) {
-		// wrap from left to far most right
-		if (BackGroundPos[i].x + BgWidth <= mario.getX() - BgWidth / 2.0f) {
-			float maxX = BackGroundPos[0].x;
-			for (int j = 1; j < 3; j++) {
-				if (BackGroundPos[j].x > maxX) maxX = BackGroundPos[j].x;
-			}
-			BackGroundPos[i].x = maxX + BgWidth;
-		}
-		// wrap from right to left
-		if (BackGroundPos[i].x + BgWidth / 2.0f >= mario.getX() + BgWidth * 2) {
-			float minX = BackGroundPos[i].x;
-			for (int j = 1; j < 3; j++) {
-				if (BackGroundPos[j].x < minX) minX = BackGroundPos[j].x;
-			}
-			BackGroundPos[i].x = minX - BgWidth;
-		}
-
-	}
-	// tiles
-	for (auto const& tile : *map1.getVectorTiles()) {
-		QuestionBlock* ques_b = dynamic_cast<QuestionBlock*>(tile);
-		if (ques_b) { ques_b->Update(); }
-
-		CollisionType PlayerCollision = mario.CheckCollision(*tile);
-		if (PlayerCollision == COLLISION_TYPE_NORTH && ques_b) { ques_b->Activate(PowerItems); }
-		if (PlayerCollision != COLLISION_TYPE_NONE)
-			mediatorCollision.HandleCollision(&mario, tile);
-		//mario.HandleTileCollision(*tile, MarioCollision);
-		for (auto& fireball : *mario.getFireBalls()) {
-			CollisionType FireBallCollision = fireball->CheckCollision(*tile);
-			if (FireBallCollision != COLLISION_TYPE_NONE)
-				mediatorCollision.HandleCollision(fireball, tile);
-				//fireball->HandleTileCollision(*tile, FireBallCollision);
-		}
-	}
-
-	// power items 
-	for (auto& item : PowerItems) {
-		if (item->getItemState() == CONSUMED) continue; 
-
-		CollisionType ItemPlayerCollision = mario.CheckCollision(*item);
-		if (ItemPlayerCollision != COLLISION_TYPE_NONE) {
-			mediatorCollision.HandleCollision(&mario, item);
-		}
-
-		for (auto const& tile : *map1.getVectorTiles()) {
-			CollisionType ItemTileCollision = item->CheckCollision(*tile);
-			if (ItemTileCollision != COLLISION_TYPE_NONE) {
-				mediatorCollision.HandleCollision(item, tile);
-			}
-		}
-
-		item->Update();
-	}
-
-	// coins
-	for (auto& coin : Coins) {
-		if (coin->getCollected()) continue; 
-
-		CollisionType CoinCollision = mario.CheckCollision(*coin);
-		if (CoinCollision != COLLISION_TYPE_NONE) {
-			mediatorCollision.HandleCollision(&mario, coin);
-		}
-
-		coin->Update();
-	}
-	
-	mario.Update();
+	currentState = std::move(newState);
 }
 
-void Game::draw()
+void Game::configureSettings(bool audioEnabled, bool musicEnabled)
 {
-	//Resource_manager.drawAllTiles(); // debug function to draw all tiles
-	BeginMode2D(camera);
-	drawBackGround();
-	mario.draw();
-	for (auto& coin : Coins) { coin->draw(); }
-	for (auto& item : PowerItems) { item->draw(); }
-	map1.drawMap();
-	EndMode2D();
+	this->audioEnabled = audioEnabled;
+	this->musicEnabled = musicEnabled;
 }
 
-void Game::drawBackGround() const
+void Game::selectCharacter(int characterIndex)
 {
-	ClearBackground(SKYBLUE);
-	for (int i = 0; i < 3; i++) {
-		DrawTexturePro(BackGroundTex, { 0, 0, (float)BackGroundTex.width, (float)BackGroundTex.height },
-			{ BackGroundPos[i].x, BackGroundPos[i].y, BgWidth, BgHeight },
-			{ 0, 0 }, 0.0f, WHITE);
+	this->selectedCharacter = characterIndex;
+}
+
+void Game::selectMap(int mapIndex)
+{
+	if (mapIndex > 3 || mapIndex <= 0)
+		return;
+		
+	switch (mapIndex)
+	{
+	case 1:
+		this->level = loadedLevel[0];
+		break;
+	case 2:
+		this->level = loadedLevel[1];
+		break;
+	case 3:
+		this->level = loadedLevel[2];
+		break;
+	//case 4:
+	//	this->level = loadedLevel[3];
+	//	break;
 	}
+	this->selectedMap = mapIndex;
 }
 
+bool Game::isAudioEnabled() const
+{
+	return audioEnabled;
+}
 
-int Game::getWidth() const {
-	return width;
+bool Game::isMusicEnabled() const
+{
+	return musicEnabled;
 }
-int Game::getHeight() const {
-	return height;
+
+int Game::getSelectedCharacter() const
+{
+	return selectedCharacter;
 }
-int Game::getTergetFPS() const {
-	return targetFPS;
+
+int Game::getSelectedMap() const
+{
+	return selectedMap;
 }
-void Game::setWidth(int width) {
-	this->width = width;
+
+void Game::saveToConfig(string filename)
+{
 }
-void Game::setHeight(int height) {
-	this->height = height;
+
+void Game::loadFromConfig(string filename)
+{
 }
-void Game::setTargetFPS(int targetFPS) {
-	this->targetFPS = targetFPS;
+
+void Game::returnToMainMenu()
+{
+	setState(std::make_unique<MainMenuState>(this));
+}
+
+void Game::setBackground(const std::string& imageName)
+{
+	if (backgroundTexture.id != 0)
+		UnloadTexture(backgroundTexture);
+	backgroundTexture = RESOURCE_MANAGER.getTexture(imageName);
+	if (backgroundTexture.id == 0)
+		throw std::runtime_error("Failed to load background texture: " + imageName);
+}
+
+void Game::loadGUI()
+{
+	GUI::heartTexture = RESOURCE_MANAGER.getTexture("HEART");
+	GUI::coinTexture = RESOURCE_MANAGER.getTexture("COIN");
+	GUI::multiplicationSign = RESOURCE_MANAGER.getTexture("MSIGN");
+	GUI::board = RESOURCE_MANAGER.getTexture("BOARD");
+	GUI::board1 = RESOURCE_MANAGER.getTexture("BOARD1");
+	GUI::board2 = RESOURCE_MANAGER.getTexture("BOARD2");
+	GUI::board3 = RESOURCE_MANAGER.getTexture("BOARD3");
+	GUI::largeBoard = RESOURCE_MANAGER.getTexture("LARGE_BOARD");
+	GUI::home = RESOURCE_MANAGER.getTexture("HOME_BUTTON");
+	GUI::restart = RESOURCE_MANAGER.getTexture("RESTART");
+	GUI::setting = RESOURCE_MANAGER.getTexture("SETTING");
+	GUI::sound_off = RESOURCE_MANAGER.getTexture("SOUND_OFF");
+	GUI::sound_on = RESOURCE_MANAGER.getTexture("SOUND_ON");
 }

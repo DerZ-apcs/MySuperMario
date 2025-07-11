@@ -1,4 +1,5 @@
 #include "../include/Entity.h"
+#include "../include/GameEngine.h"
 
 Entity::Entity():
 	Entity(Vector2{0, 0}, Vector2{0, 0}, Vector2{0, 0}, RIGHT, IDLING, texture, 0.1f, 0, BLACK)
@@ -11,7 +12,8 @@ Entity::Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState 
 Entity::Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState state,
 	Texture2D tex, float FrameTime, int MaxFrame, Color color):
 	position(pos), size(sz), velocity(vel), direction(dir), state(state), texture(tex),
-	frameTime(FrameTime), maxFrame(MaxFrame), frameAcum(0), currFrame(0), color(color)
+	frameTime(FrameTime), maxFrame(MaxFrame), frameAcum(0), currFrame(0), color(color),
+	dead(false)
 {
 	CollNorth.setColor(color);
 	CollEast.setColor(color);
@@ -24,7 +26,11 @@ Entity::Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState 
 	CollNorth(Vector2{ pos.x + size.x / 2 - 5, pos.y }, Vector2{ size.x, 5 }, color),
 	CollSouth(Vector2{ pos.x + size.x / 2 - 5, pos.y + size.y - 5 }, Vector2{ size.x, 5 }, color),
 	CollWest(Vector2{ pos.x , pos.y + size.y / 2 - 5 }, Vector2{ 5, size.y }, color),
-	CollEast(Vector2{ pos.x + size.x - 5, pos.y + size.y / 2 - 5 }, Vector2{ 5, size.y }, color)
+	CollEast(Vector2{ pos.x + size.x - 5, pos.y + size.y / 2 - 5 }, Vector2{ 5, size.y }, color),
+	collisionAvailable(true),
+	gravityAvailable(true),
+	isjumping(false),
+	dead(false)
 {
 	currFrame = 0;
 	frameAcum = 0;
@@ -32,7 +38,12 @@ Entity::Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState 
 }
 
 void Entity::Update() {
-
+	if (isDead()) return;
+	if (globalGameEngine) {
+		Vector2 bound = globalGameEngine->getBound();
+		if (this->getX() > bound.x || this->getY() > bound.y)
+			setEntityDead();
+	}
 }
 void Entity::draw() {
 
@@ -40,23 +51,10 @@ void Entity::draw() {
 void Entity::HandleInput() {
 
 }
-void Entity::UpdateTexture() {
 
-}
-void Entity::UpdatePhysics()
+void Entity::updateCollision() // update 4 rects in 4 sides of entity
 {
-	/*position.x += velocity.x * Clock::getDeltaTimeUpdate();
-	position.y += velocity.y * Clock::getDeltaTimeUpdate();*/
-
-	rect.width = size.x;
-	rect.height = size.y;
-	rect.x = position.x;
-	rect.y = position.y;
-	updateCollision();
-}
-void Entity::updateCollision()
-{
-	// update collision
+	// update the hitbox collision 
 	CollNorth.setX(position.x + size.x / 2 - CollNorth.getWidth() / 2);
 	CollNorth.setY(position.y);
 
@@ -68,6 +66,10 @@ void Entity::updateCollision()
 
 	CollWest.setX(position.x);
 	CollWest.setY(position.y + size.y / 2 - CollWest.getHeight() / 2);
+}
+
+void Entity::UpdateTexture()
+{
 }
 
 CollisionType Entity::CheckCollision(const Entity& entity) const
@@ -147,6 +149,25 @@ void Entity::setColor(Color color)
 {
 	this->color = color;
 }
+bool Entity::isDead() const
+{
+	return dead;
+}
+void Entity::setEntityDead()
+{
+	this->dead = true;
+}
+
+void Entity::setJumping(bool value)
+{
+	isjumping = value;
+}
+
+void Entity::setDirection(Direction dir)
+{
+	this->direction = dir;
+}
+
 // Getter
 Vector2& Entity::getPosition() {
 	return position;
@@ -219,4 +240,48 @@ Rectangle Entity::getRect() const
 Color& Entity::getColor()
 {
 	return color;
+}
+
+float Entity::getCenterX() const {
+	return position.x + size.x / 2.f;
+}
+
+float Entity::getCenterY() const {
+	return position.y + size.y / 2.f;
+}
+
+float Entity::getBottom() const {
+	return position.y + size.y;
+}
+
+float Entity::getLeft() const {
+	return position.x;
+}
+
+float Entity::getRight() const {
+	return position.x + size.x;
+}
+
+float Entity::getTop() const {
+	return position.y;
+}
+
+void Entity::setCollisionAvailable(bool collisionAvailable)
+{
+	this->collisionAvailable = collisionAvailable;
+}
+
+void Entity::setGravityAvailable(bool gravityAvailable)
+{
+	this->gravityAvailable = gravityAvailable;
+}
+
+bool Entity::getCollisionAvailable()
+{
+	return collisionAvailable;
+}
+
+bool Entity::getGravityAvailable()
+{
+	return gravityAvailable;
 }

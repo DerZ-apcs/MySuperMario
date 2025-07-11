@@ -3,9 +3,8 @@
 #include "../include/Singleton.h"
 #include "../include/ResourceManager.h"
 #include "../include/Direction.h"
-#include "../include/EntityState.h"
-#include "../include/Clock.h"
 #include "../include/Collision.h"
+#include "../include/Global.h"
 #include <string>
 #include <raylib.h>
 
@@ -23,8 +22,14 @@ protected:
 	float frameAcum;
 	Texture2D texture;
 	Rectangle rect;
-	const float GRAVITY = 800;
+	const float GRAVITY = 800; // Gravity for all 
+	const float accelerationX = 400;
 	std::string Entity_name;
+
+	bool isjumping;
+	bool gravityAvailable = true;
+	bool collisionAvailable;
+	bool dead;
 
 	Collision CollNorth;
 	Collision CollSouth;
@@ -40,15 +45,13 @@ public:
 	virtual void Update();
 	virtual void draw();
 	virtual void HandleInput();
+	virtual void updateCollision(); // update 4 rect in 4 sides
 	virtual void UpdateTexture();
-	virtual void UpdatePhysics();
-	virtual void updateCollision();
-	virtual CollisionType CheckCollision(const Entity& entity) const;
+	virtual CollisionType CheckCollision(const Entity& entity) const; // check the collision of 4 rects with others
 
 	bool isOnGround() const;
 	virtual void RunLeft();
-	virtual void RunRight(
-	);
+	virtual void RunRight();
 	virtual void Jumping();
 	// Setter
 	void setPosition(Vector2 pos);
@@ -65,6 +68,11 @@ public:
 
 	void setState(EntityState state);
 	void setColor(Color color);
+
+	bool isDead() const;
+	void setEntityDead();
+	void setJumping(bool value);
+	void setDirection(Direction dir);
 	// Getter
 	Vector2& getPosition();
 	float getX() const;
@@ -79,6 +87,7 @@ public:
 	float getVelX() const;
 	float getVelY() const;
 
+	virtual EntityType getEntityType() const = 0;
 	EntityState getState() const;
 	Direction getDir() const;
 	// frame control
@@ -92,5 +101,16 @@ public:
 	Rectangle getRect() const;
 	Color& getColor();
 
+	float getCenterX() const;
+	float getCenterY() const;
+	float getBottom() const;
+	float getLeft() const;
+	float getRight() const;
+	float getTop() const;
+
+	void setCollisionAvailable(bool collisionAvailable);
+	void setGravityAvailable(bool gravityAvailable);
+	bool getCollisionAvailable();
+	bool getGravityAvailable();
 };	
 #endif

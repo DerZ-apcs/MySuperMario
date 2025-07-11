@@ -1,32 +1,132 @@
-#include "../include/Enemy.h"
+﻿#include "../include/Enemy.h"
+#include "../include/Mario.h"
+#include "../include/GameEngine.h"
+#include <raylib.h>
+#include <raymath.h>
 
-//Enemy::Enemy(): 
-//	Enemy({0, 0}, {0, 0}, {0, 0}, RIGHT, STATE_IS_ACTIVE, texture, 0.1f, 1, BLACK) {
-//
-//}
-Enemy::Enemy(Vector2 pos, Vector2 size, Vector2 vel, Direction dirction, EntityState state, Texture2D texture, float frameTime, int maxFrame, Color color) :
-	Entity(pos, size, vel, direction, state, texture, frameTime, maxFrame, color)
+// Enemy Class Implementation
+Enemy::Enemy(Vector2 pos, Vector2 size, Vector2 vel, Direction direction, EntityState state, Texture2D texture, float frameTime, int maxFrame, Color color)
+    : Entity(pos, size, vel, direction, state, frameTime, maxFrame, color), deathTimer(0.0f), isdead(false), squashScale(1.0f), isFlipped(false)
 {
-	CollEast.setColor(BLACK);
-	CollSouth.setColor(GREEN);
-	CollNorth.setColor(RED);
-	CollWest.setColor(PURPLE);
-}
-Enemy::~Enemy() {
+    CollNorth.setSize({ size.x / 2, 5 });
+    CollSouth.setSize({ size.x / 2, 5 });
+    CollWest.setSize({ 5, size.y - 5 });
+    CollEast.setSize({ 5, size.y - 5 });
+    CollEast.setColor(BLACK);
+    CollSouth.setColor(GREEN);
+    CollNorth.setColor(RED);
+    CollWest.setColor(PURPLE);
 
 }
-void Enemy::CollisionWithCharacter() {
-	
+
+Enemy::~Enemy() {}
+
+void Enemy::stomped()
+{
+    // old CollsionWithCharacter
 }
-bool Enemy::isDying() {
-	return false;
-}
+
+
 void Enemy::Update() {
-
+    if (isDead() || state == STATE_IS_DYING) {
+        if (deathTimer > 0) {
+            deathTimer -= GetFrameTime();
+            updateSquashEffect();
+            if (deathTimer <= 0) {
+                isdead = true; // Mark for removal
+            }
+        }
+        UpdateTexture();
+        return;
+    }
+    const float deltaTime = GetFrameTime();
+    position.x += velocity.x * deltaTime;
+    if (state != ON_GROUND && state != STATE_SHELL) {
+        position.y += velocity.y * deltaTime;
+        velocity.y += GRAVITY * deltaTime;
+        if (velocity.y > 0 && state == JUMPING) {
+            state = FALLING;
+        }
+    }
+    updateCollision();
 }
+
 void Enemy::draw() {
-
+    if (!isDead()) {
+        Rectangle source = { 0, 0, (float)texture.width, (float)texture.height };
+        if (isFlipped) {
+            source.width *= -1; // Lật ngược texture
+        }
+        DrawTexturePro(texture, source, { position.x, position.y, size.x, size.y }, { 0.f, 0.f }, 0.f, WHITE);
+        
+//#ifdef DEBUG
+        CollNorth.draw();
+        CollSouth.draw();
+        CollEast.draw();
+        CollWest.draw();
+//#endif
+    }
 }
-void Enemy::updateCollision()
+
+void Enemy::updateSquashEffect() {
+    if (state == STATE_IS_DYING) {
+        squashScale = 1.0f - (ENEMY_DEATH_TIMER_DEFAULT - deathTimer) / ENEMY_DEATH_TIMER_DEFAULT; // Thu nhỏ chiều dọc
+        updateCollision();
+        isFlipped = true; // Lật ngược khi đang chết
+        updateCollision();
+    }
+}
+
+void Enemy::CollisionWithFireball(FireBall* fireball) {
+    if (!isDead() && state != STATE_IS_DYING) {
+        fireball->setEntityDead();
+        state = STATE_IS_DYING;
+        deathTimer = ENEMY_DEATH_TIMER_DEFAULT;
+        velocity.y = -250; // Nhảy lên nhẹ
+        velocity.x = (rand() % 100) - 50; // Văng ngang ngẫu nhiên
+        updateCollision();
+        RESOURCE_MANAGER.playSound("fireball.wav");
+        // text effect
+        TextEffect* text = new TextEffect(to_string(SCORE_STOMP_GOOMBA).c_str(), Vector2{this->getCenterX(), this->getTop()});
+        text->setTextColor(WHITE);
+        text->setOutlineColor(BLACK);
+        globalGameEngine->addEffect(text);
+    }
+}
+
+EntityType Enemy::getEntityType() const
 {
+    return ENEMY;
+}
+
+bool Enemy::isDying() {
+    return isdead || state == STATE_IS_DYING;
+}
+
+bool Enemy::isReadyForRemoval() {
+    return isdead;
+}
+
+bool Enemy::isDead()
+{
+    return isdead;
+}
+
+void Enemy::updateCollision() {
+    CollNorth.setPos({ position.x + size.x / 2 - CollNorth.getWidth() / 2, position.y });
+    CollSouth.setPos({ position.x + size.x / 2 - CollSouth.getWidth() / 2, position.y + size.y * squashScale - CollSouth.getHeight() });
+    CollEast.setPos({ position.x + size.x * squashScale - CollEast.getWidth(), position.y + size.y * squashScale / 2 - CollEast.getHeight() / 2 });
+    CollWest.setPos({ position.x, position.y + size.y * squashScale / 2 - CollWest.getHeight() / 2 });
+}
+
+void Enemy::UpdateTexture() {
+    // Virtual method, implemented in derived classes
+}
+
+
+void Enemy::attacked(Direction direction) {
+    if (isDead()) return;
+    setEntityDead();
+    //this->isdead = true;
+    setCollisionAvailable(false);
 }

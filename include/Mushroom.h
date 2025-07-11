@@ -9,6 +9,10 @@ public:
 	Mushroom(Vector2 pos, Vector2 sz, Direction dir);
 	~Mushroom() = default;
 
+	const MushroomType& getMushroomType() const {
+		return REDMUSHROOM;
+	} // to be destroyed after merge
+
 	void onConsume(Mario& mario) override;
 };
 

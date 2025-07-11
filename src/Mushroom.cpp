@@ -6,5 +6,5 @@ Mushroom::Mushroom(Vector2 pos, Vector2 sz, Direction dir) :
 
 void Mushroom::onConsume(Mario& mario) {
 	powerUpState = CONSUMED;
-	mario.TransitionToSuper();
+	//mario.TransitionToSuper();
 }

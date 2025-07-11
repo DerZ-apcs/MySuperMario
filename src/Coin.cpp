@@ -12,7 +12,7 @@ Coin::Coin(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, float timeSpan)
 	this->CollEast.setSize(Vector2{ 1, size.y - 8 });
 	this->CollWest.setSize(Vector2{ 1, size.y - 8 });
 	this->updateCollision();
-}
+	}
 
 //------------------
 
@@ -24,6 +24,15 @@ void Coin::setCollected(bool collected) {
 	isCollected = collected;
 }
 
+EntityType Coin::getEntityType() const {
+	return ITEM;
+}
+
+const CoinType& Coin::getCoinType() const
+{
+	return STATIC_COIN;
+}
+
 //------------------
 
 void Coin::Update() {
@@ -31,7 +40,7 @@ void Coin::Update() {
 	if (frameAcum >= frameTime) {
 		frameAcum = 0;
 		currFrame = (currFrame + 1) % maxFrame;
-	}
+}
 
 	UpdateTexture();
 }

@@ -106,7 +106,7 @@
                          "name":"Power",
                          "type":"string",
                          "value":"Flower"
-                        }],
+        }],
                  "rotation":0,
                  "type":"",
                  "visible":true,

@@ -13,7 +13,7 @@ Flower::Flower(Vector2 pos, Vector2 sz, Direction dir) :
 
 void Flower::onConsume(Mario& mario) {
 	powerUpState = CONSUMED;
-	mario.TransitionToFire();
+	//mario.TransitionToFire();
 }
 
 void Flower::Update() {
@@ -24,8 +24,8 @@ void Flower::Update() {
 		if (frameAcum >= frameTime) {
 			frameAcum = 0;
 			currFrame = (currFrame + 1) % maxFrame;
-		}
-	}
+}
+}
 }
 
 void Flower::UpdateTexture() {
