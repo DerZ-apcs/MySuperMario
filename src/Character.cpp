@@ -3,6 +3,7 @@
 #include"../include/Enemy.h"
 #include "../include/Effect.h"
 #include "../include/TextEffect.h"
+#include "../include/SmokeEffect.h"
 #include "../include/GameEngine.h"
 #include "../include/Blocks.h"
 #include"../include/Mushroom.h"
@@ -371,11 +372,11 @@ void Character::draw()
 		DrawTexture(texture, position.x, position.y, rainbowTint);
 	}
 	else DrawTexture(texture, position.x, position.y, WHITE);
-	//// for debug
-	//CollEast.draw();
-	//CollSouth.draw();
-	//CollNorth.draw();
-	//CollWest.draw();
+	// for debug
+	CollEast.draw();
+	CollSouth.draw();
+	CollNorth.draw();
+	CollWest.draw();
 }
 
 void Character::HandleInput()
@@ -680,17 +681,23 @@ void Character::collisionWithEnemy(Enemy* enemy, CollisionType CollType)
 		
 	}
 	else if (enemy->getEnemyType() != SHELL) {
-		if (CollType == COLLISION_TYPE_SOUTH && enemy->getEnemyType() != PIRANHA) {
+		if (CollType != COLLISION_TYPE_SOUTH || enemy->getEnemyType() == PIRANHA) {
+			lostSuit();
+		}
+		else if (countImmortalTime > 0.f)
+			return;
+		else  {
 			// stomped
 			scores += enemy->getScores();
 			setVelY(jet_stomp_velocity);
 			setJumping(true);
 			RESOURCE_MANAGER.playSound("stomp.wav");
 			enemy->stomped();
+			SmokeEffect* smokeright = new SmokeEffect(Vector2{ enemy->getCenter().x, enemy->getTop() }, Vector2{60, -120});
+			globalGameEngine->addEffect(smokeright);
+			SmokeEffect* smokeleft = new SmokeEffect(Vector2{ enemy->getCenter().x, enemy->getTop() }, Vector2{ -60, -120 });
+			globalGameEngine->addEffect(smokeleft);
 		}
-		else if (countImmortalTime > 0.f)
-			return;
-		else lostSuit();
 	}
 	else if (enemy->getEnemyType() == SHELL) {
 

@@ -3,6 +3,7 @@
 #include "../include/GameEngine.h"
 #include <raylib.h>
 #include <raymath.h>
+#include <SmokeEffect.h>
 
 // Enemy Class Implementation
 Enemy::Enemy(Vector2 pos, Vector2 size, Vector2 vel, Direction direction, EntityState state, Texture2D texture, float frameTime, int maxFrame, Color color)
@@ -78,7 +79,7 @@ void Enemy::updateSquashEffect() {
 }
 
 void Enemy::CollisionWithFireball(FireBall* fireball) {
-    if (!isDead() && state != STATE_IS_DYING) {
+    if (!isDead() && state != STATE_IS_DYING && !fireball->isDead()) {
         fireball->setEntityDead();
         state = STATE_IS_DYING;
         deathTimer = ENEMY_DEATH_TIMER_DEFAULT;
@@ -91,6 +92,10 @@ void Enemy::CollisionWithFireball(FireBall* fireball) {
         text->setTextColor(WHITE);
         text->setOutlineColor(BLACK);
         globalGameEngine->addEffect(text);
+        SmokeEffect* smokeright = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ 60, 120 });
+        globalGameEngine->addEffect(smokeright);
+        SmokeEffect* smokeleft = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ -60, 120 });
+        globalGameEngine->addEffect(smokeleft);
     }
 }
 

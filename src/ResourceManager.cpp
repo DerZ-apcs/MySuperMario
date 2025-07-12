@@ -132,7 +132,11 @@ void ResourceManager::loadTextures() {
 	textures["Star"] = LoadTexture("resources/images/sprites/items/Star.png");
 	textures["moon"] = LoadTexture("resources/images/sprites/items/3UpMoon.png");
 	
-
+	// smoke effect
+	textures["Puft_0"] = LoadTexture("resources/images/sprites/effects/Puft_0.png");
+	textures["Puft_1"] = LoadTexture("resources/images/sprites/effects/Puft_1.png");
+	textures["Puft_2"] = LoadTexture("resources/images/sprites/effects/Puft_2.png");
+	textures["Puft_3"] = LoadTexture("resources/images/sprites/effects/Puft_3.png");
 	// Enemies
 	textures["Goomba_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/Goomba_0.png");
 	textures["Goomba_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/Goomba_1.png");

@@ -54,6 +54,7 @@ void Effect::Update()
 	Entity::Update();
 	if (duration <= 0.f) setEntityDead();
 	if (gravityAvailable) setVelY(getVelY() + GRAVITY * deltaTime);
+	setPosition({ position.x, getPosition().y + getVelY() * deltaTime });
 	//std::cout << "velo y: " << velocity.y << endl;
 	duration -= deltaTime;
 
