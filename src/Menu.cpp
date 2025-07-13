@@ -4,15 +4,20 @@
 MainMenuState::MainMenuState(Game* game)
 {
 	this->game = game;
-	startButton = { {80, 720}, {0, 0}, ORANGE, DARKGRAY, "Start" };
-	continueButton = { {340, 720}, {160, 40}, ORANGE, DARKGRAY, "Continue" };
-	settingButton = { {700, 720}, {160, 40}, ORANGE, DARKGRAY, "Setting" };
-	charSelectionButton = { {1000, 720}, {200, 40}, ORANGE, DARKGRAY, "Character" };
-	mapSelectionButton = { {1390, 720}, {160, 40}, ORANGE, DARKGRAY, "Map" };
+	startButton = { Vector2{80, 720}, Vector2{160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Start" };
+	continueButton = { {340, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Continue" };
+	settingButton = { {700, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Setting" };
+	charSelectionButton = { {1000, 720}, {200, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Character" };
+	mapSelectionButton = { {1390, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Map" };
 }
 
 void MainMenuState::draw()
 {
+	startButton.setTexture(RESOURCE_MANAGER.getTexture("BOARD1"));
+	continueButton.setTexture(RESOURCE_MANAGER.getTexture("BOARD1"));
+	mapSelectionButton.setTexture(RESOURCE_MANAGER.getTexture("BOARD1"));
+	charSelectionButton.setTexture(RESOURCE_MANAGER.getTexture("BOARD1"));
+	settingButton.setTexture(RESOURCE_MANAGER.getTexture("BOARD1"));
 	startButton.draw();
 	continueButton.draw();
 	settingButton.draw();
@@ -116,17 +121,14 @@ MainMenuState::~MainMenuState()
 // SettingState implementation
 SettingState::SettingState(Game* game) { 
 	this->game = game; 
-	audioButton = { {100, 720}, {0, 0}, ORANGE, DARKGRAY, "Audio: ON" };
-	musicButton = { {500, 720}, {160, 40}, ORANGE, DARKGRAY, "Music: ON" };
-	backButton = { {900, 720}, {160, 40}, ORANGE, DARKGRAY, "Back to Main Menu" };
+	audioButton = { {100, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Audio: ON" };
+	musicButton = { {500, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Music: ON" };
+	backButton = { {900, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Return to Main Menu" };
 }
 
 
 void SettingState::draw()
 {
-	ClearBackground(RAYWHITE);
-	// Title
-	DrawText("Settings", 300, 100, 50, BLACK);
 	audioButton.draw();
 	musicButton.draw();
 	backButton.draw();
@@ -171,17 +173,14 @@ void SettingState::update()
 CharSelection::CharSelection(Game* game) 
 { 
 	this->game = game; 
-	MarioButton = { {100, 720}, {0, 0}, ORANGE, DARKGRAY, "Mario" };
-	LuigiButton = { {500, 720}, {160, 40}, ORANGE, DARKGRAY, "Luigi" };
-	backButton = { {900, 720}, {160, 40}, ORANGE, DARKGRAY, "Back to Main Menu" };
+	MarioButton = { {100, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Mario" };
+	LuigiButton = { {500, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Luigi" };
+	backButton = { {900, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Return to Main Menu" };
 }
 
 
 void CharSelection::draw()
 {
-	//ClearBackground(RAYWHITE);
-	DrawText("Character Selection", 100, 100, 50, BLACK);
-
 	MarioButton.draw();
 	LuigiButton.draw();
 	backButton.draw();
@@ -224,16 +223,14 @@ void CharSelection::update()
 MapSelection::MapSelection(Game* game)
 {
 	this->game = game;
-	map1Button = { {100, 720}, {0, 0}, ORANGE, DARKGRAY, "MAP 1" };
-	map2Button = { {400, 720}, {160, 40}, ORANGE, DARKGRAY, "MAP 2" };
-	map3Button = { {700, 720}, {160, 40}, ORANGE, DARKGRAY, "MAP 3" };
-	backButton = { {1000, 720}, {160, 40}, ORANGE, DARKGRAY, "Back to Main Menu" };
+	map1Button = { {100, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "MAP 1" };
+	map2Button = { {400, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "MAP 2" };
+	map3Button = { {700, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "MAP 3" };
+	backButton = { {1000, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Return to Main Menu" };
 }
 
 void MapSelection::draw()
 {
-	//ClearBackground(RAYWHITE);
-	DrawText("Map Selection", 100, 100, 50, BLACK);
 	map1Button.draw();
 	map2Button.draw();
 	map3Button.draw();
@@ -266,7 +263,6 @@ void MapSelection::update()
 	map1Button.update();
 	map2Button.update();
 	map3Button.update();
-	//map4Button.update();
 	backButton.update();
 }
 

@@ -211,6 +211,7 @@ bool EnemyFloorInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	enemy->setVelY(0);
 	return true;
 }
+
 bool EnemyBrickInfo::HandleCollision(Entity* entityA, Entity* entityB)
 {
 	Enemy* enemy = dynamic_cast<Enemy*>(entityA);

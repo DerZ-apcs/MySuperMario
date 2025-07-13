@@ -72,7 +72,7 @@ void Goomba::Update() {
         }
     }
     if (velocity.y > 50)
-        state == FALLING;
+        state = FALLING;
     if (getGravityAvailable()) {
         velocity.y += GRAVITY * deltaTime;
     }
@@ -138,6 +138,8 @@ void Goomba::stomped() {
     return;
 }
 
+// wait to do
+
 //void Goomba::CollisionWithEnemy(Enemy& enemy, CollisionType collType) {
 //    if (isDead) return;
 //    Koopa* koopa = dynamic_cast<Koopa*>(&enemy);
@@ -152,6 +154,9 @@ void Goomba::stomped() {
 //        return;
 //    }
 //}
+
+// ---------------------------------------------- FLYINGGOOMBA --------------------------------------------------------- 
+
 
 ENEMY_TYPE FlyingGoomba::getEnemyType() const
 {
@@ -185,17 +190,17 @@ void FlyingGoomba::Update() {
     }
 
     Character* character = globalGameEngine->getCharacter() ? globalGameEngine->getCharacter() : nullptr;
-    if (character && character->getState() != STATE_IS_DYING && collisionTimer <= 0) {
+    if (character && character->getPhase() != CLEARLEVEL_PHASE && character->getPhase() != DEAD_PHASE && collisionTimer <= 0) {
         float distance = Vector2Distance(position, character->getPosition());
         if (distance <= detectMarioRange) {
             // Mario trong phạm vi phát hiện, thay đổi hướng và tốc độ
             if (character->getX() < position.x) {
                 direction = LEFT;
-                velocity.x = -FLYINGGOOMBA_SPEED * 1.5f; // Tăng tốc khi đuổi
+                velocity.x = -FLYINGGOOMBA_SPEED * 1.2f; // Tăng tốc khi đuổi
             }
             else {
                 direction = RIGHT;
-                velocity.x = FLYINGGOOMBA_SPEED * 1.5f; // Tăng tốc khi đuổi
+                velocity.x = FLYINGGOOMBA_SPEED * 1.2f; // Tăng tốc khi đuổi
             }
             // Tăng tần suất nhảy khi gần Mario
             if (distance < detectMarioRange * 0.5f && state == ON_GROUND && jumpTimer > FLYINGGOOMBA_JUMP_INTERVAL * 0.5f) {
@@ -239,10 +244,9 @@ void FlyingGoomba::Update() {
             state = FALLING;
         }
     }
-    Entity::updateCollision();
-    //updateCollision();
+    //Entity::updateCollision();
+    Enemy::updateCollision();
     UpdateTexture();
-    //Enemy::Update();
 }
 
 void FlyingGoomba::UpdateTexture() {
@@ -270,7 +274,7 @@ void FlyingGoomba::UpdateTexture() {
 
 float FlyingGoomba::getScores() const
 {
-    return SCORE_STOMP_GOOMBA;
+    return SCORE_STOMP_GOOMBA + 50;
 }
 
 //void FlyingGoomba::HandleTileCollision(const Tile& tile, CollisionType collType) {

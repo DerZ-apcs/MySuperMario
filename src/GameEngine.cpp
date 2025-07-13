@@ -7,6 +7,7 @@
 #include "../include/Map.h"
 #include "../include/Level.h"
 #include "../include/Goomba.h"
+#include "../include/Koopa.h"
 #include <iostream>
 
 GameEngine* globalGameEngine = nullptr;
@@ -35,11 +36,19 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Char
         Coin* coin = new Coin(STATIC_COIN, { (float)i * 50, 600 });
         items.push_back(coin);
     }
-    for (int i = 7; i < 10; i++) {
+    /*for (int i = 7; i < 10; i++) {
         Goomba* goomba = new Goomba({(float) 100 * i, 300 }, RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0"));
         goomba->setState(FALLING);
         enemies.push_back(goomba);
-    }
+    }*/
+    /*for (int i = 9; i <= 10; i++) {
+        FlyingGoomba* flyingGoomba = new FlyingGoomba({ (float)50 * i, 300 }, RESOURCE_MANAGER.getTexture("FlyingGoomba_LEFT_0"));
+        flyingGoomba->setState(FALLING);
+        enemies.push_back(flyingGoomba);
+    }*/
+    Koopa* koopa = new Koopa({ 300, 500 }, RESOURCE_MANAGER.getTexture("Koopa_LEFT_0"));
+    koopa->setState(FALLING);
+    enemies.push_back(koopa);
 }
 
 GameEngine::~GameEngine() {

@@ -100,6 +100,9 @@ void ResourceManager::loadTextures() {
 	textures["BACKGROUND_2"] = LoadTexture("resources/images/backgrounds/background2.png");
 	textures["BACKGROUND_3"] = LoadTexture("resources/images/backgrounds/background3.png");
 	textures["MENU_SCREEN"] = LoadTexture("resources/images/backgrounds/Menuscreen.png");
+	//Image img = LoadImage("resources/images/backgrounds/menu.png");
+	//textures["MENU_SCREEN"] = LoadTextureFromImage(img);    // Upload to GPU
+	//UnloadImage(img);
 
 	// GUI
 	textures["HEART"] = LoadTexture("resources/images/backgrounds/heart.png");
@@ -148,18 +151,18 @@ void ResourceManager::loadTextures() {
 	textures["FlyingGoomba_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/FlyingGoomba_1.png");
 	textures["FlyingGoomba_LEFT_0"] = flipTexture(textures["FlyingGoomba_RIGHT_0"]);
 	textures["FlyingGoomba_LEFT_1"] = flipTexture(textures["FlyingGoomba_RIGHT_1"]);
+	// yellpw koopa
+	textures["YellowKoopa_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_0.png");
+	textures["YellowKoopa_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_1.png");
+	textures["YellowKoopa_LEFT_0"] = flipTexture(textures["YellowKoopa_RIGHT_0"]);
+	textures["YellowKoopa_LEFT_1"] = flipTexture(textures["YellowKoopa_RIGHT_1"]);
+	textures["YellowKoopa_Shell"] = LoadTexture("resources/images/sprites/baddies/yellow_shell_3.png");
+	textures["YellowKoopa_Shell_0"] = LoadTexture("resources/images/sprites/baddies/yellow_shell_0.png");
+	textures["YellowKoopa_Shell_1"] = LoadTexture("resources/images/sprites/baddies/yellow_shell_1.png");
+	textures["YellowKoopa_Shell_2"] = LoadTexture("resources/images/sprites/baddies/yellow_shell_2.png");
+	textures["YellowKoopa_Shell_3"] = LoadTexture("resources/images/sprites/baddies/yellow_shell_3.png");
 
-	/*textures["Koopa_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_0.png");
-	textures["Koopa_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_1.png");
-	textures["Koopa_LEFT_0"] = flipTexture(textures["Koopa_RIGHT_0"]);
-	textures["Koopa_LEFT_1"] = flipTexture(textures["Koopa_RIGHT_1"]);
-	textures["Koopa_Shell"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_Shell.png");
-	textures["Koopa_Shell_0"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_Shell_0.png");
-	textures["Koopa_Shell_1"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_Shell_1.png");
-	textures["Koopa_Shell_2"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_Shell_2.png");
-	textures["Koopa_Shell_3"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_Shell_3.png");
-
-	textures["Bullet_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/BulletBill_0.png");
+	/*textures["Bullet_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/BulletBill_0.png");
 	textures["Bullet_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/BanzaiBill_0.png");
 	textures["Bullet_LEFT_0"] = flipTexture(textures["Bullet_RIGHT_0"]);
 	textures["Bullet_LEFT_1"] = flipTexture(textures["Bullet_RIGHT_1"]);

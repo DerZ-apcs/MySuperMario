@@ -700,7 +700,26 @@ void Character::collisionWithEnemy(Enemy* enemy, CollisionType CollType)
 		}
 	}
 	else if (enemy->getEnemyType() == SHELL) {
-
+		if (CollType == COLLISION_TYPE_SOUTH || CollType == COLLISION_TYPE_NORTH) {
+			RESOURCE_MANAGER.playSound("stomp.wav");
+			enemy->stomped();
+			setVelY(jet_stomp_velocity);
+			setJumping(true);
+			SmokeEffect* smokeright = new SmokeEffect(Vector2{ enemy->getCenter().x, enemy->getTop() }, Vector2{ 60, -120 });
+			globalGameEngine->addEffect(smokeright);
+			SmokeEffect* smokeleft = new SmokeEffect(Vector2{ enemy->getCenter().x, enemy->getTop() }, Vector2{ -60, -120 });
+			globalGameEngine->addEffect(smokeleft);
+		}
+		else {
+			if (!enemy->getIsKicked()) {
+				Direction dir = CollType == COLLISION_TYPE_EAST ? LEFT : RIGHT;
+				enemy->kicked(dir);
+				RESOURCE_MANAGER.playSound("kick.wav");
+			}
+			else if (countImmortalTime > 0.f)
+				return;
+			else lostSuit();
+		}
 	}
 }
 

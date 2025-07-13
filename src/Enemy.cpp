@@ -7,7 +7,7 @@
 
 // Enemy Class Implementation
 Enemy::Enemy(Vector2 pos, Vector2 size, Vector2 vel, Direction direction, EntityState state, Texture2D texture, float frameTime, int maxFrame, Color color)
-    : Entity(pos, size, vel, direction, state, frameTime, maxFrame, color), deathTimer(0.0f), isdead(false), squashScale(1.0f), isFlipped(false)
+    : Entity(pos, size, vel, direction, state, frameTime, maxFrame, color), deathTimer(0.0f), isdead(false), squashScale(1.0f), isFlipped(false), isKicked(false)
 {
     CollNorth.setSize({ size.x / 2, 5 });
     CollSouth.setSize({ size.x / 2, 5 });
@@ -17,7 +17,6 @@ Enemy::Enemy(Vector2 pos, Vector2 size, Vector2 vel, Direction direction, Entity
     CollSouth.setColor(GREEN);
     CollNorth.setColor(RED);
     CollWest.setColor(PURPLE);
-
 }
 
 Enemy::~Enemy() {}
@@ -42,7 +41,7 @@ void Enemy::Update() {
     }
     const float deltaTime = GetFrameTime();
     position.x += velocity.x * deltaTime;
-    if (state != ON_GROUND && state != STATE_SHELL) {
+    if (state != ON_GROUND) {
         position.y += velocity.y * deltaTime;
         velocity.y += GRAVITY * deltaTime;
         if (velocity.y > 0 && state == JUMPING) {
@@ -86,7 +85,7 @@ void Enemy::CollisionWithFireball(FireBall* fireball) {
         velocity.y = -250; // Nhảy lên nhẹ
         velocity.x = (rand() % 100) - 50; // Văng ngang ngẫu nhiên
         updateCollision();
-        RESOURCE_MANAGER.playSound("fireball.wav");
+        RESOURCE_MANAGER.playSound("stomped.wav");
         // text effect
         TextEffect* text = new TextEffect(to_string(SCORE_STOMP_GOOMBA).c_str(), Vector2{this->getCenterX(), this->getTop()});
         text->setTextColor(WHITE);
@@ -122,6 +121,21 @@ void Enemy::updateCollision() {
     CollSouth.setPos({ position.x + size.x / 2 - CollSouth.getWidth() / 2, position.y + size.y * squashScale - CollSouth.getHeight() });
     CollEast.setPos({ position.x + size.x * squashScale - CollEast.getWidth(), position.y + size.y * squashScale / 2 - CollEast.getHeight() / 2 });
     CollWest.setPos({ position.x, position.y + size.y * squashScale / 2 - CollWest.getHeight() / 2 });
+}
+
+void Enemy::kicked(Direction direction)
+{ 
+    // for koopa shell only
+}
+
+bool Enemy::getIsKicked() const
+{
+    return isKicked;
+}
+
+void Enemy::setIsKicked(bool isKicked)
+{
+    this->isKicked = isKicked;
 }
 
 void Enemy::UpdateTexture() {
