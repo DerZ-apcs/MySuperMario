@@ -12,7 +12,7 @@
 GameEngine* globalGameEngine = nullptr;
 
 GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Character*& player)
-    : camera(screenWidth, screenHeight, 1.25f), level(&level), player(player) {
+    : camera(screenWidth, screenHeight, 1.25f), level(&level), player(player), items(map.getItems()) {
     map.LoadFromJsonFile(level.getMapPath());
     map.loadBackgroundTexture(level.getBackGroundName());
     Vector2 Msize = map.getMapSize();
@@ -23,22 +23,15 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Char
 
     blocks = map.getBlocks();
     enemies = map.getEnemies();
-    items = map.getItems();
+	//items = map.getItems(); // in the instantiation 
     decor = map.getDecor();
+
     isPaused = false;
     this->time = 300;
     resetTimer();
     deltaTime = 0.f;
     BackGroundPos = { {0, 0}, {(float)GetScreenWidth(), 0}, {(float)GetScreenWidth() * 2, 0} };
     //items.push_back();
-    for (int i = 0; i < 10; i++) {
-        Coin* coin = new Coin({ (float)i * 50, 600 }, 
-            Vector2{ (float)32, (float)32 },
-            Vector2{ 0,0 },
-            NONE,
-            0.1f);
-        // items.push_back(coin);  // to be fixed after merge
-    }
     for (int i = 7; i < 10; i++) {
         Goomba* goomba = new Goomba({(float) 100 * i, 300 }, RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0"));
         goomba->setState(FALLING);
@@ -248,14 +241,14 @@ void GameEngine::draw()
     if (!player) return;
     bool lostLife = player->isLostLife();
 
+    for (size_t i = 0; i < items.size(); i++) {
+        items[i]->draw();
+	} // for items emerging
     for (size_t i = 0; i < blocks.size(); i++) {
         blocks[i]->draw();
     }
     for (size_t i = 0; i < enemies.size(); i++) {
         enemies[i]->draw();
-    }
-    for (size_t i = 0; i < items.size(); i++) {
-        items[i]->draw();
     }
 
     player->draw();

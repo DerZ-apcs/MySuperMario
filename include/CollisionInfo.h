@@ -29,7 +29,7 @@ class PlayerMovingBlockInfo : public CollisionInfo {
 public:
 	bool HandleCollision(Entity* entityA, Entity* entityB) override;
 };
-class PlayerItemBlockInfo : public CollisionInfo {
+class PlayerItemBlockInfo : public CollisionInfo { // ItemBlock = QuestionBlock, too lazy to change
 public:
 	bool HandleCollision(Entity* entityA, Entity* entityB) override;
 };

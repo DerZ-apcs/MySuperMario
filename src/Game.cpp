@@ -43,7 +43,7 @@ void Game::init()
 
 	RESOURCE_MANAGER.playMusic("TITLE");
 	// load map&level
-	Level level1(Map::basePath + "MAP_1.1.json", "BACKGROUND_1", "MUSIC_1", "1-1");
+	Level level1(Map::basePath + "kmap_1.json", "BACKGROUND_1", "MUSIC_1", "1-1");
 	Level level2(Map::basePath + "MAP_1.2.json", "BACKGROUND_2", "MUSIC_2", "1-2");
 	Level level3(Map::basePath + "kmap_3.json", "BACKGROUND_3", "MUSIC_3", "1-3");
 	loadedLevel.push_back(&level1);
@@ -65,6 +65,7 @@ void Game::init()
 			{ 0, 0 },
 			0.0f,
 			WHITE);
+		//RESOURCE_MANAGER.drawAllTiles(); // debug purpose
 		if (SETTING.isMusicEnabled())
 			UpdateMusicStream(RESOURCE_MANAGER.getMusic("TITLE"));
 		if (currentState) {

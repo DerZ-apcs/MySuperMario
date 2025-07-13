@@ -22,11 +22,6 @@ std::vector<Tile*>* Map::getVectorTiles()
 	return &tiles;
 }
 
-std::vector<Coin*>* Map::getVectorCoins()
-{
-	return &coins;
-}
-
 void Map::AddTile(Vector2 pos, TileType type, const std::string& name)
 {
 	tiles.push_back(new Tile(pos, type, name));
@@ -98,17 +93,70 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 
 	int firstgid = mapJson["tilesets"][0]["firstgid"];
 
-	printf("firstgid: %d\n", firstgid);
+	//printf("firstgid: %d\n", firstgid);
 
 	for (int y = 0; y < height; ++y) {
 		for (int x = 0; x < width; ++x) {
 			int blockId = data[static_cast<std::vector<int, std::allocator<int>>::size_type>(y) * width + x];
 			if (blockId != 0) {
-				Blocks* solidBlocks = new SolidBlock({ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }, "TILE_" + std::to_string(blockId - 2));
+				int texId = blockId - firstgid;
+				
+				if (blockId == 105) {
+					Brick* brick = new Brick({ (float)x * blockwidth, (float)y * blockwidth });
+					blockArray.push_back(brick);
+					continue;
+				}
+
+				if (blockId == 114) {
+					Coin* coin = new Coin(STATIC_COIN, { (float)x * blockwidth, (float)y * blockwidth });
+					items.push_back(coin);
+					//printf("Coin at (%d, %d)\n", x, y);
+					continue;
+				}
+
+				if (blockId == 106) {
+					//QuestionBlock* questionBlock = new QuestionBlock({ (float)x * blockwidth, (float)y * blockwidth }, MUSHROOM, &items);
+					//blockArray.push_back(questionBlock);
+					continue;
+				}
+
+				Blocks* solidBlocks = new SolidBlock({ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }, "TILE_" + std::to_string(texId));
 				blockArray.push_back(solidBlocks);
 			}
 		}
 	}
+
+	nlohmann::json objectLayer = mapJson["layers"][1];
+	nlohmann::json objects = objectLayer["objects"];
+
+	for (auto& obj : objects) {
+		int gid = obj["gid"];
+		int x = obj["x"] / 32;
+		int y = obj["y"] / 32 - 1;
+		int width = obj["width"];
+		int height = obj["height"];
+
+		std::string name;
+		std::string power;
+
+		for (auto& prop : obj["properties"]) {
+			if (prop["name"] == "Name") name = prop["value"];
+			else if (prop["name"] == "Power") power = prop["value"];
+		}
+
+		if (name == "QuestionBlock") {
+			if (power == "Mushroom") {
+				blockArray.push_back(new QuestionBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, MUSHROOM, &items));
+			}
+			else if (power == "Flower") {
+				blockArray.push_back(new QuestionBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, FLOWER, &items));
+			}
+			else if (power == "Star") {
+				blockArray.push_back(new QuestionBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, STAR, &items));
+			}
+		}
+	}
+
 	setMapSize(Vector2{(float) width * blockwidth, (float) height * blockwidth});
 
 }
@@ -147,9 +195,9 @@ std::vector<Enemy*> Map::getEnemies() const
 	return enemies;
 }
 
-std::vector<Item*> Map::getItems() const
+std::vector<Item*>& Map::getItems() 
 {
-	return items;
+	return this->items;
 }
 
 std::vector<Blocks*> Map::getDecor() const

@@ -5,15 +5,17 @@
 #include "../include/PowerItem.h"
 
 class Mushroom : public PowerItem {
+private:
+	static constexpr int POINT = 150;
+
 public:
-	Mushroom(Vector2 pos, Vector2 sz, Direction dir);
+	Mushroom(Vector2 pos);
 	~Mushroom() = default;
 
-	const MushroomType& getMushroomType() const {
-		return REDMUSHROOM;
-	} // to be destroyed after merge
-
-	void onConsume(Mario& mario) override;
+	const MushroomType& getMushroomType() const;
+	EntityType getEntityType() const override;
+	ITEM_TYPE getItemType() const override;
+	const int& getPoint() const;
 };
 
 #endif // !MUSHROOM_H

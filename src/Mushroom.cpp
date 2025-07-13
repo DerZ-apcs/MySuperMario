@@ -1,10 +1,25 @@
 #include "../include/Mushroom.h"
 #include "../include/ResourceManager.h"
 
-Mushroom::Mushroom(Vector2 pos, Vector2 sz, Direction dir) :
-	PowerItem(pos, sz, dir, Singleton<ResourceManager>::getInstance().getTexture("MUSHROOM")) {}
+Mushroom::Mushroom(Vector2 pos) :
+	PowerItem(pos, Singleton<ResourceManager>::getInstance().getTexture("MUSHROOM"), POINT) {}
 
-void Mushroom::onConsume(Mario& mario) {
-	powerUpState = CONSUMED;
-	//mario.TransitionToSuper();
+//-----------------
+
+const MushroomType& Mushroom::getMushroomType() const {
+	return REDMUSHROOM; // for now only one type. to be changed later
 }
+
+EntityType Mushroom::getEntityType() const {
+	return ITEM;
+}
+
+ITEM_TYPE Mushroom::getItemType() const {
+	return MUSHROOM;
+}
+
+const int& Mushroom::getPoint() const {
+	return POINT;
+}
+
+//-----------------

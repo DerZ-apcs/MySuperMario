@@ -33,8 +33,7 @@ private:
 	std::vector<Enemy*> enemies;
 	std::vector<Item*> items;
 	std::vector<Blocks*> decors;
-	
-	std::vector<Coin*> coins;
+
 public:
 	static const std::string basePath;
 	Map();
@@ -42,7 +41,6 @@ public:
 	std::string TileTypeToString(TileType type);
 	TileType StringToTileType(const std::string& str);
 	std::vector<Tile*> *getVectorTiles();
-	std::vector<Coin*> *getVectorCoins();
 	void AddTile(Vector2 pos, TileType type, const std::string& name);
 	void clear();
 	void drawMap();
@@ -59,7 +57,7 @@ public:
 
 	std::vector<Blocks*> getBlocks() const;
 	std::vector<Enemy*> getEnemies() const;
-	std::vector<Item*> getItems() const;
+	std::vector<Item*>& getItems(); // need for QuestionBlock
 	std::vector<Blocks*> getDecor() const;
 
 	float BgWidth;

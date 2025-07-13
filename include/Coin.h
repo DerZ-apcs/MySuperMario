@@ -2,25 +2,23 @@
 #define COIN_H
 #include <raylib.h>
 #include "../include/Tile.h"
-#include "../include/Entity.h"
+#include "../include/Item.h"
 
-class Coin : public Entity {
+class GameEngine;
+
+class Coin : public Item {
 private:
-	bool isCollected = false;
+	static constexpr int POINT = 100;
+	CoinType coinType;
 
 public:
-	Coin(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, float timeSpan);
+	Coin(CoinType type, Vector2 pos);
 	~Coin() = default;
-	
-	bool getCollected() const;
-	void setCollected(bool collected);
 
 	EntityType getEntityType() const override;
 	const CoinType& getCoinType() const;
-
-	const int& getPoint() const {
-		return 100;
-	} // to be destroyed after merge
+	ITEM_TYPE getItemType() const override;
+	const int& getPoint() const;
 
 	void Update() override;
 	void draw() override;

@@ -10,6 +10,7 @@
 #include "../include/DecorBlock.h"
 #include "../include/Shell.h"
 #include "../include/ItemBlock.h"
+#include "../include/QuestionBlock.h"
 #include <iostream>
 
 inline Rectangle getProximityRect(Entity& entity, float radius)
@@ -90,7 +91,7 @@ bool PlayerMovingBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 bool PlayerItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 {
 	Character* character = dynamic_cast<Character*>(entityA);
-	ItemBlock* block = dynamic_cast<ItemBlock*>(entityB);
+	QuestionBlock* block = dynamic_cast<QuestionBlock*>(entityB);
 
 	if (!character || !block || !character->getCollisionAvailable())
 		return false;
@@ -101,7 +102,7 @@ bool PlayerItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	case COLLISION_TYPE_NORTH:
 		character->setPosition(Vector2{ character->getX(), block->getY() + block->getHeight() });
 		character->setVelY(0);
-		block->releaseItem(character); // set release
+		if (block->getActive()) { block->Activate(); }
 		break;
 	case COLLISION_TYPE_SOUTH:
 		character->setPosition(Vector2{ character->getX(), block->getY() - character->getHeight() });
@@ -129,7 +130,7 @@ bool PlayerBrickInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	if (!character || !block || !character->getCollisionAvailable())
 		return false;
 	CollisionType Colltype = character->CheckCollision(*block);
-	if (Colltype == COLLISION_TYPE_NONE)
+	if (Colltype == COLLISION_TYPE_NONE || block->getBroken() == true)
 		return false;
 	switch (Colltype) {
 	case COLLISION_TYPE_NORTH:
@@ -458,6 +459,10 @@ bool PlayerItemInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	CollisionType Colltype = character->CheckCollision(*item);
 	if (Colltype == COLLISION_TYPE_NONE)
 		return false;
+	printf("Collision detected: player vs item. Type: %d\n", Colltype);
+	PowerItem* powerItem = dynamic_cast<PowerItem*>(item);
+	if (powerItem && powerItem->getPowerUpState() != ACTIVE) { return false; }
+	
 	character->collisionWithItem(item);
 	item->setEntityDead();
 	return true;
@@ -484,12 +489,16 @@ bool ItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 {
 	Item* item = dynamic_cast<Item*>(entityA);
 	Blocks* block = dynamic_cast<Blocks*>(entityB);
+	PowerItem* powerItem = dynamic_cast<PowerItem*>(item);
 
 	if (!item || !block || item->getCollisionAvailable() == false)
 		return false;
+	if (powerItem && powerItem->getPowerUpState() != ACTIVE) 
+		return false; 
 	CollisionType Colltype = item->CheckCollision(*block);
 	if (Colltype == COLLISION_TYPE_NONE)
 		return false;
+
 	switch (Colltype) {
 	case COLLISION_TYPE_NORTH:
 		item->setPosition(Vector2{ item->getX(), block->getY() + block->getHeight() });

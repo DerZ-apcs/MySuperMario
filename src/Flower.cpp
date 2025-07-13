@@ -1,8 +1,8 @@
 #include "../include/Flower.h"
 #include "../include/ResourceManager.h"
 
-Flower::Flower(Vector2 pos, Vector2 sz, Direction dir) :
-	PowerItem(pos, sz, dir, Singleton<ResourceManager>::getInstance().getTexture("FLOWER_0")) {
+Flower::Flower(Vector2 pos) :
+	PowerItem(pos, Singleton<ResourceManager>::getInstance().getTexture("FLOWER_0"), POINT) {
 	this->frameAcum = 0;
 	this->currFrame = 0;
 	this->frameTime = 0.2f;
@@ -11,10 +11,23 @@ Flower::Flower(Vector2 pos, Vector2 sz, Direction dir) :
 
 //-----------------
 
-void Flower::onConsume(Mario& mario) {
-	powerUpState = CONSUMED;
-	//mario.TransitionToFire();
+const FlowerType& Flower::getFlowerType() const {
+	return FIRE_FLOWER;
 }
+
+EntityType Flower::getEntityType() const {
+	return ITEM;
+}
+
+ITEM_TYPE Flower::getItemType() const {
+	return FLOWER;
+}
+
+const int& Flower::getPoint() const {
+	return POINT;
+}
+
+//-----------------
 
 void Flower::Update() {
 	PowerItem::Update();
@@ -29,7 +42,7 @@ void Flower::Update() {
 }
 
 void Flower::UpdateTexture() {
-	if (powerUpState != ACTIVE) return;
+	if (this->dead == true) return;
 
 	std::string textureName = "FLOWER_" + std::to_string(currFrame);
 	texture = Singleton<ResourceManager>::getInstance().getTexture(textureName);

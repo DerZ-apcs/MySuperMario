@@ -2,12 +2,12 @@
 #define POWER_ITEM_H
 
 #include <raylib.h>
-#include "../include/Entity.h"
+#include "../include/Item.h"
 #include "../include/Mario.h"
 
-class PowerItem : public Entity {
+class PowerItem : public Item {
 protected:
-	PowerUpState powerUpState;
+	PowerUpState powerUpState = EMERGING;
 
 	float emergenceDis = 0.0f;
 	static const float EMERGENCE_HEIGHT;
@@ -16,16 +16,10 @@ protected:
 	static const float SPEED;
 
 public:
-	PowerItem(Vector2 pos, Vector2 sz, Direction dir, Texture2D tex);
+	PowerItem(Vector2 pos, Texture2D tex, int point);
 	~PowerItem() = default;
 
-	void setItemState(PowerUpState state);
-	PowerUpState getItemState() const;
-	virtual void onConsume(Mario& mario) = 0;
-
-	const int& getPoint() const {
-		return 100;
-	} // to be destroyed after merge
+	PowerUpState getPowerUpState() const;
 
 	void Update() override;
 	void draw() override;

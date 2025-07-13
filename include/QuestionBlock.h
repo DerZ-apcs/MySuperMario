@@ -3,29 +3,29 @@
 
 #include <raylib.h>
 #include "../include/Tile.h"
+#include "../include/Blocks.h"
+#include "../include/Item.h"
 #include "../include/PowerItem.h"
 #include "../include/Mushroom.h"
 #include "../include/Star.h"
 #include "../include/Flower.h"
 
-enum PowerUpType {
-	POWERUP_MUSHROOM,
-	POWERUP_FLOWER,
-	POWERUP_STAR,
-};
-
-class QuestionBlock : public Tile {
+class QuestionBlock : public Blocks {
 private:
 	bool isActive;
-	PowerUpType holdedPowerUp;
+	ITEM_TYPE heldPowerUp;
+
+	std::vector<Item*>* items;
 
 public:
-	QuestionBlock(Vector2 pos, PowerUpType type);
+	QuestionBlock(Vector2 pos, ITEM_TYPE type, std::vector<Item*>* itemsVec);
 	~QuestionBlock() = default;
 
 	bool getActive() const;	
 	void setActive(bool active);
-	void Activate(std::vector<PowerItem*>& PowerItems);
+	void Activate();
+
+	BLOCK_TYPE getBlockType() const override;
 
 	void Update() override;
 	void UpdateTexture() override;

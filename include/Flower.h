@@ -5,15 +5,18 @@
 #include "../include/PowerItem.h"
 
 class Flower : public PowerItem {
+private:
+	static constexpr int POINT = 150;
+
 public:
-	Flower(Vector2 pos, Vector2 sz, Direction dir);
+	Flower(Vector2 pos);
 	~Flower() = default;
 
-	const FlowerType& getFlowerType() const {
-		return FIRE_FLOWER;
-	} // to be destroyed after merge
+	const FlowerType& getFlowerType() const;
+	EntityType getEntityType() const override;
+	ITEM_TYPE getItemType() const override;
+	const int& getPoint() const;
 
-	void onConsume(Mario& mario) override;
 	void Update() override;
 	void UpdateTexture() override;
 };

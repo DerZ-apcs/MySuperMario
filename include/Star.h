@@ -5,15 +5,17 @@
 #include "../include/PowerItem.h"
 
 class Star : public PowerItem {
+private:
+	static constexpr int POINT = 1000;
+
 public:
-	Star(Vector2 pos, Vector2 sz, Direction dir);
+	Star(Vector2 pos);
 	~Star() = default;
 
-	const StarType& getStarType() const {
-		return YELLOW_STAR;
-	}
-
-	void onConsume(Mario& mario) override;
+	const StarType& getStarType() const;
+	EntityType getEntityType() const override;
+	ITEM_TYPE getItemType() const override;
+	const int& getPoint() const;
 };
 
 #endif // !STAR_H

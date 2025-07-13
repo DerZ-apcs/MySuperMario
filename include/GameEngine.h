@@ -26,7 +26,7 @@ private:
     Character* player;
     std::vector<Blocks*> blocks;
     std::vector<Enemy*> enemies;
-    std::vector<Item*> items;
+    std::vector<Item*>& items;
     std::vector<FireBall*> fireball;
     std::vector<Effect*> effects;
     std::vector<Blocks*> decor;

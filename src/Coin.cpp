@@ -1,27 +1,34 @@
 #include "../include/Coin.h"
+#include "../include/GameEngine.h"
+#include "../include/Effect.h"
+#include "../include/TextEffect.h"
 #include "../include/ResourceManager.h"
 
-Coin::Coin(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, float timeSpan)
-	: Entity(pos, sz, vel, dir, ON_GROUND, 0.2f, 4, YELLOW) {
-	this->texture = Singleton<ResourceManager>::getInstance().getTexture("COIN_0");
-	this->frameAcum = 0;
-	this->currFrame = 0;
+Coin::Coin(CoinType type, Vector2 pos)
+	: Item(POINT), coinType(type) {
+	this->texture = RESOURCE_MANAGER.getTexture("COIN_0");
+	this->position = pos;
+	this->size = { (float)texture.width, (float)texture.height };
+	this->dead = false;
 
-	this->CollNorth.setSize(Vector2{ size.x - 8, 1 });
-	this->CollSouth.setSize(Vector2{ size.x - 8, 1 });				
-	this->CollEast.setSize(Vector2{ 1, size.y - 8 });
-	this->CollWest.setSize(Vector2{ 1, size.y - 8 });
-	this->updateCollision();
+	this->maxFrame = 4;
+	this->currFrame = 0;
+	this->frameTime = 0.15f;
+	this->frameAcum = 0.0f;
+
+	setGravityAvailable(false);
+	setCollisionAvailable(true);
+	Entity::updateCollision();
 	}
 
 //------------------
 
-bool Coin::getCollected() const {
-	return isCollected;
+const int& Coin::getPoint() const {
+	return POINT;
 }
 
-void Coin::setCollected(bool collected) {
-	isCollected = collected;
+ITEM_TYPE Coin::getItemType() const {
+	return COIN;
 }
 
 EntityType Coin::getEntityType() const {
@@ -36,13 +43,19 @@ const CoinType& Coin::getCoinType() const
 //------------------
 
 void Coin::Update() {
+
+	if (this->dead == true) return; 
+
+	//printf("Coin Update\n");
+	Entity::Update();
 	frameAcum += GetFrameTime();
 	if (frameAcum >= frameTime) {
 		frameAcum = 0;
 		currFrame = (currFrame + 1) % maxFrame;
-}
+	}
 
 	UpdateTexture();
+	Entity::updateCollision();
 }
 
 void Coin::UpdateTexture() {
@@ -51,6 +64,6 @@ void Coin::UpdateTexture() {
 }
 
 void Coin::draw() {
-	if (isCollected) return; 
+	if (this->dead == true) return; 
 	DrawTexture(texture, position.x, position.y, WHITE);
 }

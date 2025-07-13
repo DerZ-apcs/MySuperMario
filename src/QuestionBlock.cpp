@@ -1,8 +1,8 @@
 #include "../include/QuestionBlock.h"
 #include "../include/ResourceManager.h"
 
-QuestionBlock::QuestionBlock(Vector2 pos, PowerUpType type) 
-	: Tile(pos, TileType::TILE_TYPE_NORMAL, "QUESTION_0"), isActive(true), holdedPowerUp(type) {
+QuestionBlock::QuestionBlock(Vector2 pos, ITEM_TYPE type, std::vector<Item*>* itemsVec) :
+	Blocks(pos, { 32, 32 }, "QUESTION_0"), isActive(true), heldPowerUp(type), items(itemsVec) {
 	this->frameAcum = 0;
 	this->currFrame = 0;
 	this->frameTime = 0.2f;
@@ -19,32 +19,35 @@ void QuestionBlock::setActive(bool active) {
 	isActive = active;
 }
 
-void QuestionBlock::Activate(std::vector<PowerItem*>& PowerItems) {
+void QuestionBlock::Activate() {
 	if (!isActive) return;
 
 	texture = Singleton<ResourceManager>::getInstance().getTexture("TILE_110");
-
 	isActive = false;
-	switch (holdedPowerUp) 	{
-	case POWERUP_MUSHROOM: {
-		//PowerItems.push_back(new Mushroom(Vector2{ position.x + size.x / 2 - 16, position.y + size.y - 32 }, Vector2{ 32, 32 }, RIGHT));
+
+	switch (heldPowerUp) 	{
+	case MUSHROOM: {
+		items->push_back(new Mushroom(Vector2{ position.x + size.x / 2 - 16, position.y + size.y - 32 }));
 		break;
 	}
 
-	case POWERUP_FLOWER: {
-		//PowerItems.push_back(new Flower(Vector2{ position.x + size.x / 2 - 16, position.y + size.y - 32 }, Vector2{ 32, 32 }, RIGHT));
+	case FLOWER: {
+		items->push_back(new Flower(Vector2{ position.x + size.x / 2 - 16, position.y + size.y - 32 }));
 		break;
 	}
 
-	case POWERUP_STAR: {
-		//PowerItems.push_back(new Star(Vector2{ position.x + size.x / 2 - 16, position.y + size.y - 32 }, Vector2{ 32, 32 }, RIGHT));
+	case STAR: {
+		items->push_back(new Star(Vector2{ position.x + size.x / 2 - 16, position.y + size.y }));
 		break;
 	}
-	// to be fixed after merge:)
 
 	default:
 		break;
 	}
+}
+
+BLOCK_TYPE QuestionBlock::getBlockType() const {
+	return ITEMBLOCK;
 }
 
 //-----------------
@@ -68,5 +71,5 @@ void QuestionBlock::UpdateTexture() {
 }
 
 void QuestionBlock::draw() {
-	Tile::draw();
+	DrawTexture(texture, position.x, position.y, WHITE);
 }
