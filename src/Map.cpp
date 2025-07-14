@@ -17,22 +17,7 @@ Map::~Map()
 	clear();
 }
 
-std::vector<Tile*>* Map::getVectorTiles()
-{
-	return &tiles;
-}
-
-void Map::AddTile(Vector2 pos, TileType type, const std::string& name)
-{
-	tiles.push_back(new Tile(pos, type, name));
-}
-
 void Map::clear() {
-	for (auto& tile : tiles) {
-		delete tile;
-		tile = nullptr;
-	}
-	tiles.clear();
 	blockArray.clear();
 	items.clear();
 	decors.clear();

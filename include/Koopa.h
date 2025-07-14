@@ -26,9 +26,17 @@ public:
     void stomped();
     void kicked(Direction direction) override;
     void updateCollision() override;
-    //void CollisionWithEnemy(Enemy& enemy, CollisionType collType) override;
-    //void CollisionWithFireball(FireBall& fireball) override;
-    //void HandleTileCollision(const Tile& tile, CollisionType collType) override;
 };
 
+class FlyingKoopa : public Koopa {
+private:
+    float jumpTimer; // Timer để kiểm soát tần suất nhảy
+    float collisionTimer;
+public:
+    ENEMY_TYPE getEnemyType() const;
+    FlyingKoopa(Vector2 pos, Texture2D texture);
+    void Update() override;
+    void UpdateTexture() override;
+    float getScores() const override;
+};
 #endif

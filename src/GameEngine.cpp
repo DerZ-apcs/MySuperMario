@@ -8,6 +8,8 @@
 #include "../include/Level.h"
 #include "../include/Goomba.h"
 #include "../include/Koopa.h"
+#include "../include/Rex.h"
+#include "../include/Bullet.h"
 #include <iostream>
 
 GameEngine* globalGameEngine = nullptr;
@@ -49,11 +51,24 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Char
     Koopa* koopa = new Koopa({ 300, 500 }, RESOURCE_MANAGER.getTexture("Koopa_LEFT_0"));
     koopa->setState(FALLING);
     enemies.push_back(koopa);
+
+    Rex* rex = new Rex({ 400, 500 }, RESOURCE_MANAGER.getTexture("Rex_LEFT_0"));
+    rex->setState(FALLING);
+    enemies.push_back(rex);
+
+    Bullet* bullet1 = new Bullet({ 1000, 400 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
+    enemies.push_back(bullet1);
+    FireBullet* bullet2 = new FireBullet({ 1600, 500 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
+    enemies.push_back(bullet2);
+    Bullet* bullet3 = new Bullet({ 1000, 600 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
+    enemies.push_back(bullet3);
+
+    
 }
 
 GameEngine::~GameEngine() {
-    for (size_t i = 0; i < fireball.size(); i++)
-        delete fireball[i];
+    for (size_t i = 0; i < enemyFireball.size(); i++)
+        delete enemyFireball[i];
     for (size_t i = 0; i < enemies.size(); i++)
         delete enemies[i];
     for (size_t i = 0; i < items.size(); ++i) {
@@ -69,7 +84,7 @@ GameEngine::~GameEngine() {
         delete blocks[i];
     }
     player = nullptr;
-    fireball.clear();
+    enemyFireball.clear();
     blocks.clear();
     enemies.clear();
     items.clear();
@@ -81,8 +96,8 @@ void GameEngine::addScore(int amount) {
     player->setScores(player->getScores() + amount);
 }
 
-void GameEngine::addFireBall(FireBall* fireball) {
-    this->fireball.push_back(fireball);
+void GameEngine::addEnemyFireBall(EnemyFireBall* fireball) {
+    this->enemyFireball.push_back(fireball);
 }
 
 void GameEngine::addEnemy(Enemy* enemy)
@@ -158,6 +173,15 @@ void GameEngine::update()
             BackGroundPos[i].x = minX - map.BgWidth;
         }
     }
+    for (size_t i = 0; i < enemyFireball.size(); i++) {
+        if (enemyFireball[i]->isDead() || enemyFireball[i]->isMaxTime()) {
+            delete enemyFireball[i];
+            enemyFireball.erase(enemyFireball.begin() + i);
+            i--;
+        }
+        else
+            enemyFireball[i]->Update();
+    }
 
     for (size_t i = 0; i < blocks.size(); i++) {
         if (blocks[i]->isDead()) {
@@ -223,13 +247,12 @@ void GameEngine::handleCollision()
 
         for (size_t i = 0; i < items.size(); i++) 
             CollI.HandleCollision(items[i], blocks[j]);
-       /* for (size_t i = 0; i < fireball.size(); i++) {
-            if (fireball[i]->getFireballType() == CHARACTER_FIREBALL) 
-            IColl.resolve(fireball[i], blocks[j]);
-        }*/
+
         for (auto& fireball : *player->getFireBalls()) {
             CollI.HandleCollision(fireball, blocks[j]);
         }
+        for (size_t i = 0; i < enemyFireball.size(); i++)
+            CollI.HandleCollision(enemyFireball[i], blocks[j]);
     }
     // for items
     for (size_t i = 0; i < enemies.size(); i++) {
@@ -239,8 +262,11 @@ void GameEngine::handleCollision()
         CollI.HandleCollision(player, enemies[i]);
     }
     for (size_t i = 0; i < items.size(); i++) {
-        PlayerItemInfo Infor;
-        Infor.HandleCollision(player, items[i]);   
+        CollI.HandleCollision(player, items[i]);   
+    }
+    // enemy fireball
+    for (size_t i = 0; i < enemyFireball.size(); i++) {
+        CollI.HandleCollision(enemyFireball[i], player);
     }
 }
 // draw
@@ -253,6 +279,9 @@ void GameEngine::draw()
     if (!player) return;
     bool lostLife = player->isLostLife();
 
+    for (size_t i = 0; i < enemyFireball.size(); i++) {
+        enemyFireball[i]->draw();
+    }
     for (size_t i = 0; i < blocks.size(); i++) {
         blocks[i]->draw();
     }
@@ -413,6 +442,9 @@ bool GameEngine::isOver() const
 
 void GameEngine::resetGame()
 {
+    for (size_t i = 0; i < enemyFireball.size(); i++) {
+        delete enemyFireball[i];
+    }
     for (size_t i = 0; i < blocks.size(); ++i) {
         delete blocks[i];
     }
@@ -428,6 +460,8 @@ void GameEngine::resetGame()
     for (size_t i = 0; i < effects.size(); ++i) {
         delete effects[i];
     }
+
+    enemyFireball.clear();
     blocks.clear();
     enemies.clear();
     items.clear();

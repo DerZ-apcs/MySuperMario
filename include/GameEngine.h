@@ -9,8 +9,6 @@
 #include "../include/Item.h"
 #include "../include/Blocks.h"
 #include "../include/CollisionInfo.h"
-//#include "../include/Effect.h"
-//#include "../include/Enemy.h"
 #include <vector>
 #include <string>
 #include <map>
@@ -27,7 +25,7 @@ private:
     std::vector<Blocks*> blocks;
     std::vector<Enemy*> enemies;
     std::vector<Item*> items;
-    std::vector<FireBall*> fireball;
+    std::vector<EnemyFireBall*> enemyFireball;
     std::vector<Effect*> effects;
     std::vector<Blocks*> decor;
     //std::vector<Shell*> shells;
@@ -50,9 +48,8 @@ private:
 public:
     GameEngine(float screenWidth, float screenHeight, Level& level, Character*& player);
     ~GameEngine();
-    void resolveCollision();
     void addScore(int amount);
-    void addFireBall(FireBall* fireball);
+    void addEnemyFireBall(EnemyFireBall* fireball);
     void addEnemy(Enemy* enemy);
     void addEffect(Effect* effect);
     //void addShell(Shell* shell);

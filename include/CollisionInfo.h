@@ -1,13 +1,14 @@
 #pragma once
 #include "../include/Entity.h"
 //#include "../include/Character.h"
-#include "../include/Tile.h"
 #include "../include/FireBall.h"
+#include "../include/EnemyFireBall.h"
 #include "../include/Enemy.h"
 #include "../include/Item.h"
 #include "../include/Collision.h"
 
 class Blocks;
+class EnemyFireBall;
 class Character;
 class FireBall;
 class Tile;
@@ -110,7 +111,12 @@ class FireBallBlockInfo : public CollisionInfo {
 public:
 	bool HandleCollision(Entity* entityA, Entity* entityB) override;
 };
+// enemyfireball vs block
 
+class EnemyFireBallBlockInfo : public CollisionInfo {
+public:
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
+};
 // enemy vs enemy
 class EnemyEnemyInfo : public CollisionInfo {
 public:

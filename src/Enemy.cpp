@@ -7,7 +7,7 @@
 
 // Enemy Class Implementation
 Enemy::Enemy(Vector2 pos, Vector2 size, Vector2 vel, Direction direction, EntityState state, Texture2D texture, float frameTime, int maxFrame, Color color)
-    : Entity(pos, size, vel, direction, state, frameTime, maxFrame, color), deathTimer(0.0f), isdead(false), squashScale(1.0f), isFlipped(false), isKicked(false)
+    : Entity(pos, size, vel, direction, state, frameTime, maxFrame, color), deathTimer(0.0f), squashScale(1.0f), isFlipped(false), isKicked(false)
 {
     CollNorth.setSize({ size.x / 2, 5 });
     CollSouth.setSize({ size.x / 2, 5 });
@@ -19,7 +19,8 @@ Enemy::Enemy(Vector2 pos, Vector2 size, Vector2 vel, Direction direction, Entity
     CollWest.setColor(PURPLE);
 }
 
-Enemy::~Enemy() {}
+Enemy::~Enemy() {
+}
 
 void Enemy::stomped()
 {
@@ -33,7 +34,7 @@ void Enemy::Update() {
             deathTimer -= GetFrameTime();
             updateSquashEffect();
             if (deathTimer <= 0) {
-                isdead = true; // Mark for removal
+                dead = true; // Mark for removal
             }
         }
         UpdateTexture();
@@ -41,9 +42,10 @@ void Enemy::Update() {
     }
     const float deltaTime = GetFrameTime();
     position.x += velocity.x * deltaTime;
-    if (state != ON_GROUND) {
-        position.y += velocity.y * deltaTime;
+    position.y += velocity.y * deltaTime;
+    if (getGravityAvailable())
         velocity.y += GRAVITY * deltaTime;
+    if (state != ON_GROUND) {
         if (velocity.y > 0 && state == JUMPING) {
             state = FALLING;
         }
@@ -104,16 +106,11 @@ EntityType Enemy::getEntityType() const
 }
 
 bool Enemy::isDying() {
-    return isdead || state == STATE_IS_DYING;
+    return dead || state == STATE_IS_DYING;
 }
 
 bool Enemy::isReadyForRemoval() {
-    return isdead;
-}
-
-bool Enemy::isDead()
-{
-    return isdead;
+    return dead;
 }
 
 void Enemy::updateCollision() {
@@ -148,4 +145,14 @@ void Enemy::attacked(Direction direction) {
     setEntityDead();
     //this->isdead = true;
     setCollisionAvailable(false);
+}
+
+void Enemy::setCollisionTimer(float time)
+{
+    collisionTimer = time;
+}
+
+void Enemy::setDeathTimer(float time)
+{
+    deathTimer = time;
 }

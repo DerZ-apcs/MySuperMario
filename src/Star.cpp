@@ -25,9 +25,6 @@ void Star::UpdateTexture()
 {
 }
 
-void Star::HandleTileCollision(const Tile tile, CollisionType Colltype)
-{
-}
 
 ITEM_TYPE Star::getItemType() const
 {

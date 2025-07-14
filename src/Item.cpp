@@ -52,7 +52,3 @@ void Item::updateCollision()
 void Item::UpdateTexture()
 {
 }
-
-void Item::HandleTileCollision(const Tile tile, CollisionType Colltype)
-{
-}

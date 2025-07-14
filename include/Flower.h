@@ -23,7 +23,6 @@ public:
 	void draw() override;
 	void updateCollision() override;
 	void UpdateTexture() override;
-	void HandleTileCollision(const Tile tile, CollisionType Colltype);
 };
 
 #endif // !FLOWER_H

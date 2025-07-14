@@ -1,7 +1,6 @@
 #ifndef MAP_H
 #define MAP_H
 #include <raylib.h>
-#include "../include/Tile.h"
 #include "../include/Blocks.h"
 #include "../include/Floor.h"
 #include "../include/SolidBlock.h"
@@ -19,7 +18,6 @@ class Enemy;
 
 class Map {
 private:
-	std::vector<Tile*> tiles;
 	Texture2D background;
 	std::map<std::string, Texture2D> backgroundTextures;
 	std::vector<Vector2> BackGroundPos;
@@ -35,10 +33,6 @@ public:
 	static const std::string basePath;
 	Map();
 	~Map();
-	std::string TileTypeToString(TileType type);
-	TileType StringToTileType(const std::string& str);
-	std::vector<Tile*> *getVectorTiles();
-	void AddTile(Vector2 pos, TileType type, const std::string& name);
 	void clear();
 	void drawMap();
 	void drawBackGround();

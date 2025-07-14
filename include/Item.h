@@ -2,7 +2,6 @@
 #define ITEM_H
 
 #include "../include/Entity.h"
-#include "../include/Tile.h"
 
 class Item : public Entity {
 private:
@@ -28,7 +27,6 @@ public:
 	virtual void draw() override;
 	virtual void updateCollision() override;
 	virtual void UpdateTexture() override;
-	virtual void HandleTileCollision(const Tile tile, CollisionType Colltype);
 };
 
 #endif

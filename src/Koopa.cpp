@@ -1,6 +1,5 @@
 ﻿#include "../include/Koopa.h"
-
-
+#include "../include/GameEngine.h"
 
 // Koopa Class Implementation
 Koopa::Koopa(Vector2 pos, Texture2D texture)
@@ -75,7 +74,6 @@ void Koopa::Update() {
     }
     position.y += velocity.y * deltaTime;
     position.x += velocity.x * deltaTime;
-    cout << velocity.x << endl;
     updateCollision();
     UpdateTexture();
 }
@@ -127,7 +125,7 @@ void Koopa::UpdateTexture() {
             texture = RESOURCE_MANAGER.getTexture(colorType + "Koopa" + dir + std::to_string(currFrame));
         }
         else if (state == FALLING || state == JUMPING) {
-            texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture(colorType + "Koopa_RIGHT_0") : RESOURCE_MANAGER.getTexture("Koopa_LEFT_0");
+            texture = RESOURCE_MANAGER.getTexture(colorType + "Koopa" + dir + "0");
         }
     }
 }
@@ -161,6 +159,8 @@ void Koopa::stomped()
         velocity.y = -300; // Slight upward bounce
         velocity.x = (rand() % 100) - 50; // Random horizontal velocity
         deathTimer = ENEMY_DEATH_TIMER_LONG; // Disappear after 0.5s
+        Effect* text = new TextEffect(to_string(SCORE_STOMP_KOOPA).c_str(), getCenter());
+        globalGameEngine->addEffect(text);
     }
 }
 
@@ -193,10 +193,24 @@ void Koopa::updateCollision()
     }
 }
 
-//void Koopa::CollisionWithEnemy(Enemy& enemy, CollisionType collType) {
-//    if (isDead() || state != STATE_SHELL || velocity.x == 0) return;
-//    if (collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_WEST) {
-//        enemy.CollisionWithEnemy(*this, collType);
-//        RESOURCE_MANAGER.playSound("STOMP");
-//    }
+ENEMY_TYPE FlyingKoopa::getEnemyType() const {
+    return KOOPA;
+}
+
+//FlyingKoopa::FlyingKoopa(Vector2 pos, Texture2D texture):
+//    Enemy(pos, { 32, 54 }, { 0, 0 }, LEFT, ON_GROUND, texture, 0.2f, 1, GREEN),
+//    reviveTimer(0.0f), isReviving(false), reviveShakeTimer(0.0f),
+//    koopaState(NORMAL_KOOPA), koopaType(YELLOW_KOOPA)
+//{
+//
 //}
+
+void FlyingKoopa::Update() {
+
+}
+void FlyingKoopa::UpdateTexture() {
+
+}
+float FlyingKoopa::getScores() const {
+    return SCORE_STOMP_KOOPA;
+}

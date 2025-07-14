@@ -3,6 +3,7 @@
 #include "../include/Entity.h"
 #include "../include/Mario.h"
 #include <random>
+#include <list>
 
 class Character;
 class FireBall;
@@ -36,10 +37,10 @@ const float REX_COMPRESSED_SPEED = 180.0f;
 class Enemy : public Entity {
 protected:
     float deathTimer; // Timer for death animation
-    float squashScale; // Scale for squash effect when dying
-    bool isdead; // Flag to mark enemy for removal
+    float squashScale; // Scale for squash effect when dying 
     bool isFlipped;
     bool isKicked;
+    float collisionTimer;
 public:
     Enemy(Vector2 pos, Vector2 size, Vector2 vel, Direction direction, EntityState state, Texture2D texture, float frameTime, int maxFrame, Color color);
     virtual ~Enemy();
@@ -50,7 +51,6 @@ public:
     EntityType getEntityType() const override;
     bool isDying(); // Check if enemy is dying or marked for removal
     bool isReadyForRemoval();
-    bool isDead();
     void Update() override;
     void draw() override;
     void updateSquashEffect();
@@ -61,6 +61,8 @@ public:
     virtual void UpdateTexture(); // Update enemy texture based on state
     virtual void attacked(Direction direction = RIGHT);
     virtual float getScores() const = 0;
+    void setCollisionTimer(float time);
+    void setDeathTimer(float time);
 };
 
 #endif

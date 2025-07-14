@@ -1,12 +1,12 @@
 ﻿#include "../include/Goomba.h"
-#include "../include/Koopa.h"
 #include "../include/GameEngine.h"
 
 // Goomba Class Implementation
 Goomba::Goomba(Vector2 pos, Texture2D texture)
     : Enemy(pos, { (float)texture.width, (float)texture.height }, { 0, 0 }, LEFT, ON_GROUND, texture, 0.2f, 1, BROWN),
-    pauseTimer(0.0f), isPaused(false), detectMarioRange(200.0f), collisionTimer(0.0f), beattacked(false) {
+    pauseTimer(0.0f), isPaused(false), detectMarioRange(200.0f), beattacked(false) {
     velocity.x = -GOOMBA_SPEED;
+    collisionTimer = 0.f;
 }
 bool Goomba::isAttacked() const
 {
@@ -128,6 +128,7 @@ void Goomba::stomped() {
     // stomped
     if (isReadyForRemoval() || state == STATE_IS_DYING) return;
     state = STATE_IS_DYING;
+
     velocity.x = 0.0f; // Hiệu ứng đẩy nhẹ
     velocity.y = 0.0f; // Nhảy nhẹ lên
     deathTimer = 0.3f;
@@ -137,23 +138,6 @@ void Goomba::stomped() {
     globalGameEngine->addEffect(text);
     return;
 }
-
-// wait to do
-
-//void Goomba::CollisionWithEnemy(Enemy& enemy, CollisionType collType) {
-//    if (isDead) return;
-//    Koopa* koopa = dynamic_cast<Koopa*>(&enemy);
-//    if (koopa && koopa->getState() == STATE_SHELL && (collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_WEST) && koopa->getVelX() != 0) {
-//        state = STATE_IS_DYING;
-//        velocity.x = 0.0f; // Đẩy ra xa
-//        velocity.y = 0.0f;
-//        deathTimer = ENEMY_DEATH_TIMER_DEFAULT;
-//        Singleton<ResourceManager>::getInstance().playSound("GOOMBA_SQUASH");
-//        updateSquashEffect();
-//        UpdateTexture();
-//        return;
-//    }
-//}
 
 // ---------------------------------------------- FLYINGGOOMBA --------------------------------------------------------- 
 
@@ -176,7 +160,7 @@ void FlyingGoomba::Update() {
             deathTimer -= GetFrameTime();
             updateSquashEffect();
             if (deathTimer <= 0) {
-                isdead = true;
+                dead = true;
             }
         }
         UpdateTexture();
@@ -277,28 +261,3 @@ float FlyingGoomba::getScores() const
     return SCORE_STOMP_GOOMBA + 50;
 }
 
-//void FlyingGoomba::HandleTileCollision(const Tile& tile, CollisionType collType) {
-//    if (isDead || state == STATE_IS_DYING) return;
-//    if (collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_WEST) {
-//        direction = (direction == LEFT) ? RIGHT : LEFT;
-//        if (collType == COLLISION_TYPE_EAST) {
-//            setX(tile.getX() - getWidth());
-//        }
-//        else if (collType == COLLISION_TYPE_WEST) {
-//            setX(tile.getX() + tile.getWidth());
-//        }
-//        velocity.x = (direction == LEFT) ? -FLYINGGOOMBA_SPEED : FLYINGGOOMBA_SPEED;
-//        collisionTimer = 1.0f; // Tạm thời vô hiệu hóa logic đuổi Mario trong 1 giây
-//        UpdateTexture();
-//    }
-//    else if (collType == COLLISION_TYPE_SOUTH) {
-//        setY(tile.getY() - getHeight());
-//        velocity.y = 0;
-//        state = ON_GROUND;
-//        jumpTimer = 0.5f; // Delay trước khi nhảy lại
-//    }
-//    else if (collType == COLLISION_TYPE_NORTH) {
-//        setY(tile.getY() + tile.getHeight());
-//        velocity.y = 0;
-//    }
-//}

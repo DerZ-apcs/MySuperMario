@@ -92,6 +92,6 @@ public:
 	static bool IsColorNear(Color c, Color target, int tolerance = 20);
 	static Texture2D ConvertMarioToStarMario(Texture2D marioTexture);
 	static Texture2D ConvertFireStarMarioToFireStarLuigi(Texture2D marioTexture);
-
+	static Texture2D ConvertFireballToBlue(Texture2D fireballTexture);
 };
 #endif

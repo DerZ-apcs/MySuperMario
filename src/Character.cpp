@@ -334,13 +334,13 @@ void Character::Update()
 	// physics
 	position.x += velocity.x * deltaTime;
 	position.y += velocity.y * deltaTime;
-	if (velocity.y > 50)
+	if (velocity.y > 20)
 		state = FALLING;
 	velocity.y += GRAVITY * deltaTime + 2;
 	// fireball
 	for (auto i = fireballs.begin(); i != fireballs.end();) {
 		FireBall* fireball = *i;
-		if (fireball->isMaxDistance()) {
+		if (fireball->ismaxTime()) {
 			delete fireball;
 			fireball = nullptr;
 			i = fireballs.erase(i);
@@ -399,9 +399,13 @@ void Character::HandleInput()
 		}
 		else isducking = false;
 	}
-	/*if (IsKeyPressed(KEY_SPACE)) {
-		TransitionState();
-	}*/
+
+	if (state == JUMPING) {
+		if (velocity.y < 0) {
+			if (IsKeyReleased(KEY_UP))
+				this->velocity.y *= 0.5;
+		}
+	}
 	if (IsKeyPressed(KEY_F1))
 		eatGreenMushrooms();
 	if (IsKeyPressed(KEY_F2))
@@ -723,7 +727,7 @@ void Character::collisionWithEnemy(Enemy* enemy, CollisionType CollType)
 	}
 }
 
-void Character::CollisionWithFireball(FireBall* fireball)
+void Character::CollisionWithFireball(EnemyFireBall* fireball)
 {
 	if (countImmortalTime > 0.f) return;
 	if (Character_state == STATE_STAR || Character_state == STATE_SUPERSTAR || Character_state == STATE_FIRESTAR) {

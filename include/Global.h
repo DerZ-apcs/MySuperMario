@@ -13,6 +13,7 @@ enum EntityType {
 	ENEMY,
 	ITEM,
 	FIREBALL,
+	ENEMY_FIREBALL,
 	EFFECT,
 	BLOCK
 };
@@ -107,11 +108,6 @@ enum PIRANHA_TYPE {
 enum SHELL_TYPE {
 	GREEN_SHELL,
 	RED_SHELL
-};
-
-enum FireBallType {
-	CHARACTER_FIREBALL,
-	ENEMY_FIREBALL
 };
 
 enum MushroomType {

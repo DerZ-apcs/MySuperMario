@@ -2,7 +2,6 @@
 #define LUIGI_H
 #include "../include/Character.h"
 #include "../include/FireBall.h"
-#include "../include/Tile.h"
 #include <string>
 
 class Luigi: public Character {

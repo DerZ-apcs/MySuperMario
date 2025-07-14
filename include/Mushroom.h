@@ -25,7 +25,6 @@ public:
 	void updateCollision() override;
 	void UpdateTexture() override;
 	bool isMaxDistance() const;
-	void HandleTileCollision(const Tile tile, CollisionType Colltype);
 };
 
 #endif // !MUSHROOM_H

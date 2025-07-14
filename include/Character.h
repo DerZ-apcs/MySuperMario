@@ -3,18 +3,16 @@
 
 #include "../include/Entity.h"
 #include "../include/Global.h"
-#include "../include/Tile.h"
 #include <../include/TextEffect.h>
-//#include "../include/MediatorCollision.h"
 #include <../include/Item.h>
 #include "raymath.h"
 #include <list>
 
-class MediatorCollision;
 class Item;
 class Enemy;
 class Blocks;
 class FireBall;
+class EnemyFireBall;
 class GameEngine;
 
 enum Phase {
@@ -91,7 +89,7 @@ public:
 
 	void collisionWithItem(const Item* item);
 	void collisionWithEnemy(Enemy* enemy, CollisionType CollType = COLLISION_TYPE_NORTH);
-	void CollisionWithFireball(FireBall* fireball);
+	void CollisionWithFireball(EnemyFireBall* fireball);
 	virtual std::list<FireBall*>* getFireBalls();
 	
 	// helper struct to control texture

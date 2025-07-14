@@ -19,7 +19,6 @@ public:
     void draw() override;
     void updateCollision() override;
     void UpdateTexture() override;
-    void HandleTileCollision(const Tile tile, CollisionType Colltype);
     ITEM_TYPE getItemType() const override;
 };
 

@@ -38,7 +38,3 @@ bool Mushroom::isMaxDistance() const
 {
 	return false;
 }
-
-void Mushroom::HandleTileCollision(const Tile tile, CollisionType Colltype)
-{
-}

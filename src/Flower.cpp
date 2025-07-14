@@ -33,7 +33,3 @@ void Flower::updateCollision()
 void Flower::UpdateTexture()
 {
 }
-
-void Flower::HandleTileCollision(const Tile tile, CollisionType Colltype)
-{
-}

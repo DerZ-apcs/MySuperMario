@@ -7,7 +7,6 @@ private:
     float pauseTimer;
     bool isPaused;
     float detectMarioRange;
-    float collisionTimer;
     bool beattacked;
 public:
     bool isAttacked() const;
@@ -19,7 +18,6 @@ public:
     void attacked(Direction direction) override;
     float getScores() const override;
     void stomped() override;
-    //void CollisionWithEnemy(Enemy& enemy, CollisionType collType) override;
 };
 
 class FlyingGoomba : public Goomba {

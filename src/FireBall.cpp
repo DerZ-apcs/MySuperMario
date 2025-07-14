@@ -1,11 +1,12 @@
 #include "../include/FireBall.h"
 #include "../include/ResourceManager.h"
 #include "../include/Mario.h"
-const float FireBall::maxDistance = 1200.0f;
 const float FireBall::FB_SpeedX = 500.0f;
+const float FireBall::maxTime = 2.5f;
 
 FireBall::FireBall(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, float timeSpan) :
-	Entity(pos, sz, vel, dir, ON_GROUND, 0.1f, 3, BLACK), timeSpan(timeSpan), timeSpanAcum(0), currDistance(0)
+	Entity(pos, sz, vel, dir, ON_GROUND, 0.1f, 3, BLACK), timeSpan(timeSpan), timeSpanAcum(0), 
+	currTime(0.f)
 {
 	this->texture = direction == RIGHT ? RESOURCE_MANAGER.getTexture("FlowerMarioFireball_RIGHT_0") :
 		RESOURCE_MANAGER.getTexture("FlowerMarioFireball_LEFT_0");
@@ -24,7 +25,7 @@ FireBall::~FireBall() {
 
 void FireBall::Update()
 {
-	if (isMaxDistance() || isDead()) return;
+	if (ismaxTime() || isDead()) return;
 	
 	const float deltaTime = GetFrameTime();
 	frameAcum += deltaTime;
@@ -34,7 +35,7 @@ void FireBall::Update()
 		currFrame++;
 		if (currFrame > maxFrame) currFrame = 0;
 	}
-	currDistance += abs(velocity.x) * deltaTime;
+	currTime += deltaTime;
 	if (velocity.x > 0)
 		direction = RIGHT;
 	else if (velocity.x < 0)
@@ -49,8 +50,7 @@ void FireBall::Update()
 
 void FireBall::draw()
 {	
-	if (isMaxDistance() || isDead()) return;
-	//UpdateTexture();
+	if (ismaxTime() || isDead()) return;
 	DrawTexture(texture, position.x, position.y, WHITE);
 }
 
@@ -66,11 +66,9 @@ void FireBall::UpdateTexture()
 	texture = RESOURCE_MANAGER.getTexture(textureName);
 }
 
-bool FireBall::isMaxDistance() const
-{
-	return currDistance >= maxDistance;
+bool FireBall::ismaxTime() const {
+	return currTime >= maxTime;
 }
-
 EntityType FireBall::getEntityType() const
 {
 	return FIREBALL;
