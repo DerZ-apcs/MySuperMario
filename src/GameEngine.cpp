@@ -10,6 +10,7 @@
 #include "../include/Koopa.h"
 #include "../include/Rex.h"
 #include "../include/Bullet.h"
+#include "../include/PiranhaPlant.h"
 #include <iostream>
 
 GameEngine* globalGameEngine = nullptr;
@@ -48,22 +49,23 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Char
         flyingGoomba->setState(FALLING);
         enemies.push_back(flyingGoomba);
     }*/
-    Koopa* koopa = new Koopa({ 300, 500 }, RESOURCE_MANAGER.getTexture("Koopa_LEFT_0"));
+    /*Koopa* koopa = new Koopa({ 300, 500 }, RESOURCE_MANAGER.getTexture("Koopa_LEFT_0"));
     koopa->setState(FALLING);
-    enemies.push_back(koopa);
+    enemies.push_back(koopa);*/
 
     Rex* rex = new Rex({ 400, 500 }, RESOURCE_MANAGER.getTexture("Rex_LEFT_0"));
     rex->setState(FALLING);
     enemies.push_back(rex);
 
-    Bullet* bullet1 = new Bullet({ 1000, 400 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
+    /*Bullet* bullet1 = new Bullet({ 1000, 400 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
     enemies.push_back(bullet1);
     FireBullet* bullet2 = new FireBullet({ 1600, 500 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
     enemies.push_back(bullet2);
     Bullet* bullet3 = new Bullet({ 1000, 600 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
-    enemies.push_back(bullet3);
+    enemies.push_back(bullet3);*/
 
-    
+    //PiranhaPlant* plant = new PiranhaPlant({ 500, 800 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_CLOSED"));
+    //enemies.push_back(plant);
 }
 
 GameEngine::~GameEngine() {

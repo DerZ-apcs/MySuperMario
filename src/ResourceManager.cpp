@@ -140,6 +140,11 @@ void ResourceManager::loadTextures() {
 	textures["Puft_1"] = LoadTexture("resources/images/sprites/effects/Puft_1.png");
 	textures["Puft_2"] = LoadTexture("resources/images/sprites/effects/Puft_2.png");
 	textures["Puft_3"] = LoadTexture("resources/images/sprites/effects/Puft_3.png");
+	// dust effect
+	textures["Dust_0"] = LoadTexture("resources/images/sprites/effects/StarDust_0.png");
+	textures["Dust_1"] = LoadTexture("resources/images/sprites/effects/StarDust_1.png");
+	textures["Dust_2"] = LoadTexture("resources/images/sprites/effects/StarDust_2.png");
+	textures["Dust_3"] = LoadTexture("resources/images/sprites/effects/StarDust_3.png");
 	// Enemies
 	textures["Goomba_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/Goomba_0.png");
 	textures["Goomba_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/Goomba_1.png");
@@ -178,12 +183,10 @@ void ResourceManager::loadTextures() {
 	textures["EnemyFireball_LEFT_2"] = flipTexture(textures["EnemyFireball_RIGHT_2"]);
 	textures["EnemyFireball_LEFT_3"] = flipTexture(textures["EnemyFireball_RIGHT_3"]);
 
-	/*textures["PiranhaPlant_OPEN"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_1.png");
-	textures["PiranhaPlant_CLOSED"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_0.png");
-	textures["FirePiranhaPlant_OPEN"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_1.png");
-	textures["FirePiranhaPlant_CLOSED"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_0.png;*/
-
-
+	textures["PiranhaPlant_OPEN"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_0.png");
+	textures["PiranhaPlant_CLOSED"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_1.png");
+	textures["FirePiranhaPlant_OPEN"] = textures["PiranhaPlant_OPEN"];
+	textures["FirePiranhaPlant_CLOSED"] = textures["PiranhaPlant_CLOSED"];
 
 	textures["Rex_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/Rex_2_0.png");
 	textures["Rex_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/Rex_2_1.png");

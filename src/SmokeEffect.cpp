@@ -5,14 +5,15 @@
 SmokeEffect::SmokeEffect(Vector2 pos, Vector2 vel, float delay):
 	Effect(pos, delay)
 {
-	maxFrame = 3;
+	maxFrame = 1;
+	frameTime = 0.2f;
 	this->position = pos;
-	this->duration = duration;
 	this->delayed = delay;
 	this->velocity = vel;
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 2; i++) {
 		animations.push_back(RESOURCE_MANAGER.getTexture("Puft_" + std::to_string(i)));
 	}
+	texture = RESOURCE_MANAGER.getTexture("Puft_0");
 }
 
 void SmokeEffect::Update()
@@ -25,7 +26,7 @@ void SmokeEffect::Update()
 	frameAcum += deltaTime;
 	if (frameAcum > frameTime) {
 		currFrame++;
-		if (currFrame >= 4) {
+		if (currFrame >= 2) {
 			setEntityDead();
 			return;
 		}

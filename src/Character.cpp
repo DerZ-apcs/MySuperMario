@@ -10,6 +10,7 @@
 #include"../include/Flower.h"
 #include"../include/Star.h"
 #include"../include/Coin.h"
+#include "../include/DustEffect.h"
 
 Character::Character():
 	Character({32, 400}, {32, 40})
@@ -626,6 +627,7 @@ void Character::ThrowingFireBalls()
 void Character::collisionWithItem(const Item* item)
 {
 	TextEffect* text = nullptr;
+	DustEffect* dust = nullptr;
 	if (item->getItemType() == MUSHROOM) {
 		const Mushroom* mushroom = dynamic_cast<const Mushroom*>(item);
 		if (mushroom->getMushroomType() == REDMUSHROOM) {
@@ -641,6 +643,7 @@ void Character::collisionWithItem(const Item* item)
 			text->setTextColor(WHITE);
 			text->setOutlineColor(BLACK);
 		}	
+		dust = new DustEffect(Vector2{ mushroom->getX(), mushroom->getY() });
 	}
 	else if (item->getItemType() == STAR) {
 		const Star* star = dynamic_cast<const Star*>(item);
@@ -649,6 +652,7 @@ void Character::collisionWithItem(const Item* item)
 			scores += star->getPoint();
 			text = new TextEffect(to_string(star->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
 		}
+		dust = new DustEffect(Vector2{ star->getX(), star->getY() });
 	}
 	else if (item->getItemType() == FLOWER) {
 		const Flower* flower = dynamic_cast<const Flower*>(item);
@@ -657,6 +661,8 @@ void Character::collisionWithItem(const Item* item)
 			eatFireFlower();
 			text = new TextEffect(to_string(flower->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
 		}
+		dust = new DustEffect(Vector2{ flower->getX(), flower->getY() });
+
 	}
 	else if (item->getItemType() == COIN) {
 		const Coin* coin = dynamic_cast<const Coin*>(item);
@@ -666,10 +672,14 @@ void Character::collisionWithItem(const Item* item)
 			text = new TextEffect(to_string(coin->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
 			RESOURCE_MANAGER.playSound("coin.wav");
 		}
+		dust = new DustEffect(Vector2{ coin->getX(), coin->getY() });
+
 	}
 	if (text != nullptr) {
 		globalGameEngine->addEffect(text);
 	}
+	if (dust != nullptr)
+		globalGameEngine->addEffect(dust);
 }
 
 void Character::collisionWithEnemy(Enemy* enemy, CollisionType CollType)
@@ -685,7 +695,7 @@ void Character::collisionWithEnemy(Enemy* enemy, CollisionType CollType)
 		
 	}
 	else if (enemy->getEnemyType() != SHELL) {
-		if (CollType != COLLISION_TYPE_SOUTH || enemy->getEnemyType() == PIRANHA) {
+		if (CollType != COLLISION_TYPE_SOUTH /*|| enemy->getEnemyType() == PIRANHA*/) {
 			lostSuit();
 		}
 		else if (countImmortalTime > 0.f)
