@@ -10,6 +10,10 @@
 #include "../include/Koopa.h"
 #include "../include/Rex.h"
 #include "../include/Bullet.h"
+#include "../include/Flower.h"
+#include "../include/Star.h"
+#include "../include/Mushroom.h"
+#include "../include/Moon.h"
 #include "../include/PiranhaPlant.h"
 #include <iostream>
 
@@ -49,14 +53,23 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Char
         flyingGoomba->setState(FALLING);
         enemies.push_back(flyingGoomba);
     }*/
-    /*Koopa* koopa = new Koopa({ 300, 500 }, RESOURCE_MANAGER.getTexture("Koopa_LEFT_0"));
+    Koopa* koopa = new Koopa({ 300, 500 }, RESOURCE_MANAGER.getTexture("Koopa_LEFT_0"));
     koopa->setState(FALLING);
-    enemies.push_back(koopa);*/
+    enemies.push_back(koopa);
 
-    Rex* rex = new Rex({ 400, 500 }, RESOURCE_MANAGER.getTexture("Rex_LEFT_0"));
+    /*Rex* rex = new Rex({ 400, 500 }, RESOURCE_MANAGER.getTexture("Rex_LEFT_0"));
     rex->setState(FALLING);
-    enemies.push_back(rex);
+    enemies.push_back(rex);*/
 
+    Mushroom* red = new Mushroom(REDMUSHROOM, { 400, 500 }, { 32, 32 }, LEFT);
+    Mushroom* green = new Mushroom(GREENMUSHROOM, { 300, 500 }, { 32, 32 }, LEFT);
+    Star* star = new Star(YELLOW_STAR, {200, 500}, {32, 32}, LEFT);
+    Flower* flower = new Flower(FIRE_FLOWER, { 500, 500 }, LEFT);
+
+    /*items.push_back(star);
+    items.push_back(red);
+    items.push_back(green);
+    items.push_back(flower);*/
     /*Bullet* bullet1 = new Bullet({ 1000, 400 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
     enemies.push_back(bullet1);
     FireBullet* bullet2 = new FireBullet({ 1600, 500 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
@@ -66,6 +79,11 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Char
 
     //PiranhaPlant* plant = new PiranhaPlant({ 500, 800 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_CLOSED"));
     //enemies.push_back(plant);
+
+    Moon* moon = new Moon({ 300, 600 }, LEFT);
+    items.push_back(moon);
+    Star* blueStar = new Star(BLUE_STAR, { 300, 400 }, { 32, 32 }, LEFT);
+    items.push_back(blueStar);
 }
 
 GameEngine::~GameEngine() {
@@ -131,6 +149,8 @@ void GameEngine::update()
         isPaused = !isPaused;
         if (died)
         {
+            if (RESOURCE_MANAGER.isPlayingSound("lost_life.wav"))
+                RESOURCE_MANAGER.stopSound("lost_life.wav");
             died = false;
             player->setLostLife(false);
             player->resetInGame();

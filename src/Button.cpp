@@ -2,7 +2,6 @@
 
 Button::Button():
 	Button({0, 0}, {0, 0}, RESOURCE_MANAGER.getTexture("BOARD1"), "")
-	
 {
 	
 }
@@ -34,7 +33,7 @@ void Button::handle()
 void Button::draw() 
 {
 	if (texture.id != 0) {
-		Color tint = is_hovered ? Color{ 255, 255, 255, 240 } : WHITE;
+		Color tint = is_hovered ? Color{ 255, 255, 255, 250 } : WHITE;
 
 		DrawTexturePro(texture, { 0, 0, (float)texture.width, (float)texture.height },
 			{ m_position.x, m_position.y, m_size.x, m_size.y }, { 0, 0 }, 0.f, tint);

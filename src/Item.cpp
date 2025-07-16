@@ -3,8 +3,11 @@
 Item::Item(int point)
 {
 	this->point = point;
-	this->appear = true;
-	this->bottomAppear = 0.f;
+}
+
+Item::Item(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState state, Texture2D tex):
+	Entity(pos, sz, vel, dir, state, tex, "")
+{
 }
 
 const int& Item::getPoint() const
@@ -17,26 +20,6 @@ EntityType Item::getEntityType() const
 	return ITEM;
 }
 
-void Item::setAppearBottom(float bottom)
-{
-	this->bottomAppear = bottom;
-}
-
-const float& Item::getAppearBottom()
-{
-	return this->bottomAppear;
-}
-
-void Item::setAppear(bool appear)
-{
-	this->appear = appear;
-}
-
-bool Item::isAppear() const
-{
-	return this->appear;
-}
-
 void Item::Update()
 {
 }
@@ -47,6 +30,7 @@ void Item::draw()
 
 void Item::updateCollision()
 {
+	Entity::updateCollision();
 }
 
 void Item::UpdateTexture()

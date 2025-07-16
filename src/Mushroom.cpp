@@ -1,11 +1,16 @@
 #include "../include/Mushroom.h"
 
-Mushroom::Mushroom(MushroomType type, Vector2 position, Direction direction)
+Mushroom::Mushroom(MushroomType type, Vector2 position, Vector2 sz, Direction direction):
+	PowerItem(position, sz, direction, type == GREENMUSHROOM ? RESOURCE_MANAGER.getTexture("GreenMushroom") : RESOURCE_MANAGER.getTexture("RedMushroom")),
+	type(type)
 {
+	INTERVAL_JUMPING = 0.8f;
+	texture = type == GREENMUSHROOM ? RESOURCE_MANAGER.getTexture("GreenMushroom") : RESOURCE_MANAGER.getTexture("RedMushroom");
 }
 
-Mushroom::~Mushroom()
+float Mushroom::getPoint() const
 {
+	return SCORE_MUSHROOM;
 }
 
 const MushroomType& Mushroom::getMushroomType() const
@@ -15,26 +20,5 @@ const MushroomType& Mushroom::getMushroomType() const
 
 ITEM_TYPE Mushroom::getItemType() const
 {
-	return ITEM_TYPE();
-}
-
-void Mushroom::Update()
-{
-}
-
-void Mushroom::draw()
-{
-}
-
-void Mushroom::updateCollision()
-{
-}
-
-void Mushroom::UpdateTexture()
-{
-}
-
-bool Mushroom::isMaxDistance() const
-{
-	return false;
+	return MUSHROOM;
 }

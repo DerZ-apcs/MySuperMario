@@ -68,9 +68,10 @@ enum BLOCK_TYPE {
 enum ITEM_TYPE {
 	COIN,
 	MUSHROOM,
-	SUPERLEAF,
 	FLOWER,
-	STAR
+	STAR,
+	POWERITEM,
+	MOON
 };
 
 enum ENEMY_TYPE {
@@ -119,11 +120,17 @@ enum FlowerType {
 	FIRE_FLOWER
 };
 enum StarType {
-	YELLOW_STAR
+	YELLOW_STAR,
+	BLUE_STAR
 };
 
 enum CoinType {
 	BLOCK_COIN,
 	STATIC_COIN
+};
+
+enum PowerUpState {
+	EMERGING,
+	ACTIVE
 };
 #endif

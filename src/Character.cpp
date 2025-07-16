@@ -11,6 +11,7 @@
 #include"../include/Star.h"
 #include"../include/Coin.h"
 #include "../include/DustEffect.h"
+#include "../include/Moon.h"
 
 Character::Character():
 	Character({32, 400}, {32, 40})
@@ -633,7 +634,7 @@ void Character::collisionWithItem(const Item* item)
 		if (mushroom->getMushroomType() == REDMUSHROOM) {
 			scores += mushroom->getPoint();
 			eatRedMushrooms();
-			text = new TextEffect(to_string(mushroom->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
+			text = new TextEffect(to_string((int)mushroom->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
 			text->setTextColor(WHITE);
 			text->setOutlineColor(BLACK);
 		}
@@ -645,13 +646,24 @@ void Character::collisionWithItem(const Item* item)
 		}	
 		dust = new DustEffect(Vector2{ mushroom->getX(), mushroom->getY() });
 	}
+	else if (item->getItemType() == MOON) {
+		const Moon* moon = dynamic_cast<const Moon*>(item);
+		lives += 3;
+		RESOURCE_MANAGER.playSound("1-up.wav");
+		text = new TextEffect("3 UPs", Vector2{ getCenterX(), getTop() });
+		text->setTextColor(WHITE);
+		text->setOutlineColor(BLACK);
+		dust = new DustEffect(Vector2{ moon->getX(), moon->getY() });
+	}
 	else if (item->getItemType() == STAR) {
 		const Star* star = dynamic_cast<const Star*>(item);
-		if (star->getStarType() == YELLOW_STAR) {
-			eatStar();
-			scores += star->getPoint();
-			text = new TextEffect(to_string(star->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
-		}
+		eatStar();
+		if (star->getStarType() == YELLOW_STAR) 
+			invicibleStarTime = 12.f;
+		else if (star->getStarType() == BLUE_STAR)
+			invicibleStarTime = 18.f;
+		scores += star->getPoint();
+		text = new TextEffect(to_string((int)star->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
 		dust = new DustEffect(Vector2{ star->getX(), star->getY() });
 	}
 	else if (item->getItemType() == FLOWER) {
@@ -659,7 +671,7 @@ void Character::collisionWithItem(const Item* item)
 		if (flower->getFlowerType() == FIRE_FLOWER) {
 			scores += flower->getPoint();
 			eatFireFlower();
-			text = new TextEffect(to_string(flower->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
+			text = new TextEffect(to_string((int)flower->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
 		}
 		dust = new DustEffect(Vector2{ flower->getX(), flower->getY() });
 
@@ -669,7 +681,7 @@ void Character::collisionWithItem(const Item* item)
 		if (coin->getCoinType() == STATIC_COIN) {
 			coins++;
 			scores += coin->getPoint();
-			text = new TextEffect(to_string(coin->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
+			text = new TextEffect(to_string((int)coin->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
 			RESOURCE_MANAGER.playSound("coin.wav");
 		}
 		dust = new DustEffect(Vector2{ coin->getX(), coin->getY() });
@@ -787,7 +799,7 @@ void Character::eatStar() // transform to star
 	else if (Character_state == STATE_FIRE) {
 		StartTransition({ 4, 9, 4, 9, 4, 9, 4, 9 }, 8);
 	}
-	invicibleStarTime = 12.f;
+	//invicibleStarTime = 12.f;
 }
 
 void Character::eatFireFlower() // transform to fire

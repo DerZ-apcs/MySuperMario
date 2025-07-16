@@ -129,11 +129,13 @@ void ResourceManager::loadTextures() {
 	textures["FireFlower_0"] = LoadTexture("resources/images/sprites/items/FireFlower_0.png");
 	textures["FireFlower_1"] = LoadTexture("resources/images/sprites/items/FireFlower_1.png");
 	// mushroom 
-	textures["1UpMushroom"] = LoadTexture("resources/images/sprites/items/1UpMushroom.png");
-	textures["SuperMushroom"] = LoadTexture("resources/images/sprites/items/Mushroom.png");
+	textures["GreenMushroom"] = LoadTexture("resources/images/sprites/items/1UpMushroom.png");
+	textures["RedMushroom"] = LoadTexture("resources/images/sprites/items/Mushroom.png");
 	// star
-	textures["Star"] = LoadTexture("resources/images/sprites/items/Star.png");
-	textures["moon"] = LoadTexture("resources/images/sprites/items/3UpMoon.png");
+	textures["YellowStar"] = LoadTexture("resources/images/sprites/items/Star.png");
+	textures["BlueStar"] = LoadTexture("resources/images/sprites/items/blue_star.png");
+
+	textures["Moon"] = LoadTexture("resources/images/sprites/items/3UpMoon.png");
 	
 	// smoke effect
 	textures["Puft_0"] = LoadTexture("resources/images/sprites/effects/Puft_0.png");

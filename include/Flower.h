@@ -1,15 +1,13 @@
 #ifndef FLOWER_H
 #define FLOWER_H
 
-#include "../include/Item.h"
+#include "../include/PowerItem.h"
 
-class Flower : public Item {
+class Flower : public PowerItem {
 private:
-	static constexpr int POINT = 1000;
+	static constexpr int POINT = 600;
 
 	FlowerType type;
-
-	static constexpr float APPEAR_SPEED = 16.f;
 public:
 	Flower(FlowerType type = FIRE_FLOWER, Vector2 position = { 0.f, 0.f }, Direction direction = RIGHT);
 
@@ -18,10 +16,8 @@ public:
 	const FlowerType& getFlowerType() const;
 
 	ITEM_TYPE getItemType() const override;
-
+	float getPoint() const override;
 	void Update() override;
-	void draw() override;
-	void updateCollision() override;
 	void UpdateTexture() override;
 };
 
