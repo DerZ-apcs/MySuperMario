@@ -6,7 +6,9 @@
 #include "../include/SolidBlock.h"
 #include "../include/Brick.h"
 #include "../include/CoinBlock.h"
+#include "../include/ItemBlock.h"
 #include "../include/Item.h"
+#include "../include/Goomba.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>

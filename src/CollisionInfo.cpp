@@ -105,7 +105,8 @@ bool PlayerItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	case COLLISION_TYPE_NORTH:
 		character->setPosition(Vector2{ character->getX(), block->getY() + block->getHeight() });
 		character->setVelY(0);
-		block->releaseItem(character); // set release
+		//block->releaseItem(character); // set release
+		block->Activate();
 		break;
 	case COLLISION_TYPE_SOUTH:
 		character->setPosition(Vector2{ character->getX(), block->getY() - character->getHeight() });
@@ -355,7 +356,8 @@ bool EnemyItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 
 		if (enemy->getEnemyType() == SHELL) {
 			if (enemy->getIsKicked())
-				block->releaseItem(enemy);
+				//block->releaseItem(enemy);
+				block->Activate();
 		}
 	}
 	return true;
@@ -433,12 +435,36 @@ bool FireBallItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	if (Colltype == COLLISION_TYPE_NONE)
 		return false;
 
-	block->releaseItem(fireball);
-	fireball->setEntityDead();
-	fireball->setCollisionAvailable(false);
-	RESOURCE_MANAGER.playSound("bump.wav");
-	SmokeEffect* smoke = new SmokeEffect(Vector2{ block->getCenter().x, block->getTop() }, Vector2{ 0, -200 });
-	globalGameEngine->addEffect(smoke);
+	if (!block->getActive()) {
+		block->Activate();
+		fireball->setEntityDead();
+		fireball->setCollisionAvailable(false);
+		RESOURCE_MANAGER.playSound("bump.wav");
+		SmokeEffect* smoke = new SmokeEffect(Vector2{ block->getCenter().x, block->getTop() }, Vector2{ 0, -200 });
+		globalGameEngine->addEffect(smoke);
+	}
+	switch (Colltype)
+	{
+	case COLLISION_TYPE_NORTH:
+		fireball->setPosition(Vector2{ fireball->getX(), block->getY() + block->getHeight() });
+		fireball->setVelY(0);
+		break;
+	case COLLISION_TYPE_SOUTH:
+		fireball->setPosition(Vector2{ fireball->getX(), block->getY() - fireball->getHeight() });
+		fireball->setVelY(fireball->getVelY() * -0.9f);
+		break;
+	case COLLISION_TYPE_EAST:
+		fireball->setPosition(Vector2{ block->getX() - fireball->getWidth(), fireball->getY() });
+		fireball->setVelX(fireball->getVelX() * -0.9f);
+		break;
+	case COLLISION_TYPE_WEST:
+		fireball->setPosition(Vector2{ block->getX() + block->getWidth(), fireball->getY() });
+		fireball->setVelX(fireball->getVelX() * -0.9f);
+		break;
+	default:
+		break;
+	}
+	
 	return true;
 }
 
@@ -459,6 +485,7 @@ bool FireBallBrickInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	RESOURCE_MANAGER.playSound("bump.wav");
 	SmokeEffect* smoke = new SmokeEffect(Vector2{ block->getCenter().x, block->getTop() }, Vector2{ 0, -200 });
 	globalGameEngine->addEffect(smoke);
+	
 	return true;
 }
 

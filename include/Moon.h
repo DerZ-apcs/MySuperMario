@@ -7,7 +7,7 @@ class Moon : public PowerItem {
 private:
     const float speedX = 200.f;
 public:
-    Moon(Vector2 position = { 0.f, 0.f }, Direction direction = RIGHT);
+    Moon(MoonType moonType = NORMAL_MOON, Vector2 position = { 0.f, 0.f }, Direction direction = RIGHT);
 
     float getPoint() const override;
     ITEM_TYPE getItemType() const override;

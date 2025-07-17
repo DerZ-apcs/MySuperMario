@@ -80,7 +80,7 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Char
     //PiranhaPlant* plant = new PiranhaPlant({ 500, 800 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_CLOSED"));
     //enemies.push_back(plant);
 
-    Moon* moon = new Moon({ 300, 600 }, LEFT);
+    Moon* moon = new Moon(NORMAL_MOON, { 300, 600 }, LEFT);
     items.push_back(moon);
     Star* blueStar = new Star(BLUE_STAR, { 300, 400 }, LEFT);
     items.push_back(blueStar);
@@ -95,6 +95,13 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Char
         CoinBlock* coinBlock = new CoinBlock({ (float)i * 32, 550 }, "TILE_110", 4);
         blocks.push_back(coinBlock);
     }
+    
+    ItemBlock* itemblock1 = new ItemBlock({ 100, 800 }, MUSHROOM, 0);
+    ItemBlock* itemblock2 = new ItemBlock({ 132, 800 }, STAR, 0);
+    ItemBlock* itemblock3 = new ItemBlock({ 164, 800 }, FLOWER, 0);
+    blocks.push_back(itemblock1);
+    blocks.push_back(itemblock2);
+    blocks.push_back(itemblock3);
 }
 
 GameEngine::~GameEngine() {

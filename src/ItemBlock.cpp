@@ -1,9 +1,18 @@
 #include "../include/ItemBlock.h"
 #include "../include/ItemFactory.h"
+#include "../include/GameEngine.h"
+#include <random>
 
+static Direction getRandomDirection() {
+	static std::random_device rd;
+	static std::mt19937 gen(rd());
+	static std::uniform_int_distribution<> dist(0, 1);
+
+	return dist(gen) == 0 ? Direction::LEFT : Direction::RIGHT;
+}
 ItemBlock::ItemBlock(Vector2 pos, Vector2 size):
-	Blocks(pos, size), isActive(true),
-	item(COIN)
+	Blocks(pos, size), isActive(true), heldPowerUp(MUSHROOM),
+	subType(0)
 {
 	this->frameAcum = 0;
 	this->currFrame = 0;
@@ -11,9 +20,11 @@ ItemBlock::ItemBlock(Vector2 pos, Vector2 size):
 	this->maxFrame = 4;
 }
 
-ItemBlock::ItemBlock(Vector2 pos, Vector2 size, std::string textureName, ITEM_TYPE item):
-	Blocks(pos, size, textureName), item(item), isActive(true)
+ItemBlock::ItemBlock(Vector2 pos, ITEM_TYPE type, int subType):
+	Blocks(pos, {32, 32}, "QUESTION_0"), isActive(true),
+	heldPowerUp(type), subType(subType)
 {
+	
 	this->frameAcum = 0;
 	this->currFrame = 0;
 	this->frameTime = 0.2f;
@@ -33,8 +44,6 @@ void ItemBlock::draw()
 
 void ItemBlock::Update()
 {
-	if (!isActive)
-		return;
 	frameAcum += GetFrameTime();
 	if (frameAcum >= frameTime) {
 		frameAcum = 0;
@@ -49,19 +58,7 @@ void ItemBlock::UpdateTexture()
 		texture = RESOURCE_MANAGER.getTexture("EyesClosed_0");
 		return;
 	}
-	std::string textureName = "QUESTION_" + std::to_string(currFrame);
-	texture = RESOURCE_MANAGER.getTexture(textureName);
-}
-
-void ItemBlock::releaseItem(const Entity* object)
-{
-	if (hasItem)
-	{
-	}
-}
-
-void ItemBlock::setItem(ITEM_TYPE item, int subtype)
-{
+	texture = RESOURCE_MANAGER.getTexture("QUESTION_" + std::to_string(currFrame));
 }
 
 bool ItemBlock::getActive() const
@@ -72,4 +69,15 @@ bool ItemBlock::getActive() const
 void ItemBlock::setActive(bool active)
 {
 	this->isActive = active;
+}
+
+void ItemBlock::Activate()
+{
+	if (!isActive) return;
+	texture = RESOURCE_MANAGER.getTexture("EyesClosed_0");
+	isActive = false;
+
+	ItemFactory& factory = ItemFactory::getInstance();
+	Item* item = factory.createItem(heldPowerUp, { position.x, position.y - 8}, getRandomDirection(), subType);
+	globalGameEngine->addItem(item);
 }

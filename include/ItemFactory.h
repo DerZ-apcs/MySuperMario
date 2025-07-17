@@ -4,6 +4,7 @@
 #include "../include/Mushroom.h"
 #include "../include/Flower.h"
 #include "../include/Star.h"
+#include "../include/Moon.h"
 #include <functional>
 #include <unordered_map>
 
@@ -18,6 +19,13 @@ public:
 
 	void registerItem(ITEM_TYPE type, ItemCreator creator) {
 		creators[type] = creator;
+	}
+	Item* createItem(ITEM_TYPE type, Vector2 pos = { 0.f, 0.f }, Direction direction = RIGHT, int subtype = 0) {
+		auto it = creators.find(type);
+		if (it != creators.end()) {
+			return it->second(pos, direction, subtype);
+		}
+		return nullptr;
 	}
 private:
 	std::unordered_map<ITEM_TYPE, ItemCreator> creators;
@@ -44,5 +52,8 @@ inline void registerItems() {
 
 	factory.registerItem(STAR, [](Vector2 pos, Direction direction, int subtype) {
 		return new Star(static_cast<StarType>(subtype), pos, direction);
+		});
+	factory.registerItem(MOON, [](Vector2 pos, Direction direction, int subtype) {
+		return new Moon(static_cast<MoonType>(subtype), pos, direction);
 		});
 }

@@ -1,6 +1,6 @@
 #include "../include/PowerItem.h"
 
-const float PowerItem::EMERGENCE_HEIGHT = 32.0f;
+const float PowerItem::EMERGENCE_HEIGHT = 4.0f;
 const float PowerItem::EMERGENCE_SPEED = 48.0f;
 const float PowerItem::SPEED = 150.0f;
 
@@ -35,6 +35,8 @@ void PowerItem::Update() {
 
 	switch (powerUpState) {
 	case ACTIVE: {
+		gravityAvailable = true;
+		collisionAvailable = true;
 		float deltaTime = GetFrameTime();
 		position.x += velocity.x * deltaTime;
 		position.y += velocity.y * deltaTime;
@@ -54,6 +56,9 @@ void PowerItem::Update() {
 	}
 
 	case EMERGING: {
+		RESOURCE_MANAGER.playSound("mushroom_appears.wav");
+		gravityAvailable = false;
+		collisionAvailable = false;
 		float deltaTime = GetFrameTime();
 		float dy = EMERGENCE_SPEED * deltaTime;
 		emergenceDis += dy; position.y -= dy;

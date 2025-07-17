@@ -76,16 +76,74 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 	int blockwidth = mapJson["tilewidth"];
 	std::vector<int> data = mapJson["layers"][0]["data"];
 
+	int firstgid = mapJson["tilesets"][0]["firstgid"];
+
 	for (int y = 0; y < height; ++y) {
 		for (int x = 0; x < width; ++x) {
 			int blockId = data[static_cast<std::vector<int, std::allocator<int>>::size_type>(y) * width + x];
 			if (blockId != 0) {
+				int texId = blockId - firstgid;
+				if (blockId == 105) {
+					Brick* brick = new Brick({ (float)x * blockwidth, (float)y * blockwidth });
+					blockArray.push_back(brick);
+					continue;
+				}
+				if (blockId == 114) {
+					Coin* coin = new Coin(STATIC_COIN, { (float)x * blockwidth, (float)y * blockwidth });
+					items.push_back(coin);
+					continue;
+				}
+				if (blockId == 106) {
+
+					continue;
+				}
 				Blocks* solidBlocks = new SolidBlock({ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }, "TILE_" + std::to_string(blockId - 2));
 				blockArray.push_back(solidBlocks);
 			}
 		}
 	}
-	setMapSize(Vector2{(float) width * blockwidth, (float) height * blockwidth});
+	/*nlohmann::json objectLayer = mapJson["layers"][1];
+	nlohmann::json objects = objectLayer["objects"];*/
+
+	//for (auto& obj : objects) {
+	//	int gid = obj["gid"];
+	//	int x = obj["x"] / 32;
+	//	int y = obj["y"] / 32 - 1;
+	//	int width = obj["width"];
+	//	int height = obj["height"];
+
+	//	std::string name;
+	//	std::string type;
+
+	//	for (auto& prop : obj["properties"]) {
+	//		if (prop["name"] == "Name") name = prop["value"];
+	//		else if (prop["name"] == "Type") type = prop["value"];
+	//	}
+	//	// question block
+	//	if (name == "QuestionBlock") {
+	//		if (type == "Mushroom") {
+	//			blockArray.push_back(new ItemBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, MUSHROOM));
+	//		}
+	//		else if (type == "Flower") {
+	//			blockArray.push_back(new ItemBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, FLOWER));
+	//		}
+	//		else if (type == "Star") {
+	//			blockArray.push_back(new ItemBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, STAR));
+	//		}
+	//	}
+	//	// enemy
+	//	if (name == "Enemy") {
+	//		if (type == "Goomba") {
+	//			enemies.push_back(new Goomba(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0")));
+	//		}
+	//	}
+	//	// coin block
+	//	if (name == "CoinBlock") {
+	//		int texId = gid - firstgid;
+	//		blockArray.push_back(new CoinBlock({ (float)x * blockwidth, (float)y * blockwidth }, "TILE_" + std::to_string(texId), 5));
+	//	}
+	//}
+	setMapSize(Vector2{ (float)width * blockwidth, (float)height * blockwidth });
 
 }
 

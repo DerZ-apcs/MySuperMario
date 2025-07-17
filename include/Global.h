@@ -4,6 +4,7 @@
 #include "../include/Setting.h"
 #include "../include/Singleton.h"
 #include <map>
+#include <random>
 
 extern ResourceManager& RESOURCE_MANAGER;
 extern Setting& SETTING;
@@ -114,21 +115,25 @@ enum SHELL_TYPE {
 };
 
 enum MushroomType {
-	GREENMUSHROOM, // Lives
-	REDMUSHROOM, // Super
+	// Super 1.
+	REDMUSHROOM,
+	GREENMUSHROOM, // Lives 2.
 };
 
 enum FlowerType {
-	FIRE_FLOWER
+	FIRE_FLOWER // 1
+};
+enum MoonType {
+	NORMAL_MOON
 };
 enum StarType {
-	YELLOW_STAR,
-	BLUE_STAR
+	YELLOW_STAR, // 1.
+	BLUE_STAR // 2.
 };
 
 enum CoinType {
-	BLOCK_COIN,
-	STATIC_COIN
+	STATIC_COIN, // 1.
+	BLOCK_COIN // 2.
 };
 
 enum PowerUpState {

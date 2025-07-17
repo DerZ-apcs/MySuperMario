@@ -1,5 +1,7 @@
 #include "../include/Game.h"
 #include "../include/Level.h"
+#include "../include/ItemFactory.h"
+#include "../include/BlockManagement.h"
 
 class MenuState;
 
@@ -38,7 +40,9 @@ void Game::init()
 		backgroundTexture = RESOURCE_MANAGER.getTexture("MENU_SCREEN");
 	}
 	SetTargetFPS(140);
-
+	
+	registerBlocks();
+	registerItems();
 	globalGameEngine = nullptr;
 
 	RESOURCE_MANAGER.playMusic("TITLE");
