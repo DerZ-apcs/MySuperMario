@@ -8,7 +8,7 @@ private:
 	MushroomType type;
 public:
 	//Create new mushroom
-	Mushroom(MushroomType type = REDMUSHROOM, Vector2 position = { 0.f, 0.f }, Vector2 sz = {32, 32}, Direction direction = RIGHT);
+	Mushroom(MushroomType type = REDMUSHROOM, Vector2 position = { 0.f, 0.f }, Direction direction = RIGHT);
 	~Mushroom() = default;
 
 	float getPoint() const override;

@@ -54,14 +54,16 @@ enum CharacterState {
 
 //Block
 enum BLOCK_TYPE {
-	FLOOR,
+	FLOOR, // only collision the upper
 	BRICK, // breakable
 	SOLIDBLOCK, // unmovable, unbreakable
 	MOVINGBLOCK,
-	ITEMBLOCK,
-	HIDDEN,
+	ITEMBLOCK, // carry items
+	HIDDEN, 
 	TEMPBLOCK,
-	DECOR
+	DECOR, // for decor, not collision
+	COINBLOCK, // coin when hit
+	CLOUDBLOCK
 };
 
 

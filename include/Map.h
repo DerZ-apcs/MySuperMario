@@ -4,6 +4,8 @@
 #include "../include/Blocks.h"
 #include "../include/Floor.h"
 #include "../include/SolidBlock.h"
+#include "../include/Brick.h"
+#include "../include/CoinBlock.h"
 #include "../include/Item.h"
 #include <iostream>
 #include <fstream>
@@ -11,6 +13,7 @@
 #include "../include/json.hpp"
 #include <string>
 #include <map>
+#include "../include/ResourceManager.h"
 
 using json = nlohmann::json; // to load file json
 

@@ -11,6 +11,8 @@
 #include "../include/Shell.h"
 #include "../include/SmokeEffect.h"
 #include "../include/ItemBlock.h"
+#include "../include/CoinBlock.h"
+#include "../include/Coin.h"
 #include <iostream>
 #include <GameEngine.h>
 
@@ -194,6 +196,44 @@ bool PlayerBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	return true;
 }
 
+bool PlayerCoinBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
+{
+	Character* character = dynamic_cast<Character*>(entityA);
+	CoinBlock* block = dynamic_cast<CoinBlock*>(entityB);
+
+	if (!character || !block || !character->getCollisionAvailable())
+		return false;
+	CollisionType Colltype = character->CheckCollision(*block);
+	if (Colltype == COLLISION_TYPE_NONE)
+		return false;
+	switch (Colltype) {
+	case COLLISION_TYPE_NORTH:
+		character->setPosition(Vector2{ character->getX(), block->getY() + block->getHeight() });
+		character->setVelY(0);
+		if (block->getActive()) {
+			block->Activate();
+			character->setCoins(character->getCoins() + 1);
+			Coin coin;
+			character->setScores(character->getScores() + coin.getPoint());
+		}
+		break;
+	case COLLISION_TYPE_SOUTH:
+		character->setPosition(Vector2{ character->getX(), block->getY() - character->getHeight() });
+		character->setState(ON_GROUND);
+		character->setVelY(0);
+		break;
+	case COLLISION_TYPE_EAST:
+		character->setPosition(Vector2{ block->getX() - character->getWidth(), character->getY() });
+		character->setVelX(0);
+		break;
+	case COLLISION_TYPE_WEST:
+		character->setPosition(Vector2{ block->getX() + block->getWidth(), character->getY() });
+		character->setVelX(0);
+		break;
+	default:
+		break;
+	}
+}
 // enemy
 bool EnemyFloorInfo::HandleCollision(Entity* entityA, Entity* entityB)
 {
@@ -638,6 +678,8 @@ std::unique_ptr<CollisionInfo> CollisionInfoSelector::getInfor(EntityType typeA,
 			return std::make_unique<PlayerMovingBlockInfo>();
 		if (block && block->getBlockType() == ITEMBLOCK)
 			return std::make_unique<PlayerItemBlockInfo>();
+		if (block && block->getBlockType() == COINBLOCK)
+			return std::make_unique<PlayerCoinBlockInfo>();
 		if (block && block->getBlockType() == BRICK)
 			return std::make_unique<PlayerBrickInfo>();
 		return std::make_unique<PlayerBlockInfo>();

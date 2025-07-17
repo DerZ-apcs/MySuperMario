@@ -94,6 +94,15 @@ void ResourceManager::loadTextures() {
 		std::string path = "resources/images/tiles/AllTiles/tile_" + std::to_string(i) + ".png";
 		textures["TILE_" + std::to_string(i)] = LoadTexture(path.c_str());
 	}
+		// brick
+	textures["Brick_0"] = LoadTexture("resources/images/tiles/AllTiles/brick.png");
+	textures["Brick_1"] = LoadTexture("resources/images/tiles/AllTiles/tile_110.png");
+		// question block
+	textures["QUESTION_0"] = LoadTexture("resources/images/sprites/blocks/Question_0.png");
+	textures["QUESTION_1"] = LoadTexture("resources/images/sprites/blocks/Question_1.png");
+	textures["QUESTION_2"] = LoadTexture("resources/images/sprites/blocks/Question_2.png");
+	textures["QUESTION_3"] = LoadTexture("resources/images/sprites/blocks/Question_3.png");
+	textures["EyesClosed_0"] = LoadTexture("resources/images/sprites/blocks/EyesClosed_0.png");
 	// background
 
 	textures["BACKGROUND_1"] = LoadTexture("resources/images/backgrounds/background1.png");

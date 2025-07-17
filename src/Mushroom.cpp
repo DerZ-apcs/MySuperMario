@@ -1,7 +1,7 @@
 #include "../include/Mushroom.h"
 
-Mushroom::Mushroom(MushroomType type, Vector2 position, Vector2 sz, Direction direction):
-	PowerItem(position, sz, direction, type == GREENMUSHROOM ? RESOURCE_MANAGER.getTexture("GreenMushroom") : RESOURCE_MANAGER.getTexture("RedMushroom")),
+Mushroom::Mushroom(MushroomType type, Vector2 position, Direction direction):
+	PowerItem(position, { 32, 32 }, direction, type == GREENMUSHROOM ? RESOURCE_MANAGER.getTexture("GreenMushroom") : RESOURCE_MANAGER.getTexture("RedMushroom")),
 	type(type)
 {
 	INTERVAL_JUMPING = 0.8f;

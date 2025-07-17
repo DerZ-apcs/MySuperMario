@@ -23,6 +23,8 @@ void Blocks::Update()
 
 void Blocks::draw()
 {
+	if (texture.id != 0)
+	DrawTexture(texture, position.x, position.y, WHITE);
 }
 
 void Blocks::UpdateTexture()

@@ -61,9 +61,9 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Char
     rex->setState(FALLING);
     enemies.push_back(rex);*/
 
-    Mushroom* red = new Mushroom(REDMUSHROOM, { 400, 500 }, { 32, 32 }, LEFT);
-    Mushroom* green = new Mushroom(GREENMUSHROOM, { 300, 500 }, { 32, 32 }, LEFT);
-    Star* star = new Star(YELLOW_STAR, {200, 500}, {32, 32}, LEFT);
+    Mushroom* red = new Mushroom(REDMUSHROOM, { 400, 500 }, LEFT);
+    Mushroom* green = new Mushroom(GREENMUSHROOM, { 300, 500 }, LEFT);
+    Star* star = new Star(YELLOW_STAR, {200, 500}, LEFT);
     Flower* flower = new Flower(FIRE_FLOWER, { 500, 500 }, LEFT);
 
     /*items.push_back(star);
@@ -82,8 +82,19 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Char
 
     Moon* moon = new Moon({ 300, 600 }, LEFT);
     items.push_back(moon);
-    Star* blueStar = new Star(BLUE_STAR, { 300, 400 }, { 32, 32 }, LEFT);
+    Star* blueStar = new Star(BLUE_STAR, { 300, 400 }, LEFT);
     items.push_back(blueStar);
+
+    // test brick
+    for (int i = 1; i < 10; i++) {
+        Brick* brick = new Brick(Vector2{ (float)i * 32, 700 }, Vector2{ 32, 32 }, "Brick_0");
+        blocks.push_back(brick);
+    }
+    // test coin block
+    for (int i = 1; i < 10; i++) {
+        CoinBlock* coinBlock = new CoinBlock({ (float)i * 32, 550 }, "TILE_110", 4);
+        blocks.push_back(coinBlock);
+    }
 }
 
 GameEngine::~GameEngine() {

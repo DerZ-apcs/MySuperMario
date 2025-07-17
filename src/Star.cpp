@@ -1,7 +1,7 @@
 #include "../include/Star.h"
 
-Star::Star(StarType type, Vector2 position, Vector2 sz, Direction direction) :
-	PowerItem(position, sz, direction, YELLOW_STAR ? RESOURCE_MANAGER.getTexture("YellowStar") : RESOURCE_MANAGER.getTexture("BlueStar")),
+Star::Star(StarType type, Vector2 position, Direction direction) :
+	PowerItem(position, {32, 32}, direction, YELLOW_STAR ? RESOURCE_MANAGER.getTexture("YellowStar") : RESOURCE_MANAGER.getTexture("BlueStar")),
 	type(type)
 {
 	INTERVAL_JUMPING = 0.8f;
