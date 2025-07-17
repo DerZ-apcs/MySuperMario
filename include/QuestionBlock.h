@@ -15,10 +15,8 @@ private:
 	bool isActive;
 	ITEM_TYPE heldPowerUp;
 
-	std::vector<Item*>* items;
-
 public:
-	QuestionBlock(Vector2 pos, ITEM_TYPE type, std::vector<Item*>* itemsVec);
+	QuestionBlock(Vector2 pos, ITEM_TYPE type);
 	~QuestionBlock() = default;
 
 	bool getActive() const;	

@@ -18,7 +18,7 @@ public:
 	EntityType getEntityType() const override;
 	const CoinType& getCoinType() const;
 	ITEM_TYPE getItemType() const override;
-	const int& getPoint() const;
+	static const int& getPoint();
 
 	void Update() override;
 	void draw() override;

@@ -33,6 +33,10 @@ class PlayerItemBlockInfo : public CollisionInfo { // ItemBlock = QuestionBlock,
 public:
 	bool HandleCollision(Entity* entityA, Entity* entityB) override;
 };
+class PlayerCoinBlockInfo : public CollisionInfo {
+public:
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
+};
 class PlayerBrickInfo : public CollisionInfo {
 public:
 	bool HandleCollision(Entity* entityA, Entity* entityB) override;

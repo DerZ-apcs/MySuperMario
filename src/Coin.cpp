@@ -23,7 +23,7 @@ Coin::Coin(CoinType type, Vector2 pos)
 
 //------------------
 
-const int& Coin::getPoint() const {
+const int& Coin::getPoint() {
 	return POINT;
 }
 

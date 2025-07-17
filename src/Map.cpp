@@ -137,23 +137,34 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 		int height = obj["height"];
 
 		std::string name;
-		std::string power;
+		std::string type;
 
 		for (auto& prop : obj["properties"]) {
 			if (prop["name"] == "Name") name = prop["value"];
-			else if (prop["name"] == "Power") power = prop["value"];
+			else if (prop["name"] == "Type") type = prop["value"];
 		}
 
 		if (name == "QuestionBlock") {
-			if (power == "Mushroom") {
-				blockArray.push_back(new QuestionBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, MUSHROOM, &items));
+			if (type == "Mushroom") {
+				blockArray.push_back(new QuestionBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, MUSHROOM));
 			}
-			else if (power == "Flower") {
-				blockArray.push_back(new QuestionBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, FLOWER, &items));
+			else if (type == "Flower") {
+				blockArray.push_back(new QuestionBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, FLOWER));
 			}
-			else if (power == "Star") {
-				blockArray.push_back(new QuestionBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, STAR, &items));
+			else if (type == "Star") {
+				blockArray.push_back(new QuestionBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, STAR));
 			}
+		}
+
+		if (name == "Enemy") {
+			if (type == "Goomba") {
+				enemies.push_back(new Goomba(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0")));
+			}
+		}
+
+		if (name == "CoinBlock") {
+			int texId = gid - firstgid;
+			blockArray.push_back(new CoinBlock({ (float)x * blockwidth, (float)y * blockwidth }, "TILE_" + std::to_string(texId), 5));
 		}
 	}
 
@@ -195,7 +206,7 @@ std::vector<Enemy*> Map::getEnemies() const
 	return enemies;
 }
 
-std::vector<Item*>& Map::getItems() 
+std::vector<Item*> Map::getItems() const
 {
 	return this->items;
 }

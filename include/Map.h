@@ -9,6 +9,9 @@
 #include "../include/Coin.h"
 #include "../include/Brick.h"
 #include "../include/QuestionBlock.h"
+#include "../include/CoinBlock.h"
+#include "../include/Enemy.h"
+#include "../include/Goomba.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -57,7 +60,7 @@ public:
 
 	std::vector<Blocks*> getBlocks() const;
 	std::vector<Enemy*> getEnemies() const;
-	std::vector<Item*>& getItems(); // need for QuestionBlock
+	std::vector<Item*> getItems() const; 
 	std::vector<Blocks*> getDecor() const;
 
 	float BgWidth;

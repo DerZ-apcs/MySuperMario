@@ -59,6 +59,7 @@ enum BLOCK_TYPE {
 	SOLIDBLOCK, // unmovable, unbreakable
 	MOVINGBLOCK,
 	ITEMBLOCK,
+	COINBLOCK,
 	HIDDEN,
 	TEMPBLOCK,
 	DECOR

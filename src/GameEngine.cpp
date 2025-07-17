@@ -12,7 +12,7 @@
 GameEngine* globalGameEngine = nullptr;
 
 GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Character*& player)
-    : camera(screenWidth, screenHeight, 1.25f), level(&level), player(player), items(map.getItems()) {
+    : camera(screenWidth, screenHeight, 1.25f), level(&level), player(player) {
     map.LoadFromJsonFile(level.getMapPath());
     map.loadBackgroundTexture(level.getBackGroundName());
     Vector2 Msize = map.getMapSize();
@@ -23,7 +23,7 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Char
 
     blocks = map.getBlocks();
     enemies = map.getEnemies();
-	//items = map.getItems(); // in the instantiation 
+	items = map.getItems(); // in the instantiation 
     decor = map.getDecor();
 
     isPaused = false;
@@ -32,11 +32,12 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Char
     deltaTime = 0.f;
     BackGroundPos = { {0, 0}, {(float)GetScreenWidth(), 0}, {(float)GetScreenWidth() * 2, 0} };
     //items.push_back();
+    /*
     for (int i = 7; i < 10; i++) {
         Goomba* goomba = new Goomba({(float) 100 * i, 300 }, RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0"));
         goomba->setState(FALLING);
         enemies.push_back(goomba);
-    }
+    }*/
 }
 
 GameEngine::~GameEngine() {

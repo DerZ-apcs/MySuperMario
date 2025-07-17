@@ -11,6 +11,7 @@
 #include "../include/Shell.h"
 #include "../include/ItemBlock.h"
 #include "../include/QuestionBlock.h"
+#include "../include/CoinBlock.h"
 #include <iostream>
 
 inline Rectangle getProximityRect(Entity& entity, float radius)
@@ -102,7 +103,47 @@ bool PlayerItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	case COLLISION_TYPE_NORTH:
 		character->setPosition(Vector2{ character->getX(), block->getY() + block->getHeight() });
 		character->setVelY(0);
-		if (block->getActive()) { block->Activate(); }
+		if (block->getActive()) { 
+			block->Activate(); 
+		}
+		break;
+	case COLLISION_TYPE_SOUTH:
+		character->setPosition(Vector2{ character->getX(), block->getY() - character->getHeight() });
+		character->setState(ON_GROUND);
+		character->setVelY(0);
+		break;
+	case COLLISION_TYPE_EAST:
+		character->setPosition(Vector2{ block->getX() - character->getWidth(), character->getY() });
+		character->setVelX(0);
+		break;
+	case COLLISION_TYPE_WEST:
+		character->setPosition(Vector2{ block->getX() + block->getWidth(), character->getY() });
+		character->setVelX(0);
+		break;
+	default:
+		break;
+	}
+}
+
+bool PlayerCoinBlockInfo::HandleCollision(Entity* entityA, Entity* entityB) 
+{
+	Character* character = dynamic_cast<Character*>(entityA);
+	CoinBlock* block = dynamic_cast<CoinBlock*>(entityB);
+
+	if (!character || !block || !character->getCollisionAvailable())
+		return false;
+	CollisionType Colltype = character->CheckCollision(*block);
+	if (Colltype == COLLISION_TYPE_NONE)
+		return false;
+	switch (Colltype) {
+	case COLLISION_TYPE_NORTH:
+		character->setPosition(Vector2{ character->getX(), block->getY() + block->getHeight() });
+		character->setVelY(100);
+		if (block->getActive()) { 
+			block->Activate(); 
+			character->setCoins(character->getCoins() + 1);
+			character->setScores(character->getScores() + Coin::getPoint());
+		}
 		break;
 	case COLLISION_TYPE_SOUTH:
 		character->setPosition(Vector2{ character->getX(), block->getY() - character->getHeight() });
@@ -459,7 +500,6 @@ bool PlayerItemInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	CollisionType Colltype = character->CheckCollision(*item);
 	if (Colltype == COLLISION_TYPE_NONE)
 		return false;
-	printf("Collision detected: player vs item. Type: %d\n", Colltype);
 	PowerItem* powerItem = dynamic_cast<PowerItem*>(item);
 	if (powerItem && powerItem->getPowerUpState() != ACTIVE) { return false; }
 	
@@ -583,6 +623,8 @@ std::unique_ptr<CollisionInfo> CollisionInfoSelector::getInfor(EntityType typeA,
 			return std::make_unique<PlayerItemBlockInfo>();
 		if (block && block->getBlockType() == BRICK)
 			return std::make_unique<PlayerBrickInfo>();
+		if (block && block->getBlockType() == COINBLOCK)
+			return std::make_unique<PlayerCoinBlockInfo>();
 		return std::make_unique<PlayerBlockInfo>();
 	}
 	if (typeA == ENEMY && typeB == BLOCK)

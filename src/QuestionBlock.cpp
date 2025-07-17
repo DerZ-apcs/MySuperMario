@@ -1,8 +1,9 @@
 #include "../include/QuestionBlock.h"
 #include "../include/ResourceManager.h"
+#include "../include/GameEngine.h"
 
-QuestionBlock::QuestionBlock(Vector2 pos, ITEM_TYPE type, std::vector<Item*>* itemsVec) :
-	Blocks(pos, { 32, 32 }, "QUESTION_0"), isActive(true), heldPowerUp(type), items(itemsVec) {
+QuestionBlock::QuestionBlock(Vector2 pos, ITEM_TYPE type) :
+	Blocks(pos, { 32, 32 }, "QUESTION_0"), isActive(true), heldPowerUp(type) {
 	this->frameAcum = 0;
 	this->currFrame = 0;
 	this->frameTime = 0.2f;
@@ -27,17 +28,17 @@ void QuestionBlock::Activate() {
 
 	switch (heldPowerUp) 	{
 	case MUSHROOM: {
-		items->push_back(new Mushroom(Vector2{ position.x + size.x / 2 - 16, position.y + size.y - 32 }));
+		globalGameEngine->addItem(new Mushroom(Vector2{ position.x + size.x / 2 - 16, position.y + size.y - 32 }));
 		break;
 	}
 
 	case FLOWER: {
-		items->push_back(new Flower(Vector2{ position.x + size.x / 2 - 16, position.y + size.y - 32 }));
+		globalGameEngine->addItem(new Flower(Vector2{ position.x + size.x / 2 - 16, position.y + size.y - 32 }));
 		break;
 	}
 
 	case STAR: {
-		items->push_back(new Star(Vector2{ position.x + size.x / 2 - 16, position.y + size.y }));
+		globalGameEngine->addItem(new Star(Vector2{ position.x + size.x / 2 - 16, position.y + size.y - 32 }));
 		break;
 	}
 
