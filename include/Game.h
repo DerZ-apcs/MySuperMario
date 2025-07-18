@@ -15,6 +15,7 @@
 #include "../include/PiranhaPlant.h"
 #include "../include/Rex.h"
 #include "../include/FirePiranhaPlant.h"
+#include "../include/Muncher.h"
 
 class Game {
 private:

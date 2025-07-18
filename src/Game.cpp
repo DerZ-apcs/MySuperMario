@@ -29,10 +29,10 @@ Game::Game(int nwidth, int nheight, int ntargetFPS) :
    /* enemies.push_back(new FirePiranhaPlant({ 576, 448 }, Resource_manager.getTexture("FirePiranhaPlant_OPEN"), mario));
 	enemies.push_back(new RapidFirePiranha({ 800, 448 }, Resource_manager.getTexture("FirePiranhaPlant_OPEN"), mario));
     enemies.push_back(new HomingFirePiranha({ 576, 448 }, Resource_manager.getTexture("FirePiranhaPlant_OPEN"), mario));
-    enemies.push_back(new Rex({ 400, 920 }, Resource_manager.getTexture("Rex_LEFT_0"), &mediatorCollision)); 
 	enemies.push_back(new Bullet({ 2000, 448 }, Resource_manager.getTexture("Bullet_LEFT_1"), LEFT));
-    enemies.push_back(new FireBullet({ 2000, 350 }, Resource_manager.getTexture("Bullet_LEFT_1"), LEFT, mario));*/
-    enemies.push_back(new Rex({ 400, 920 }, Resource_manager.getTexture("Rex_LEFT_0")));
+    enemies.push_back(new FireBullet({ 2000, 350 }, Resource_manager.getTexture("Bullet_LEFT_1"), LEFT, mario));
+    enemies.push_back(new Rex({ 400, 920 }, Resource_manager.getTexture("Rex_LEFT_0")));*/
+    enemies.push_back(new Muncher({ 500,448 }, Resource_manager.getTexture("Muncher_1")));
 }
 
 Game::~Game()
