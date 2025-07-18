@@ -5,7 +5,7 @@ const float PiranhaPlant::POP_UP_DURATION = 1.0f; // Thời gian trồi lên/rú
 const float PiranhaPlant::STAY_UP_DURATION = 2.0f; // Thời gian ở trạng thái trồi lên
 
 PiranhaPlant::PiranhaPlant(Vector2 pos, Texture2D texture, Mario& mario)
-    : Enemy(pos, { 32, 48 }, { 0, 0 }, RIGHT, ON_GROUND, texture, 0.2f, 1, RED),
+    : Enemy(pos, { 32, 66 }, { 0, 0 }, RIGHT, ON_GROUND, texture, 0.2f, 1, RED),
     popUpTimer(0.0f), isPoppingUp(true), popUpHeight(48.0f), baseY(pos.y), mario(mario), delayTimer(0.2f), invincibilityTimer(0.0f) { 
 }
 
@@ -28,11 +28,10 @@ void PiranhaPlant::Update() {
         invincibilityTimer -= deltaTime;
     }
 
-    // Xử lý độ trễ trước khi trồi lên
     if (delayTimer > 0) {
         delayTimer -= deltaTime;
         if (delayTimer <= 0) {
-            popUpTimer = 0.0f; // Bắt đầu chu kỳ trồi lên sau độ trễ
+            popUpTimer = 0.0f; 
         }
         else {
             position.y = baseY; // Giữ ẩn trong ống trong độ trễ
@@ -42,19 +41,15 @@ void PiranhaPlant::Update() {
         }
     }
 
-    // Thực hiện chu kỳ trồi/rút mà không phụ thuộc vào vị trí Mario
     popUpTimer += deltaTime;
 
-    // Tổng chu kỳ: trồi lên (1s) + ở trên (2s) + rút xuống (1s) = 4s
     float cycleTime = 2 * POP_UP_DURATION + STAY_UP_DURATION;
 
     if (popUpTimer >= cycleTime) {
         popUpTimer = 0.0f; // Reset chu kỳ
     }
 
-    // Xác định giai đoạn trong chu kỳ
     if (popUpTimer < POP_UP_DURATION) {
-        // Giai đoạn trồi lên
         isPoppingUp = true;
         float t = popUpTimer / POP_UP_DURATION; // Tỷ lệ hoàn thành (0 đến 1)
         position.y = baseY - popUpHeight * t; // Di chuyển lên
@@ -72,46 +67,19 @@ void PiranhaPlant::Update() {
     UpdateTexture();
 }
 
-//void PiranhaPlant::draw() {
-//    Enemy::draw();
-//}
-
 void PiranhaPlant::draw() {
-    if (isDead || isReadyForRemoval()) {
-        return;
-    }
-
-    float emergedHeight = baseY - position.y;
-    if (emergedHeight <= 0) {
-        return;
-    }
-
-    if (emergedHeight > popUpHeight) {
-        emergedHeight = popUpHeight;
-    }
-
-    // Vẽ chỉ phần texture tương ứng với độ cao trồi lên
-    Rectangle source = { 0.0f, (float)texture.height - emergedHeight - 10, (float)texture.width, emergedHeight };
-    Rectangle dest = { position.x, position.y, (float)texture.width * squashScale, emergedHeight * squashScale };
-    Vector2 origin = { (texture.width * squashScale) / 2, 0 }; // Origin ở giữa trục X, đầu trên trục Y
-
-    DrawTexturePro(texture, source, dest, origin, 0.1f, WHITE);
-
+    if (!isDead) {
+        Rectangle source = { 0, 0, (float)texture.width, (float)texture.height };
+        Rectangle dest = { position.x + 30, position.y, texture.width * squashScale, texture.height * squashScale };
+        Vector2 origin = { (texture.width * squashScale) / 2, (texture.height * squashScale) / 2 };
+        DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
 #ifdef DEBUG
-    // Chỉ vẽ các vùng va chạm khi cây trồi lên đủ cao
-    if (emergedHeight >= CollNorth.getHeight()) {
         CollNorth.draw();
-    }
-    if (emergedHeight >= CollSouth.getHeight()) {
         CollSouth.draw();
-    }
-    if (emergedHeight >= CollEast.getHeight()) {
         CollEast.draw();
-    }
-    if (emergedHeight >= CollWest.getHeight()) {
         CollWest.draw();
-    }
 #endif
+    }
 }
 
 void PiranhaPlant::UpdateTexture() {

@@ -101,44 +101,7 @@ void FirePiranhaPlant::Update() {
 }
 
 void FirePiranhaPlant::draw() {
-    if (isDead || isReadyForRemoval()) {
-        return;
-    }
-
-    float emergedHeight = baseY - position.y;
-    if (emergedHeight <= 0) {
-        return;
-    }
-
-    if (emergedHeight > popUpHeight) {
-        emergedHeight = popUpHeight;
-    }
-
-    Rectangle source = { 0.0f, (float)texture.height - emergedHeight - 10, (float)texture.width, emergedHeight };
-    Rectangle dest = { position.x, position.y, (float)texture.width * squashScale, emergedHeight * squashScale };
-    Vector2 origin = { (texture.width * squashScale) / 2, 0 };
-    DrawTexturePro(texture, source, dest, origin, 0.1f, WHITE);
-
-    for (auto fireball : fireballs) {
-        if (!fireball->IsDestroyed()) {
-            fireball->draw();
-        }
-    }
-
-#ifdef DEBUG
-    if (emergedHeight >= CollNorth.getHeight()) {
-        CollNorth.draw();
-    }
-    if (emergedHeight >= CollSouth.getHeight()) {
-        CollSouth.draw();
-    }
-    if (emergedHeight >= CollEast.getHeight()) {
-        CollEast.draw();
-    }
-    if (emergedHeight >= CollWest.getHeight()) {
-        CollWest.draw();
-    }
-#endif
+    Enemy::draw();
 }
 
 void FirePiranhaPlant::UpdateTexture() {
