@@ -6,7 +6,6 @@ Rex::Rex(Vector2 pos, Texture2D texture)
     : Enemy(pos, { 32, 48 }, { 0, 0 }, LEFT, ON_GROUND, texture, 0.2f, 1, BLUE),
     rexState(REX_NORMAL) {
     velocity.x = -REX_SPEED; 
-    //updateCollision();
 }
 
 void Rex::Update() {
@@ -72,7 +71,6 @@ void Rex::CollisionWithCharacter(Mario& mario, CollisionType collType) {
             if (direction == RIGHT) direction = LEFT;
             else direction = RIGHT;
             velocity.x = (direction == LEFT) ? -REX_COMPRESSED_SPEED : REX_COMPRESSED_SPEED;
-           // updateCollision();
             mario.setVelY(MARIO_BOUNCE_VELOCITY);
             mario.addScore(SCORE_STOMP_REX);
             Singleton<ResourceManager>::getInstance().playSound("STOMP");
@@ -125,7 +123,6 @@ void Rex::CollisionWithFireball(FireBall& fireball) {
     velocity.y = -250; // Nhảy lên nhẹ
     velocity.x = (rand() % 100) - 50; // Văng ngang ngẫu nhiên
     deathTimer = ENEMY_DEATH_TIMER_LONG;
-    //updateCollision();
     Singleton<ResourceManager>::getInstance().playSound("FIREBALL_KILL");
 }
 
@@ -148,40 +145,9 @@ void Rex::HandleTileCollision(const Tile& tile, CollisionType collType) {
         setY(tile.getY() - getHeight());
         velocity.y = 0;
         state = ON_GROUND;
-        //updateCollision();
     }
     else if (collType == COLLISION_TYPE_NORTH) {
         setY(tile.getY() + tile.getHeight());
         velocity.y = 0;
-        //updateCollision();
     }
 }
-
-//void Rex::updateCollision() {
-//    // Cập nhật kích thước hộp va chạm dựa trên trạng thái của Rex
-//    if (rexState == REX_NORMAL) {
-//        CollNorth.setSize({ size.x * 0.9f, 5 });
-//        CollSouth.setSize({ size.x * 0.9f, 5 });
-//        CollEast.setSize({ 5, size.y * 0.9f });
-//        CollWest.setSize({ 5, size.y * 0.9f });
-//    }
-//    else if (rexState == REX_COMPRESSED) {
-//        CollNorth.setSize({ size.x * 0.9f, 4 });
-//        CollSouth.setSize({ size.x * 0.9f, 4 });
-//        CollEast.setSize({ 4, size.y * 0.9f });
-//        CollWest.setSize({ 4, size.y * 0.9f });
-//    }
-//
-//    // Cập nhật vị trí hộp va chạm (không sử dụng squashScale khi không ở trạng thái chết)
-//    if (state != STATE_IS_DYING) {
-//        squashScale = 1.0f; // Đảm bảo không áp dụng squashScale khi không chết
-//    }
-//
-//    CollNorth.setPos({ position.x + size.x / 2 - CollNorth.getWidth() / 2, position.y });
-//    CollSouth.setPos({ position.x + size.x / 2 - CollSouth.getWidth() / 2, position.y + size.y - CollSouth.getHeight() });
-//    CollEast.setPos({ position.x + size.x - CollEast.getWidth(), position.y + size.y / 2 - CollEast.getHeight() / 2 });
-//    CollWest.setPos({ position.x, position.y + size.y / 2 - CollWest.getHeight() / 2 });
-//
-//    // Cập nhật lại rect cho Entity
-//    rect = { position.x, position.y, size.x, size.y };
-//}

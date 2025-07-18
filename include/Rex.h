@@ -20,7 +20,6 @@ public:
     void CollisionWithEnemy(Enemy& enemy, CollisionType collType) override;
     void CollisionWithFireball(FireBall& fireball) override;
     void HandleTileCollision(const Tile& tile, CollisionType collType) override;
-   /* void updateCollision() override;*/
 };
 
 #endif
