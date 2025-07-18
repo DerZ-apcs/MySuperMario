@@ -52,11 +52,6 @@ void Goomba::Update() {
         }
         else {
             if (state == ON_GROUND) {
-                //velocity.x = (direction == LEFT) ? -GOOMBA_SPEED : GOOMBA_SPEED;
-                //if (GetRandomValue(0, 1000) < 3) { // 0.5% cơ hội dừng lại
-                //    isPaused = true;
-                //    pauseTimer = GetRandomValue(5, 15) / 10.0f; // Dừng 1-3 giây
-                //}
                 if (collisionTimer <= 0) {
                     velocity.x = (direction == LEFT) ? -GOOMBA_SPEED : GOOMBA_SPEED;
                 }
@@ -77,7 +72,6 @@ void Goomba::draw() {
 void Goomba::UpdateTexture() {
     if (state == STATE_IS_DYING) {
         texture = Singleton<ResourceManager>::getInstance().getTexture("Goomba_Dead");
-        /*isFlipped = true;*/
         return;
     }
     if (state == ON_GROUND) {

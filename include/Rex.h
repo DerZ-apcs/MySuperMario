@@ -11,11 +11,8 @@ enum RexState {
 class Rex : public Enemy {
 private:
     RexState rexState;
-    float detectMarioRange;
-    MediatorCollision* mediatorCollision;
-    float collisionTimer;
 public:
-    Rex(Vector2 pos, Texture2D texture, MediatorCollision* mediator);
+    Rex(Vector2 pos, Texture2D texture);
     void Update() override;
     void draw() override;
     void UpdateTexture() override;
@@ -23,7 +20,7 @@ public:
     void CollisionWithEnemy(Enemy& enemy, CollisionType collType) override;
     void CollisionWithFireball(FireBall& fireball) override;
     void HandleTileCollision(const Tile& tile, CollisionType collType) override;
-    void updateCollision() override;
+   /* void updateCollision() override;*/
 };
 
 #endif

@@ -111,16 +111,14 @@ void ResourceManager::loadTextures() {
 	textures["EnemyFireball_LEFT_2"] = flipTexture(textures["FlowerMarioFireball_RIGHT_2"]);
 	textures["EnemyFireball_LEFT_3"] = flipTexture(textures["FlowerMarioFireball_RIGHT_3"]);
 
-
-
-	textures["Rex_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/GreenKoopaTroopa_0.png");
-	textures["Rex_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/GreenKoopaTroopa_1.png");
-	textures["Rex_LEFT_0"] = flipTexture(textures["Rex_LEFT_0"]);
-	textures["Rex_LEFT_1"] = flipTexture(textures["Rex_LEFT_1"]);
+	textures["Rex_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/Rex_2_0.png");
+	textures["Rex_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/Rex_2_1.png");
+	textures["Rex_LEFT_0"] = flipTexture(textures["Rex_RIGHT_0"]);
+	textures["Rex_LEFT_1"] = flipTexture(textures["Rex_RIGHT_1"]);
 	textures["Rex_Compressed_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/Rex_1_0.png");
 	textures["Rex_Compressed_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/Rex_1_1.png");
-	textures["Rex_Compressed_LEFT_0"] = flipTexture(textures["Rex_Compressed_LEFT_0"]);
-	textures["Rex_Compressed_LEFT_1"] = flipTexture(textures["Rex_Compressed_LEFT_1"]);
+	textures["Rex_Compressed_LEFT_0"] = flipTexture(textures["Rex_Compressed_RIGHT_0"]);
+	textures["Rex_Compressed_LEFT_1"] = flipTexture(textures["Rex_Compressed_RIGHT_1"]);
 	textures["Rex_Dead"] = LoadTexture("resources/images/sprites/baddies/Goomba_1.png");
 	// tile
 	for (int i = 0; i <= 112; i++) {
