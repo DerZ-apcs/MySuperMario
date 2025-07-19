@@ -80,6 +80,7 @@ public:
 	virtual void Update() override;
 	virtual void draw() override;
 	virtual void HandleInput() override;
+	void HandleInput(int leftKey, int rightKey, int upKey, int downKey, int fireKey);
 	virtual void updateCollision() override;
 	virtual void UpdateTexture() override;
 	virtual void UpdateTransitioningTexture();

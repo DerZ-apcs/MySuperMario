@@ -2,11 +2,12 @@
 #include "../include/GameEngine.h"
 
 // PiranhaPlant Class Implementation
-const float PiranhaPlant::POP_UP_DURATION = 1.0f; // Thời gian trồi lên/rút xuống
-const float PiranhaPlant::STAY_UP_DURATION = 2.0f; // Thời gian ở trạng thái trồi lên
+const float PiranhaPlant::POP_UP_DURATION = 1.5f; // Thời gian trồi lên/rút xuống
+const float PiranhaPlant::STAY_UP_DURATION = 1.5f; // Thời gian ở trạng thái trồi lên
+const float PiranhaPlant::DURATION_BETWEEN_POPUP = 1.f; // rest between two pops up;
 
 PiranhaPlant::PiranhaPlant(Vector2 pos, Texture2D texture)
-    : Enemy(pos, { 32, 32 }, { 0, 0 }, RIGHT, ON_GROUND, texture, 0.2f, 1, RED),
+    : Enemy(pos, { 32, 66 }, { 0, 0 }, RIGHT, ON_GROUND, texture, 0.2f, 1, RED),
     popUpTimer(0.0f), isPoppingUp(true), popUpHeight(66.0f), baseY(pos.y), delayTimer(0.2f), invincibilityTimer(0.0f) { 
 }
 
@@ -69,7 +70,7 @@ void PiranhaPlant::Update() {
         float t = (popUpTimer - POP_UP_DURATION - STAY_UP_DURATION) / POP_UP_DURATION; // Tỷ lệ hoàn thành (0 đến 1)
         position.y = baseY - popUpHeight * (1.0f - t); // Di chuyển xuống
     }
-    Entity::updateCollision();
+    Enemy::updateCollision();
     UpdateTexture();
 }
 
@@ -77,36 +78,15 @@ void PiranhaPlant::draw() {
     if (isDead() || isReadyForRemoval()) {
         return;
     }
-
-    float emergedHeight = baseY - position.y;
-    if (emergedHeight <= 0) {
-        return;
-    }
-
-    if (emergedHeight > popUpHeight) {
-        emergedHeight = popUpHeight;
-    }
-
-    // Vẽ chỉ phần texture tương ứng với độ cao trồi lên
-    Rectangle source = { 0.0f, (float)texture.height - emergedHeight - 10, (float)texture.width, emergedHeight };
-    Rectangle dest = { position.x, position.y, (float)texture.width * squashScale, emergedHeight * squashScale };
-    Vector2 origin = { (texture.width * squashScale) / 2, 0 }; // Origin ở giữa trục X, đầu trên trục Y
-
-    DrawTexturePro(texture, source, dest, origin, 0.1f, WHITE);
-
-    // Chỉ vẽ các vùng va chạm khi cây trồi lên đủ cao
-    if (emergedHeight >= CollNorth.getHeight()) {
-        CollNorth.draw();
-    }
-    if (emergedHeight >= CollSouth.getHeight()) {
-        CollSouth.draw();
-    }
-    if (emergedHeight >= CollEast.getHeight()) {
-        CollEast.draw();
-    }
-    if (emergedHeight >= CollWest.getHeight()) {
-        CollWest.draw();
-    }
+    Rectangle source = { 0, 0, (float)texture.width, (float)texture.height };
+    Rectangle dest = { position.x, position.y, texture.width * squashScale, texture.height * squashScale };
+    //Vector2 origin = { (texture.width * squashScale) / 2, (texture.height * squashScale) / 2 };
+    DrawTexturePro(texture, source, dest, {0.f, 0.f}, 0.0f, WHITE);
+    
+    CollNorth.draw();
+    CollSouth.draw();
+    CollEast.draw();
+    CollWest.draw();
 }
 
 void PiranhaPlant::UpdateTexture() {
@@ -172,14 +152,3 @@ float PiranhaPlant::getScores() const
 //        updateSquashEffect();
 //        UpdateTexture();
 //    }
-//    else if ((collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_WEST || collType == COLLISION_TYPE_NORTH) && isFullyPoppedUp) {
-//        if (mario.getMarioState() == STATE_SUPER || mario.getMarioState() == STATE_FIRE_BALL) {
-//            mario.TransitionToSmall();
-//            mario.setInvincibilityTimer(2.0f);
-//        }
-//        else {
-//            mario.setState(STATE_IS_DYING);
-//            RESOURCE_MANAGER.playSound("MARIO_DIE");
-//        }
-//    }
-//}

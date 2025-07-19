@@ -14,6 +14,7 @@
 #include "../include/Star.h"
 #include "../include/Mushroom.h"
 #include "../include/Moon.h"
+#include "../include/FirePiranhaPlant.h"
 #include "../include/PiranhaPlant.h"
 #include <iostream>
 
@@ -27,7 +28,24 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Char
     camera.loadRenderTexture(Msize);
     // camera
     if (!player) player = new Mario();
+    // test
+    if (!player2) {
+        std::cout << "Allocating player2\n";
+        player2 = new Luigi();
+    }
+    else {
+        std::cout << "player2 already exists at: " << player2 << "\n";
+    }
 
+    if (player2) {
+        player2->setState(FALLING);
+        player2->setVel({ 0, 0 });
+        player2->setPosition({ 36, 400 });
+    }
+   
+    multiplayers.clear();
+    multiplayers.push_back(player);
+    multiplayers.push_back(player2);
 
     blocks = map.getBlocks();
     enemies = map.getEnemies();
@@ -38,11 +56,10 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Char
     resetTimer();
     deltaTime = 0.f;
     BackGroundPos = { {0, 0}, {(float)GetScreenWidth(), 0}, {(float)GetScreenWidth() * 2, 0} };
-    //items.push_back();
-    for (int i = 0; i < 10; i++) {
+    /*for (int i = 0; i < 10; i++) {
         Coin* coin = new Coin(STATIC_COIN, { (float)i * 50, 600 });
         items.push_back(coin);
-    }
+    }*/
     /*for (int i = 7; i < 10; i++) {
         Goomba* goomba = new Goomba({(float) 100 * i, 300 }, RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0"));
         goomba->setState(FALLING);
@@ -53,55 +70,41 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Char
         flyingGoomba->setState(FALLING);
         enemies.push_back(flyingGoomba);
     }*/
-    Koopa* koopa = new Koopa({ 300, 500 }, RESOURCE_MANAGER.getTexture("Koopa_LEFT_0"));
-    koopa->setState(FALLING);
-    enemies.push_back(koopa);
+    //Koopa* koopa = new Koopa({ 300, 500 }, RESOURCE_MANAGER.getTexture("Koopa_LEFT_0"));
+    //koopa->setState(FALLING);
+    //enemies.push_back(koopa);
 
-    /*Rex* rex = new Rex({ 400, 500 }, RESOURCE_MANAGER.getTexture("Rex_LEFT_0"));
-    rex->setState(FALLING);
-    enemies.push_back(rex);*/
+    //Rex* rex = new Rex({ 400, 500 }, RESOURCE_MANAGER.getTexture("Rex_LEFT_0"));
+    //rex->setState(FALLING);
+    //enemies.push_back(rex);
 
-    Mushroom* red = new Mushroom(REDMUSHROOM, { 400, 500 }, LEFT);
-    Mushroom* green = new Mushroom(GREENMUSHROOM, { 300, 500 }, LEFT);
-    Star* star = new Star(YELLOW_STAR, {200, 500}, LEFT);
-    Flower* flower = new Flower(FIRE_FLOWER, { 500, 500 }, LEFT);
+    //Bullet* bullet1 = new Bullet({ 1000, 400 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
+    //enemies.push_back(bullet1);
+    //FireBullet* bullet2 = new FireBullet({ 1600, 500 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
+    //enemies.push_back(bullet2);
+    //Bullet* bullet3 = new Bullet({ 1000, 600 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
+    //enemies.push_back(bullet3);
 
-    /*items.push_back(star);
-    items.push_back(red);
-    items.push_back(green);
-    items.push_back(flower);*/
-    /*Bullet* bullet1 = new Bullet({ 1000, 400 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
-    enemies.push_back(bullet1);
-    FireBullet* bullet2 = new FireBullet({ 1600, 500 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
-    enemies.push_back(bullet2);
-    Bullet* bullet3 = new Bullet({ 1000, 600 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
-    enemies.push_back(bullet3);*/
-
-    //PiranhaPlant* plant = new PiranhaPlant({ 500, 800 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_CLOSED"));
+    //FirePiranhaPlant* plant = new FirePiranhaPlant({ 432, 710 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_CLOSED"));
     //enemies.push_back(plant);
 
-    Moon* moon = new Moon(NORMAL_MOON, { 300, 600 }, LEFT);
-    items.push_back(moon);
-    Star* blueStar = new Star(BLUE_STAR, { 300, 400 }, LEFT);
-    items.push_back(blueStar);
-
-    // test brick
-    for (int i = 1; i < 10; i++) {
-        Brick* brick = new Brick(Vector2{ (float)i * 32, 700 }, Vector2{ 32, 32 }, "Brick_0");
-        blocks.push_back(brick);
-    }
-    // test coin block
-    for (int i = 1; i < 10; i++) {
-        CoinBlock* coinBlock = new CoinBlock({ (float)i * 32, 550 }, "TILE_110", 4);
-        blocks.push_back(coinBlock);
-    }
-    
-    ItemBlock* itemblock1 = new ItemBlock({ 100, 800 }, MUSHROOM, 0);
-    ItemBlock* itemblock2 = new ItemBlock({ 132, 800 }, STAR, 0);
-    ItemBlock* itemblock3 = new ItemBlock({ 164, 800 }, FLOWER, 0);
-    blocks.push_back(itemblock1);
-    blocks.push_back(itemblock2);
-    blocks.push_back(itemblock3);
+    //// test brick
+    //for (int i = 1; i < 10; i++) {
+    //    Brick* brick = new Brick(Vector2{ (float)i * 32, 700 }, Vector2{ 32, 32 }, "Brick_0");
+    //    blocks.push_back(brick);
+    //}
+    //// test coin block
+    //for (int i = 1; i < 10; i++) {
+    //    CoinBlock* coinBlock = new CoinBlock({ (float)i * 32, 550 }, "TILE_110", 4);
+    //    blocks.push_back(coinBlock);
+    //}
+    //
+    //ItemBlock* itemblock1 = new ItemBlock({ 100, 800 }, MUSHROOM, 0);
+    //ItemBlock* itemblock2 = new ItemBlock({ 132, 800 }, STAR, 0);
+    //ItemBlock* itemblock3 = new ItemBlock({ 164, 800 }, FLOWER, 0);
+    //blocks.push_back(itemblock1);
+    //blocks.push_back(itemblock2);
+    //blocks.push_back(itemblock3);
 }
 
 GameEngine::~GameEngine() {
@@ -122,6 +125,8 @@ GameEngine::~GameEngine() {
         delete blocks[i];
     }
     player = nullptr;
+    player2 = nullptr;
+    multiplayers.clear();
     enemyFireball.clear();
     blocks.clear();
     enemies.clear();
@@ -156,7 +161,7 @@ void GameEngine::addItem(Item* item)
 // update
 void GameEngine::update()
 {
-    if (!player) {
+    if (!player && !player2) {
         cout << "NULL player" << endl;
         return;
     }
@@ -170,8 +175,10 @@ void GameEngine::update()
             if (RESOURCE_MANAGER.isPlayingSound("lost_life.wav"))
                 RESOURCE_MANAGER.stopSound("lost_life.wav");
             died = false;
-            player->setLostLife(false);
-            player->resetInGame();
+            for (auto* p : multiplayers) {
+                p->setLostLife(false);
+                p->resetInGame();
+            }
             resetGame();
             resetTimer();
         }
@@ -181,7 +188,9 @@ void GameEngine::update()
     }
     if (GUI::restart_is_pressed) {
         GUI::restart_is_pressed = false;
-        player->reset();
+        for (auto* p : multiplayers) {
+            p->reset();
+        }
         resetGame();
         resetTimer();
     }
@@ -265,11 +274,30 @@ void GameEngine::update()
     }
 
     // player udpate
-    player->Update();
+        // handle input
+    for (int i = 0; i < multiplayers.size(); ++i) {
+        multiplayers[i]->HandleInput(
+            controlBindings[i].left,
+            controlBindings[i].right,
+            controlBindings[i].up,
+            controlBindings[i].down,
+            controlBindings[i].fire
+        );
+    }
+        // update
+    for (auto* p : multiplayers) {
+        p->Update();
+    }
+    //player->Update();
     // all collision
     handleCollision();
+
     // camera update
-    camera.update(player->getX(), player->getY());
+    if (multiplayers.size() == 2) {
+        camera.update(multiplayers[0]->getX(), multiplayers[0]->getY(),
+            multiplayers[1]->getX(), multiplayers[1]->getY());
+    }
+    else camera.update(player->getX(), player->getY());
 }
 
 void GameEngine::handleCollision()
@@ -278,35 +306,41 @@ void GameEngine::handleCollision()
     CollisionInterface CollI;
     bool isGrounded = false;
     for (size_t j = 0; j < blocks.size(); j++) {
-        if (CollI.HandleCollision(player, blocks[j]))
-            isGrounded = true;
-        //PlayerBlockInfo Infor;
-        //Infor.HandleCollision(player, blocks[j]);
+        for (auto* p : multiplayers) {
+            CollI.HandleCollision(p, blocks[j]);
+            for (auto& fireball : *p->getFireBalls()) {
+                CollI.HandleCollision(fireball, blocks[j]);
+            }
+        }
+        
         for (size_t i = 0; i < enemies.size(); i++)
             CollI.HandleCollision(enemies[i], blocks[j]);
 
         for (size_t i = 0; i < items.size(); i++) 
             CollI.HandleCollision(items[i], blocks[j]);
 
-        for (auto& fireball : *player->getFireBalls()) {
-            CollI.HandleCollision(fireball, blocks[j]);
-        }
         for (size_t i = 0; i < enemyFireball.size(); i++)
             CollI.HandleCollision(enemyFireball[i], blocks[j]);
     }
     // for items
     for (size_t i = 0; i < enemies.size(); i++) {
-        for (auto& fireball : *player->getFireBalls()) {
-            CollI.HandleCollision(fireball, enemies[i]);
+        for (auto* p : multiplayers) {
+            CollI.HandleCollision(p, enemies[i]);
+            for (auto& fireball : *p->getFireBalls()) {
+                CollI.HandleCollision(fireball, enemies[i]);
+            }
         }
-        CollI.HandleCollision(player, enemies[i]);
     }
+    // player item
     for (size_t i = 0; i < items.size(); i++) {
-        CollI.HandleCollision(player, items[i]);   
+        for (auto* p : multiplayers) {
+            CollI.HandleCollision(p, items[i]);
+        } 
     }
     // enemy fireball
     for (size_t i = 0; i < enemyFireball.size(); i++) {
-        CollI.HandleCollision(enemyFireball[i], player);
+        for (auto* p : multiplayers)
+            CollI.HandleCollision(enemyFireball[i], p);
     }
 }
 // draw
@@ -316,24 +350,29 @@ void GameEngine::draw()
     ClearBackground(SKYBLUE);
     map.drawBackGround(camera.getSize(), camera.getScale());
     //map.drawMap();
-    if (!player) return;
-    bool lostLife = player->isLostLife();
+    bool lostLife = false;
+    for (auto* p : multiplayers) {
+        if (!p) return;
+        lostLife = (lostLife == true || p->isLostLife());
+    }
 
     for (size_t i = 0; i < enemyFireball.size(); i++) {
         enemyFireball[i]->draw();
     }
-    for (size_t i = 0; i < blocks.size(); i++) {
-        blocks[i]->draw();
-    }
     for (size_t i = 0; i < enemies.size(); i++) {
         enemies[i]->draw();
+    }
+    for (size_t i = 0; i < blocks.size(); i++) {
+        blocks[i]->draw();
     }
     for (size_t i = 0; i < items.size(); i++) {
         items[i]->draw();
     }
 
-    player->draw();
-    
+    for (auto* p : multiplayers) {
+        p->draw();
+    }
+
     for (size_t i = 0; i < effects.size(); i++) {
         effects[i]->draw();
     }
@@ -404,46 +443,47 @@ bool GameEngine::run() {
             break;
         }
 
-        // out of time
-        if (this->time <= 0) player->setLostLife(true);
-        // set lost life for falling out of bound
-        if (player->getY() > getBound().y && player->getPhase() != Phase::CLEARLEVEL_PHASE)
-            player->setLostLife(true);
-
-        // clear level
-        if (!player->getExitLevel() && player->getX() >= map.getMapSize().x - 100.f && player->getState() == ON_GROUND) { // clear level (when character enter near the end of level)
-            player->setVictory(true);
-            player->setVel({ 0, 0 });
-            RESOURCE_MANAGER.stopCurrentMusic();
-            RESOURCE_MANAGER.playSound("level_clear.wav");
-        }
-        if ((player->getExitLevel()) && (player->getPhase() != Phase::CLEARLEVEL_PHASE)) {
-            player->setPhase(Phase::CLEARLEVEL_PHASE);
-        }
-        if (player->getX() >= map.getMapSize().x - 10 && player->getPhase() == CLEARLEVEL_PHASE) {
-            cleared = true;
-            isPaused = true;
-            player->setVel({ 0, 0 });
-        }
-        else if (player->isLostLife() && player->getTop() > getBound().y) { // when finish the animation of dying (flying to the top)
-            if (player->getLives() < 0) {
-                gameover = true;
-                isPaused = true;
-            }
-            else {
-                died = true;
-                isPaused = true;
-            }
-        }
-        if (player->isLostLife()) { // set animation & sound when dying
-            if (player->getPhase() != DEAD_PHASE) {
+        for (auto* p : multiplayers) {
+            if (this->time <= 0) // outof time
+                p->setLostLife(true);
+            // set lost life for falling out of bound
+            if (p->getY() > getBound().y && p->getPhase() != Phase::CLEARLEVEL_PHASE)
+                p->setLostLife(true);
+            // clear level
+            if (!p->getExitLevel() && p->getX() >= map.getMapSize().x - 100.f && p->getState() == ON_GROUND) { // clear level (when character enter near the end of level)
+                p->setVictory(true);
+                p->setVel({ 0, 0 });
                 RESOURCE_MANAGER.stopCurrentMusic();
-                player->setPhase(DEAD_PHASE);
-                if (player->getLives() < 0) {
-                    RESOURCE_MANAGER.playSound("game_over.wav");
+                RESOURCE_MANAGER.playSound("level_clear.wav");
+            }
+            if ((p->getExitLevel()) && (p->getPhase() != Phase::CLEARLEVEL_PHASE)) {
+                p->setPhase(Phase::CLEARLEVEL_PHASE);
+            }
+            if (p->getX() >= map.getMapSize().x - 10 && p->getPhase() == CLEARLEVEL_PHASE) {
+                cleared = true;
+                isPaused = true;
+                p->setVel({ 0, 0 });
+            }
+            else if (p->isLostLife() && p->getTop() > getBound().y) { // when finish the animation of dying (flying to the top)
+                if (p->getLives() < 0) {
+                    gameover = true;
+                    isPaused = true;
                 }
                 else {
-                    RESOURCE_MANAGER.playSound("lost_life.wav");
+                    died = true;
+                    isPaused = true;
+                }
+            }
+            if (p->isLostLife()) { // set animation & sound when dying
+                if (p->getPhase() != DEAD_PHASE) {
+                    RESOURCE_MANAGER.stopCurrentMusic();
+                    p->setPhase(DEAD_PHASE);
+                    if (p->getLives() < 0) {
+                        RESOURCE_MANAGER.playSound("game_over.wav");
+                    }
+                    else {
+                        RESOURCE_MANAGER.playSound("lost_life.wav");
+                    }
                 }
             }
         }
@@ -507,7 +547,8 @@ void GameEngine::resetGame()
     items.clear();
     effects.clear();
     decor.clear();
-    player->getFireBalls()->clear();
+    for (auto* p : multiplayers)
+        p->getFireBalls()->clear();
     map.clear();
 
     RESOURCE_MANAGER.stopCurrentMusic();

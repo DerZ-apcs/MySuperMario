@@ -83,7 +83,8 @@ enum ENEMY_TYPE {
 	BULLET,
 	REX,
 	PIRANHA,
-	SHELL
+	SHELL,
+	MUNCHER
 };
 
 enum GOOMBA_TYPE {

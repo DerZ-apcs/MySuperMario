@@ -28,7 +28,7 @@ public:
 
 	virtual float getPoint() const = 0;
 	void setItemState(PowerUpState state);
-	PowerUpState getItemState() const;
+	PowerUpState getPowerUpState() const;
 
 	void Update() override;
 	void draw() override;

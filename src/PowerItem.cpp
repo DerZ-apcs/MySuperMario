@@ -1,6 +1,6 @@
 #include "../include/PowerItem.h"
 
-const float PowerItem::EMERGENCE_HEIGHT = 4.0f;
+const float PowerItem::EMERGENCE_HEIGHT = 32.0f;
 const float PowerItem::EMERGENCE_SPEED = 48.0f;
 const float PowerItem::SPEED = 150.0f;
 
@@ -22,10 +22,10 @@ void PowerItem::setItemState(PowerUpState state) {
 	powerUpState = state;
 }
 
-PowerUpState PowerItem::getItemState() const {
+PowerUpState PowerItem::getPowerUpState() const
+{
 	return powerUpState;
 }
-
 
 //------------------
 
@@ -43,7 +43,7 @@ void PowerItem::Update() {
 
 		currtimeJumping += deltaTime;
 		if (currtimeJumping >= INTERVAL_JUMPING && state == ON_GROUND) {
-			velocity.y = -400;
+			velocity.y = -300;
 			state = JUMPING;
 			currtimeJumping = 0.f;
 		}
@@ -81,10 +81,10 @@ void PowerItem::draw() {
 
 	DrawTexture(texture, position.x, position.y, WHITE);
 	// debug
-	CollNorth.draw();
+	/*CollNorth.draw();
 	CollSouth.draw();
 	CollEast.draw();
-	CollWest.draw();
+	CollWest.draw();*/
 
 }
 

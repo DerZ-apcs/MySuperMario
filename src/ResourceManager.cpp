@@ -198,7 +198,7 @@ void ResourceManager::loadTextures() {
 	textures["PiranhaPlant_CLOSED"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_1.png");
 	textures["FirePiranhaPlant_OPEN"] = textures["PiranhaPlant_OPEN"];
 	textures["FirePiranhaPlant_CLOSED"] = textures["PiranhaPlant_CLOSED"];
-
+	// rex
 	textures["Rex_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/Rex_2_0.png");
 	textures["Rex_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/Rex_2_1.png");
 	textures["Rex_LEFT_0"] = flipTexture(textures["Rex_RIGHT_0"]);
@@ -208,6 +208,9 @@ void ResourceManager::loadTextures() {
 	textures["Rex_Compressed_LEFT_0"] = flipTexture(textures["Rex_Compressed_RIGHT_0"]);
 	textures["Rex_Compressed_LEFT_1"] = flipTexture(textures["Rex_Compressed_RIGHT_1"]);
 	textures["Rex_Dead"] = textures["Rex_Compressed_RIGHT_0"];
+	// muncher
+	textures["Muncher_0"] = LoadTexture("resources/images/sprites/baddies/Muncher_0");
+	textures["Muncher_1"] = LoadTexture("resources/images/sprites/baddies/Muncher_1");
 }
 
 

@@ -78,6 +78,6 @@ void ItemBlock::Activate()
 	isActive = false;
 
 	ItemFactory& factory = ItemFactory::getInstance();
-	Item* item = factory.createItem(heldPowerUp, { position.x, position.y - 8}, getRandomDirection(), subType);
+	Item* item = factory.createItem(heldPowerUp, { position.x, position.y}, getRandomDirection(), subType);
 	globalGameEngine->addItem(item);
 }

@@ -317,7 +317,6 @@ void Character::Ducking()
 
 void Character::Update()
 {
-	HandleInput();
 	const float deltaTime = GetFrameTime();
 
 	if (isInvicible()) {
@@ -396,7 +395,7 @@ void Character::HandleInput()
 		if (IsKeyPressed(KEY_UP)) {
 			Jumping();
 		}
-		if (IsKeyDown(KEY_DOWN) && !(characterType == LUIGI && Character_state == STATE_SMALL)) {
+		if (IsKeyDown(KEY_DOWN)) {
 			Ducking();
 		}
 		else isducking = false;
@@ -419,6 +418,42 @@ void Character::HandleInput()
 	if (IsKeyPressed(KEY_L))
 		lostSuit();
 	if (IsKeyPressed(KEY_LEFT_CONTROL) && (Character_state == STATE_FIRE || Character_state == STATE_FIRESTAR) && !isducking) {
+		ThrowingFireBalls();
+	}
+}
+
+void Character::HandleInput(int leftKey, int rightKey, int upKey, int downKey, int fireKey)
+{
+	if (IsKeyDown(leftKey))
+		RunLeft();
+	else if (IsKeyDown(rightKey))
+		RunRight();
+	else Standing();
+
+	if (state == ON_GROUND) {
+		if (IsKeyPressed(upKey)) {
+			Jumping();
+		}
+		if (IsKeyDown(downKey)) {
+			Ducking();
+		}
+		else {
+			isducking = false;
+		}
+	}
+
+	if (state == JUMPING && velocity.y < 0 && IsKeyReleased(upKey)) {
+		velocity.y *= 0.5f;
+	}
+
+	// Power-up / debug keys could be shared or also player-specific
+	if (IsKeyPressed(KEY_F1)) eatGreenMushrooms();
+	if (IsKeyPressed(KEY_F2)) eatRedMushrooms();
+	if (IsKeyPressed(KEY_F3)) eatFireFlower();
+	if (IsKeyPressed(KEY_F4)) eatStar();
+	if (IsKeyPressed(KEY_L))  lostSuit();
+
+	if (IsKeyPressed(fireKey) && (Character_state == STATE_FIRE || Character_state == STATE_FIRESTAR) && !isducking) {
 		ThrowingFireBalls();
 	}
 }
@@ -707,11 +742,11 @@ void Character::collisionWithEnemy(Enemy* enemy, CollisionType CollType)
 		
 	}
 	else if (enemy->getEnemyType() != SHELL) {
-		if (CollType != COLLISION_TYPE_SOUTH /*|| enemy->getEnemyType() == PIRANHA*/) {
+		if (countImmortalTime > 0.f)
+			return;
+		else if (CollType != COLLISION_TYPE_SOUTH || enemy->getEnemyType() == PIRANHA || enemy->getEnemyType() == MUNCHER) {
 			lostSuit();
 		}
-		else if (countImmortalTime > 0.f)
-			return;
 		else  {
 			// stomped
 			scores += enemy->getScores();
@@ -799,7 +834,7 @@ void Character::eatStar() // transform to star
 	else if (Character_state == STATE_FIRE) {
 		StartTransition({ 4, 9, 4, 9, 4, 9, 4, 9 }, 8);
 	}
-	//invicibleStarTime = 12.f;
+	invicibleStarTime = 12.f;
 }
 
 void Character::eatFireFlower() // transform to fire

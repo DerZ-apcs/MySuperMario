@@ -3,6 +3,7 @@
 
 #include "../include/Camera.h"
 #include "../include/Mario.h"
+#include "../include/Luigi.h"
 #include "../include/FireBall.h"
 #include "../include/Map.h"
 #include "../include/GUI.h"
@@ -19,9 +20,18 @@ class Level;
 
 class GameEngine {
 private:
+    struct PlayerControls {
+        int left, right, up, down, fire;
+    };
+    std::vector<PlayerControls> controlBindings = {
+        {KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_RIGHT_SHIFT},
+        {KEY_A, KEY_D, KEY_W, KEY_S, KEY_LEFT_SHIFT}
+    };
     Level* level;
     Map map;
     Character* player;
+    Character* player2 = nullptr;
+    std::vector<Character*> multiplayers; // for multiplayers
     std::vector<Blocks*> blocks;
     std::vector<Enemy*> enemies;
     std::vector<Item*> items;

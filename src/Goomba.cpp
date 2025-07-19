@@ -136,7 +136,6 @@ void Goomba::stomped() {
     UpdateTexture();
     Effect* text = new TextEffect(to_string(SCORE_STOMP_GOOMBA).c_str(), getCenter());
     globalGameEngine->addEffect(text);
-    return;
 }
 
 // ---------------------------------------------- FLYINGGOOMBA --------------------------------------------------------- 

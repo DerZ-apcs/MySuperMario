@@ -13,6 +13,7 @@ protected:
     float delayTimer;
     static const float POP_UP_DURATION; // Thời gian trồi lên/rút xuống
     static const float STAY_UP_DURATION; // Thời gian ở trạng thái trồi lên
+    static const float DURATION_BETWEEN_POPUP; // rest between two popups
 public:
     PiranhaPlant(Vector2 pos, Texture2D texture);
     void Update() override;

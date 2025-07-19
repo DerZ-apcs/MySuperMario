@@ -13,6 +13,7 @@
 #include "../include/ItemBlock.h"
 #include "../include/CoinBlock.h"
 #include "../include/Coin.h"
+#include "../include/PowerItem.h"
 #include <iostream>
 #include <GameEngine.h>
 
@@ -105,8 +106,8 @@ bool PlayerItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	case COLLISION_TYPE_NORTH:
 		character->setPosition(Vector2{ character->getX(), block->getY() + block->getHeight() });
 		character->setVelY(0);
-		//block->releaseItem(character); // set release
-		block->Activate();
+		if (block->getActive())
+			block->Activate();
 		break;
 	case COLLISION_TYPE_SOUTH:
 		character->setPosition(Vector2{ character->getX(), block->getY() - character->getHeight() });
@@ -210,7 +211,7 @@ bool PlayerCoinBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	switch (Colltype) {
 	case COLLISION_TYPE_NORTH:
 		character->setPosition(Vector2{ character->getX(), block->getY() + block->getHeight() });
-		character->setVelY(0);
+		character->setVelY(50);
 		if (block->getActive()) {
 			block->Activate();
 			character->setCoins(character->getCoins() + 1);
@@ -355,7 +356,7 @@ bool EnemyItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 		}
 
 		if (enemy->getEnemyType() == SHELL) {
-			if (enemy->getIsKicked())
+			if (enemy->getIsKicked() && block->getActive())
 				//block->releaseItem(enemy);
 				block->Activate();
 		}
@@ -367,17 +368,14 @@ bool EnemyBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	Enemy* enemy = dynamic_cast<Enemy*>(entityA);
 	Blocks* block = dynamic_cast<Blocks*>(entityB);
 
-	if (!enemy || !block || !enemy->getCollisionAvailable() || !block->getCollisionAvailable())
+	if (!enemy || !block || !enemy->getCollisionAvailable() || !block->getCollisionAvailable() || enemy->getEnemyType() == PIRANHA)
 		return false;
 	CollisionType Colltype = enemy->CheckCollision(*block);
 
 	if (Colltype == COLLISION_TYPE_NONE)
 		return false;
 	if (enemy->getEnemyType() == BULLET) {
-		enemy->setVel({ 0, 0 });
-		RESOURCE_MANAGER.playSound("stomp.wav");
-		enemy->setEntityDead();
-		return true;
+		return false;
 	}
 	switch (Colltype) {
 	case COLLISION_TYPE_NORTH:
@@ -435,7 +433,7 @@ bool FireBallItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	if (Colltype == COLLISION_TYPE_NONE)
 		return false;
 
-	if (!block->getActive()) {
+	if (block->getActive()) {
 		block->Activate();
 		fireball->setEntityDead();
 		fireball->setCollisionAvailable(false);
@@ -575,12 +573,17 @@ bool ItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 {
 	Item* item = dynamic_cast<Item*>(entityA);
 	Blocks* block = dynamic_cast<Blocks*>(entityB);
+	PowerItem* powerItem = dynamic_cast<PowerItem*>(item);
 
-	if (!item || !block || item->getCollisionAvailable() == false)
+	if (!item || !block || !item->getCollisionAvailable())
 		return false;
+	if (powerItem && powerItem->getPowerUpState() != ACTIVE) {
+		return false;
+	}
 	CollisionType Colltype = item->CheckCollision(*block);
 	if (Colltype == COLLISION_TYPE_NONE)
 		return false;
+
 	switch (Colltype) {
 	case COLLISION_TYPE_NORTH:
 		item->setPosition(Vector2{ item->getX(), block->getY() + block->getHeight() });
@@ -636,7 +639,7 @@ bool EnemyFireBallBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	{
 	case COLLISION_TYPE_NORTH:
 		fireball->setPosition(Vector2{ fireball->getX(), block->getY() + block->getHeight() });
-		fireball->setVelY(0);
+		fireball->setVelY(fireball->getVelY() * -0.9f);
 		break;
 	case COLLISION_TYPE_SOUTH:
 		fireball->setPosition(Vector2{ fireball->getX(), block->getY() - fireball->getHeight() });
@@ -662,6 +665,8 @@ bool FireBallEnemyInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	FireBall* fireball = dynamic_cast<FireBall*>(entityA);
 	Enemy* enemy = dynamic_cast<Enemy*>(entityB);
 	if (!fireball || !enemy || !fireball->getCollisionAvailable() || !enemy->getCollisionAvailable())
+		return false;
+	if (enemy->getEnemyType() == MUNCHER)
 		return false;
 	CollisionType Colltype = fireball->CheckCollision(*enemy);
 	if (Colltype == COLLISION_TYPE_NONE)

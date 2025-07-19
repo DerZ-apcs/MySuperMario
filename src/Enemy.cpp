@@ -62,10 +62,10 @@ void Enemy::draw() {
         DrawTexturePro(texture, source, { position.x, position.y, size.x, size.y }, { 0.f, 0.f }, 0.f, WHITE);
         
 //#ifdef DEBUG
-        CollNorth.draw();
+        /*CollNorth.draw();
         CollSouth.draw();
         CollEast.draw();
-        CollWest.draw();
+        CollWest.draw();*/
 //#endif
     }
 }
