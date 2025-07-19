@@ -23,14 +23,13 @@ void Goomba::Update() {
     if (mario && mario->getState() != STATE_IS_DYING && collisionTimer <= 0) {
         float distance = Vector2Distance(position, mario->getPosition());
         if (distance <= detectMarioRange) {
-            // Mario trong phạm vi phát hiện, thay đổi hành vi
             if (mario->getX() < position.x) {
                 direction = LEFT;
-                velocity.x = -GOOMBA_SPEED * 1.5f; // Tăng tốc độ khi đuổi
+                velocity.x = -GOOMBA_SPEED * 1.5f; 
             }
             else {
                 direction = RIGHT;
-                velocity.x = GOOMBA_SPEED * 1.5f; // Tăng tốc độ khi đuổi
+                velocity.x = GOOMBA_SPEED * 1.5f; 
             }
         }
         else {
@@ -159,12 +158,19 @@ void Goomba::HandleTileCollision(const Tile& tile, CollisionType collType) {
 
 // FlyingGoomba Class Implementation
 FlyingGoomba::FlyingGoomba(Vector2 pos, Texture2D texture, MediatorCollision* mediator)
-    : Goomba(pos, texture, nullptr), jumpTimer(0.0f), detectMarioRange(250.0f), mediatorCollision(mediator), collisionTimer(0.0f) {
+    : Goomba(pos, texture, mediator), jumpTimer(0.0f), detectMarioRange(250.0f),
+    collisionTimer(0.0f), hasWings(true) {
     velocity.x = -FLYINGGOOMBA_SPEED;
     state = ON_GROUND;
 }
 
 void FlyingGoomba::Update() {
+
+    if (!hasWings) {
+        Goomba::Update();
+        return;
+    }
+
     if (isReadyForRemoval() || state == STATE_IS_DYING) {
         if (deathTimer > 0) {
             deathTimer -= GetFrameTime();
@@ -187,7 +193,6 @@ void FlyingGoomba::Update() {
     if (mario && mario->getState() != STATE_IS_DYING && collisionTimer <= 0) {
         float distance = Vector2Distance(position, mario->getPosition());
         if (distance <= detectMarioRange) {
-            // Mario trong phạm vi phát hiện, thay đổi hướng và tốc độ
             if (mario->getX() < position.x) {
                 direction = LEFT;
                 velocity.x = -FLYINGGOOMBA_SPEED * 1.5f; // Tăng tốc khi đuổi
@@ -224,14 +229,11 @@ void FlyingGoomba::Update() {
         velocity.y = -FLYINGGOOMBA_JUMP_VELOCITY; // Nhảy ngẫu nhiên
         state = JUMPING;
         jumpTimer = 0.0f;
-        // baseY = position.y;
     }
 
-    // Cập nhật vị trí
     position.x += velocity.x * deltaTime;
     position.y += velocity.y * deltaTime;
 
-    // Áp dụng trọng lực nhẹ
     if (state != ON_GROUND) {
         velocity.y += GRAVITY * deltaTime * 0.5f; // Trọng lực nhẹ hơ
         if (velocity.y > 0 && state == JUMPING) {
@@ -243,10 +245,40 @@ void FlyingGoomba::Update() {
     UpdateTexture();
 }
 
+void FlyingGoomba::CollisionWithCharacter(Mario& mario, CollisionType collType) {
+    if (isReadyForRemoval() || state == STATE_IS_DYING) return;
+
+    // Handle Mario stomping on the Flying Goomba
+    if (collType == COLLISION_TYPE_SOUTH && (mario.getState() == JUMPING || mario.getState() == FALLING)) {
+        if (hasWings) {
+            hasWings = false; // Lose wings
+            state = FALLING; // Fall to the ground
+            velocity.x = (direction == LEFT) ? -GOOMBA_SPEED : GOOMBA_SPEED; // Set to normal Goomba speed
+            velocity.y = 0; // Reset vertical velocity before bounce
+            mario.setVelY(MARIO_BOUNCE_VELOCITY);
+            mario.addScore(SCORE_STOMP_GOOMBA); // Give score for de-winging
+            Singleton<ResourceManager>::getInstance().playSound("STOMP");
+        }
+        else {
+            // If wings are already gone, call the base Goomba collision, which handles death
+            Goomba::CollisionWithCharacter(mario, collType);
+        }
+    }
+    // For any other collision, Mario gets hurt. Call the base Goomba logic.
+    else if (collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_WEST || collType == COLLISION_TYPE_NORTH) {
+        Goomba::CollisionWithCharacter(mario, collType);
+    }
+}
+
 void FlyingGoomba::UpdateTexture() {
+
+    if (!hasWings) {
+        Goomba::UpdateTexture();
+        return;
+    }
+
     if (state == STATE_IS_DYING) {
         texture = Singleton<ResourceManager>::getInstance().getTexture("Goomba_Dead");
-       /* isFlipped = true;*/
         return;
     }
 
@@ -267,6 +299,12 @@ void FlyingGoomba::UpdateTexture() {
 }
 
 void FlyingGoomba::HandleTileCollision(const Tile& tile, CollisionType collType) {
+    
+    if (!hasWings) {
+        Goomba::HandleTileCollision(tile, collType);
+        return;
+    }
+
     if (isDead || state == STATE_IS_DYING) return;
     if (collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_WEST) {
         direction = (direction == LEFT) ? RIGHT : LEFT;

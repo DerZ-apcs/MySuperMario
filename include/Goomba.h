@@ -4,7 +4,7 @@
 #include "../include/MediatorCollision.h"
 
 class Goomba : public Enemy {
-private:
+protected:
     float pauseTimer;
     bool isPaused;
     float detectMarioRange;
@@ -24,12 +24,14 @@ class FlyingGoomba : public Goomba {
 private:
     float jumpTimer; // Timer để kiểm soát tần suất nhảy
     float detectMarioRange;
-	MediatorCollision* mediatorCollision;
+	// MediatorCollision* mediatorCollision;
     float collisionTimer;
+    bool hasWings;
 public:
     FlyingGoomba(Vector2 pos, Texture2D texture, MediatorCollision* mediator);
     void Update() override;
     void UpdateTexture() override;
+    void CollisionWithCharacter(Mario& mario, CollisionType collType) override;
     void HandleTileCollision(const Tile& tile, CollisionType collType) override;
 };
 
