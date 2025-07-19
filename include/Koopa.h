@@ -29,4 +29,11 @@ public:
     BlueKoopa(Vector2 pos, Texture2D texture);
     void UpdateTexture() override;
 };
+
+class GreenKoopa : public Koopa {
+public:
+    GreenKoopa(Vector2 pos, Texture2D texture);
+    void UpdateTexture() override;
+};
+
 #endif
