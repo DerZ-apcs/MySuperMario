@@ -3,10 +3,10 @@
 #include "../include/Enemy.h"
 
 class Koopa : public Enemy {
-private:
+protected:
     float reviveTimer;
-    bool isReviving; // Trạng thái rung trước khi hồi sinh
-    float reviveShakeTimer; // Timer cho hiệu ứng rung
+    bool isReviving; 
+    float reviveShakeTimer;
 public:
     Koopa(Vector2 pos, Texture2D texture);
     void Update() override;
@@ -18,4 +18,9 @@ public:
     void HandleTileCollision(const Tile& tile, CollisionType collType) override;
 };
 
+class YellowKoopa : public Koopa {
+public:
+    YellowKoopa(Vector2 pos, Texture2D texture);
+    void UpdateTexture() override;
+};
 #endif

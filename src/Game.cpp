@@ -20,9 +20,9 @@ Game::Game(int nwidth, int nheight, int ntargetFPS) :
     camera.zoom = 1.0f;
     mediatorCollision.SetMario(&mario);
    /* enemies.push_back(new Goomba({ 400, 920 }, Resource_manager.getTexture("Goomba_LEFT_0"), &mediatorCollision));
-    enemies.push_back(new Goomba({ 401, 900 }, Resource_manager.getTexture("Goomba_RIGHT_0"), &mediatorCollision));
-    enemies.push_back(new Koopa({ 500, 912 }, Resource_manager.getTexture("Koopa_LEFT_1")));
-    enemies.push_back(new FlyingGoomba({ 700, 900 }, Resource_manager.getTexture("Goomba_LEFT_0"), &mediatorCollision));
+    enemies.push_back(new Goomba({ 401, 900 }, Resource_manager.getTexture("Goomba_RIGHT_0"), &mediatorCollision));*/
+    enemies.push_back(new YellowKoopa({ 600, 900 }, Resource_manager.getTexture("YellowKoopa_RIGHT_1")));
+  /*  enemies.push_back(new FlyingGoomba({ 700, 900 }, Resource_manager.getTexture("Goomba_LEFT_0"), &mediatorCollision));
     enemies.push_back(new FlyingGoomba({ 800, 920 }, Resource_manager.getTexture("FlyingGoomba_LEFT_1"), &mediatorCollision));
     enemies.push_back(new Bullet({ 400, 704 }, Resource_manager.getTexture("Bullet_LEFT_1"), LEFT)); */
   /*  enemies.push_back(new PiranhaPlant({ 576, 448 }, Resource_manager.getTexture("PiranhaPlant_OPEN"),mario));*/
@@ -32,7 +32,7 @@ Game::Game(int nwidth, int nheight, int ntargetFPS) :
 	enemies.push_back(new Bullet({ 2000, 448 }, Resource_manager.getTexture("Bullet_LEFT_1"), LEFT));
     enemies.push_back(new FireBullet({ 2000, 350 }, Resource_manager.getTexture("Bullet_LEFT_1"), LEFT, mario));
     enemies.push_back(new Rex({ 400, 920 }, Resource_manager.getTexture("Rex_LEFT_0")));*/
-    enemies.push_back(new Muncher({ 500,448 }, Resource_manager.getTexture("Muncher_1")));
+   /* enemies.push_back(new Muncher({ 500,448 }, Resource_manager.getTexture("Muncher_1"))); */
 }
 
 Game::~Game()

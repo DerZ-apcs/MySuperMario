@@ -1,6 +1,5 @@
 ﻿#include "../include/Koopa.h"
 
-// Koopa Class Implementation
 Koopa::Koopa(Vector2 pos, Texture2D texture)
     : Enemy(pos, { 32, 48 }, { 0, 0 }, LEFT, ON_GROUND, texture, 0.2f, 1, GREEN),
     reviveTimer(0.0f), isReviving(false), reviveShakeTimer(0.0f) {
@@ -57,6 +56,7 @@ void Koopa::Update() {
 }
 
 void Koopa::draw() {
+    // Enemy::draw();
     if (!isDead) {
         Rectangle source = { 0, 0, (float)texture.width, (float)texture.height };
         Rectangle dest = { position.x, position.y, texture.width * squashScale, texture.height * squashScale };
@@ -86,10 +86,10 @@ void Koopa::UpdateTexture() {
                 currFrame = (currFrame + 1) % 4;
                 frameAcum = 0;
             }
-            texture = Singleton<ResourceManager>::getInstance().getTexture("Koopa_Shell_" + std::to_string(currFrame));
+            texture = Singleton<ResourceManager>::getInstance().getTexture("YellowKoopa_Shell_" + std::to_string(currFrame));
         }
         else {
-            texture = Singleton<ResourceManager>::getInstance().getTexture("Koopa_Shell");
+            texture = Singleton<ResourceManager>::getInstance().getTexture("YellowKoopa_Shell");
         }
         return;
     }
@@ -101,18 +101,18 @@ void Koopa::UpdateTexture() {
         }
         if (direction == LEFT) {
             if (currFrame == 0) {
-                texture = Singleton<ResourceManager>::getInstance().getTexture("Koopa_LEFT_0");
+                texture = Singleton<ResourceManager>::getInstance().getTexture("YellowKoopa_LEFT_0");
             }
             else {
-                texture = Singleton<ResourceManager>::getInstance().getTexture("Koopa_LEFT_1");
+                texture = Singleton<ResourceManager>::getInstance().getTexture("YellowKoopa_LEFT_1");
             }
         }
         else {
             if (currFrame == 0) {
-                texture = Singleton<ResourceManager>::getInstance().getTexture("Koopa_RIGHT_0");
+                texture = Singleton<ResourceManager>::getInstance().getTexture("YellowKoopa_RIGHT_0");
             }
             else {
-                texture = Singleton<ResourceManager>::getInstance().getTexture("Koopa_RIGHT_1");
+                texture = Singleton<ResourceManager>::getInstance().getTexture("YellowKoopa_RIGHT_1");
             }
         }
     }
@@ -121,9 +121,7 @@ void Koopa::UpdateTexture() {
 void Koopa::CollisionWithCharacter(Mario& mario, CollisionType collType) {
     if (isReadyForRemoval() || state == STATE_IS_DYING) return;
 
-    // 1. Mario stomps from above (COLLISION_TYPE_SOUTH)
     if (collType == COLLISION_TYPE_SOUTH && (mario.getState() == JUMPING || mario.getState() == FALLING)) {
-        // First stomp: Koopa becomes a stationary shell
         if (state != STATE_SHELL) {
             state = STATE_SHELL;
             velocity.x = 0;
@@ -169,7 +167,6 @@ void Koopa::CollisionWithCharacter(Mario& mario, CollisionType collType) {
                 mario.setInvincibilityTimer(2.0f);
             }
         }
-        // Non-shell Koopa hurts Mario
         else if (mario.getInvincibilityTimer() <= 0) {
             mario.TransitionToSmall();
             mario.setInvincibilityTimer(2.0f);
@@ -200,8 +197,6 @@ void Koopa::CollisionWithFireball(FireBall& fireball) {
     deathTimer = ENEMY_DEATH_TIMER_LONG;
     updateCollision();
     Singleton<ResourceManager>::getInstance().playSound("FIREBALL_KILL");
-    // Giả định Mario được truy cập qua MediatorCollision hoặc cách khác
-    // mario->addScore(SCORE_FIREBALL_KOOPA); // Cần thêm cơ chế truyền Mario
 }
 
 void Koopa::HandleTileCollision(const Tile& tile, CollisionType collType) {
@@ -227,3 +222,49 @@ void Koopa::HandleTileCollision(const Tile& tile, CollisionType collType) {
         velocity.y = 0;
     }
 }
+
+YellowKoopa::YellowKoopa(Vector2 pos, Texture2D texture)
+    : Koopa(pos, texture) {
+}
+
+void YellowKoopa::UpdateTexture() {
+    if (state == STATE_SHELL || state == STATE_IS_DYING) {
+        if (state == STATE_SHELL && velocity.x != 0) {
+            frameAcum += GetFrameTime();
+            if (frameAcum > 0.05f) {
+                currFrame = (currFrame + 1) % 4;
+                frameAcum = 0;
+            }
+            texture = Singleton<ResourceManager>::getInstance().getTexture("YellowKoopa_Shell_" + std::to_string(currFrame));
+        }
+        else {
+            texture = Singleton<ResourceManager>::getInstance().getTexture("YellowKoopa_Shell");
+        }
+        return;
+    }
+    if (state == ON_GROUND) {
+        frameAcum += GetFrameTime();
+        if (frameAcum > frameTime) {
+            currFrame = (currFrame + 1) % (maxFrame + 1);
+            frameAcum = 0;
+        }
+        if (direction == LEFT) {
+            if (currFrame == 0) {
+                texture = Singleton<ResourceManager>::getInstance().getTexture("YellowKoopa_LEFT_0");
+            }
+            else {
+                texture = Singleton<ResourceManager>::getInstance().getTexture("YellowKoopa_LEFT_1");
+            }
+        }
+        else {
+            if (currFrame == 0) {
+                texture = Singleton<ResourceManager>::getInstance().getTexture("YellowKoopa_RIGHT_0");
+            }
+            else {
+                texture = Singleton<ResourceManager>::getInstance().getTexture("YellowKoopa_RIGHT_1");
+            }
+        }
+    }
+}
+
+
