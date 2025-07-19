@@ -11,7 +11,7 @@ public:
     Koopa(Vector2 pos, Texture2D texture);
     void Update() override;
     void draw() override;
-    void UpdateTexture() override;
+    void UpdateTexture() = 0;
     void CollisionWithCharacter(Mario& mario, CollisionType collType) override;
     void CollisionWithEnemy(Enemy& enemy, CollisionType collType) override;
     void CollisionWithFireball(FireBall& fireball) override;

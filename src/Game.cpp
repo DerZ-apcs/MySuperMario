@@ -21,7 +21,7 @@ Game::Game(int nwidth, int nheight, int ntargetFPS) :
     mediatorCollision.SetMario(&mario);
    /* enemies.push_back(new Goomba({ 400, 920 }, Resource_manager.getTexture("Goomba_LEFT_0"), &mediatorCollision));
     enemies.push_back(new Goomba({ 401, 900 }, Resource_manager.getTexture("Goomba_RIGHT_0"), &mediatorCollision));*/
-    enemies.push_back(new BlueKoopa({ 600, 900 }, Resource_manager.getTexture("YellowKoopa_RIGHT_1")));
+    enemies.push_back(new BlueKoopa({ 400, 912 }, Resource_manager.getTexture("BlueKoopa_RIGHT_1")));
   /*  enemies.push_back(new FlyingGoomba({ 700, 900 }, Resource_manager.getTexture("Goomba_LEFT_0"), &mediatorCollision));
     enemies.push_back(new FlyingGoomba({ 800, 920 }, Resource_manager.getTexture("FlyingGoomba_LEFT_1"), &mediatorCollision));
     enemies.push_back(new Bullet({ 400, 704 }, Resource_manager.getTexture("Bullet_LEFT_1"), LEFT)); */
