@@ -60,6 +60,9 @@ public:
     void TransitionToFire();
     void TransitionMarioState();
 
+    void TakeDamage();
+    bool isInvincible() const;
+
     void ThrowingFireBalls();
     std::list<FireBall*>* getFireBalls();
 
@@ -73,4 +76,5 @@ public:
     float getInvincibilityTimer() const { return invincibilityTimer; }
     void setInvincibilityTimer(float time) { invincibilityTimer = time; }
 };
+
 #endif

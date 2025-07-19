@@ -430,6 +430,25 @@ void Mario::TransitionMarioState()
         Mario_sprite = STATE_TRANSITIONING_FROM_FIREBALL_TO_SMALL;
 }
 
+bool Mario::isInvincible() const {
+    return invincibilityTimer > 0;
+}
+
+void Mario::TakeDamage() {
+    // Nếu đang bất tử, không nhận sát thương
+    if (isInvincible()) {
+        return;
+    }
+
+    if (Mario_State == STATE_SUPER || Mario_State == STATE_FIRE_BALL) {
+        TransitionToSmall();
+        setInvincibilityTimer(1.0f);
+    }
+    else if (Mario_State == STATE_SMALL) {
+        setState(STATE_IS_DYING);
+    }
+}
+
 void Mario::ThrowingFireBalls()
 {
     isThrowing = true;
