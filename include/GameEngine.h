@@ -24,13 +24,13 @@ private:
         int left, right, up, down, fire;
     };
     std::vector<PlayerControls> controlBindings = {
-        {KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_RIGHT_SHIFT},
-        {KEY_A, KEY_D, KEY_W, KEY_S, KEY_LEFT_SHIFT}
+        {KEY_A, KEY_D, KEY_W, KEY_S, KEY_LEFT_SHIFT},
+        {KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_RIGHT_SHIFT}
     };
     Level* level;
     Map map;
-    Character* player;
-    Character* player2 = nullptr;
+    /*Character* player;
+    Character* player2 = nullptr;*/
     std::vector<Character*> multiplayers; // for multiplayers
     std::vector<Blocks*> blocks;
     std::vector<Enemy*> enemies;
@@ -38,7 +38,6 @@ private:
     std::vector<EnemyFireBall*> enemyFireball;
     std::vector<Effect*> effects;
     std::vector<Blocks*> decor;
-    //std::vector<Shell*> shells;
     std::vector<Entity*> testEntities;
     GameCamera camera;
     bool isvictory = false;
@@ -48,21 +47,20 @@ private:
     bool cleared = false;
     float time;
     float deltaTime;
+    int sharedLives = 5;
     Texture2D BackGroundTex;
 
-    std::vector<Tile*> Tiles;
     std::map<std::string, Texture2D> backgroundTextures;
     std::vector<Vector2> BackGroundPos;
-    //MediatorCollision mediatorCollision;
 
 public:
     GameEngine(float screenWidth, float screenHeight, Level& level, Character*& player);
+    GameEngine(float screenWidth, float screenHeight, Level& level, std::vector<Character*>& multiplayers);
     ~GameEngine();
     void addScore(int amount);
     void addEnemyFireBall(EnemyFireBall* fireball);
     void addEnemy(Enemy* enemy);
     void addEffect(Effect* effect);
-    //void addShell(Shell* shell);
     void addItem(Item* item);
     void update();
     void handleCollision();
@@ -75,7 +73,7 @@ public:
     bool isOver() const;
     void resetGame();
     Vector2 getBound();
-    Character*& getCharacter();
+    std::vector<Character*>& getMultiplayers();
 };
 extern GameEngine* globalGameEngine;
 

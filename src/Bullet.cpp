@@ -106,17 +106,20 @@ void FireBullet::Update() {
 
 void FireBullet::ShootFireBall() {
     //if (size() >= MAX_FIREBALLS) return; // Không bắn nếu vượt giới hạn
-    Character* character = globalGameEngine->getCharacter() ? globalGameEngine->getCharacter() : nullptr;
-    if (!character) return;
 
-    float distanceToMario = Vector2Distance(position, character->getPosition());
-    bool isHoming = (distanceToMario <= DETECTION_RANGE);
-    
-    Direction dir = (character->getX() > position.x) ? RIGHT : LEFT;
-    Vector2 fireBallPos = { position.x + (dir == RIGHT ? size.x / 2 : -size.x / 2), position.y + size.y / 2 };
-    Vector2 fireBallVel = (dir == RIGHT) ? Vector2{ 400.0f, -200.0f } : Vector2{ -400.0f, -200.0f };
-    
-    EnemyFireBall* fireball = new EnemyFireBall(fireBallPos, { 16, 16 }, fireBallVel, dir, 2.0f, isHoming);
-    globalGameEngine->addEnemyFireBall(fireball);
-    RESOURCE_MANAGER.playSound("fireball.wav");
+    for (auto* p : globalGameEngine->getMultiplayers()) {
+        if (p && p->getPhase() != CLEARLEVEL_PHASE && p->getPhase() != DEAD_PHASE && collisionTimer <= 0) {
+            float distanceToMario = Vector2Distance(position, p->getPosition());
+            bool isHoming = (distanceToMario <= DETECTION_RANGE);
+
+            Direction dir = (p->getX() > position.x) ? RIGHT : LEFT;
+            Vector2 fireBallPos = { position.x + (dir == RIGHT ? size.x / 2 : -size.x / 2), position.y + size.y / 2 };
+            Vector2 fireBallVel = (dir == RIGHT) ? Vector2{ 400.0f, -200.0f } : Vector2{ -400.0f, -200.0f };
+
+            EnemyFireBall* fireball = new EnemyFireBall(fireBallPos, { 16, 16 }, fireBallVel, dir, 2.0f, isHoming);
+            globalGameEngine->addEnemyFireBall(fireball);
+            RESOURCE_MANAGER.playSound("fireball.wav");
+        }
+    }
+   
 }

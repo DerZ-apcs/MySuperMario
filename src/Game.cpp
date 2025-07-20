@@ -10,7 +10,6 @@ Game::Game(): backgroundTexture({0})
 	currentState = std::make_unique<MainMenuState>(this);
 	audioEnabled = true;
 	musicEnabled = true;
-	player = new Mario();
 	level = nullptr;
 	selectedCharacter = 1;
 	selectedMap = 1;
@@ -22,8 +21,6 @@ Game::~Game()
 		UnloadTexture(backgroundTexture);
 		backgroundTexture.id = 0;
 	}
-	if (player)
-		delete player;
 }
 
 void Game::init()

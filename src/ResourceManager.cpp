@@ -109,9 +109,8 @@ void ResourceManager::loadTextures() {
 	textures["BACKGROUND_2"] = LoadTexture("resources/images/backgrounds/background2.png");
 	textures["BACKGROUND_3"] = LoadTexture("resources/images/backgrounds/background3.png");
 	textures["MENU_SCREEN"] = LoadTexture("resources/images/backgrounds/Menuscreen.png");
-	//Image img = LoadImage("resources/images/backgrounds/menu.png");
-	//textures["MENU_SCREEN"] = LoadTextureFromImage(img);    // Upload to GPU
-	//UnloadImage(img);
+	textures["BACKGROUND_8"] = LoadTexture("resources/images/backgrounds/background8.png");
+	textures["WHITE"] = LoadTexture("resources/images/backgrounds/white.png");
 
 	// GUI
 	textures["HEART"] = LoadTexture("resources/images/backgrounds/heart.png");
@@ -127,6 +126,12 @@ void ResourceManager::loadTextures() {
 	textures["SETTING"] = LoadTexture("resources/images/gui/setting.png");
 	textures["SOUND_OFF"] = LoadTexture("resources/images/gui/sound_off.png");
 	textures["SOUND_ON"] = LoadTexture("resources/images/gui/sound_on.png");
+	textures["LuigiGUI"] = LoadTexture("resources/images/gui/Luigi_.png");
+	textures["MarioGUI"] = LoadTexture("resources/images/gui/Mario_.png");
+	textures["Mario_start"] = LoadTexture("resources/images/gui/Mario_start.png");
+	textures["Luigi_start"] = LoadTexture("resources/images/gui/Luigi_start.png");
+	textures["GameOver"] = LoadTexture("resources/images/gui/guiGameOver.png");
+	textures["Time_Up"] = LoadTexture("resources/images/gui/guiTimeUp.png");
 
 	// coin
 	textures["Coin_0"] = LoadTexture("resources/images/sprites/items/Coin_0.png");
@@ -212,7 +217,6 @@ void ResourceManager::loadTextures() {
 	textures["Muncher_0"] = LoadTexture("resources/images/sprites/baddies/Muncher_0");
 	textures["Muncher_1"] = LoadTexture("resources/images/sprites/baddies/Muncher_1");
 }
-
 
 void ResourceManager::loadFonts()
 {

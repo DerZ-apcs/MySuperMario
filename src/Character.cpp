@@ -374,10 +374,10 @@ void Character::draw()
 	}
 	else DrawTexture(texture, position.x, position.y, WHITE);
 	// for debug
-	CollEast.draw();
-	CollSouth.draw();
-	CollNorth.draw();
-	CollWest.draw();
+	//CollEast.draw();
+	//CollSouth.draw();
+	//CollNorth.draw();
+	//CollWest.draw();
 }
 
 void Character::HandleInput()
@@ -737,6 +737,7 @@ void Character::collisionWithEnemy(Enemy* enemy, CollisionType CollType)
 		scores += enemy->getScores();
 		RESOURCE_MANAGER.playSound("stomp.wav");
 
+	
 		//enemy->attacked(this->direction); for attacked
 		enemy->stomped();
 		

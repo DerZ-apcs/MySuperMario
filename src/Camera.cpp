@@ -47,7 +47,7 @@ void GameCamera::update(float p1x, float p1y, float p2x, float p2y) {
 
     // Add visual buffer to ensure players aren't on edge
     const float bufferX = 300.0f;  // Increased for better spacing
-    const float bufferY = 300.0f;
+    const float bufferY = 450.0f;
 
     // View size that would be needed to fit both players + buffer
     float requiredWidth = distanceX + bufferX;

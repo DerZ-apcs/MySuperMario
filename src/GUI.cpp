@@ -60,21 +60,115 @@ void GUI::drawStatusBar(const Character* player) {
 
     dest = { 100.f, 155.f, 20.f, 20.f };
     DrawTexturePro(multiplicationSign, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-    //
-
+    // Scores
     DrawText(to_string(player->getScores()).c_str(), 440.f + 1571.f / 8.f - MeasureTextEx(GetFontDefault(), to_string(player->getScores()).c_str(), 45.f, 0.f).x / 2.f, 45, 45, BLACK);
 
     DrawText(globalGameEngine->getCurrentMapName().c_str(), 530, 145, 45, BLACK);
     int timer = floor((globalGameEngine->getRemainingTime()));
     DrawText(to_string(timer).c_str(), 480.f + 1571.f / 8.f - MeasureTextEx(GetFontDefault(), to_string(timer).c_str(), 45.f, 0.f).x / 2.f, 145, 45, BLACK);
 
+    // draw setting button
+    source = { 0, 0, (float)setting.width, (float)restart.height };
+    dest = { (float)GetScreenWidth() - 100, 30.f, 80.f, 80.f };
+    DrawTexturePro(setting, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+    setting_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+}
+
+void GUI::drawStatusBar(std::vector<Character*> multiplayers)
+{
+    Rectangle dest, source;
+
+    //Draw board
+    dest = { 20.f, 20.f, 1138.f / 4.f, 397.f / 4.f };
+    source = { 0, 0, (float)board1.width, (float)board1.height };
+    DrawTexturePro(board1, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+
+    dest = { 20.f, 120.f, 1138.f / 4.f, 397.f / 4.f };
+    DrawTexturePro(board1, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+
+    source = { 0, 0, (float)board2.width, (float)board2.height };
+    dest = { 320.f, 20.f, 1571.f / 4.f, 421.f / 4.f };
+    DrawTexturePro(board2, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+
+    //Draw heart
+    source = { 0, 0, (float)heartTexture.width, (float)heartTexture.height };
+    dest = { 55.f, 45.f, 40.f, 40.f };
+    DrawTexturePro(heartTexture, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+    DrawText(to_string(multiplayers[0]->getLives()).c_str(), 130, 45, 40, BLACK);
+     // player1
+    std::string p1 = "P1";
+    DrawText(p1.c_str(), 200, 45, 40, BLACK);
+
+    //Draw Coin
+    source = { 0, 0, (float)coinTexture.width, (float)coinTexture.height };
+    dest = { 55.f, 145.f, 40.f, 40.f };
+    DrawTexturePro(coinTexture, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+    DrawText(to_string(multiplayers[0]->getCoins()).c_str(), 130, 145, 40, BLACK);
+    //
+
+    //Draw X sign
+    source = { 0, 0, (float)multiplicationSign.width, (float)multiplicationSign.height };
+    dest = { 100.f, 55.f, 20.f, 20.f };
+    DrawTexturePro(multiplicationSign, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+
+    dest = { 100.f, 155.f, 20.f, 20.f };
+    DrawTexturePro(multiplicationSign, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+    // Scores
+    DrawText(to_string(multiplayers[0]->getScores()).c_str(), 320.f + 1571.f / 8.f - MeasureTextEx(GetFontDefault(), to_string(multiplayers[0]->getScores()).c_str(), 45.f, 0.f).x / 2.f, 45, 45, BLACK);
+
+    // for player 2
+    
+        //Draw board
+        dest = { 750.f, 20.f, 1138.f / 4.f, 397.f / 4.f };
+        source = { 0, 0, (float)board1.width, (float)board1.height };
+        DrawTexturePro(board1, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+
+        dest = { 750.f, 120.f, 1138.f / 4.f, 397.f / 4.f };
+        DrawTexturePro(board1, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+
+        source = { 0, 0, (float)board2.width, (float)board2.height };
+        dest = { 1040.f, 20.f, 1571.f / 4.f, 421.f / 4.f };
+        DrawTexturePro(board2, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+
+        //Draw heart
+        source = { 0, 0, (float)heartTexture.width, (float)heartTexture.height };
+        dest = { 785.f, 45.f, 40.f, 40.f };
+        DrawTexturePro(heartTexture, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+        DrawText(to_string(multiplayers[0]->getLives()).c_str(), 860, 45, 40, BLACK);
+        //
+        std::string p2 = "P2";
+        DrawText(p2.c_str(), 930, 45, 40, BLACK);
+        //Draw Coin
+        source = { 0, 0, (float)coinTexture.width, (float)coinTexture.height };
+        dest = { 785.f, 145.f, 40.f, 40.f };
+        DrawTexturePro(coinTexture, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+        DrawText(to_string(multiplayers[0]->getCoins()).c_str(), 860, 145, 40, BLACK);
+        //
+
+        //Draw X sign
+        source = { 0, 0, (float)multiplicationSign.width, (float)multiplicationSign.height };
+        dest = { 830.f, 55.f, 20.f, 20.f };
+        DrawTexturePro(multiplicationSign, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+
+        dest = { 830.f, 155.f, 20.f, 20.f };
+        DrawTexturePro(multiplicationSign, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+        // Scores
+        DrawText(to_string(multiplayers[0]->getScores()).c_str(), 1040.f + 1571.f / 8.f - MeasureTextEx(GetFontDefault(), to_string(multiplayers[0]->getScores()).c_str(), 45.f, 0.f).x / 2.f, 45, 45, BLACK);
+    
+
+    // Map & Time
+    DrawText(globalGameEngine->getCurrentMapName().c_str(), 530, 145, 45, BLACK);
+    int timer = floor((globalGameEngine->getRemainingTime()));
+    DrawText(to_string(timer).c_str(), 480.f + 1571.f / 8.f - MeasureTextEx(GetFontDefault(), to_string(timer).c_str(), 45.f, 0.f).x / 2.f, 145, 45, BLACK);
 
     // draw setting button
     source = { 0, 0, (float)setting.width, (float)restart.height };
     dest = { (float)GetScreenWidth() - 100, 30.f, 80.f, 80.f };
     DrawTexturePro(setting, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-    setting_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsKeyPressed(KEY_S);
+    setting_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
 }
+
+
 
 void GUI::drawPauseMenu()
 {

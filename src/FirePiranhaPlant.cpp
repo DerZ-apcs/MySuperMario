@@ -108,23 +108,29 @@ void FirePiranhaPlant::UpdateTexture() {
 
 void FirePiranhaPlant::ShootFireBall() {
     //if (fireballs.size() >= MAX_FIREBALLS) return; // Không bắn nếu vượt giới hạn
-    Character* character = globalGameEngine->getCharacter() ? globalGameEngine->getCharacter() : nullptr;
-    if (!character) return;
-    Direction dir = (character->getX() > position.x) ? RIGHT : LEFT;
-    Vector2 fireBallPos = { position.x, position.y + 10 };
-    const int numFireballs = 3;
-    const float angleSpread = 15.0f;
-    const float baseSpeed = 300.0f;
+    //Character* character = globalGameEngine->getCharacter() ? globalGameEngine->getCharacter() : nullptr;
+    //if (!character) return;
 
-    for (int i = 0; i < numFireballs; ++i) {
-        float angle = (i - (numFireballs - 1) / 2.0f) * angleSpread;
-        float rad = angle * DEG2RAD;
-        float velX = baseSpeed * cosf(rad) * (dir == RIGHT ? 1.0f : -1.0f);
-        float velY = -200.0f + baseSpeed * sinf(rad);
-        Vector2 fireBallVel = { velX, velY };
-        EnemyFireBall* fireball = new EnemyFireBall(fireBallPos, { 16, 16 }, fireBallVel, dir, 2.0f);
-        globalGameEngine->addEnemyFireBall(fireball);
+    for (auto* p : globalGameEngine->getMultiplayers()) {
+        if (p && p->getPhase() != CLEARLEVEL_PHASE && p->getPhase() != DEAD_PHASE) {
+            Direction dir = (p->getX() > position.x) ? RIGHT : LEFT;
+            Vector2 fireBallPos = { position.x, position.y + 10 };
+            const int numFireballs = 3;
+            const float angleSpread = 15.0f;
+            const float baseSpeed = 300.0f;
+
+            for (int i = 0; i < numFireballs; ++i) {
+                float angle = (i - (numFireballs - 1) / 2.0f) * angleSpread;
+                float rad = angle * DEG2RAD;
+                float velX = baseSpeed * cosf(rad) * (dir == RIGHT ? 1.0f : -1.0f);
+                float velY = -200.0f + baseSpeed * sinf(rad);
+                Vector2 fireBallVel = { velX, velY };
+                EnemyFireBall* fireball = new EnemyFireBall(fireBallPos, { 16, 16 }, fireBallVel, dir, 2.0f);
+                globalGameEngine->addEnemyFireBall(fireball);
+            }
+        }
     }
+   
     //RESOURCE_MANAGER.playSound("fireball.wav");
 }
 
@@ -135,13 +141,15 @@ RapidFirePiranha::RapidFirePiranha(Vector2 pos, Texture2D texture)
 
 void RapidFirePiranha::ShootFireBall() {
     //if (fireballs.size() >= MAX_FIREBALLS) return; // Không bắn nếu vượt giới hạn
-    Character* character = globalGameEngine->getCharacter() ? globalGameEngine->getCharacter() : nullptr;
-    if (!character) return;
-    Direction dir = (character->getX() > position.x) ? RIGHT : LEFT;
-    Vector2 fireBallPos = { position.x, position.y + 10 };
-    Vector2 fireBallVel = (dir == RIGHT) ? Vector2{ 200.0f, -200.0f } : Vector2{ -400.0f, -200.0f };
-    EnemyFireBall* fireball = new EnemyFireBall(fireBallPos, { 16, 16 }, fireBallVel, dir, 2.0f);
-    globalGameEngine->addEnemyFireBall(fireball);
+    for (auto* p : globalGameEngine->getMultiplayers()) {
+        if (p && p->getPhase() != CLEARLEVEL_PHASE && p->getPhase() != DEAD_PHASE) {
+            Direction dir = (p->getX() > position.x) ? RIGHT : LEFT;
+            Vector2 fireBallPos = { position.x, position.y + 10 };
+            Vector2 fireBallVel = (dir == RIGHT) ? Vector2{ 200.0f, -200.0f } : Vector2{ -400.0f, -200.0f };
+            EnemyFireBall* fireball = new EnemyFireBall(fireBallPos, { 16, 16 }, fireBallVel, dir, 2.0f);
+            globalGameEngine->addEnemyFireBall(fireball);
+        }
+    }
     RESOURCE_MANAGER.playSound("fireball.wav");
 }
 
@@ -151,19 +159,20 @@ HomingFirePiranha::HomingFirePiranha(Vector2 pos, Texture2D texture)
 
 void HomingFirePiranha::ShootFireBall() {
     //if (fireballs.size() >= MAX_FIREBALLS) return; // Không bắn nếu vượt giới hạn
-    Character* character = globalGameEngine->getCharacter() ? globalGameEngine->getCharacter() : nullptr;
-    if (!character) 
-        return;
 
-    Direction dir = (character->getX() > position.x) ? RIGHT : LEFT;
-    Vector2 fireBallPos = { position.x, position.y + 10 };
-    Vector2 fireBallVel = (dir == RIGHT) ? Vector2{ 200.0f, -200.0f } : Vector2{ -400.0f, -200.0f };
-    bool isHoming = false;
-    float distanceToMario = Vector2Distance(position, character->getPosition());
-    if (distanceToMario <= DETECTION_RANGE) {
-        isHoming = true; // Kích hoạt nhắm mục tiêu khi Mario ở gần
+    for (auto* p : globalGameEngine->getMultiplayers()) {
+        if (p && p->getPhase() != CLEARLEVEL_PHASE && p->getPhase() != DEAD_PHASE) {
+            Direction dir = (p->getX() > position.x) ? RIGHT : LEFT;
+            Vector2 fireBallPos = { position.x, position.y + 10 };
+            Vector2 fireBallVel = (dir == RIGHT) ? Vector2{ 200.0f, -200.0f } : Vector2{ -400.0f, -200.0f };
+            bool isHoming = false;
+            float distanceToMario = Vector2Distance(position, p->getPosition());
+            if (distanceToMario <= DETECTION_RANGE) {
+                isHoming = true; // Kích hoạt nhắm mục tiêu khi Mario ở gần
+            }
+            EnemyFireBall* fireball = new EnemyFireBall(fireBallPos, { 16, 16 }, fireBallVel, dir, 2.0f, isHoming);
+            globalGameEngine->addEnemyFireBall(fireball);
+        }
     }
-    EnemyFireBall* fireball = new EnemyFireBall(fireBallPos, { 16, 16 }, fireBallVel, dir, 2.0f, isHoming);
-    globalGameEngine->addEnemyFireBall(fireball);
     RESOURCE_MANAGER.playSound("fireball.wav");
 }

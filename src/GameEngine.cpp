@@ -20,32 +20,102 @@
 
 GameEngine* globalGameEngine = nullptr;
 
-GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Character*& player)
-    : camera(screenWidth, screenHeight, 1.25f), level(&level), player(player) {
+//GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Character*& player)
+//    : camera(screenWidth, screenHeight, 1.25f), level(&level), player(player) {
+//    map.LoadFromJsonFile(level.getMapPath());
+//    map.loadBackgroundTexture(level.getBackGroundName());
+//    Vector2 Msize = map.getMapSize();
+//    camera.loadRenderTexture(Msize);
+//    // camera
+//    if (!player) player = new Mario();
+//    // test
+//    //if (!player2) {
+//    //    std::cout << "Allocating player2\n";
+//    //    player2 = new Luigi();
+//    //}
+//    //else {
+//    //    std::cout << "player2 already exists at: " << player2 << "\n";
+//    //}
+//
+//    //if (player2) {
+//    //    player2->setState(FALLING);
+//    //    player2->setVel({ 0, 0 });
+//    //    player2->setPosition({ 36, 400 });
+//    //}
+//   
+//    multiplayers.clear();
+//    multiplayers.push_back(player);
+//    //multiplayers.push_back(player2);
+//
+//    blocks = map.getBlocks();
+//    enemies = map.getEnemies();
+//    items = map.getItems();
+//    decor = map.getDecor();
+//    isPaused = false;
+//    this->time = 300;
+//    resetTimer();
+//    deltaTime = 0.f;
+//    BackGroundPos = { {0, 0}, {(float)GetScreenWidth(), 0}, {(float)GetScreenWidth() * 2, 0} };
+//    /*for (int i = 0; i < 10; i++) {
+//        Coin* coin = new Coin(STATIC_COIN, { (float)i * 50, 600 });
+//        items.push_back(coin);
+//    }*/
+//    /*for (int i = 7; i < 10; i++) {
+//        Goomba* goomba = new Goomba({(float) 100 * i, 300 }, RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0"));
+//        goomba->setState(FALLING);
+//        enemies.push_back(goomba);
+//    }*/
+//    /*for (int i = 9; i <= 10; i++) {
+//        FlyingGoomba* flyingGoomba = new FlyingGoomba({ (float)50 * i, 300 }, RESOURCE_MANAGER.getTexture("FlyingGoomba_LEFT_0"));
+//        flyingGoomba->setState(FALLING);
+//        enemies.push_back(flyingGoomba);
+//    }*/
+//    //Koopa* koopa = new Koopa({ 300, 500 }, RESOURCE_MANAGER.getTexture("Koopa_LEFT_0"));
+//    //koopa->setState(FALLING);
+//    //enemies.push_back(koopa);
+//
+//    //Rex* rex = new Rex({ 400, 500 }, RESOURCE_MANAGER.getTexture("Rex_LEFT_0"));
+//    //rex->setState(FALLING);
+//    //enemies.push_back(rex);
+//
+//    //Bullet* bullet1 = new Bullet({ 1000, 400 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
+//    //enemies.push_back(bullet1);
+//    //FireBullet* bullet2 = new FireBullet({ 1600, 500 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
+//    //enemies.push_back(bullet2);
+//    //Bullet* bullet3 = new Bullet({ 1000, 600 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
+//    //enemies.push_back(bullet3);
+//
+//    //FirePiranhaPlant* plant = new FirePiranhaPlant({ 432, 710 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_CLOSED"));
+//    //enemies.push_back(plant);
+//
+//    //// test brick
+//    //for (int i = 1; i < 10; i++) {
+//    //    Brick* brick = new Brick(Vector2{ (float)i * 32, 700 }, Vector2{ 32, 32 }, "Brick_0");
+//    //    blocks.push_back(brick);
+//    //}
+//    //// test coin block
+//    //for (int i = 1; i < 10; i++) {
+//    //    CoinBlock* coinBlock = new CoinBlock({ (float)i * 32, 550 }, "TILE_110", 4);
+//    //    blocks.push_back(coinBlock);
+//    //}
+//    //
+//    //ItemBlock* itemblock1 = new ItemBlock({ 100, 800 }, MUSHROOM, 0);
+//    //ItemBlock* itemblock2 = new ItemBlock({ 132, 800 }, STAR, 0);
+//    //ItemBlock* itemblock3 = new ItemBlock({ 164, 800 }, FLOWER, 0);
+//    //blocks.push_back(itemblock1);
+//    //blocks.push_back(itemblock2);
+//    //blocks.push_back(itemblock3);
+//}
+
+GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std::vector<Character*>& multiplayers):
+    camera(screenWidth, screenHeight, 1.25f), level(&level), multiplayers(multiplayers)
+{
     map.LoadFromJsonFile(level.getMapPath());
     map.loadBackgroundTexture(level.getBackGroundName());
     Vector2 Msize = map.getMapSize();
     camera.loadRenderTexture(Msize);
-    // camera
-    if (!player) player = new Mario();
-    // test
-    if (!player2) {
-        std::cout << "Allocating player2\n";
-        player2 = new Luigi();
-    }
-    else {
-        std::cout << "player2 already exists at: " << player2 << "\n";
-    }
 
-    if (player2) {
-        player2->setState(FALLING);
-        player2->setVel({ 0, 0 });
-        player2->setPosition({ 36, 400 });
-    }
-   
-    multiplayers.clear();
-    multiplayers.push_back(player);
-    multiplayers.push_back(player2);
+    if (!multiplayers.empty()) multiplayers.push_back(new Mario());
 
     blocks = map.getBlocks();
     enemies = map.getEnemies();
@@ -56,55 +126,6 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Char
     resetTimer();
     deltaTime = 0.f;
     BackGroundPos = { {0, 0}, {(float)GetScreenWidth(), 0}, {(float)GetScreenWidth() * 2, 0} };
-    /*for (int i = 0; i < 10; i++) {
-        Coin* coin = new Coin(STATIC_COIN, { (float)i * 50, 600 });
-        items.push_back(coin);
-    }*/
-    /*for (int i = 7; i < 10; i++) {
-        Goomba* goomba = new Goomba({(float) 100 * i, 300 }, RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0"));
-        goomba->setState(FALLING);
-        enemies.push_back(goomba);
-    }*/
-    /*for (int i = 9; i <= 10; i++) {
-        FlyingGoomba* flyingGoomba = new FlyingGoomba({ (float)50 * i, 300 }, RESOURCE_MANAGER.getTexture("FlyingGoomba_LEFT_0"));
-        flyingGoomba->setState(FALLING);
-        enemies.push_back(flyingGoomba);
-    }*/
-    //Koopa* koopa = new Koopa({ 300, 500 }, RESOURCE_MANAGER.getTexture("Koopa_LEFT_0"));
-    //koopa->setState(FALLING);
-    //enemies.push_back(koopa);
-
-    //Rex* rex = new Rex({ 400, 500 }, RESOURCE_MANAGER.getTexture("Rex_LEFT_0"));
-    //rex->setState(FALLING);
-    //enemies.push_back(rex);
-
-    //Bullet* bullet1 = new Bullet({ 1000, 400 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
-    //enemies.push_back(bullet1);
-    //FireBullet* bullet2 = new FireBullet({ 1600, 500 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
-    //enemies.push_back(bullet2);
-    //Bullet* bullet3 = new Bullet({ 1000, 600 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
-    //enemies.push_back(bullet3);
-
-    //FirePiranhaPlant* plant = new FirePiranhaPlant({ 432, 710 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_CLOSED"));
-    //enemies.push_back(plant);
-
-    //// test brick
-    //for (int i = 1; i < 10; i++) {
-    //    Brick* brick = new Brick(Vector2{ (float)i * 32, 700 }, Vector2{ 32, 32 }, "Brick_0");
-    //    blocks.push_back(brick);
-    //}
-    //// test coin block
-    //for (int i = 1; i < 10; i++) {
-    //    CoinBlock* coinBlock = new CoinBlock({ (float)i * 32, 550 }, "TILE_110", 4);
-    //    blocks.push_back(coinBlock);
-    //}
-    //
-    //ItemBlock* itemblock1 = new ItemBlock({ 100, 800 }, MUSHROOM, 0);
-    //ItemBlock* itemblock2 = new ItemBlock({ 132, 800 }, STAR, 0);
-    //ItemBlock* itemblock3 = new ItemBlock({ 164, 800 }, FLOWER, 0);
-    //blocks.push_back(itemblock1);
-    //blocks.push_back(itemblock2);
-    //blocks.push_back(itemblock3);
 }
 
 GameEngine::~GameEngine() {
@@ -124,8 +145,10 @@ GameEngine::~GameEngine() {
     for (size_t i = 0; i < blocks.size(); ++i) {
         delete blocks[i];
     }
-    player = nullptr;
-    player2 = nullptr;
+    for (auto& p : multiplayers) {
+        delete p;
+        p = nullptr;
+    }
     multiplayers.clear();
     enemyFireball.clear();
     blocks.clear();
@@ -136,7 +159,8 @@ GameEngine::~GameEngine() {
 }
 
 void GameEngine::addScore(int amount) {
-    player->setScores(player->getScores() + amount);
+    for (auto* p : multiplayers)
+        p->setScores(p->getScores() + amount);
 }
 
 void GameEngine::addEnemyFireBall(EnemyFireBall* fireball) {
@@ -161,10 +185,8 @@ void GameEngine::addItem(Item* item)
 // update
 void GameEngine::update()
 {
-    if (!player && !player2) {
-        cout << "NULL player" << endl;
-        return;
-    }
+    if (multiplayers.empty()) return;
+    if (multiplayers[0] == nullptr) return;
 
     if (IsKeyPressed(KEY_ENTER) || GUI::setting_is_pressed) {
         if (GUI::setting_is_pressed) 
@@ -206,7 +228,10 @@ void GameEngine::update()
 
     for (int i = 0; i < 3; i++) {
         // wrap from left to far most right
-        if (BackGroundPos[i].x + map.BgWidth <= player->getX() - map.BgWidth / 2.0f) {
+        float farX = 0;
+        for (auto* p : multiplayers)
+            farX = max(p->getX(), farX);
+        if (BackGroundPos[i].x + map.BgWidth <= farX - map.BgWidth / 2.0f) {
             float maxX = BackGroundPos[0].x;
             for (int j = 1; j < 3; j++) {
                 if (BackGroundPos[j].x > maxX) maxX = BackGroundPos[j].x;
@@ -214,7 +239,10 @@ void GameEngine::update()
             BackGroundPos[i].x = maxX + map.BgWidth;
         }
         // wrap from right to left
-        if (BackGroundPos[i].x + map.BgWidth / 2.0f >= player->getX() + map.BgWidth * 2) {
+        float nearX = INT_MAX;
+        for (auto* p : multiplayers)
+            nearX = min(nearX, p->getX());
+        if (BackGroundPos[i].x + map.BgWidth / 2.0f >= nearX + map.BgWidth * 2) {
             float minX = BackGroundPos[i].x;
             for (int j = 1; j < 3; j++) {
                 if (BackGroundPos[j].x < minX) minX = BackGroundPos[j].x;
@@ -288,7 +316,6 @@ void GameEngine::update()
     for (auto* p : multiplayers) {
         p->Update();
     }
-    //player->Update();
     // all collision
     handleCollision();
 
@@ -297,7 +324,7 @@ void GameEngine::update()
         camera.update(multiplayers[0]->getX(), multiplayers[0]->getY(),
             multiplayers[1]->getX(), multiplayers[1]->getY());
     }
-    else camera.update(player->getX(), player->getY());
+    else camera.update(multiplayers[0]->getX(), multiplayers[0]->getY());
 }
 
 void GameEngine::handleCollision()
@@ -368,9 +395,20 @@ void GameEngine::draw()
     for (size_t i = 0; i < items.size(); i++) {
         items[i]->draw();
     }
-
-    for (auto* p : multiplayers) {
-        p->draw();
+    // draw the characters
+    for (size_t i = 0; i < multiplayers.size(); i++) {
+        multiplayers[i]->draw();
+        std::string label = "P" + std::to_string(i + 1);
+        Font font = RESOURCE_MANAGER.getFont("WinterMinie");
+        float fontSize = 20.f;
+        Vector2 pos = multiplayers[i]->getPosition();
+        Vector2 size = multiplayers[i]->getSize();
+        Vector2 textSize = MeasureTextEx(font, label.c_str(), fontSize, 1.0f);
+        Vector2 textPos = {
+            pos.x + size.x / 2 - textSize.x / 2,
+            pos.y - textSize.y - 10
+        };
+        DrawTextPro(font, label.c_str(), textPos, {0, 0}, 0.f, fontSize, 1.0f, BLACK);
     }
 
     for (size_t i = 0; i < effects.size(); i++) {
@@ -387,8 +425,11 @@ void GameEngine::draw()
     camera.render();
 
 
-    if (!lostLife) 
-        GUI::drawStatusBar(player);
+    if (!lostLife)
+        if (multiplayers.size() == 1)
+            GUI::drawStatusBar(multiplayers[0]);
+        else if (multiplayers.size() >= 1)
+            GUI::drawStatusBar(multiplayers);
 
     if (isPaused) {
         DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.5f));
@@ -569,8 +610,8 @@ Vector2 GameEngine::getBound()
     return map.getMapSize();
 }
 
-Character*& GameEngine::getCharacter()
+std::vector<Character*>& GameEngine::getMultiplayers()
 {
-    return player;
+    return multiplayers;
 }
 

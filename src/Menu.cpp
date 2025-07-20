@@ -7,8 +7,8 @@ MainMenuState::MainMenuState(Game* game)
 	startButton = { Vector2{80, 720}, Vector2{160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Start" };
 	continueButton = { {340, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Continue" };
 	settingButton = { {700, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Setting" };
-	charSelectionButton = { {1000, 720}, {200, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Character" };
-	mapSelectionButton = { {1390, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Map" };
+	modePlayerButton = { {1000, 720}, {200, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "PlayerMode" }; // for mode
+	mapSelectionButton = { {1450, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Map" };
 }
 
 void MainMenuState::draw()
@@ -16,12 +16,12 @@ void MainMenuState::draw()
 	startButton.setTexture(RESOURCE_MANAGER.getTexture("BOARD1"));
 	continueButton.setTexture(RESOURCE_MANAGER.getTexture("BOARD1"));
 	mapSelectionButton.setTexture(RESOURCE_MANAGER.getTexture("BOARD1"));
-	charSelectionButton.setTexture(RESOURCE_MANAGER.getTexture("BOARD1"));
+	modePlayerButton.setTexture(RESOURCE_MANAGER.getTexture("BOARD1"));
 	settingButton.setTexture(RESOURCE_MANAGER.getTexture("BOARD1"));
 	startButton.draw();
 	continueButton.draw();
 	settingButton.draw();
-	charSelectionButton.draw();
+	modePlayerButton.draw();
 	mapSelectionButton.draw();
 }
 
@@ -29,12 +29,12 @@ void MainMenuState::handleInput()
 {
 	if (continueButton.isPressed()) {
 		if (globalGameEngine == nullptr) {
-			if (game->player == nullptr)
-				game->player = new Mario();
-			game->player->setPosition({ 32, 400 });
-			game->player->setVel({ 0, 0 });
-			game->player->setState(FALLING);
-			GameEngine* gameEngine = new GameEngine(1600, 800, *game->level, game->player);
+			if (game->multiplayers.empty() || (!game->multiplayers.empty() && game->multiplayers[0] == nullptr))
+				game->multiplayers.push_back(new Mario());
+			game->multiplayers[0]->setPosition({32, 400});
+			game->multiplayers[0]->setVel({ 0, 0 });
+			game->multiplayers[0]->setState(FALLING);
+			GameEngine* gameEngine = new GameEngine(1600, 800, *game->level, game->multiplayers);
 			globalGameEngine = gameEngine;
 		}
 		while (globalGameEngine != nullptr) {
@@ -43,63 +43,67 @@ void MainMenuState::handleInput()
 				globalGameEngine = nullptr;
 				if ((game->getSelectedMap() + 1) <= 4)
 				{
-					if (game->player == nullptr)
-						game->player = new Mario();
-					game->player->setPosition({ 32, 400 });
-					game->player->setVel({ 0,0 });
-					game->player->setState(FALLING);
+					if (game->multiplayers.empty() || (!game->multiplayers.empty() && game->multiplayers[0] == nullptr))
+						game->multiplayers.push_back(new Mario());
+					game->multiplayers[0]->setPosition({ 32, 400 });
+					game->multiplayers[0]->setVel({ 0, 0 });
+					game->multiplayers[0]->setState(FALLING);
 					game->selectMap(game->getSelectedMap() + 1);
-					GameEngine* gameEngine = new GameEngine(820.0f, 512.0f, *game->level, game->player);
+					GameEngine* gameEngine = new GameEngine(820.0f, 512.0f, *game->level, game->multiplayers);
 					globalGameEngine = gameEngine;
 				}
 				else break;
 			}
 			else {
 				if (globalGameEngine->isOver())
-					game->player->reset();
+					for (auto* p : game->multiplayers)
+						p->reset();
 				break;
 			}
 		}
 	}
 	else if (startButton.isPressed()) {
-		if (game->player == nullptr)
-			game->player = new Mario();
-		if (game->player) {
-			game->player->reset();
+		if (game->multiplayers.empty() || (!game->multiplayers.empty() && game->multiplayers[0] == nullptr))
+			game->multiplayers.push_back(new Mario());
+		if (!game->multiplayers.empty() && game->multiplayers[0] != nullptr) {
+			game->multiplayers[0]->reset();
 		}
 		if (globalGameEngine != nullptr) {
 			delete globalGameEngine;
 			globalGameEngine = nullptr;
 		}
-		GameEngine* gameEngine = new GameEngine(1600, 800, *game->level, game->player);
+		GameEngine* gameEngine = new GameEngine(1600, 800, *game->level, game->multiplayers);
 		globalGameEngine = gameEngine;
-		
+
 		while (globalGameEngine != nullptr) {
 			if (globalGameEngine->run()) {
 				delete globalGameEngine;
 				globalGameEngine = nullptr;
 
 				if ((game->getSelectedMap() + 1) <= 4) {
-					game->player->setPosition({ 16, 400 });
-					game->player->setVel({ 0, 0 });
+					for (auto* p : game->multiplayers) {
+						p->setPosition({ 16, 400 });
+						p->setVel({ 0, 0 });
+						p->setState(FALLING);
+					}
 					game->selectMap(game->getSelectedMap() + 1);
-					game->player->setState(FALLING);
-					GameEngine* gameEngine = new GameEngine(1600, 800, *game->level, game->player);
+					GameEngine* gameEngine = new GameEngine(1600, 800, *game->level, game->multiplayers);
 					globalGameEngine = gameEngine;
 				}
 				else break;
 			}
 			else {
 				if (globalGameEngine->isOver())
-					game->player->reset();
+					for (auto* p : game->multiplayers)
+						p->reset();
 				break;
 			}
 		}
 	}
 	else if (settingButton.isPressed())
 		game->setState(std::make_unique<SettingState>(game));
-	else if (charSelectionButton.isPressed())
-		game->setState(std::make_unique<CharSelection>(game));
+	else if (modePlayerButton.isPressed())
+		game->setState(std::make_unique<ModePlayer>(game));
 	else if (mapSelectionButton.isPressed())
 		game->setState(std::make_unique<MapSelection>(game));
 }
@@ -109,7 +113,7 @@ void MainMenuState::update()
 	startButton.update();
 	continueButton.update();
 	settingButton.update();
-	charSelectionButton.update();
+	modePlayerButton.update();
 	mapSelectionButton.update();
 }
 
@@ -165,57 +169,47 @@ void SettingState::update()
 		musicButton.setText("Music: ON");
 	else if (!SETTING.isMusicEnabled() && musicButton.getText() == "Music: ON")
 		musicButton.setText("Music: OFF");
-	/*SETTING.setMusic(!game->isMusicEnabled());
-	game->configureSettings(game->isAudioEnabled(), !game->isMusicEnabled());*/
 }
 
-//CharSlection implementation
-CharSelection::CharSelection(Game* game) 
-{ 
-	this->game = game; 
-	MarioButton = { {100, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Mario" };
-	LuigiButton = { {500, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Luigi" };
-	backButton = { {900, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Return to Main Menu" };
-}
-
-
-void CharSelection::draw()
+// Mode player implementation
+ 
+ModePlayer::ModePlayer(Game* game)
 {
-	MarioButton.draw();
-	LuigiButton.draw();
-	backButton.draw();
-
+	this->game = game;
+	singleButton = { {100, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Single" };
+	dualButton = { {400, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Dual" };
+	difficultyButton = { {700, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Difficulty" };
+	returnButton = { {1000, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Return to Main Menu" };
 }
 
-void CharSelection::handleInput()
+void ModePlayer::draw()
 {
-	if (MarioButton.isPressed()) {
-		if (game->player) delete game->player;
-		game->player = new Mario();
-		if (globalGameEngine != nullptr) {
-			delete globalGameEngine;
-			globalGameEngine = nullptr;
-		}
+	singleButton.draw();
+	dualButton.draw();
+	difficultyButton.draw();
+	returnButton.draw();
+}
+
+void ModePlayer::handleInput()
+{
+	if (singleButton.isPressed())
+		game->setState(make_unique<SingleCharSelection>(game));
+	else if (dualButton.isPressed())
+		game->setState(make_unique<DualCharSelection>(game));
+	else if (difficultyButton.isPressed()) {
+		
+	}
+	else if (returnButton.isPressed()) {
 		game->returnToMainMenu();
 	}
-	else if (LuigiButton.isPressed()) {
-		if (game->player) delete game->player;
-		game->player = new Luigi(); // new Luigi 
-		if (globalGameEngine != nullptr) {
-			delete globalGameEngine;
-			globalGameEngine = nullptr;
-		}
-		game->returnToMainMenu();
-	}
-	else if (backButton.isPressed())
-		game->returnToMainMenu();
 }
 
-void CharSelection::update()
+void ModePlayer::update()
 {
-	MarioButton.update();
-	LuigiButton.update();
-	backButton.update();
+	singleButton.update();
+	dualButton.update();
+	difficultyButton.update();
+	returnButton.update();
 }
 
 //MapSelection Implementation
@@ -241,17 +235,20 @@ void MapSelection::handleInput()
 {
 	if (map1Button.isPressed()) {
 		game->selectMap(1);
-		game->player->reset();
+		for (auto* p : game->multiplayers)
+			p->reset();
 		game->returnToMainMenu();
 	}
 	else if (map2Button.isPressed()) {
 		game->selectMap(2);
-		game->player->reset();
+		for (auto* p : game->multiplayers)
+			p->reset();
 		game->returnToMainMenu();
 	}
 	else if (map3Button.isPressed()) {
 		game->selectMap(3);
-		game->player->reset();
+		for (auto* p : game->multiplayers)
+			p->reset();
 		game->returnToMainMenu();
 	}
 	else if (backButton.isPressed())
@@ -266,3 +263,143 @@ void MapSelection::update()
 	backButton.update();
 }
 
+SingleCharSelection::SingleCharSelection(Game* game)
+{
+	this->game = game;
+	MarioButton = { {100, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Mario" };
+	LuigiButton = { {500, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Luigi" };
+	BackButton = { {900, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Return to Mode Player" };
+}
+
+void SingleCharSelection::draw()
+{
+	MarioButton.draw();
+	LuigiButton.draw();
+	BackButton.draw();
+}
+
+void SingleCharSelection::handleInput()
+{
+	if (MarioButton.isPressed()) {
+		for (auto* p : game->multiplayers) {
+			if (p != nullptr) delete p;
+		}
+		Character* player = new Mario();
+		game->multiplayers.push_back(player);
+		if (globalGameEngine != nullptr) {
+			delete globalGameEngine;
+			globalGameEngine = nullptr;
+		}
+		game->returnToMainMenu();
+	}
+	else if (LuigiButton.isPressed()) {
+		for (auto* p : game->multiplayers) {
+			if (p != nullptr) delete p;
+		}
+		Character* player = new Luigi();
+		game->multiplayers.push_back(player);
+		if (globalGameEngine != nullptr) {
+			delete globalGameEngine;
+			globalGameEngine = nullptr;
+		}
+		game->returnToMainMenu();
+	}
+	else if (BackButton.isPressed())
+		game->returnToMainMenu();
+}
+
+void SingleCharSelection::update()
+{
+	MarioButton.update();
+	LuigiButton.update();
+	BackButton.update();
+}
+
+DualCharSelection::DualCharSelection(Game* game)
+{
+	this->game = game;
+	currentPlayer1 = 0;
+	currentPlayer2 = 0;
+	textureP1 = RESOURCE_MANAGER.getTexture("SmallMario_RIGHT_0");
+	textureP2 = RESOURCE_MANAGER.getTexture("SmallLuigi_RIGHT_0");
+	Textures.push_back(textureP1);
+	Textures.push_back(textureP2);
+	guiMario = RESOURCE_MANAGER.getTexture("MarioGUI");
+	guiLuigi = RESOURCE_MANAGER.getTexture("LuigiGUI");
+	white = RESOURCE_MANAGER.getTexture("WHITE");
+	sea = RESOURCE_MANAGER.getTexture("BACKGROUND_8");
+}
+
+void DualCharSelection::draw()
+{
+	// background
+	DrawTexturePro(white, { 0, 0, (float)white.width, (float)white.height },
+		{ 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() }, { 0, 0 }, 0.f, WHITE);
+	DrawTexturePro(sea, { 0, 0, (float)sea.width, (float)sea.height },
+		{ 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() }, { 0, 0 }, 0.f, WHITE);
+	
+	// gui1
+	if (currentPlayer1 == 0) {
+		DrawTexturePro(guiMario, { 0, 0, (float)guiMario.width, (float)guiMario.height },
+			{ 330, 200, 320, 64 }, { 0, 0 }, 0.f, WHITE);
+	} else DrawTexturePro(guiLuigi, { 0, 0, (float)guiLuigi.width, (float)guiLuigi.height },
+		{ 330, 200, 320, 64 }, { 0, 0 }, 0.f, WHITE);
+	
+	// gui2
+	if (currentPlayer2 == 0)
+		DrawTexturePro(guiMario, { 0, 0, (float)guiMario.width, (float)guiMario.height },
+		{ 930, 200, 320, 64 }, { 0, 0 }, 0.f, WHITE);
+	else DrawTexturePro(guiLuigi, { 0, 0, (float)guiLuigi.width, (float)guiLuigi.height },
+		{ 930, 200, 320, 64 }, { 0, 0 }, 0.f, WHITE);
+	
+	// texture 1 & 2
+	DrawTexturePro(textureP1, { 0, 0, (float)textureP1.width, (float)textureP1.height }, 
+		{400, 300, 32 * 5, 40 * 5}, { 0, 0 }, 0.f, WHITE);
+	DrawTexturePro(textureP2, { 0, 0, (float)textureP2.width, (float)textureP2.height }, 
+		{1000, 300, 32 * 5, 40 * 5}, { 0, 0 }, 0.f, WHITE);
+}
+
+void DualCharSelection::handleInput()
+{
+	if (IsKeyPressed(KEY_A) || IsKeyPressed(KEY_D)) {
+		currentPlayer1++;
+		if (currentPlayer1 > 1) currentPlayer1 = 0;
+	}
+	if (IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_RIGHT)) {
+		currentPlayer2++;
+		if (currentPlayer2 > 1) currentPlayer2 = 0;
+	}
+	textureP1 = Textures[currentPlayer1];
+	textureP2 = Textures[currentPlayer2];
+
+	if (IsKeyPressed(KEY_ENTER)) {
+		// init the game with 2 players
+		for (auto* p : game->multiplayers) {
+			if (p != nullptr) delete p;
+		}
+		Character* player1 = nullptr;
+		Character* player2 = nullptr;
+		if (currentPlayer1 == 0) {
+			player1 = new Mario();
+		}
+		else player1 = new Luigi();
+
+		if (currentPlayer2 == 0) {
+			player2 = new Mario();
+		}
+		else player2 = new Luigi();
+
+		game->multiplayers.push_back(player1);
+		game->multiplayers.push_back(player2);
+
+		if (globalGameEngine != nullptr) {
+			delete globalGameEngine;
+			globalGameEngine = nullptr;
+		}
+		game->returnToMainMenu();
+	}
+}
+
+void DualCharSelection::update()
+{
+}

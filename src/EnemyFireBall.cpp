@@ -36,13 +36,16 @@ void EnemyFireBall::Update() {
         currFrame = (currFrame + 1) % (maxFrame + 1);
     }
     timeSpanAcum += deltaTime;
-    Character* character = globalGameEngine->getCharacter() ? globalGameEngine->getCharacter() : nullptr;
-    if (isHoming && character != nullptr) {
-        Vector2 toMario = Vector2Subtract(character->getPosition(), position);
-        float homingStrength = 0.1f; // Sức mạnh nhắm mục tiêu
-        Vector2 targetVel = Vector2Scale(Vector2Normalize(toMario), FB_SpeedX);
-        velocity = Vector2Lerp(velocity, targetVel, homingStrength);
+    //Character* character = globalGameEngine->getCharacter() ? globalGameEngine->getCharacter() : nullptr;
+    for (auto* p : globalGameEngine->getMultiplayers()) {
+        if (p && p->getPhase() != DEAD_PHASE && p->getPhase() != CLEARLEVEL_PHASE && isHoming) {
+                Vector2 toMario = Vector2Subtract(p->getPosition(), position);
+                float homingStrength = 0.1f; // Sức mạnh nhắm mục tiêu
+                Vector2 targetVel = Vector2Scale(Vector2Normalize(toMario), FB_SpeedX);
+                velocity = Vector2Lerp(velocity, targetVel, homingStrength);
+        }
     }
+    
 
     position.x += velocity.x * deltaTime;
     position.y += velocity.y * deltaTime;

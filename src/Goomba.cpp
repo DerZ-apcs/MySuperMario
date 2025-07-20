@@ -28,49 +28,52 @@ void Goomba::Update() {
         collisionTimer -= deltaTime;
     }
 
-    Character* character = globalGameEngine->getCharacter() ? globalGameEngine->getCharacter() : nullptr;
-    if (character && character->getPhase() != DEAD_PHASE && character->getPhase() != CLEARLEVEL_PHASE && collisionTimer <= 0) {
-        float distance = Vector2Distance(position, character->getPosition());
-        if (distance <= detectMarioRange) {
-            // Mario trong phạm vi phát hiện, thay đổi hành vi
-            if (character->getX() < position.x) {
-                direction = LEFT;
-                velocity.x = -GOOMBA_SPEED * 1.5f; // Tăng tốc độ khi đuổi
+    //Character* character = globalGameEngine->getMultiplayers() ? globalGameEngine->getCharacter() : nullptr;
+    for (auto* p : globalGameEngine->getMultiplayers()) {
+        if (p != nullptr && p->getPhase() != DEAD_PHASE && p->getPhase() != CLEARLEVEL_PHASE && collisionTimer <= 0) {
+            float distance = Vector2Distance(position, p->getPosition());
+            if (distance <= detectMarioRange) {
+                // Mario trong phạm vi phát hiện, thay đổi hành vi
+                if (p->getX() < position.x) {
+                    direction = LEFT;
+                    velocity.x = -GOOMBA_SPEED * 1.5f; // Tăng tốc độ khi đuổi
+                }
+                else {
+                    direction = RIGHT;
+                    velocity.x = GOOMBA_SPEED * 1.5f; // Tăng tốc độ khi đuổi
+                }
             }
             else {
-                direction = RIGHT;
-                velocity.x = GOOMBA_SPEED * 1.5f; // Tăng tốc độ khi đuổi
-            }
-        }
-        else {
-            // Mario ngoài phạm vi, di chuyển bình thường
-            if (state == ON_GROUND) {
-                velocity.x = (direction == LEFT) ? -GOOMBA_SPEED : GOOMBA_SPEED;
-            }
-        }
-    }
-    else {
-        if (isPaused) {
-            pauseTimer -= deltaTime;
-            if (pauseTimer <= 0) {
-                isPaused = false;
-                direction = (direction == LEFT) ? RIGHT : LEFT;
-                velocity.x = (direction == LEFT) ? -GOOMBA_SPEED : GOOMBA_SPEED;
-            }
-            velocity.x = 0;
-        }
-        else {
-            if (state == ON_GROUND) {
-                if (collisionTimer <= 0) {
+                // Mario ngoài phạm vi, di chuyển bình thường
+                if (state == ON_GROUND) {
                     velocity.x = (direction == LEFT) ? -GOOMBA_SPEED : GOOMBA_SPEED;
                 }
-                if (GetRandomValue(0, 1000) < 3) { // 0.3% cơ hội dừng lại
-                    isPaused = true;
-                    pauseTimer = GetRandomValue(5, 15) / 10.0f; // Dừng 0.5-1.5 giây
+            }
+        }
+        else {
+            if (isPaused) {
+                pauseTimer -= deltaTime;
+                if (pauseTimer <= 0) {
+                    isPaused = false;
+                    direction = (direction == LEFT) ? RIGHT : LEFT;
+                    velocity.x = (direction == LEFT) ? -GOOMBA_SPEED : GOOMBA_SPEED;
+                }
+                velocity.x = 0;
+            }
+            else {
+                if (state == ON_GROUND) {
+                    if (collisionTimer <= 0) {
+                        velocity.x = (direction == LEFT) ? -GOOMBA_SPEED : GOOMBA_SPEED;
+                    }
+                    if (GetRandomValue(0, 1000) < 3) { // 0.3% cơ hội dừng lại
+                        isPaused = true;
+                        pauseTimer = GetRandomValue(5, 15) / 10.0f; // Dừng 0.5-1.5 giây
+                    }
                 }
             }
         }
     }
+
     if (velocity.y > 50)
         state = FALLING;
     if (getGravityAvailable()) {
@@ -172,36 +175,38 @@ void FlyingGoomba::Update() {
         collisionTimer -= deltaTime;
     }
 
-    Character* character = globalGameEngine->getCharacter() ? globalGameEngine->getCharacter() : nullptr;
-    if (character && character->getPhase() != CLEARLEVEL_PHASE && character->getPhase() != DEAD_PHASE && collisionTimer <= 0) {
-        float distance = Vector2Distance(position, character->getPosition());
-        if (distance <= detectMarioRange) {
-            // Mario trong phạm vi phát hiện, thay đổi hướng và tốc độ
-            if (character->getX() < position.x) {
-                direction = LEFT;
-                velocity.x = -FLYINGGOOMBA_SPEED * 1.2f; // Tăng tốc khi đuổi
+    for (auto* p : globalGameEngine->getMultiplayers()) {
+        if (p && p->getPhase() != CLEARLEVEL_PHASE && p->getPhase() != DEAD_PHASE && collisionTimer <= 0) {
+            float distance = Vector2Distance(position, p->getPosition());
+            if (distance <= detectMarioRange) {
+                // Mario trong phạm vi phát hiện, thay đổi hướng và tốc độ
+                if (p->getX() < position.x) {
+                    direction = LEFT;
+                    velocity.x = -FLYINGGOOMBA_SPEED * 1.2f; // Tăng tốc khi đuổi
+                }
+                else {
+                    direction = RIGHT;
+                    velocity.x = FLYINGGOOMBA_SPEED * 1.2f; // Tăng tốc khi đuổi
+                }
+                // Tăng tần suất nhảy khi gần Mario
+                if (distance < detectMarioRange * 0.5f && state == ON_GROUND && jumpTimer > FLYINGGOOMBA_JUMP_INTERVAL * 0.5f) {
+                    velocity.y = -FLYINGGOOMBA_JUMP_VELOCITY;
+                    state = JUMPING;
+                    jumpTimer = 0.0f;
+                }
             }
             else {
-                direction = RIGHT;
-                velocity.x = FLYINGGOOMBA_SPEED * 1.2f; // Tăng tốc khi đuổi
-            }
-            // Tăng tần suất nhảy khi gần Mario
-            if (distance < detectMarioRange * 0.5f && state == ON_GROUND && jumpTimer > FLYINGGOOMBA_JUMP_INTERVAL * 0.5f) {
-                velocity.y = -FLYINGGOOMBA_JUMP_VELOCITY;
-                state = JUMPING;
-                jumpTimer = 0.0f;
+                // Mario ngoài phạm vi, di chuyển bình thường
+                velocity.x = (direction == LEFT) ? -FLYINGGOOMBA_SPEED : FLYINGGOOMBA_SPEED;
             }
         }
         else {
-            // Mario ngoài phạm vi, di chuyển bình thường
+            // Không có Mario hoặc Mario đang chết, di chuyển bình thường
             velocity.x = (direction == LEFT) ? -FLYINGGOOMBA_SPEED : FLYINGGOOMBA_SPEED;
         }
-    }
-    else {
-        // Không có Mario hoặc Mario đang chết, di chuyển bình thường
-        velocity.x = (direction == LEFT) ? -FLYINGGOOMBA_SPEED : FLYINGGOOMBA_SPEED;
-    }
 
+    }
+   
     static float hoverTimer = 0.0f;
     hoverTimer += deltaTime;
     float hoverOffset = sin(hoverTimer * 3.0f) * 50.0f; // Dao động ±10 pixel

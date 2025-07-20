@@ -33,32 +33,34 @@ void Rex::Update() {
         collisionTimer -= deltaTime;
     }
 
-    Character* character = globalGameEngine->getCharacter() ? globalGameEngine->getCharacter() : nullptr;
-
-    if (character && character->getState() != STATE_IS_DYING && collisionTimer <= 0) {
-        float distance = Vector2Distance(position, character->getPosition());
-        if (distance <= detectMarioRange) {
-            // Mario trong phạm vi phát hiện, thay đổi hướng và tốc độ
-            if (character->getX() < position.x) {
-                direction = LEFT;
-                velocity.x = (rexState == REX_NORMAL) ? -REX_SPEED : -REX_COMPRESSED_SPEED;
+    //Character* character = globalGameEngine->getCharacter() ? globalGameEngine->getCharacter() : nullptr;
+    for (auto* p : globalGameEngine->getMultiplayers()) {
+        if (p && p->getState() != STATE_IS_DYING && collisionTimer <= 0) {
+            float distance = Vector2Distance(position, p->getPosition());
+            if (distance <= detectMarioRange) {
+                // Mario trong phạm vi phát hiện, thay đổi hướng và tốc độ
+                if (p->getX() < position.x) {
+                    direction = LEFT;
+                    velocity.x = (rexState == REX_NORMAL) ? -REX_SPEED : -REX_COMPRESSED_SPEED;
+                }
+                else {
+                    direction = RIGHT;
+                    velocity.x = (rexState == REX_NORMAL) ? REX_SPEED : REX_COMPRESSED_SPEED;
+                }
             }
             else {
-                direction = RIGHT;
-                velocity.x = (rexState == REX_NORMAL) ? REX_SPEED : REX_COMPRESSED_SPEED;
+                // Mario ngoài phạm vi, di chuyển bình thường
+                velocity.x = (direction == LEFT) ? ((rexState == REX_NORMAL) ? -REX_SPEED : -REX_COMPRESSED_SPEED) :
+                    ((rexState == REX_NORMAL) ? REX_SPEED : REX_COMPRESSED_SPEED);
             }
         }
         else {
-            // Mario ngoài phạm vi, di chuyển bình thường
+            // Di chuyển bình thường
             velocity.x = (direction == LEFT) ? ((rexState == REX_NORMAL) ? -REX_SPEED : -REX_COMPRESSED_SPEED) :
                 ((rexState == REX_NORMAL) ? REX_SPEED : REX_COMPRESSED_SPEED);
         }
     }
-    else {
-        // Di chuyển bình thường
-        velocity.x = (direction == LEFT) ? ((rexState == REX_NORMAL) ? -REX_SPEED : -REX_COMPRESSED_SPEED) :
-            ((rexState == REX_NORMAL) ? REX_SPEED : REX_COMPRESSED_SPEED);
-    }
+   
     if (velocity.y > 50)
         state = FALLING;
     if (getGravityAvailable()) {
