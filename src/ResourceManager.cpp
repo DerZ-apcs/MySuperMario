@@ -127,10 +127,12 @@ void ResourceManager::loadTextures() {
 	textures["Rex_Compressed_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/Rex_1_1.png");
 	textures["Rex_Compressed_LEFT_0"] = flipTexture(textures["Rex_Compressed_RIGHT_0"]);
 	textures["Rex_Compressed_LEFT_1"] = flipTexture(textures["Rex_Compressed_RIGHT_1"]);
-	textures["Rex_Dead"] = LoadTexture("resources/images/sprites/baddies/Goomba_1.png");
+	textures["Rex_Dead"] = LoadTexture("resources/images/sprites/baddies/Rex_1_1.png");
 
 	textures["Muncher_0"] = LoadTexture("resources/images/sprites/baddies/Muncher_0.png");
 	textures["Muncher_1"] = LoadTexture("resources/images/sprites/baddies/Muncher_1.png");
+
+
 	// tile
 	for (int i = 0; i <= 112; i++) {
 		std::string path = "resources/images/tiles/AllTiles/tile_" + std::to_string(i) + ".png";

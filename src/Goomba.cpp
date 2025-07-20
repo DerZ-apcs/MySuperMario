@@ -258,6 +258,7 @@ void FlyingGoomba::CollisionWithCharacter(Mario& mario, CollisionType collType) 
             mario.setVelY(MARIO_BOUNCE_VELOCITY);
             mario.addScore(SCORE_STOMP_GOOMBA); // Give score for de-winging
             Singleton<ResourceManager>::getInstance().playSound("STOMP");
+            this->mediatorCollision = nullptr;
         }
         else {
             // If wings are already gone, call the base Goomba collision, which handles death
@@ -315,7 +316,7 @@ void FlyingGoomba::HandleTileCollision(const Tile& tile, CollisionType collType)
             setX(tile.getX() + tile.getWidth());
         }
         velocity.x = (direction == LEFT) ? -FLYINGGOOMBA_SPEED : FLYINGGOOMBA_SPEED;
-        collisionTimer = 1.0f; // Tạm thời vô hiệu hóa logic đuổi Mario trong 1 giây
+        collisionTimer = 1.0f; 
         UpdateTexture();
     }
     else if (collType == COLLISION_TYPE_SOUTH) {

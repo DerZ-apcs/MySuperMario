@@ -45,8 +45,6 @@ void BobOmb::UpdateTexture() {
     }
 
     if (isActivated) {
-        // Trạng thái kích hoạt, nhấp nháy
-        // (Sử dụng frame hiện tại để tạo hiệu ứng nhấp nháy đơn giản)
         frameAcum += GetFrameTime() * 5; // Nhấp nháy nhanh hơn
         if (frameAcum > frameTime) {
             currFrame = (currFrame + 1) % 2;
