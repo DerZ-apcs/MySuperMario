@@ -159,7 +159,7 @@ void Goomba::HandleTileCollision(const Tile& tile, CollisionType collType) {
 // FlyingGoomba Class Implementation
 FlyingGoomba::FlyingGoomba(Vector2 pos, Texture2D texture, MediatorCollision* mediator)
     : Goomba(pos, texture, mediator), jumpTimer(0.0f), detectMarioRange(250.0f),
-    collisionTimer(0.0f), hasWings(true) {
+    collisionTimer(0.0f), hasWings(true),isSearchPaused(false), searchCooldownTimer(0.0f) {
     velocity.x = -FLYINGGOOMBA_SPEED;
     state = ON_GROUND;
 }
@@ -185,57 +185,77 @@ void FlyingGoomba::Update() {
 
 	const float deltaTime = GetFrameTime();
 
+    if (isSearchPaused) {
+        searchCooldownTimer -= deltaTime;
+        if (searchCooldownTimer <= 0) {
+            isSearchPaused = false; 
+        }
+    }
+
     if (collisionTimer > 0) {
 		collisionTimer -= deltaTime;
     }
 
+    bool shouldChase = false;
     Mario* mario = mediatorCollision ? mediatorCollision->GetMario() : nullptr;
-    if (mario && mario->getState() != STATE_IS_DYING && collisionTimer <= 0) {
-        float distance = Vector2Distance(position, mario->getPosition());
-        if (distance <= detectMarioRange) {
-            if (mario->getX() < position.x) {
-                direction = LEFT;
-                velocity.x = -FLYINGGOOMBA_SPEED * 1.5f; // Tăng tốc khi đuổi
+    if (mario && !isSearchPaused && mario->getState() != STATE_IS_DYING && collisionTimer <= 0) {
+        float totalDistance = Vector2Distance(position, mario->getPosition());
+
+        if (totalDistance <= detectMarioRange) {
+            float horizontalDistance = fabsf(mario->getX() - this->position.x);
+            const float horizontalDeadZone = 2.0f; // Vùng chết theo chiều ngang
+
+            if (horizontalDistance < horizontalDeadZone) {
+                // Bị kẹt theo chiều ngang -> Bắt đầu tạm nghỉ tìm kiếm
+                isSearchPaused = true;
+                searchCooldownTimer = 2.0f; // Tạm nghỉ 2 giây
+                shouldChase = false;        // Buộc quay về hành vi Tuần tra
             }
             else {
-                direction = RIGHT;
-                velocity.x = FLYINGGOOMBA_SPEED * 1.5f; // Tăng tốc khi đuổi
-            }
-            // Tăng tần suất nhảy khi gần Mario
-            if (distance < detectMarioRange * 0.5f && state == ON_GROUND && jumpTimer > FLYINGGOOMBA_JUMP_INTERVAL * 0.5f) {
-                velocity.y = -FLYINGGOOMBA_JUMP_VELOCITY;
-                state = JUMPING;
-                jumpTimer = 0.0f;
+                shouldChase = true;
             }
         }
+    }
+
+    // --- 3. Thiết lập vận tốc dựa trên hành vi ---
+    if (shouldChase) {
+        // Hành vi Đuổi theo
+        if (mario->getX() < position.x) {
+            direction = LEFT;
+            velocity.x = -FLYINGGOOMBA_SPEED * 1.5f;
+        }
         else {
-            // Mario ngoài phạm vi, di chuyển bình thường
-            velocity.x = (direction == LEFT) ? -FLYINGGOOMBA_SPEED : FLYINGGOOMBA_SPEED;
+            direction = RIGHT;
+            velocity.x = FLYINGGOOMBA_SPEED * 1.5f;
         }
     }
     else {
-        // Không có Mario hoặc Mario đang chết, di chuyển bình thường
+        // Hành vi Tuần tra (mặc định)
         velocity.x = (direction == LEFT) ? -FLYINGGOOMBA_SPEED : FLYINGGOOMBA_SPEED;
     }
 
-    static float hoverTimer = 0.0f;
-    hoverTimer += deltaTime;
-    float hoverOffset = sin(hoverTimer * 3.0f) * 50.0f; // Dao động ±10 pixel
-    position.y += hoverOffset * deltaTime;
-
-    // Logic nhảy
+    // --- 4. Logic nhảy ---
     jumpTimer += deltaTime;
-    if (state == ON_GROUND && jumpTimer > FLYINGGOOMBA_JUMP_INTERVAL) {
-        velocity.y = -FLYINGGOOMBA_JUMP_VELOCITY; // Nhảy ngẫu nhiên
+    float currentJumpInterval = shouldChase ? (FLYINGGOOMBA_JUMP_INTERVAL * 0.7f) : FLYINGGOOMBA_JUMP_INTERVAL;
+
+    if (state == ON_GROUND && jumpTimer > currentJumpInterval) {
+        velocity.y = -FLYINGGOOMBA_JUMP_VELOCITY;
         state = JUMPING;
         jumpTimer = 0.0f;
     }
 
+    // Hiệu ứng bay lượn
+    static float hoverTimer = 0.0f;
+    hoverTimer += deltaTime;
+    position.y += sin(hoverTimer * 3.0f) * 50.0f * deltaTime;
+
+    // --- 5. Cập nhật vật lý và hình ảnh ---
     position.x += velocity.x * deltaTime;
     position.y += velocity.y * deltaTime;
 
+    // Áp dụng trọng lực
     if (state != ON_GROUND) {
-        velocity.y += GRAVITY * deltaTime * 0.5f; // Trọng lực nhẹ hơ
+        velocity.y += GRAVITY * deltaTime * 0.5f;
         if (velocity.y > 0 && state == JUMPING) {
             state = FALLING;
         }
@@ -253,6 +273,7 @@ void FlyingGoomba::CollisionWithCharacter(Mario& mario, CollisionType collType) 
         if (hasWings) {
             hasWings = false; // Lose wings
             state = FALLING; // Fall to the ground
+            position.y += 16.0f;
             velocity.x = (direction == LEFT) ? -GOOMBA_SPEED : GOOMBA_SPEED; // Set to normal Goomba speed
             velocity.y = 0; // Reset vertical velocity before bounce
             mario.setVelY(MARIO_BOUNCE_VELOCITY);

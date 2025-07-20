@@ -27,6 +27,8 @@ private:
 	// MediatorCollision* mediatorCollision;
     float collisionTimer;
     bool hasWings;
+    bool isSearchPaused;
+    float searchCooldownTimer;
 public:
     FlyingGoomba(Vector2 pos, Texture2D texture, MediatorCollision* mediator);
     void Update() override;
