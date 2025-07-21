@@ -29,14 +29,12 @@ public:
     void returnToMainMenu();
     void setBackground(const std::string& imageName);
     void loadGUI();
-    //Character* player = nullptr;
-    //Character* player2 = nullptr;
-    // change from 1 to vector of character
-    std::vector<Character*> multiplayers;
+    std::vector<std::unique_ptr<Character>> multiplayers;
     Level* level;
 
 private:
-    vector<Level*> loadedLevel;
+    //vector<Level*> loadedLevel;
+    std::vector<std::unique_ptr<Level>> loadedLevel;
     bool audioEnabled;
     bool musicEnabled;
     int selectedCharacter;

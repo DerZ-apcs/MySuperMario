@@ -107,15 +107,14 @@ GameEngine* globalGameEngine = nullptr;
 //    //blocks.push_back(itemblock3);
 //}
 
-GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std::vector<Character*>& multiplayers):
+GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std::vector<std::unique_ptr<Character>>* multiplayers):
     camera(screenWidth, screenHeight, 1.25f), level(&level), multiplayers(multiplayers)
 {
+	globalGameEngine = this;
     map.LoadFromJsonFile(level.getMapPath());
     map.loadBackgroundTexture(level.getBackGroundName());
     Vector2 Msize = map.getMapSize();
     camera.loadRenderTexture(Msize);
-
-    if (!multiplayers.empty()) multiplayers.push_back(new Mario());
 
     blocks = map.getBlocks();
     enemies = map.getEnemies();
@@ -127,6 +126,7 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std:
     deltaTime = 0.f;
     BackGroundPos = { {0, 0}, {(float)GetScreenWidth(), 0}, {(float)GetScreenWidth() * 2, 0} };
 }
+
 
 GameEngine::~GameEngine() {
     for (size_t i = 0; i < enemyFireball.size(); i++)
@@ -145,11 +145,7 @@ GameEngine::~GameEngine() {
     for (size_t i = 0; i < blocks.size(); ++i) {
         delete blocks[i];
     }
-    for (auto& p : multiplayers) {
-        delete p;
-        p = nullptr;
-    }
-    multiplayers.clear();
+    //multiplayers.clear();
     enemyFireball.clear();
     blocks.clear();
     enemies.clear();
@@ -159,7 +155,7 @@ GameEngine::~GameEngine() {
 }
 
 void GameEngine::addScore(int amount) {
-    for (auto* p : multiplayers)
+    for (auto& p : *multiplayers)
         p->setScores(p->getScores() + amount);
 }
 
@@ -185,8 +181,8 @@ void GameEngine::addItem(Item* item)
 // update
 void GameEngine::update()
 {
-    if (multiplayers.empty()) return;
-    if (multiplayers[0] == nullptr) return;
+    if ((*multiplayers).empty()) return;
+    if ((*multiplayers)[0] == nullptr) return;
 
     if (IsKeyPressed(KEY_ENTER) || GUI::setting_is_pressed) {
         if (GUI::setting_is_pressed) 
@@ -197,7 +193,7 @@ void GameEngine::update()
             if (RESOURCE_MANAGER.isPlayingSound("lost_life.wav"))
                 RESOURCE_MANAGER.stopSound("lost_life.wav");
             died = false;
-            for (auto* p : multiplayers) {
+            for (auto& p : *multiplayers) {
                 p->setLostLife(false);
                 p->resetInGame();
             }
@@ -210,7 +206,7 @@ void GameEngine::update()
     }
     if (GUI::restart_is_pressed) {
         GUI::restart_is_pressed = false;
-        for (auto* p : multiplayers) {
+        for (auto& p : *multiplayers) {
             p->reset();
         }
         resetGame();
@@ -229,7 +225,7 @@ void GameEngine::update()
     for (int i = 0; i < 3; i++) {
         // wrap from left to far most right
         float farX = 0;
-        for (auto* p : multiplayers)
+        for (auto& p : *multiplayers)
             farX = max(p->getX(), farX);
         if (BackGroundPos[i].x + map.BgWidth <= farX - map.BgWidth / 2.0f) {
             float maxX = BackGroundPos[0].x;
@@ -240,7 +236,7 @@ void GameEngine::update()
         }
         // wrap from right to left
         float nearX = INT_MAX;
-        for (auto* p : multiplayers)
+        for (auto& p : *multiplayers)
             nearX = min(nearX, p->getX());
         if (BackGroundPos[i].x + map.BgWidth / 2.0f >= nearX + map.BgWidth * 2) {
             float minX = BackGroundPos[i].x;
@@ -303,28 +299,28 @@ void GameEngine::update()
 
     // player udpate
         // handle input
-    for (int i = 0; i < multiplayers.size(); ++i) {
-        multiplayers[i]->HandleInput(
-            controlBindings[i].left,
-            controlBindings[i].right,
-            controlBindings[i].up,
-            controlBindings[i].down,
-            controlBindings[i].fire
-        );
+    for (int i = 0; i < (*multiplayers).size(); ++i) {
+        if ((*multiplayers)[i] != nullptr) {
+            (*multiplayers)[i]->HandleInput(
+                controlBindings[i].left,
+                controlBindings[i].right,
+                controlBindings[i].up,
+                controlBindings[i].down,
+                controlBindings[i].fire
+            );
+            (*multiplayers)[i]->Update();
+        } else std::cout << "multiplayers[" << i << "] is nullptr!\n";
     }
-        // update
-    for (auto* p : multiplayers) {
-        p->Update();
-    }
+
     // all collision
     handleCollision();
 
     // camera update
-    if (multiplayers.size() == 2) {
-        camera.update(multiplayers[0]->getX(), multiplayers[0]->getY(),
-            multiplayers[1]->getX(), multiplayers[1]->getY());
+    if ((*multiplayers).size() == 2) {
+        camera.update((*multiplayers)[0]->getX(), (*multiplayers)[0]->getY(),
+            (*multiplayers)[1]->getX(), (*multiplayers)[1]->getY());
     }
-    else camera.update(multiplayers[0]->getX(), multiplayers[0]->getY());
+    else camera.update((*multiplayers)[0]->getX(), (*multiplayers)[0]->getY());
 }
 
 void GameEngine::handleCollision()
@@ -333,8 +329,8 @@ void GameEngine::handleCollision()
     CollisionInterface CollI;
     bool isGrounded = false;
     for (size_t j = 0; j < blocks.size(); j++) {
-        for (auto* p : multiplayers) {
-            CollI.HandleCollision(p, blocks[j]);
+        for (auto& p : *multiplayers) {
+            CollI.HandleCollision(p.get(), blocks[j]);
             for (auto& fireball : *p->getFireBalls()) {
                 CollI.HandleCollision(fireball, blocks[j]);
             }
@@ -351,8 +347,8 @@ void GameEngine::handleCollision()
     }
     // for items
     for (size_t i = 0; i < enemies.size(); i++) {
-        for (auto* p : multiplayers) {
-            CollI.HandleCollision(p, enemies[i]);
+        for (auto& p : *multiplayers) {
+            CollI.HandleCollision(p.get(), enemies[i]);
             for (auto& fireball : *p->getFireBalls()) {
                 CollI.HandleCollision(fireball, enemies[i]);
             }
@@ -360,14 +356,14 @@ void GameEngine::handleCollision()
     }
     // player item
     for (size_t i = 0; i < items.size(); i++) {
-        for (auto* p : multiplayers) {
-            CollI.HandleCollision(p, items[i]);
+        for (auto& p : *multiplayers) {
+            CollI.HandleCollision(p.get(), items[i]);
         } 
     }
     // enemy fireball
     for (size_t i = 0; i < enemyFireball.size(); i++) {
-        for (auto* p : multiplayers)
-            CollI.HandleCollision(enemyFireball[i], p);
+        for (auto& p : *multiplayers)
+            CollI.HandleCollision(enemyFireball[i], p.get());
     }
 }
 // draw
@@ -378,11 +374,10 @@ void GameEngine::draw()
     map.drawBackGround(camera.getSize(), camera.getScale());
     //map.drawMap();
     bool lostLife = false;
-    for (auto* p : multiplayers) {
+    for (auto& p : *multiplayers) {
         if (!p) return;
         lostLife = (lostLife == true || p->isLostLife());
     }
-
     for (size_t i = 0; i < enemyFireball.size(); i++) {
         enemyFireball[i]->draw();
     }
@@ -396,19 +391,22 @@ void GameEngine::draw()
         items[i]->draw();
     }
     // draw the characters
-    for (size_t i = 0; i < multiplayers.size(); i++) {
-        multiplayers[i]->draw();
-        std::string label = "P" + std::to_string(i + 1);
-        Font font = RESOURCE_MANAGER.getFont("WinterMinie");
-        float fontSize = 20.f;
-        Vector2 pos = multiplayers[i]->getPosition();
-        Vector2 size = multiplayers[i]->getSize();
-        Vector2 textSize = MeasureTextEx(font, label.c_str(), fontSize, 1.0f);
-        Vector2 textPos = {
-            pos.x + size.x / 2 - textSize.x / 2,
-            pos.y - textSize.y - 10
-        };
-        DrawTextPro(font, label.c_str(), textPos, {0, 0}, 0.f, fontSize, 1.0f, BLACK);
+    for (size_t i = 0; i < (*multiplayers).size(); i++) {
+        (*multiplayers)[i]->draw();
+
+        if ((*multiplayers).size() > 1) {
+            std::string label = "P" + std::to_string(i + 1);
+            Font font = RESOURCE_MANAGER.getFont("WinterMinie");
+            float fontSize = 20.f;
+            Vector2 pos = (*multiplayers)[i]->getPosition();
+            Vector2 size = (*multiplayers)[i]->getSize();
+            Vector2 textSize = MeasureTextEx(font, label.c_str(), fontSize, 1.0f);
+            Vector2 textPos = {
+                pos.x + size.x / 2 - textSize.x / 2,
+                pos.y - textSize.y - 10
+            };
+            DrawTextPro(font, label.c_str(), textPos, { 0, 0 }, 0.f, fontSize, 1.0f, BLACK);
+        }
     }
 
     for (size_t i = 0; i < effects.size(); i++) {
@@ -426,10 +424,10 @@ void GameEngine::draw()
 
 
     if (!lostLife)
-        if (multiplayers.size() == 1)
-            GUI::drawStatusBar(multiplayers[0]);
-        else if (multiplayers.size() >= 1)
-            GUI::drawStatusBar(multiplayers);
+        if ((*multiplayers).size() == 1)
+            GUI::drawStatusBar((*multiplayers)[0].get());
+        else if ((*multiplayers).size() >= 1)
+            GUI::drawStatusBar((*multiplayers));
 
     if (isPaused) {
         DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.5f));
@@ -484,7 +482,7 @@ bool GameEngine::run() {
             break;
         }
 
-        for (auto* p : multiplayers) {
+        for (auto& p : *multiplayers) {
             if (this->time <= 0) // outof time
                 p->setLostLife(true);
             // set lost life for falling out of bound
@@ -588,7 +586,7 @@ void GameEngine::resetGame()
     items.clear();
     effects.clear();
     decor.clear();
-    for (auto* p : multiplayers)
+    for (auto& p : *multiplayers)
         p->getFireBalls()->clear();
     map.clear();
 
@@ -610,8 +608,8 @@ Vector2 GameEngine::getBound()
     return map.getMapSize();
 }
 
-std::vector<Character*>& GameEngine::getMultiplayers()
+std::vector<std::unique_ptr<Character>>& GameEngine::getMultiplayers()
 {
-    return multiplayers;
+    return *multiplayers;
 }
 

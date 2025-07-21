@@ -29,9 +29,7 @@ private:
     };
     Level* level;
     Map map;
-    /*Character* player;
-    Character* player2 = nullptr;*/
-    std::vector<Character*> multiplayers; // for multiplayers
+    std::vector<std::unique_ptr<Character>>* multiplayers; // for multiplayers
     std::vector<Blocks*> blocks;
     std::vector<Enemy*> enemies;
     std::vector<Item*> items;
@@ -52,10 +50,9 @@ private:
 
     std::map<std::string, Texture2D> backgroundTextures;
     std::vector<Vector2> BackGroundPos;
-
 public:
-    GameEngine(float screenWidth, float screenHeight, Level& level, Character*& player);
-    GameEngine(float screenWidth, float screenHeight, Level& level, std::vector<Character*>& multiplayers);
+    //GameEngine(float screenWidth, float screenHeight, Level& level, Character*& player);
+    GameEngine(float screenWidth, float screenHeight, Level& level, std::vector<std::unique_ptr<Character>>* multiplayers);
     ~GameEngine();
     void addScore(int amount);
     void addEnemyFireBall(EnemyFireBall* fireball);
@@ -73,7 +70,7 @@ public:
     bool isOver() const;
     void resetGame();
     Vector2 getBound();
-    std::vector<Character*>& getMultiplayers();
+    std::vector<std::unique_ptr<Character>>& getMultiplayers(); 
 };
 extern GameEngine* globalGameEngine;
 

@@ -29,7 +29,7 @@ void Goomba::Update() {
     }
 
     //Character* character = globalGameEngine->getMultiplayers() ? globalGameEngine->getCharacter() : nullptr;
-    for (auto* p : globalGameEngine->getMultiplayers()) {
+    for (auto& p : globalGameEngine->getMultiplayers()) {
         if (p != nullptr && p->getPhase() != DEAD_PHASE && p->getPhase() != CLEARLEVEL_PHASE && collisionTimer <= 0) {
             float distance = Vector2Distance(position, p->getPosition());
             if (distance <= detectMarioRange) {
@@ -175,7 +175,7 @@ void FlyingGoomba::Update() {
         collisionTimer -= deltaTime;
     }
 
-    for (auto* p : globalGameEngine->getMultiplayers()) {
+    for (auto& p : globalGameEngine->getMultiplayers()) {
         if (p && p->getPhase() != CLEARLEVEL_PHASE && p->getPhase() != DEAD_PHASE && collisionTimer <= 0) {
             float distance = Vector2Distance(position, p->getPosition());
             if (distance <= detectMarioRange) {

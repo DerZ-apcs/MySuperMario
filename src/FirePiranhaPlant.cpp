@@ -111,7 +111,7 @@ void FirePiranhaPlant::ShootFireBall() {
     //Character* character = globalGameEngine->getCharacter() ? globalGameEngine->getCharacter() : nullptr;
     //if (!character) return;
 
-    for (auto* p : globalGameEngine->getMultiplayers()) {
+    for (auto& p : globalGameEngine->getMultiplayers()) {
         if (p && p->getPhase() != CLEARLEVEL_PHASE && p->getPhase() != DEAD_PHASE) {
             Direction dir = (p->getX() > position.x) ? RIGHT : LEFT;
             Vector2 fireBallPos = { position.x, position.y + 10 };
@@ -141,7 +141,7 @@ RapidFirePiranha::RapidFirePiranha(Vector2 pos, Texture2D texture)
 
 void RapidFirePiranha::ShootFireBall() {
     //if (fireballs.size() >= MAX_FIREBALLS) return; // Không bắn nếu vượt giới hạn
-    for (auto* p : globalGameEngine->getMultiplayers()) {
+    for (auto& p : globalGameEngine->getMultiplayers()) {
         if (p && p->getPhase() != CLEARLEVEL_PHASE && p->getPhase() != DEAD_PHASE) {
             Direction dir = (p->getX() > position.x) ? RIGHT : LEFT;
             Vector2 fireBallPos = { position.x, position.y + 10 };
@@ -160,7 +160,7 @@ HomingFirePiranha::HomingFirePiranha(Vector2 pos, Texture2D texture)
 void HomingFirePiranha::ShootFireBall() {
     //if (fireballs.size() >= MAX_FIREBALLS) return; // Không bắn nếu vượt giới hạn
 
-    for (auto* p : globalGameEngine->getMultiplayers()) {
+    for (auto& p : globalGameEngine->getMultiplayers()) {
         if (p && p->getPhase() != CLEARLEVEL_PHASE && p->getPhase() != DEAD_PHASE) {
             Direction dir = (p->getX() > position.x) ? RIGHT : LEFT;
             Vector2 fireBallPos = { position.x, position.y + 10 };

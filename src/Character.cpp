@@ -26,7 +26,7 @@ Character::Character(Vector2 pos, Vector2 size):
 Character::Character(Vector2 pos, Vector2 sz, CharacterState characterstate):
 	Character(pos, sz, characterstate, MARIO) // default is mario
 {
-	
+	cout << "Character created" << endl;
 }
 
 Character::Character(Vector2 pos, Vector2 sz, CharacterState characterstate, CharacterType characterType):

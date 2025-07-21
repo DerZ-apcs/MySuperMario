@@ -44,12 +44,19 @@ void Game::init()
 
 	RESOURCE_MANAGER.playMusic("TITLE");
 	// load map&level
-	Level level1(Map::basePath + "MAP_1.1.json", "BACKGROUND_1", "MUSIC_1", "1-1");
+	/*Level level1(Map::basePath + "MAP_1.1.json", "BACKGROUND_1", "MUSIC_1", "1-1");
 	Level level2(Map::basePath + "MAP_1.2.json", "BACKGROUND_2", "MUSIC_2", "1-2");
 	Level level3(Map::basePath + "kmap_3.json", "BACKGROUND_3", "MUSIC_3", "1-3");
 	loadedLevel.push_back(&level1);
 	loadedLevel.push_back(&level2);
-	loadedLevel.push_back(&level3);
+	loadedLevel.push_back(&level3);*/
+	loadedLevel.push_back(std::make_unique<Level>(
+		Map::basePath + "MAP_1.1.json", "BACKGROUND_1", "MUSIC_1", "1-1"));
+	loadedLevel.push_back(std::make_unique<Level>(
+		Map::basePath + "MAP_1.2.json", "BACKGROUND_2", "MUSIC_2", "1-2"));
+	loadedLevel.push_back(std::make_unique<Level>(
+		Map::basePath + "kmap_3.json", "BACKGROUND_3", "MUSIC_3", "1-3"));
+
 	// gui
 	loadGUI();
 
@@ -111,13 +118,13 @@ void Game::selectMap(int mapIndex)
 	switch (mapIndex)
 	{
 	case 1:
-		this->level = loadedLevel[0];
+		this->level = loadedLevel[0].get();
 		break;
 	case 2:
-		this->level = loadedLevel[1];
+		this->level = loadedLevel[1].get();
 		break;
 	case 3:
-		this->level = loadedLevel[2];
+		this->level = loadedLevel[2].get();
 		break;
 	//case 4:
 	//	this->level = loadedLevel[3];

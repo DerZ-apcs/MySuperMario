@@ -25,7 +25,7 @@ public:
 	static Texture2D sound_off;
 
 	static void drawStatusBar(const Character* player);
-	static void drawStatusBar(std::vector<Character*> multiplayers);
+	static void drawStatusBar(std::vector<std::unique_ptr<Character>>& multiplayers);
 	static void drawPauseMenu();
 	static void drawLevelClear();
 	static void drawDeathScreen();

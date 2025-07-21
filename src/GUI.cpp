@@ -74,10 +74,10 @@ void GUI::drawStatusBar(const Character* player) {
     setting_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
 }
 
-void GUI::drawStatusBar(std::vector<Character*> multiplayers)
+void GUI::drawStatusBar(std::vector<std::unique_ptr<Character>>& multiplayers)
 {
     Rectangle dest, source;
-
+	if (multiplayers.empty()) return;
     //Draw board
     dest = { 20.f, 20.f, 1138.f / 4.f, 397.f / 4.f };
     source = { 0, 0, (float)board1.width, (float)board1.height };

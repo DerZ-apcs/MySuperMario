@@ -107,7 +107,7 @@ void FireBullet::Update() {
 void FireBullet::ShootFireBall() {
     //if (size() >= MAX_FIREBALLS) return; // Không bắn nếu vượt giới hạn
 
-    for (auto* p : globalGameEngine->getMultiplayers()) {
+    for (auto& p : globalGameEngine->getMultiplayers()) {
         if (p && p->getPhase() != CLEARLEVEL_PHASE && p->getPhase() != DEAD_PHASE && collisionTimer <= 0) {
             float distanceToMario = Vector2Distance(position, p->getPosition());
             bool isHoming = (distanceToMario <= DETECTION_RANGE);

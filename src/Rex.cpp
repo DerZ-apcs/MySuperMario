@@ -34,7 +34,7 @@ void Rex::Update() {
     }
 
     //Character* character = globalGameEngine->getCharacter() ? globalGameEngine->getCharacter() : nullptr;
-    for (auto* p : globalGameEngine->getMultiplayers()) {
+    for (auto& p : globalGameEngine->getMultiplayers()) {
         if (p && p->getState() != STATE_IS_DYING && collisionTimer <= 0) {
             float distance = Vector2Distance(position, p->getPosition());
             if (distance <= detectMarioRange) {

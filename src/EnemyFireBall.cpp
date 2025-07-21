@@ -37,7 +37,7 @@ void EnemyFireBall::Update() {
     }
     timeSpanAcum += deltaTime;
     //Character* character = globalGameEngine->getCharacter() ? globalGameEngine->getCharacter() : nullptr;
-    for (auto* p : globalGameEngine->getMultiplayers()) {
+    for (auto& p : globalGameEngine->getMultiplayers()) {
         if (p && p->getPhase() != DEAD_PHASE && p->getPhase() != CLEARLEVEL_PHASE && isHoming) {
                 Vector2 toMario = Vector2Subtract(p->getPosition(), position);
                 float homingStrength = 0.1f; // Sức mạnh nhắm mục tiêu

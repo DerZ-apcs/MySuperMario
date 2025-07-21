@@ -29,13 +29,12 @@ void MainMenuState::handleInput()
 {
 	if (continueButton.isPressed()) {
 		if (globalGameEngine == nullptr) {
-			if (game->multiplayers.empty() || (!game->multiplayers.empty() && game->multiplayers[0] == nullptr))
-				game->multiplayers.push_back(new Mario());
+			if (game->multiplayers.empty())
+				game->multiplayers.push_back(std::make_unique<Mario>());
 			game->multiplayers[0]->setPosition({32, 400});
 			game->multiplayers[0]->setVel({ 0, 0 });
 			game->multiplayers[0]->setState(FALLING);
-			GameEngine* gameEngine = new GameEngine(1600, 800, *game->level, game->multiplayers);
-			globalGameEngine = gameEngine;
+			globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
 		}
 		while (globalGameEngine != nullptr) {
 			if (globalGameEngine->run()) {
@@ -43,59 +42,78 @@ void MainMenuState::handleInput()
 				globalGameEngine = nullptr;
 				if ((game->getSelectedMap() + 1) <= 4)
 				{
-					if (game->multiplayers.empty() || (!game->multiplayers.empty() && game->multiplayers[0] == nullptr))
-						game->multiplayers.push_back(new Mario());
-					game->multiplayers[0]->setPosition({ 32, 400 });
-					game->multiplayers[0]->setVel({ 0, 0 });
-					game->multiplayers[0]->setState(FALLING);
+		/*			if (game->multiplayers.empty())
+						game->multiplayers.push_back(std::make_unique<Mario>());*/
+					for (auto& p : game->multiplayers) {
+						p->setPosition({ 32, 400 });
+						p->setVel({ 0, 0 });
+						p->setState(FALLING);
+					}
 					game->selectMap(game->getSelectedMap() + 1);
-					GameEngine* gameEngine = new GameEngine(820.0f, 512.0f, *game->level, game->multiplayers);
-					globalGameEngine = gameEngine;
+					globalGameEngine = new GameEngine(1600.0f, 800.0f, *game->level, &game->multiplayers);
 				}
 				else break;
 			}
 			else {
 				if (globalGameEngine->isOver())
-					for (auto* p : game->multiplayers)
+					for (auto& p : game->multiplayers)
 						p->reset();
 				break;
 			}
 		}
 	}
 	else if (startButton.isPressed()) {
-		if (game->multiplayers.empty() || (!game->multiplayers.empty() && game->multiplayers[0] == nullptr))
-			game->multiplayers.push_back(new Mario());
-		if (!game->multiplayers.empty() && game->multiplayers[0] != nullptr) {
-			game->multiplayers[0]->reset();
+		std::cout << "multiplayers size before Start pressed: " << game->multiplayers.size() << "\n";
+		if (game->multiplayers.empty()) {
+			game->multiplayers.push_back(std::make_unique<Mario>());
+			game->multiplayers[0]->setPosition({32, 400});
+			game->multiplayers[0]->setVel({0, 0});
+			game->multiplayers[0]->setState(FALLING);
 		}
+		else {
+			for (auto& p : game->multiplayers)
+				if (p) p->reset();
+		}
+
 		if (globalGameEngine != nullptr) {
 			delete globalGameEngine;
 			globalGameEngine = nullptr;
 		}
-		GameEngine* gameEngine = new GameEngine(1600, 800, *game->level, game->multiplayers);
-		globalGameEngine = gameEngine;
+		std::cout << "multiplayers size after Start pressed: " << game->multiplayers.size() << "\n";
+		globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
 
 		while (globalGameEngine != nullptr) {
 			if (globalGameEngine->run()) {
-				delete globalGameEngine;
-				globalGameEngine = nullptr;
-
+				auto& players = globalGameEngine->getMultiplayers();
+				if (players.empty()) {
+					std::cout << "No players found in GameEngine!\n";
+					break;
+				}
+				
 				if ((game->getSelectedMap() + 1) <= 4) {
-					for (auto* p : game->multiplayers) {
-						p->setPosition({ 16, 400 });
-						p->setVel({ 0, 0 });
-						p->setState(FALLING);
+					for (auto& p : players) {
+						if (p) {
+							p->setPosition({ 16, 400 });
+							p->setVel({ 0, 0 });
+							p->setState(FALLING);
+						}
 					}
+					//auto movedPlayers = std::move(players);
+					delete globalGameEngine;
+					globalGameEngine = nullptr;
+
 					game->selectMap(game->getSelectedMap() + 1);
-					GameEngine* gameEngine = new GameEngine(1600, 800, *game->level, game->multiplayers);
-					globalGameEngine = gameEngine;
+					// Create a new GameEngine with the updated map and players
+					globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
 				}
 				else break;
 			}
 			else {
-				if (globalGameEngine->isOver())
-					for (auto* p : game->multiplayers)
+				if (globalGameEngine->isOver()) {
+					//auto& players = globalGameEngine->getMultiplayers();
+					for (auto& p : game->multiplayers)
 						p->reset();
+				}
 				break;
 			}
 		}
@@ -235,19 +253,19 @@ void MapSelection::handleInput()
 {
 	if (map1Button.isPressed()) {
 		game->selectMap(1);
-		for (auto* p : game->multiplayers)
+		for (auto& p : game->multiplayers)
 			p->reset();
 		game->returnToMainMenu();
 	}
 	else if (map2Button.isPressed()) {
 		game->selectMap(2);
-		for (auto* p : game->multiplayers)
+		for (auto& p : game->multiplayers)
 			p->reset();
 		game->returnToMainMenu();
 	}
 	else if (map3Button.isPressed()) {
 		game->selectMap(3);
-		for (auto* p : game->multiplayers)
+		for (auto& p : game->multiplayers)
 			p->reset();
 		game->returnToMainMenu();
 	}
@@ -281,11 +299,10 @@ void SingleCharSelection::draw()
 void SingleCharSelection::handleInput()
 {
 	if (MarioButton.isPressed()) {
-		for (auto* p : game->multiplayers) {
-			if (p != nullptr) delete p;
-		}
-		Character* player = new Mario();
-		game->multiplayers.push_back(player);
+		game->multiplayers.clear();
+
+		game->multiplayers.push_back(std::make_unique<Mario>());
+		
 		if (globalGameEngine != nullptr) {
 			delete globalGameEngine;
 			globalGameEngine = nullptr;
@@ -293,11 +310,8 @@ void SingleCharSelection::handleInput()
 		game->returnToMainMenu();
 	}
 	else if (LuigiButton.isPressed()) {
-		for (auto* p : game->multiplayers) {
-			if (p != nullptr) delete p;
-		}
-		Character* player = new Luigi();
-		game->multiplayers.push_back(player);
+		game->multiplayers.clear();
+		game->multiplayers.push_back(std::make_unique<Luigi>());
 		if (globalGameEngine != nullptr) {
 			delete globalGameEngine;
 			globalGameEngine = nullptr;
@@ -374,23 +388,17 @@ void DualCharSelection::handleInput()
 
 	if (IsKeyPressed(KEY_ENTER)) {
 		// init the game with 2 players
-		for (auto* p : game->multiplayers) {
-			if (p != nullptr) delete p;
-		}
-		Character* player1 = nullptr;
-		Character* player2 = nullptr;
+		game->multiplayers.clear();
+
 		if (currentPlayer1 == 0) {
-			player1 = new Mario();
+			game->multiplayers.push_back(std::make_unique<Mario>());
 		}
-		else player1 = new Luigi();
+		else game->multiplayers.push_back(std::make_unique<Luigi>());
 
 		if (currentPlayer2 == 0) {
-			player2 = new Mario();
+			game->multiplayers.push_back(std::make_unique<Mario>());
 		}
-		else player2 = new Luigi();
-
-		game->multiplayers.push_back(player1);
-		game->multiplayers.push_back(player2);
+		else game->multiplayers.push_back(std::make_unique<Luigi>());
 
 		if (globalGameEngine != nullptr) {
 			delete globalGameEngine;
