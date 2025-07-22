@@ -120,6 +120,18 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 					continue;
 				}
 
+				if (blockId == 115) {
+					NoteBlock* noteBlock = new NoteBlock({ (float)x * blockwidth, (float)y * blockwidth });
+					blockArray.push_back(noteBlock);
+					continue;
+				}
+
+				if (blockId == 116) {
+					CloudBlock* cloudBlock = new CloudBlock({ (float)x * blockwidth, (float)y * blockwidth });
+					blockArray.push_back(cloudBlock);
+					continue;
+				}
+
 				Blocks* solidBlocks = new SolidBlock({ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }, "TILE_" + std::to_string(texId));
 				blockArray.push_back(solidBlocks);
 			}

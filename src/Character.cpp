@@ -226,6 +226,11 @@ int Character::getScores() const
 	return scores;
 }
 
+float Character::getSinkingTime() const
+{
+	return sinkingTime;
+}
+
 bool Character::isHolding() const
 {
 	return holding;
@@ -254,6 +259,10 @@ void Character::setDucking(bool ducking)
 void Character::setHolding(bool holding)
 {
 	this->holding = holding;
+}
+
+void Character::setSinkingTime(float sinkingTime) {
+	this->sinkingTime = sinkingTime;
 }
 
 void Character::lostSuit()
@@ -333,9 +342,17 @@ void Character::Update()
 	// physics
 	position.x += velocity.x * deltaTime;
 	position.y += velocity.y * deltaTime;
-	if (velocity.y > 50)
+	if (velocity.y > 50 && state != SINKING)
 		state = FALLING;
 	velocity.y += GRAVITY * deltaTime + 2;
+	if (state == SINKING) { 
+		sinkingTime -= deltaTime;
+		velocity.y = GRAVITY / 32;
+		//printf("SINKING\n");
+		if (sinkingTime <= 0.f) {
+			state = FALLING;
+		}
+	}
 	// fireball
 	for (auto i = fireballs.begin(); i != fireballs.end();) {
 		FireBall* fireball = *i;
@@ -389,7 +406,7 @@ void Character::HandleInput()
 		RunRight();
 	}
 	else Standing();
-	if (state == ON_GROUND) {
+	if (state == ON_GROUND || state == SINKING) {
 		if (IsKeyPressed(KEY_UP)) {
 			Jumping();
 		}
@@ -470,7 +487,7 @@ void Character::UpdateTexture()
 		if (currFrame > maxFrame) currFrame = 0;
 		frameAcum -= frameTime;
 	}
-	if (state == ON_GROUND) {
+	if (state == ON_GROUND || state == SINKING) {
 		if (velocity.x != 0 && !isducking)
 			// moving
 			texture = RESOURCE_MANAGER.getTexture(characterState + charactertype + characterDir + std::to_string(currFrame));

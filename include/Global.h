@@ -24,6 +24,7 @@ enum EntityState {
 	ON_GROUND,
 	IDLING,
 	FLYING,
+	SINKING,
 	STATE_IS_DYING,
 	STATE_SHELL
 
@@ -56,13 +57,23 @@ enum CharacterState {
 enum BLOCK_TYPE {
 	FLOOR,
 	BRICK, // breakable
+	CLOUDBLOCK, // phase through
 	SOLIDBLOCK, // unmovable, unbreakable
 	MOVINGBLOCK,
 	ITEMBLOCK,
 	COINBLOCK,
+	NOTEBLOCK,
 	HIDDEN,
 	TEMPBLOCK,
 	DECOR
+};
+
+enum BOUNCE_DIRECTION {
+	BOUNCE_UP,
+	BOUNCE_DOWN,
+	BOUNCE_LEFT,
+	BOUNCE_RIGHT,
+	NO_BOUNCE
 };
 
 

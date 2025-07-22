@@ -56,6 +56,7 @@ public:
 	bool isHolding() const;
 	bool getVictory() const;
 	bool getExitLevel() const;
+	float getSinkingTime() const;
 
 	void setLostLife(bool lostLife);
 	
@@ -65,6 +66,7 @@ public:
 	void setScores(int scores);
 	void setDucking(bool ducking);
 	void setHolding(bool holding);
+	void setSinkingTime(float sinkingTime);
 	void lostSuit();
 	void setVictory(bool victory);
 	void eatGreenMushrooms();
@@ -121,6 +123,7 @@ protected:
 	int coins;
 	int lives;
 	float invicibleStarTime;
+	float sinkingTime;
 
 	bool holding;
 	bool isThrowing;

@@ -102,6 +102,11 @@ void ResourceManager::loadTextures() {
 	textures["QUESTION_1"] = LoadTexture("resources/images/sprites/blocks/Question_1.png");
 	textures["QUESTION_2"] = LoadTexture("resources/images/sprites/blocks/Question_2.png");
 	textures["QUESTION_3"] = LoadTexture("resources/images/sprites/blocks/Question_3.png");	
+	// note block
+	textures["NOTE_0"] = LoadTexture("resources/images/sprites/blocks/Note_0.png");
+	textures["NOTE_1"] = LoadTexture("resources/images/sprites/blocks/Note_1.png");
+	textures["NOTE_2"] = LoadTexture("resources/images/sprites/blocks/Note_2.png");
+	textures["NOTE_3"] = LoadTexture("resources/images/sprites/blocks/Note_3.png");
 	// mushroom
 	textures["MUSHROOM"] = LoadTexture("resources/images/sprites/items/Mushroom.png");
 	// star
@@ -111,7 +116,7 @@ void ResourceManager::loadTextures() {
 	textures["FLOWER_1"] = LoadTexture("resources/images/sprites/items/FireFlower_1.png");
 
 	// tile
-	for (int i = 0; i <= 113; i++) {
+	for (int i = 0; i <= 115; i++) {
 		std::string path = "resources/images/tiles/AllTiles/tile_" + std::to_string(i) + ".png";
 		textures["TILE_" + std::to_string(i)] = LoadTexture(path.c_str());
 	}

@@ -242,6 +242,8 @@ void GameEngine::draw()
     if (!player) return;
     bool lostLife = player->isLostLife();
 
+    player->draw();
+
     for (size_t i = 0; i < items.size(); i++) {
         items[i]->draw();
 	} // for items emerging
@@ -250,10 +252,7 @@ void GameEngine::draw()
     }
     for (size_t i = 0; i < enemies.size(); i++) {
         enemies[i]->draw();
-    }
-
-    player->draw();
-    
+    }    
     for (size_t i = 0; i < effects.size(); i++) {
         effects[i]->draw();
     }

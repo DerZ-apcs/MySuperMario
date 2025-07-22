@@ -8,8 +8,10 @@
 #include "../include/Item.h"
 #include "../include/Coin.h"
 #include "../include/Brick.h"
+#include "../include/CloudBlock.h"
 #include "../include/QuestionBlock.h"
 #include "../include/CoinBlock.h"
+#include "../include/NoteBlock.h"
 #include "../include/Enemy.h"
 #include "../include/Goomba.h"
 #include <iostream>
