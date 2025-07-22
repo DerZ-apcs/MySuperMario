@@ -23,8 +23,10 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Char
 
     blocks = map.getBlocks();
     enemies = map.getEnemies();
-	items = map.getItems(); // in the instantiation 
+	items = map.getItems();  
     decor = map.getDecor();
+	covers = map.getCovers();
+	secretAreas = map.getSecretAreas();
 
     isPaused = false;
     this->time = 300;
@@ -32,12 +34,6 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Char
     deltaTime = 0.f;
     BackGroundPos = { {0, 0}, {(float)GetScreenWidth(), 0}, {(float)GetScreenWidth() * 2, 0} };
     //items.push_back();
-    /*
-    for (int i = 7; i < 10; i++) {
-        Goomba* goomba = new Goomba({(float) 100 * i, 300 }, RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0"));
-        goomba->setState(FALLING);
-        enemies.push_back(goomba);
-    }*/
 }
 
 GameEngine::~GameEngine() {
@@ -50,6 +46,9 @@ GameEngine::~GameEngine() {
     }
     for (size_t i = 0; i < decor.size(); ++i) {
         delete decor[i];
+    }
+    for (size_t i = 0; i < covers.size(); ++i) {
+        delete covers[i];
     }
     for (size_t i = 0; i < effects.size(); ++i) {
         delete effects[i];
@@ -241,23 +240,35 @@ void GameEngine::draw()
     //map.drawMap();
     if (!player) return;
     bool lostLife = player->isLostLife();
+    
+    bool drawCover = true;
+    for (auto& area : secretAreas) {
+        if (CheckCollisionPointRec({ player->getX(), player->getY() }, area) == true) {
+            drawCover = false;
+            break;
+        }
+    }
 
+    for (Entity* dec : decor) {
+        dec->draw();
+    }
     player->draw();
-
     for (size_t i = 0; i < items.size(); i++) {
         items[i]->draw();
 	} // for items emerging
     for (size_t i = 0; i < blocks.size(); i++) {
         blocks[i]->draw();
     }
+    if (drawCover == true) {
+        for (Entity* cover : covers) {
+            cover->draw();
+        }
+    }
     for (size_t i = 0; i < enemies.size(); i++) {
         enemies[i]->draw();
     }    
     for (size_t i = 0; i < effects.size(); i++) {
         effects[i]->draw();
-    }
-    for (Entity* dec : decor) {
-        dec->draw();
     }
 
     camera.endDrawing();
@@ -413,6 +424,9 @@ void GameEngine::resetGame()
     for (size_t i = 0; i < decor.size(); ++i) {
         delete decor[i];
     }
+    for (size_t i = 0; i < covers.size(); ++i) {
+        delete covers[i];
+    }
     for (size_t i = 0; i < effects.size(); ++i) {
         delete effects[i];
     }
@@ -432,6 +446,9 @@ void GameEngine::resetGame()
     enemies = map.getEnemies();
     items = map.getItems();
     decor = map.getDecor();
+    covers = map.getCovers();
+	secretAreas = map.getSecretAreas();
+
     isPaused = false;
     this->time = 300;
     resetTimer();

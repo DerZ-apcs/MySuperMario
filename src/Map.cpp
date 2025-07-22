@@ -36,7 +36,9 @@ void Map::clear() {
 	blockArray.clear();
 	items.clear();
 	decors.clear();
+	covers.clear();
 	enemies.clear();
+	secretAreas.clear();
 }
 
 void Map::drawMap()
@@ -93,7 +95,6 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 
 	int firstgid = mapJson["tilesets"][0]["firstgid"];
 
-	//printf("firstgid: %d\n", firstgid);
 
 	for (int y = 0; y < height; ++y) {
 		for (int x = 0; x < width; ++x) {
@@ -168,15 +169,52 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			}
 		}
 
+		if (name == "CoinBlock") {
+			int texId = gid - firstgid;
+			blockArray.push_back(new CoinBlock({ (float)x * blockwidth, (float)y * blockwidth }, "TILE_" + std::to_string(texId), 5));
+		}
+
 		if (name == "Enemy") {
 			if (type == "Goomba") {
 				enemies.push_back(new Goomba(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0")));
 			}
 		}
 
-		if (name == "CoinBlock") {
-			int texId = gid - firstgid;
-			blockArray.push_back(new CoinBlock({ (float)x * blockwidth, (float)y * blockwidth }, "TILE_" + std::to_string(texId), 5));
+		if (name == "Area") {
+			int areaWidth;
+			int areaHeight;
+			for (auto& prop : obj["properties"]) {
+				if (prop["name"] == "Width") areaWidth = prop["value"];
+				else if (prop["name"] == "Height") areaHeight = prop["value"];
+			}
+			Rectangle area = { (float)x * blockwidth, (float)y * blockwidth, (float)areaWidth * blockwidth, (float)areaHeight * blockwidth };
+			secretAreas.push_back(area);
+		}
+	}
+
+	// decor layer
+	std::vector<int> decorData = mapJson["layers"][2]["data"];
+	for (int y = 0; y < height; ++y) {
+		for (int x = 0; x < width; ++x) {
+			int blockId = decorData[static_cast<std::vector<int, std::allocator<int>>::size_type>(y) * width + x];
+			if (blockId != 0) {
+				int texId = blockId - firstgid;
+				Blocks* decorBlock = new DecorBlock({ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }, "TILE_" + std::to_string(texId));
+				decors.push_back(decorBlock);
+			}
+		}
+	}
+
+	// covers layer
+	std::vector<int> coverData = mapJson["layers"][3]["data"];
+	for (int y = 0; y < height; ++y) {
+		for (int x = 0; x < width; ++x) {
+			int blockId = coverData[static_cast<std::vector<int, std::allocator<int>>::size_type>(y) * width + x];
+			if (blockId != 0) {
+				int texId = blockId - firstgid;
+				Blocks* coverBlock = new SolidBlock({ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }, "TILE_" + std::to_string(texId));
+				covers.push_back(coverBlock);
+			}
 		}
 	}
 
@@ -228,3 +266,12 @@ std::vector<Blocks*> Map::getDecor() const
 	return decors;
 }
 
+std::vector<Blocks*> Map::getCovers() const
+{
+	return covers;
+}
+
+std::vector<Rectangle> Map::getSecretAreas() const
+{
+	return secretAreas;
+}

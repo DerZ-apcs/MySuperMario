@@ -30,6 +30,8 @@ private:
     std::vector<FireBall*> fireball;
     std::vector<Effect*> effects;
     std::vector<Blocks*> decor;
+	std::vector<Blocks*> covers; 
+	std::vector<Rectangle> secretAreas; 
     //std::vector<Shell*> shells;
     std::vector<Entity*> testEntities;
     GameCamera camera;

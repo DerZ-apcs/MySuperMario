@@ -5,6 +5,7 @@
 #include "../include/Blocks.h"
 #include "../include/Floor.h"
 #include "../include/SolidBlock.h"
+#include "../include/DecorBlock.h"
 #include "../include/Item.h"
 #include "../include/Coin.h"
 #include "../include/Brick.h"
@@ -38,6 +39,9 @@ private:
 	std::vector<Enemy*> enemies;
 	std::vector<Item*> items;
 	std::vector<Blocks*> decors;
+	std::vector<Blocks*> covers;
+
+	std::vector<Rectangle> secretAreas; 
 
 public:
 	static const std::string basePath;
@@ -64,6 +68,8 @@ public:
 	std::vector<Enemy*> getEnemies() const;
 	std::vector<Item*> getItems() const; 
 	std::vector<Blocks*> getDecor() const;
+	std::vector<Blocks*> getCovers() const;
+	std::vector<Rectangle> getSecretAreas() const;
 
 	float BgWidth;
 	float BgHeight;
