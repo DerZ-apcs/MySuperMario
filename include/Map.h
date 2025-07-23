@@ -11,6 +11,7 @@
 #include "../include/Brick.h"
 #include "../include/CloudBlock.h"
 #include "../include/QuestionBlock.h"
+#include "../include/RotatingBlock.h"
 #include "../include/CoinBlock.h"
 #include "../include/NoteBlock.h"
 #include "../include/Enemy.h"

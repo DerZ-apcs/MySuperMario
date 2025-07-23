@@ -14,6 +14,7 @@
 #include "../include/ItemBlock.h"
 #include "../include/QuestionBlock.h"
 #include "../include/CoinBlock.h"
+#include "../include/RotatingBlock.h"
 #include <iostream>
 
 inline Rectangle getProximityRect(Entity& entity, float radius)
@@ -164,6 +165,45 @@ bool PlayerCoinBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	default:
 		break;
 	}
+	return true;
+}
+
+bool PlayerRotatingBlockInfo::HandleCollision(Entity* entityA, Entity* entityB) {
+	Character* character = dynamic_cast<Character*>(entityA);
+	RotatingBlock* block = dynamic_cast<RotatingBlock*>(entityB);
+
+	if (!character || !block || !character->getCollisionAvailable())
+		return false;
+	CollisionType Colltype = character->CheckCollision(*block);
+	if (Colltype == COLLISION_TYPE_NONE)
+		return false;
+	switch (Colltype) {
+	case COLLISION_TYPE_NORTH:
+		if (block->getActive() == false) {
+			character->setPosition(Vector2{ character->getX(), block->getY() + block->getHeight() });
+			character->setVelY(0);
+			block->Activate();
+		}
+		break;
+	case COLLISION_TYPE_SOUTH:
+		if (block->getActive() == false) {
+			character->setPosition(Vector2{ character->getX(), block->getY() - character->getHeight() });
+			character->setState(ON_GROUND);
+			character->setVelY(0);
+		}
+		break;
+	case COLLISION_TYPE_EAST:
+		character->setPosition(Vector2{ block->getX() - character->getWidth(), character->getY() });
+		character->setVelX(0);
+		break;
+	case COLLISION_TYPE_WEST:
+		character->setPosition(Vector2{ block->getX() + block->getWidth(), character->getY() });
+		character->setVelX(0);
+		break;
+	default:
+		break;
+	}
+	return true;
 	return true;
 }
 
@@ -693,6 +733,8 @@ std::unique_ptr<CollisionInfo> CollisionInfoSelector::getInfor(EntityType typeA,
 			return std::make_unique<PlayerNoteBlockInfo>();
 		if (block && block->getBlockType() == COINBLOCK)
 			return std::make_unique<PlayerCoinBlockInfo>();
+		if (block && block->getBlockType() == ROTATINGBLOCK)
+			return std::make_unique<PlayerRotatingBlockInfo>();
 		return std::make_unique<PlayerBlockInfo>();
 	}
 	if (typeA == ENEMY && typeB == BLOCK)

@@ -133,6 +133,12 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 					continue;
 				}
 
+				if (blockId == 117) {
+					RotatingBlock* rotatingBlock = new RotatingBlock({ (float)x * blockwidth, (float)y * blockwidth });
+					blockArray.push_back(rotatingBlock);
+					continue;
+				}
+
 				Blocks* solidBlocks = new SolidBlock({ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }, "TILE_" + std::to_string(texId));
 				blockArray.push_back(solidBlocks);
 			}
