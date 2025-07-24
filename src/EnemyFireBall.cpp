@@ -59,6 +59,7 @@ void EnemyFireBall::draw() {
 
 void EnemyFireBall::updateCollision() {
     Entity::updateCollision();
+
     if (mario && !isDestroyed) {
         Rectangle fbRec = { position.x, position.y, size.x, size.y };
         Rectangle mRec = { mario->getPosition().x,
