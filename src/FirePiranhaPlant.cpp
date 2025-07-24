@@ -102,6 +102,12 @@ void FirePiranhaPlant::Update() {
 
 void FirePiranhaPlant::draw() {
     PiranhaPlant::draw();
+    for (auto fireball : fireballs) {
+        if (!fireball->IsDestroyed()) {
+            fireball->UpdateTexture();
+            fireball->draw();
+        }
+    }
 }
 
 void FirePiranhaPlant::UpdateTexture() {
@@ -138,7 +144,7 @@ void FirePiranhaPlant::ShootFireBall() {
         float velX = baseSpeed * cosf(rad) * (dir == RIGHT ? 1.0f : -1.0f);
         float velY = -200.0f + baseSpeed * sinf(rad);
         Vector2 fireBallVel = { velX, velY };
-        EnemyFireBall* fireball = new EnemyFireBall(fireBallPos, { 16, 16 }, fireBallVel, dir, 2.0f);
+        EnemyFireBall* fireball = new EnemyFireBall(fireBallPos, { 16, 16 }, fireBallVel, dir, 2.0f, &mario, false);
         fireballs.push_back(fireball);
     }
     Singleton<ResourceManager>::getInstance().playSound("FIREBALL");
