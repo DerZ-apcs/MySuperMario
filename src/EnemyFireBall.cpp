@@ -8,8 +8,8 @@ const float EnemyFireBall::FB_SpeedX = 400.0f;
 
 EnemyFireBall::EnemyFireBall(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, float timeSpan, Mario* mario, bool homing)
     : Entity(pos, sz, vel, dir, ON_GROUND, 0.1f, 3, BLACK), timeSpan(timeSpan), timeSpanAcum(0), isDestroyed(false), mario(mario), isHoming(homing) {
-    this->texture = direction == RIGHT ? Singleton<ResourceManager>::getInstance().getTexture("EnemyFireball_RIGHT_0") :
-        Singleton<ResourceManager>::getInstance().getTexture("EnemyFireball_LEFT_0");
+    this->texture = direction == RIGHT ? Singleton<ResourceManager>::getInstance().getTexture("Goomba_RIGHT_0") :
+        Singleton<ResourceManager>::getInstance().getTexture("Goomba_LEFT_0");
     this->frameAcum = 0;
     this->currFrame = 0;
     this->CollNorth.setSize(Vector2{ size.x - 8, 1 });

@@ -36,7 +36,7 @@ private:
     static const float DETECTION_RANGE; // Phạm vi phát hiện Mario
 public:
     HomingFirePiranha(Vector2 pos, Texture2D texture, Mario& mario);
-    void ShootFireBall() override; // Ghi đè để bắn fireball nhắm mục tiêu
+    void ShootFireBall() override; 
 };
 
 #endif

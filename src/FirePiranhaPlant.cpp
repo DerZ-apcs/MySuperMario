@@ -4,7 +4,7 @@
 #include <raymath.h>
 
 // FirePiranhaPlant Class Implementation
-const float FirePiranhaPlant::FIREBALL_INTERVAL = 1.0f; // Bắn fireball mỗi 2s khi trồi lên
+const float FirePiranhaPlant::FIREBALL_INTERVAL = 1.0f; 
 const float RapidFirePiranha::FIREBALL_INTERVAL = 0.5f;
 const float HomingFirePiranha::FIREBALL_INTERVAL = 0.75f;
 const float HomingFirePiranha::DETECTION_RANGE = 300.0f;
@@ -101,7 +101,7 @@ void FirePiranhaPlant::Update() {
 }
 
 void FirePiranhaPlant::draw() {
-    Enemy::draw();
+    PiranhaPlant::draw();
 }
 
 void FirePiranhaPlant::UpdateTexture() {
@@ -169,15 +169,37 @@ HomingFirePiranha::HomingFirePiranha(Vector2 pos, Texture2D texture, Mario& mari
 
 void HomingFirePiranha::ShootFireBall() {
     if (fireballs.size() >= MAX_FIREBALLS) return; // Không bắn nếu vượt giới hạn
+    //Direction dir = (mario.getX() > position.x) ? RIGHT : LEFT;
+    //Vector2 fireBallPos = { position.x, position.y + 10 };
+    //Vector2 fireBallVel = (dir == RIGHT) ? Vector2{ 400.0f, -200.0f } : Vector2{ -400.0f, -200.0f };
+    //bool isHoming = false;
+    //float distanceToMario = Vector2Distance(position, mario.getPosition());
+    //if (distanceToMario <= DETECTION_RANGE) {
+    //    isHoming = true; // Kích hoạt nhắm mục tiêu khi Mario ở gần
+    //}
+    //EnemyFireBall* fireball = new EnemyFireBall(fireBallPos, { 16, 16 }, fireBallVel, dir, 2.0f, &mario, isHoming);
+    //fireballs.push_back(fireball);
+    //Singleton<ResourceManager>::getInstance().playSound("FIREBALL");
+
+    float distanceToMario = Vector2Distance(position, mario.getPosition());
+    if (distanceToMario > DETECTION_RANGE) return; // Chỉ bắn khi Mario trong tầm
+
     Direction dir = (mario.getX() > position.x) ? RIGHT : LEFT;
     Vector2 fireBallPos = { position.x, position.y + 10 };
-    Vector2 fireBallVel = (dir == RIGHT) ? Vector2{ 400.0f, -200.0f } : Vector2{ -400.0f, -200.0f };
+
+    // Tính toán vector hướng tới vị trí của Mario tại thời điểm bắn
+    Vector2 targetPos = mario.getPosition();
+    Vector2 directionToMario = Vector2Subtract(targetPos, fireBallPos);
+    Vector2 normalizedDirection = Vector2Normalize(directionToMario);
+
+    // Đặt tốc độ cho quả cầu lửa
+    const float fireBallSpeed = 400.0f;
+    Vector2 fireBallVel = Vector2Scale(normalizedDirection, fireBallSpeed);
+
+    // Tạo quả cầu lửa với isHoming = false để nó không bám theo Mario
     bool isHoming = false;
-    float distanceToMario = Vector2Distance(position, mario.getPosition());
-    if (distanceToMario <= DETECTION_RANGE) {
-        isHoming = true; // Kích hoạt nhắm mục tiêu khi Mario ở gần
-    }
-    EnemyFireBall* fireball = new EnemyFireBall(fireBallPos, { 16, 16 }, fireBallVel, dir, 2.0f, &mario, isHoming);
+    EnemyFireBall* fireball = new EnemyFireBall(fireBallPos, { 16, 16 }, fireBallVel, dir, 2.0f, nullptr, isHoming);
+
     fireballs.push_back(fireball);
     Singleton<ResourceManager>::getInstance().playSound("FIREBALL");
 }

@@ -68,9 +68,10 @@ void PiranhaPlant::Update() {
 }
 
 void PiranhaPlant::draw() {
+    //Enemy::draw();
     if (!isDead) {
         Rectangle source = { 0, 0, (float)texture.width, (float)texture.height };
-        Rectangle dest = { position.x + 30, position.y, texture.width * squashScale, texture.height * squashScale };
+        Rectangle dest = { position.x, position.y, texture.width * squashScale, texture.height * squashScale };
         Vector2 origin = { (texture.width * squashScale) / 2, (texture.height * squashScale) / 2 };
         DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
 #ifdef DEBUG
@@ -105,9 +106,7 @@ void PiranhaPlant::UpdateTexture() {
 void PiranhaPlant::CollisionWithCharacter(Mario& mario, CollisionType collType) {
     if (isDead || state == STATE_IS_DYING || mario.getInvincibilityTimer() > 0 || invincibilityTimer > 0) return;
 
-    // Chỉ gây sát thương khi ở trạng thái trồi lên hoàn toàn
     bool isFullyPoppedUp = (popUpTimer >= POP_UP_DURATION && popUpTimer < POP_UP_DURATION + STAY_UP_DURATION);
-
 
     // Mario nhảy lên đầu (stomp)
     if (collType == COLLISION_TYPE_SOUTH && (mario.getState() == JUMPING || mario.getState() == FALLING)) {
