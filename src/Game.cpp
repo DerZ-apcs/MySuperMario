@@ -20,17 +20,23 @@ Game::Game(int nwidth, int nheight, int ntargetFPS) :
     camera.zoom = 1.0f;
     mediatorCollision.SetMario(&mario);
     // enemies.push_back(new Goomba({ 400, 920 }, Resource_manager.getTexture("Goomba_LEFT_0"), &mediatorCollision));
-    // enemies.push_back(new Goomba({ 401, 900 }, Resource_manager.getTexture("Goomba_RIGHT_0"), &mediatorCollision));
-    // enemies.push_back(new BlueKoopa({ 400, 912 }, Resource_manager.getTexture("BlueKoopa_RIGHT_1")));
+    
     // enemies.push_back(new FlyingGoomba({ 400, 900 }, Resource_manager.getTexture("Goomba_LEFT_0"), &mediatorCollision));
-    // enemies.push_back(new FlyingGoomba({ 800, 920 }, Resource_manager.getTexture("FlyingGoomba_LEFT_1"), &mediatorCollision));
+    // 
+    // enemies.push_back(new BlueKoopa({ 400, 912 }, Resource_manager.getTexture("BlueKoopa_RIGHT_1")));
+	// enemies.push_back(new GreenKoopa({ 400, 912 }, Resource_manager.getTexture("GreenKoopa_RIGHT_1")));
+	// enemies.push_back(new YellowKoopa({ 400, 912 }, Resource_manager.getTexture("YellowKoopa_RIGHT_1")));
+    
     // enemies.push_back(new PiranhaPlant({ 576, 448 }, Resource_manager.getTexture("PiranhaPlant_OPEN"),mario));
     // enemies.push_back(new FirePiranhaPlant({ 576, 448 }, Resource_manager.getTexture("FirePiranhaPlant_OPEN"), mario));
 	// enemies.push_back(new RapidFirePiranha({ 577, 448 }, Resource_manager.getTexture("FirePiranhaPlant_OPEN"), mario));
-    enemies.push_back(new HomingFirePiranha({ 576, 448 }, Resource_manager.getTexture("FirePiranhaPlant_OPEN"), mario));
+    // enemies.push_back(new HomingFirePiranha({ 576, 448 }, Resource_manager.getTexture("FirePiranhaPlant_OPEN"), mario));
+    // 
 	// enemies.push_back(new Bullet({ 2000, 350 }, Resource_manager.getTexture("Bullet_LEFT_1"), LEFT));
     // enemies.push_back(new FireBullet({ 2000, 350 }, Resource_manager.getTexture("Bullet_LEFT_1"), LEFT, mario));
+    // 
     // enemies.push_back(new Rex({ 400, 920 }, Resource_manager.getTexture("Rex_LEFT_0")));
+    // 
     // enemies.push_back(new Muncher({ 500,448 }, Resource_manager.getTexture("Muncher_1"))); 
 }
 

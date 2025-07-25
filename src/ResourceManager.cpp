@@ -86,19 +86,28 @@ void ResourceManager::loadTextures() {
 	textures["YellowKoopa_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_1.png");
 	textures["YellowKoopa_LEFT_0"] = flipTexture(textures["YellowKoopa_RIGHT_0"]);
 	textures["YellowKoopa_LEFT_1"] = flipTexture(textures["YellowKoopa_RIGHT_1"]);
-	textures["YellowKoopa_Shell"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_Shell.png");
+	textures["YellowKoopa_Shell_3"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_Shell_3.png");
+	textures["YellowKoopa_Shell_2"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_Shell_2.png");
+	textures["YellowKoopa_Shell_1"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_Shell_1.png");
+	textures["YellowKoopa_Shell_0"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_Shell_0.png");
 
 	textures["BlueKoopa_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/BlueKoopaTroopa_0.png");
 	textures["BlueKoopa_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/BlueKoopaTroopa_1.png");
 	textures["BlueKoopa_LEFT_0"] = flipTexture(textures["BlueKoopa_RIGHT_0"]);
 	textures["BlueKoopa_LEFT_1"] = flipTexture(textures["BlueKoopa_RIGHT_1"]);
-	textures["BlueKoopa_Shell"] = LoadTexture("resources/images/sprites/baddies/BlueKoopaTroopa_Shell.png");
+	textures["BlueKoopa_Shell_3"] = LoadTexture("resources/images/sprites/baddies/BlueKoopaTroopa_Shell_3.png");
+	textures["BlueKoopa_Shell_2"] = LoadTexture("resources/images/sprites/baddies/BlueKoopaTroopa_Shell_2.png");
+	textures["BlueKoopa_Shell_1"] = LoadTexture("resources/images/sprites/baddies/BlueKoopaTroopa_Shell_1.png");
+	textures["BlueKoopa_Shell_0"] = LoadTexture("resources/images/sprites/baddies/BlueKoopaTroopa_Shell_0.png");
 
 	textures["GreenKoopa_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/GreenKoopaTroopa_0.png");
 	textures["GreenKoopa_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/GreenKoopaTroopa_1.png");
 	textures["GreenKoopa_LEFT_0"] = flipTexture(textures["GreenKoopa_RIGHT_0"]);
 	textures["GreenKoopa_LEFT_1"] = flipTexture(textures["GreenKoopa_RIGHT_1"]);
-	textures["GreenKoopa_Shell"] = LoadTexture("resources/images/sprites/baddies/GreenKoopaTroopa_Shell.png");
+	textures["GreenKoopa_Shell_3"] = LoadTexture("resources/images/sprites/baddies/GreenKoopaTroopa_Shell_3.png");
+	textures["GreenKoopa_Shell_2"] = LoadTexture("resources/images/sprites/baddies/GreenKoopaTroopa_Shell_2.png");
+	textures["GreenKoopa_Shell_1"] = LoadTexture("resources/images/sprites/baddies/GreenKoopaTroopa_Shell_1.png");
+	textures["GreenKoopa_Shell_0"] = LoadTexture("resources/images/sprites/baddies/GreenKoopaTroopa_Shell_0.png");
 
 	textures["Bullet_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/BulletBill_0.png");
 	textures["Bullet_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/BanzaiBill_0.png");
