@@ -63,7 +63,7 @@ else()
 
 endif()
 
-target_sources("${CMAKE_PROJECT_NAME}" PRIVATE ${MY_SOURCES}  "include/Goomba.h" "include/Koopa.h" "include/Bullet.h" "include/PiranhaPlant.h" "src/Goomba.cpp" "src/Koopa.cpp" "src/Bullet.cpp" "src/PiranhaPlant.cpp" "include/Rex.h" "src/Rex.cpp"   "include/FirePiranhaPlant.h" "src/FirePiranhaPlant.cpp" "include/EnemyFireBall.h" "src/EnemyFireBall.cpp" "include/Muncher.h" "src/Muncher.cpp" "include/BobOmb.h" "src/BobOmb.cpp")
+target_sources("${CMAKE_PROJECT_NAME}" PRIVATE ${MY_SOURCES}  "include/Goomba.h" "include/Koopa.h" "include/Bullet.h" "include/PiranhaPlant.h" "src/Goomba.cpp" "src/Koopa.cpp" "src/Bullet.cpp" "src/PiranhaPlant.cpp" "include/Rex.h" "src/Rex.cpp"   "include/FirePiranhaPlant.h" "src/FirePiranhaPlant.cpp" "include/EnemyFireBall.h" "src/EnemyFireBall.cpp" "include/Muncher.h" "src/Muncher.cpp" "include/BobOmb.h" "src/BobOmb.cpp" "include/ParaKoopa.h" "src/ParaKoopa.cpp"  )
 
 
 if(MSVC) # If using the VS compiler...

@@ -23,6 +23,7 @@ public:
     void UpdateTexture() override;
     bool isMaxDistance() const;
     void HandleTileCollision(const Tile tile, CollisionType Colltype);
+    void SetTexture(const Texture2D& tex);
     void destroy();
     bool IsDestroyed() { return isDestroyed; }
 };

@@ -112,6 +112,10 @@ void EnemyFireBall::HandleTileCollision(const Tile tile, CollisionType Colltype)
     }
 }
 
+void EnemyFireBall::SetTexture(const Texture2D& tex) {
+    texture = tex;
+}
+
 void EnemyFireBall::destroy() {
     isDestroyed = true;
 }

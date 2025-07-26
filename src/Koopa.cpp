@@ -1,5 +1,8 @@
 ﻿#include "../include/Koopa.h"
 
+#define BLUE_KOOPA_SPEED 100.0f
+#define BLUE_KOOPA_SHELL_SPEED 450.0f
+
 Koopa::Koopa(Vector2 pos, Texture2D texture)
     : Enemy(pos, { 32, 48 }, { 0, 0 }, LEFT, ON_GROUND, texture, 0.2f, 1, GREEN),
     reviveTimer(0.0f), isReviving(false), reviveShakeTimer(0.0f) {
@@ -229,6 +232,56 @@ void YellowKoopa::UpdateTexture() {
 
 BlueKoopa::BlueKoopa(Vector2 pos, Texture2D texture)
     : Koopa(pos, texture) {
+}
+
+void BlueKoopa::Update() {
+    if (state == ON_GROUND) {
+        if (direction == LEFT) {
+            velocity.x = -BLUE_KOOPA_SPEED; 
+        }
+        else {
+            velocity.x = BLUE_KOOPA_SPEED; 
+        }
+    }
+
+    if (isReadyForRemoval() || state == STATE_IS_DYING) {
+        if (deathTimer > 0) {
+            deathTimer -= GetFrameTime();
+            updateSquashEffect();
+            if (deathTimer <= 0) {
+                isDead = true;
+            }
+        }
+        UpdateTexture();
+        return;
+    }
+
+    if (state == STATE_SHELL && velocity.x == 0) {
+        reviveTimer += GetFrameTime(); // Bắt đầu đếm giờ
+        if (reviveTimer > KOOPA_REVIVE_WARNING_TIME) {
+            isReviving = true;
+            reviveShakeTimer += GetFrameTime(); // Timer cho hiệu ứng nhấp nháy
+        }
+        // Khi hết giờ, hồi sinh hoàn toàn
+        if (reviveTimer > KOOPA_REVIVE_TIME) {
+            state = ON_GROUND;
+            setHeight(48);
+            setSize({ 32, 48 });
+            setY(getY() - 16); // Nâng Koopa lên để vừa với size mới
+            isReviving = false; // Tắt trạng thái cảnh báo
+            reviveTimer = 0.0f;
+            reviveShakeTimer = 0.0f;
+            updateCollision();
+            Singleton<ResourceManager>::getInstance().playSound("KOOPA_REVIVE");
+        }
+    }
+    else {
+        reviveTimer = 0.0f;
+        isReviving = false;
+        reviveShakeTimer = 0.0f;
+    }
+
+    Enemy::Update();
 }
 
 void BlueKoopa::UpdateTexture() {

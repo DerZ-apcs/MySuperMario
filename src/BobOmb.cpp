@@ -39,7 +39,6 @@ void BobOmb::Update() {
 
 void BobOmb::UpdateTexture() {
     if (state == STATE_IS_DYING) {
-        // Trạng thái nổ
         texture = Singleton<ResourceManager>::getInstance().getTexture("BobOmb_Explosion");
         return;
     }
@@ -55,7 +54,6 @@ void BobOmb::UpdateTexture() {
             : Singleton<ResourceManager>::getInstance().getTexture("BobOmb_Activated_1");
     }
     else {
-        // Trạng thái đi bộ
         frameAcum += GetFrameTime();
         if (frameAcum > frameTime) {
             currFrame = (currFrame + 1) % (maxFrame + 1);
@@ -102,17 +100,27 @@ void BobOmb::CollisionWithFireball(FireBall& fireball) {
 }
 
 void BobOmb::HandleTileCollision(const Tile& tile, CollisionType collType) {
-    if (isDying() || isActivated) return; // Không xử lý va chạm tường khi đã kích hoạt
+	if (state == STATE_IS_DYING) return;
 
-    // Logic đổi hướng khi va vào tường (giống Goomba)
+    if (isActivated) {
+        if (collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_WEST) {
+            Explode();
+            return;
+        }
+        if (collType == COLLISION_TYPE_SOUTH) {
+            setY(tile.getY() - getHeight());
+            velocity.y = 0;
+            state = ON_GROUND;
+        }
+        return;
+    }
+
     if (collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_WEST) {
         direction = (direction == LEFT) ? RIGHT : LEFT;
-        if (collType == COLLISION_TYPE_EAST) {
+        if (collType == COLLISION_TYPE_EAST)
             setX(tile.getX() - getWidth());
-        }
-        else {
+        else
             setX(tile.getX() + tile.getWidth());
-        }
         velocity.x = (direction == LEFT) ? -BOBOMB_WALK_SPEED : BOBOMB_WALK_SPEED;
     }
     else if (collType == COLLISION_TYPE_SOUTH) {

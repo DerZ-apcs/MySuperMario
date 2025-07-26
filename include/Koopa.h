@@ -27,6 +27,7 @@ public:
 class BlueKoopa : public Koopa {
 public:
     BlueKoopa(Vector2 pos, Texture2D texture);
+    void Update() override;
     void UpdateTexture() override;
 };
 

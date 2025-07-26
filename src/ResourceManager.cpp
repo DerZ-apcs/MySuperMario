@@ -109,6 +109,24 @@ void ResourceManager::loadTextures() {
 	textures["GreenKoopa_Shell_1"] = LoadTexture("resources/images/sprites/baddies/GreenKoopaTroopa_Shell_1.png");
 	textures["GreenKoopa_Shell_0"] = LoadTexture("resources/images/sprites/baddies/GreenKoopaTroopa_Shell_0.png");
 
+	textures["ParaKoopaRed_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/ParaKoopaRed_0.png");
+	textures["ParaKoopaRed_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/ParaKoopaRed_1.png");
+	textures["ParaKoopaRed_LEFT_0"] = flipTexture(textures["ParaKoopaRed_RIGHT_0"]);
+	textures["ParaKoopaRed_LEFT_1"] = flipTexture(textures["ParaKoopaRed_RIGHT_1"]);
+	textures["RedKoopa_Shell_3"] = LoadTexture("resources/images/sprites/baddies/RedKoopaTroopa_Shell_3.png");
+	textures["RedKoopa_Shell_2"] = LoadTexture("resources/images/sprites/baddies/RedKoopaTroopa_Shell_2.png");
+	textures["RedKoopa_Shell_1"] = LoadTexture("resources/images/sprites/baddies/RedKoopaTroopa_Shell_1.png");
+	textures["RedKoopa_Shell_0"] = LoadTexture("resources/images/sprites/baddies/RedKoopaTroopa_Shell_0.png");
+
+	textures["ParaKoopaBlue_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/BlueKoopaTroopa_0.png");
+	textures["ParaKoopaBlue_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/BlueKoopaTroopa_1.png");
+	textures["ParaKoopaBlue_LEFT_0"] = flipTexture(textures["ParaKoopaBlue_RIGHT_0"]);
+	textures["ParaKoopaBlue_LEFT_1"] = flipTexture(textures["ParaKoopaBlue_RIGHT_1"]);
+	textures["BlueKoopa_Shell_3"] = LoadTexture("resources/images/sprites/baddies/BlueKoopaTroopa_Shell_3.png");
+	textures["BlueKoopa_Shell_2"] = LoadTexture("resources/images/sprites/baddies/BlueKoopaTroopa_Shell_2.png");
+	textures["BlueKoopa_Shell_1"] = LoadTexture("resources/images/sprites/baddies/BlueKoopaTroopa_Shell_1.png");
+	textures["BlueKoopa_Shell_0"] = LoadTexture("resources/images/sprites/baddies/BlueKoopaTroopa_Shell_0.png");
+
 	textures["Bullet_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/BulletBill_0.png");
 	textures["Bullet_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/BanzaiBill_0.png");
 	textures["Bullet_LEFT_0"] = flipTexture(textures["Bullet_RIGHT_0"]);
@@ -137,12 +155,20 @@ void ResourceManager::loadTextures() {
 	textures["Rex_Compressed_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/Rex_1_1.png");
 	textures["Rex_Compressed_LEFT_0"] = flipTexture(textures["Rex_Compressed_RIGHT_0"]);
 	textures["Rex_Compressed_LEFT_1"] = flipTexture(textures["Rex_Compressed_RIGHT_1"]);
-	textures["Rex_Dead"] = LoadTexture("resources/images/sprites/baddies/Rex_1_1.png");
+	textures["Rex_Dead"] = LoadTexture("resources/images/sprites/baddies/Rex_Dead.png");
 
 	textures["Muncher_0"] = LoadTexture("resources/images/sprites/baddies/Muncher_0.png");
 	textures["Muncher_1"] = LoadTexture("resources/images/sprites/baddies/Muncher_1.png");
 
+	textures["BobOmb_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/BobOmb_0.png");
+	textures["BobOmb_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/BobOmb_1.png");
+	textures["BobOmb_LEFT_0"] = flipTexture(textures["BobOmb_RIGHT_0"]);
+	textures["BobOmb_LEFT_1"] = flipTexture(textures["BobOmb_RIGHT_1"]);
+	textures["BobOmb_Activated_0"] = LoadTexture("resources/images/sprites/baddies/BobOmb_0.png");
+	textures["BobOmb_Activated_1"] = LoadTexture("resources/images/sprites/baddies/BobOmb__1.png");
+	textures["BobOmb_Explosion"] = LoadTexture("resources/images/sprites/baddies/Muncher_1.png");
 
+	textures["Bone"] = LoadTexture("resources/images/sprites/mario/FlowerMarioFireball_0.png");
 	// tile
 	for (int i = 0; i <= 112; i++) {
 		std::string path = "resources/images/tiles/AllTiles/tile_" + std::to_string(i) + ".png";
