@@ -9,7 +9,6 @@ Koopa::Koopa(Vector2 pos, Texture2D texture)
 }
 
 void Koopa::Update() {
-    // Xử lý trạng thái chết
     if (isReadyForRemoval() || state == STATE_IS_DYING) {
         if (deathTimer > 0) {
             deathTimer -= GetFrameTime();

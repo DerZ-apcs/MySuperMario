@@ -22,10 +22,9 @@ void ParaKoopaRed::Update() {
     jumpTimer += GetFrameTime();
     if (state == ON_GROUND && jumpTimer > RED_JUMP_INTERVAL) {
         velocity.y = -RED_JUMP_VELOCITY;
+        state = JUMPING;
         jumpTimer = 0.0f;
     }
-
-	velocity.x = (direction == LEFT ? -RED_RUN_SPEED : RED_RUN_SPEED);
 
     Koopa::Update();
 }
@@ -71,10 +70,13 @@ void ParaKoopaBlue::Update() {
     jumpTimer += GetFrameTime();
     if (state == ON_GROUND && jumpTimer > BLUE_JUMP_INTERVAL) {
         velocity.y = -BLUE_JUMP_VELOCITY;
+        state = JUMPING;
         jumpTimer = 0.0f;
     }
 
     Koopa::Update();
+
+
 }
 
 void ParaKoopaBlue::UpdateTexture() {
