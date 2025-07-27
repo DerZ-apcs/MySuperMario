@@ -18,6 +18,7 @@
 #include "../include/Muncher.h"
 #include "../include/BobOmb.h"
 #include "../include/ParaKoopa.h"
+#include "../include/JumpingPiranhaPlant.h"
 
 class Game {
 private:

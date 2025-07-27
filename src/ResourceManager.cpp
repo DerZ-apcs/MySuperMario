@@ -118,8 +118,8 @@ void ResourceManager::loadTextures() {
 	textures["RedKoopa_Shell_1"] = LoadTexture("resources/images/sprites/baddies/RedKoopaTroopa_Shell_1.png");
 	textures["RedKoopa_Shell_0"] = LoadTexture("resources/images/sprites/baddies/RedKoopaTroopa_Shell_0.png");
 
-	textures["ParaKoopaBlue_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/BlueKoopaTroopa_0.png");
-	textures["ParaKoopaBlue_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/BlueKoopaTroopa_1.png");
+	textures["ParaKoopaBlue_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/ParaKoopaGreen_0.png");
+	textures["ParaKoopaBlue_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/ParaKoopaGreen_1.png");
 	textures["ParaKoopaBlue_LEFT_0"] = flipTexture(textures["ParaKoopaBlue_RIGHT_0"]);
 	textures["ParaKoopaBlue_LEFT_1"] = flipTexture(textures["ParaKoopaBlue_RIGHT_1"]);
 	textures["BlueKoopa_Shell_3"] = LoadTexture("resources/images/sprites/baddies/BlueKoopaTroopa_Shell_3.png");
@@ -135,6 +135,9 @@ void ResourceManager::loadTextures() {
 
 	textures["PiranhaPlant_OPEN"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_1.png");
 	textures["PiranhaPlant_CLOSED"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_0.png");
+	textures["PiranhaPlant_JUMPING"] = LoadTexture("resources/images/sprites/baddies/JumpingPiranhaPlant_0.png");
+	textures["PiranhaPlant_JUMPING_1"] = LoadTexture("resources/images/sprites/baddies/JumpingPiranhaPlant_1.png");
+	textures["PiranhaPlant_JUMPING_2"] = LoadTexture("resources/images/sprites/baddies/JumpingPiranhaPlant_2.png");
 	textures["FirePiranhaPlant_OPEN"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_1.png");
 	textures["FirePiranhaPlant_CLOSED"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_0.png");
 
@@ -168,7 +171,6 @@ void ResourceManager::loadTextures() {
 	textures["BobOmb_Activated_1"] = LoadTexture("resources/images/sprites/baddies/BobOmb__1.png");
 	textures["BobOmb_Explosion"] = LoadTexture("resources/images/sprites/baddies/Muncher_1.png");
 
-	textures["Bone"] = LoadTexture("resources/images/sprites/mario/FlowerMarioFireball_0.png");
 	// tile
 	for (int i = 0; i <= 112; i++) {
 		std::string path = "resources/images/tiles/AllTiles/tile_" + std::to_string(i) + ".png";
