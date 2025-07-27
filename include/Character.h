@@ -48,6 +48,7 @@ public:
 	bool isStandingUp() const;
 	bool isJumping() const;
 
+	float getSinkingTime() const;
 	int getLives() const;
 	int getCoins() const;
 	int getScores() const;
@@ -56,8 +57,7 @@ public:
 	bool getExitLevel() const;
 
 	void setLostLife(bool lostLife);
-	
-	//void transform(CharacterState newState);
+	void setSinkingTime(float sinkingTime);
 	void setLives(int lives);
 	void setCoins(int coins);
 	void setScores(int scores);
@@ -112,6 +112,9 @@ protected:
 		int Max_frame;
 	};
 	std::vector<TransitionFrame> transitionFrames;
+	std::vector<TransitionFrame> transitionFramesToad;
+	std::vector<TransitionFrame> transitionFramesPeach;
+	std::vector<TransitionFrame> transitionFramesMarisa;
 	Phase phase;
 	CharacterType characterType;
 	bool lostLife;
@@ -119,6 +122,7 @@ protected:
 	int scores;
 	int coins;
 	int lives;
+	float sinkingTime;
 	float invicibleStarTime;
 
 	bool holding;

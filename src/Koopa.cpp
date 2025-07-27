@@ -91,10 +91,10 @@ void Koopa::draw() {
             DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
         }
 
-        CollNorth.draw();
+       /* CollNorth.draw();
         CollSouth.draw();
         CollEast.draw();
-        CollWest.draw();
+        CollWest.draw();*/
     }
 }
 

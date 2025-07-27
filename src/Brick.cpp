@@ -19,7 +19,7 @@ BLOCK_TYPE Brick::getBlockType() const
 }
 
 void Brick::breakBrick() {
-	RESOURCE_MANAGER.playSound("break_brick_block.wav");
+	if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("break_brick_block.wav");
 	TextEffect* text = new TextEffect(to_string(20), position);
 	text->setVel(Vector2{ 0, -100 });
 	globalGameEngine->addEffect(text);

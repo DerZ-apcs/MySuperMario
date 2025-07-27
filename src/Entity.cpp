@@ -55,9 +55,15 @@ void Entity::HandleInput() {
 void Entity::updateCollision() // update 4 rects in 4 sides of entity
 {
 	// update the hitbox collision 
+
+	CollNorth.setSize({ size.x / 2, 5 });
+	CollSouth.setSize({ size.x / 2, 5 });
+	CollWest.setSize({ 5, size.y - 5 });
+	CollEast.setSize({ 5, size.y - 5 });
+
 	CollNorth.setX(position.x + size.x / 2 - CollNorth.getWidth() / 2);
 	CollNorth.setY(position.y);
-
+	
 	CollSouth.setX(position.x + size.x / 2 - CollSouth.getWidth() / 2);
 	CollSouth.setY(position.y + size.y - CollSouth.getHeight());
 	
@@ -66,6 +72,7 @@ void Entity::updateCollision() // update 4 rects in 4 sides of entity
 
 	CollWest.setX(position.x);
 	CollWest.setY(position.y + size.y / 2 - CollWest.getHeight() / 2);
+	//cout << size.x << " " << size.y << endl;
 }
 
 void Entity::UpdateTexture()

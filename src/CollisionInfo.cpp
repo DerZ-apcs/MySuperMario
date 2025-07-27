@@ -7,6 +7,8 @@
 #include "../include/TemporaryBlock.h"
 #include "../include/HiddenBlock.h"
 #include "../include/SolidBlock.h"
+#include "../include/CloudBlock.h"
+#include "../include/NoteBlock.h"
 #include "../include/DecorBlock.h"
 #include "../include/Shell.h"
 #include "../include/SmokeEffect.h"
@@ -198,6 +200,68 @@ bool PlayerBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	return true;
 }
 
+bool PlayerCloudBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
+{
+	Character* character = dynamic_cast<Character*>(entityA);
+	CloudBlock* block = dynamic_cast<CloudBlock*>(entityB);
+
+	if (!character || !block || !character->getCollisionAvailable())
+		return false;
+	CollisionType Colltype = character->CheckCollision(*block);
+
+	if (Colltype == COLLISION_TYPE_SOUTH && character->getVelY() > 0) {
+		if (character->getState() != SINKING) {
+			character->setPosition(Vector2{ character->getX(), block->getY() - character->getHeight() });
+			character->setVelY(0);
+			character->setState(SINKING);
+		}
+
+		character->setSinkingTime(0.05f); // refresh timer 
+		return true;
+	}
+
+	return false;
+}
+
+bool PLayerNoteBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
+{
+	Character* character = dynamic_cast<Character*>(entityA);
+	NoteBlock* block = dynamic_cast<NoteBlock*>(entityB);
+
+	if (!character || !block || !character->getCollisionAvailable())
+		return false;
+	CollisionType Colltype = character->CheckCollision(*block);
+	if (Colltype == COLLISION_TYPE_NONE)
+		return false;
+	switch (Colltype) {
+	case COLLISION_TYPE_NORTH:
+		character->setPosition(Vector2{ character->getX(), block->getY() + block->getHeight() });
+		character->setVelY(0);
+		block->setBounceDir(BOUNCE_UP);
+		break;
+	case COLLISION_TYPE_SOUTH:
+		character->setPosition(Vector2{ character->getX(), block->getY() - character->getHeight() });
+		character->setState(JUMPING);
+		if (character->getVelY() > 35) {
+			character->setVelY(max(character->getVelY() * -1.5f, -1550.0f)); // bounce effect
+			block->setBounceDir(BOUNCE_DOWN);
+		}
+		else { character->setVelY(0); }
+		break;
+	case COLLISION_TYPE_EAST:
+		character->setPosition(Vector2{ block->getX() - character->getWidth(), character->getY() });
+		character->setVelX(0);
+		break;
+	case COLLISION_TYPE_WEST:
+		character->setPosition(Vector2{ block->getX() + block->getWidth(), character->getY() });
+		character->setVelX(0);
+		break;
+	default:
+		break;
+	}
+	return true;
+}
+
 bool PlayerCoinBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 {
 	Character* character = dynamic_cast<Character*>(entityA);
@@ -271,7 +335,7 @@ bool EnemyBrickInfo::HandleCollision(Entity* entityA, Entity* entityB)
 		return false;
 	if (enemy->getEnemyType() == BULLET) {
 		enemy->setVel({ 0, 0 });
-		RESOURCE_MANAGER.playSound("stomp.wav");
+		if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomp.wav");
 		enemy->setEntityDead();
 		return true;
 	}
@@ -324,11 +388,11 @@ bool EnemyItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 		return false;
 	if (enemy->getEnemyType() == BULLET) {
 		enemy->setVel({ 0, 0 });
-		RESOURCE_MANAGER.playSound("stomp.wav");
+		if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomp.wav");
 		enemy->setEntityDead();
 		return true;
 	}
-	if (enemy->getVelX() != 0 || enemy->getEnemyType() == SHELL) {
+	if (enemy->getVelX() != 0 || enemy->getVelY() != 0 || enemy->getEnemyType() == SHELL) {
 
 		switch (Colltype) {
 		case COLLISION_TYPE_NORTH:
@@ -437,7 +501,7 @@ bool FireBallItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 		block->Activate();
 		fireball->setEntityDead();
 		fireball->setCollisionAvailable(false);
-		RESOURCE_MANAGER.playSound("bump.wav");
+		if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("bump.wav");
 		SmokeEffect* smoke = new SmokeEffect(Vector2{ block->getCenter().x, block->getTop() }, Vector2{ 0, -200 });
 		globalGameEngine->addEffect(smoke);
 	}
@@ -480,7 +544,7 @@ bool FireBallBrickInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	block->breakBrick();
 	fireball->setEntityDead();
 	fireball->setCollisionAvailable(false);
-	RESOURCE_MANAGER.playSound("bump.wav");
+	if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("bump.wav");
 	SmokeEffect* smoke = new SmokeEffect(Vector2{ block->getCenter().x, block->getTop() }, Vector2{ 0, -200 });
 	globalGameEngine->addEffect(smoke);
 	
@@ -714,6 +778,10 @@ std::unique_ptr<CollisionInfo> CollisionInfoSelector::getInfor(EntityType typeA,
 			return std::make_unique<PlayerCoinBlockInfo>();
 		if (block && block->getBlockType() == BRICK)
 			return std::make_unique<PlayerBrickInfo>();
+		if (block && block->getBlockType() == CLOUDBLOCK)
+			return std::make_unique<PlayerCloudBlockInfo>();
+		if (block && block->getBlockType() == NOTEBLOCK)
+			return std::make_unique<PLayerNoteBlockInfo>();
 		return std::make_unique<PlayerBlockInfo>();
 	}
 	if (typeA == ENEMY && typeB == BLOCK)
@@ -787,4 +855,3 @@ bool CollisionInterface::HandleCollision(Entity* entityA, Entity* entityB)
 	}
 	return false;
 }
-

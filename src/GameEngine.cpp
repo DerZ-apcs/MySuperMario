@@ -70,14 +70,9 @@ GameEngine* globalGameEngine = nullptr;
 //        flyingGoomba->setState(FALLING);
 //        enemies.push_back(flyingGoomba);
 //    }*/
-//    //Koopa* koopa = new Koopa({ 300, 500 }, RESOURCE_MANAGER.getTexture("Koopa_LEFT_0"));
-//    //koopa->setState(FALLING);
-//    //enemies.push_back(koopa);
+
 //
-//    //Rex* rex = new Rex({ 400, 500 }, RESOURCE_MANAGER.getTexture("Rex_LEFT_0"));
-//    //rex->setState(FALLING);
-//    //enemies.push_back(rex);
-//
+
 //    //Bullet* bullet1 = new Bullet({ 1000, 400 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
 //    //enemies.push_back(bullet1);
 //    //FireBullet* bullet2 = new FireBullet({ 1600, 500 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
@@ -85,9 +80,7 @@ GameEngine* globalGameEngine = nullptr;
 //    //Bullet* bullet3 = new Bullet({ 1000, 600 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
 //    //enemies.push_back(bullet3);
 //
-//    //FirePiranhaPlant* plant = new FirePiranhaPlant({ 432, 710 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_CLOSED"));
-//    //enemies.push_back(plant);
-//
+
 //    //// test brick
 //    //for (int i = 1; i < 10; i++) {
 //    //    Brick* brick = new Brick(Vector2{ (float)i * 32, 700 }, Vector2{ 32, 32 }, "Brick_0");
@@ -99,12 +92,7 @@ GameEngine* globalGameEngine = nullptr;
 //    //    blocks.push_back(coinBlock);
 //    //}
 //    //
-//    //ItemBlock* itemblock1 = new ItemBlock({ 100, 800 }, MUSHROOM, 0);
-//    //ItemBlock* itemblock2 = new ItemBlock({ 132, 800 }, STAR, 0);
-//    //ItemBlock* itemblock3 = new ItemBlock({ 164, 800 }, FLOWER, 0);
-//    //blocks.push_back(itemblock1);
-//    //blocks.push_back(itemblock2);
-//    //blocks.push_back(itemblock3);
+
 //}
 
 GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std::vector<std::unique_ptr<Character>>* multiplayers):
@@ -120,11 +108,36 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std:
     enemies = map.getEnemies();
     items = map.getItems();
     decor = map.getDecor();
+	covers = map.getCovers();
+	secretAreas = map.getSecretAreas();
     isPaused = false;
     this->time = 300;
     resetTimer();
     deltaTime = 0.f;
     BackGroundPos = { {0, 0}, {(float)GetScreenWidth(), 0}, {(float)GetScreenWidth() * 2, 0} };
+
+    ItemBlock* itemblock1 = new ItemBlock({ 100, 800 }, MUSHROOM, 0);
+    ItemBlock* itemblock2 = new ItemBlock({ 132, 800 }, STAR, 0);
+    ItemBlock* itemblock3 = new ItemBlock({ 164, 800 }, FLOWER, 0);
+    blocks.push_back(itemblock1);
+    blocks.push_back(itemblock2);
+    blocks.push_back(itemblock3);
+    
+    for (int i = 0; i < 10; i++) {
+        Coin* coin = new Coin(STATIC_COIN, { (float)i * 50, 600 });
+        items.push_back(coin);
+    }
+
+    //Rex* rex = new Rex({ 400, 500 }, RESOURCE_MANAGER.getTexture("Rex_LEFT_0"));
+    //rex->setState(FALLING);
+    //enemies.push_back(rex);
+
+    //FirePiranhaPlant* plant = new FirePiranhaPlant({ 432, 710 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_CLOSED"));
+    //enemies.push_back(plant);
+
+    Koopa* koopa = new Koopa({ 100, 500 }, RESOURCE_MANAGER.getTexture("Koopa_LEFT_0"));
+    koopa->setState(FALLING);
+    enemies.push_back(koopa);
 }
 
 
@@ -144,6 +157,9 @@ GameEngine::~GameEngine() {
     }
     for (size_t i = 0; i < blocks.size(); ++i) {
         delete blocks[i];
+    }
+    for (size_t i = 0; i < covers.size(); i++) {
+        delete covers[i];
     }
     //multiplayers.clear();
     enemyFireball.clear();
@@ -201,7 +217,7 @@ void GameEngine::update()
             resetTimer();
         }
         else if (isPaused) {
-            RESOURCE_MANAGER.playSound("pause.wav");
+            if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("pause.wav");
         }
     }
     if (GUI::restart_is_pressed) {
@@ -373,11 +389,18 @@ void GameEngine::draw()
     ClearBackground(SKYBLUE);
     map.drawBackGround(camera.getSize(), camera.getScale());
     //map.drawMap();
+   
     bool lostLife = false;
     for (auto& p : *multiplayers) {
         if (!p) return;
         lostLife = (lostLife == true || p->isLostLife());
     }
+    bool drawCover = true;
+    
+    for (Entity* dec : decor) {
+        dec->draw();
+    }
+
     for (size_t i = 0; i < enemyFireball.size(); i++) {
         enemyFireball[i]->draw();
     }
@@ -386,9 +409,6 @@ void GameEngine::draw()
     }
     for (size_t i = 0; i < blocks.size(); i++) {
         blocks[i]->draw();
-    }
-    for (size_t i = 0; i < items.size(); i++) {
-        items[i]->draw();
     }
     // draw the characters
     for (size_t i = 0; i < (*multiplayers).size(); i++) {
@@ -407,14 +427,25 @@ void GameEngine::draw()
             };
             DrawTextPro(font, label.c_str(), textPos, { 0, 0 }, 0.f, fontSize, 1.0f, BLACK);
         }
-    }
 
+        for (auto& area : secretAreas) {
+            if (CheckCollisionPointRec((*multiplayers)[i]->getPosition(), area)) {
+                drawCover = false;
+                break;
+            }
+        }
+    }
+    if (drawCover == true)
+        for (size_t i = 0; i < covers.size(); i++) {
+            covers[i]->draw();
+        }
+    for (size_t i = 0; i < items.size(); i++) {
+        items[i]->draw();
+    }
     for (size_t i = 0; i < effects.size(); i++) {
         effects[i]->draw();
     }
-    for (Entity* dec : decor) {
-        dec->draw();
-    }
+
 
     camera.endDrawing();
 
@@ -493,7 +524,7 @@ bool GameEngine::run() {
                 p->setVictory(true);
                 p->setVel({ 0, 0 });
                 RESOURCE_MANAGER.stopCurrentMusic();
-                RESOURCE_MANAGER.playSound("level_clear.wav");
+                if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("level_clear.wav");
             }
             if ((p->getExitLevel()) && (p->getPhase() != Phase::CLEARLEVEL_PHASE)) {
                 p->setPhase(Phase::CLEARLEVEL_PHASE);
@@ -518,10 +549,10 @@ bool GameEngine::run() {
                     RESOURCE_MANAGER.stopCurrentMusic();
                     p->setPhase(DEAD_PHASE);
                     if (p->getLives() < 0) {
-                        RESOURCE_MANAGER.playSound("game_over.wav");
+                        if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("game_over.wav");
                     }
                     else {
-                        RESOURCE_MANAGER.playSound("lost_life.wav");
+                        if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("lost_life.wav");
                     }
                 }
             }
@@ -579,6 +610,9 @@ void GameEngine::resetGame()
     for (size_t i = 0; i < effects.size(); ++i) {
         delete effects[i];
     }
+    for (size_t i = 0; i < covers.size(); i++) {
+        delete covers[i];
+    }
 
     enemyFireball.clear();
     blocks.clear();
@@ -586,6 +620,8 @@ void GameEngine::resetGame()
     items.clear();
     effects.clear();
     decor.clear();
+    covers.clear();
+    secretAreas.clear();
     for (auto& p : *multiplayers)
         p->getFireBalls()->clear();
     map.clear();
@@ -598,6 +634,8 @@ void GameEngine::resetGame()
     enemies = map.getEnemies();
     items = map.getItems();
     decor = map.getDecor();
+    covers = map.getCovers();
+    secretAreas = map.getSecretAreas();
     isPaused = false;
     this->time = 300;
     resetTimer();

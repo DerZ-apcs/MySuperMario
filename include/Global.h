@@ -26,8 +26,8 @@ enum EntityState {
 	ON_GROUND,
 	IDLING,
 	FLYING,
-	STATE_IS_DYING
-
+	STATE_IS_DYING,
+	SINKING
 };
 enum SPRITE_STATE {
 	NORMAL,
@@ -41,7 +41,10 @@ enum SPRITE_STATE {
 // Mario, luigi
 enum CharacterType { 
 	MARIO,
-	LUIGI
+	LUIGI,
+	PEACH,
+	MARISA,
+	TOAD
 };
 // State: Small, Super, Fireball
 enum CharacterState {
@@ -64,9 +67,17 @@ enum BLOCK_TYPE {
 	TEMPBLOCK,
 	DECOR, // for decor, not collision
 	COINBLOCK, // coin when hit
-	CLOUDBLOCK
+	CLOUDBLOCK,
+	NOTEBLOCK // note block
 };
 
+enum BOUNCE_DIRECTION {
+	BOUNCE_UP,
+	BOUNCE_DOWN,
+	BOUNCE_LEFT,
+	BOUNCE_RIGHT,
+	NO_BOUNCE
+};
 
 enum ITEM_TYPE {
 	COIN,

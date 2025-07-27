@@ -18,7 +18,7 @@ Coin::Coin(CoinType type, Vector2 position): Item(POINT)
 		setVelY(-COIN_UP_VELOCITY);
 		setCollisionAvailable(false);
 		this->lifeTime = BLOCK_COIN_LIFE_TIME;
-		RESOURCE_MANAGER.playSound("coin.wav");
+		if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("coin.wav");
 	}
 	setPosition(position);
 	setGravityAvailable(false);

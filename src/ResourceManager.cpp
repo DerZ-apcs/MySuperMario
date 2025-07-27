@@ -5,6 +5,9 @@ void ResourceManager::loadTextures() {
 	// move //
 	
 	// small mario
+		// for choosing character
+	textures["SmallMario_Straight"] = LoadTexture("resources/images/sprites/mario/SmallMario_Straight_0.png");
+
 	textures["SmallMario_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SmallMario_0.png");
 	textures["SmallMario_RIGHT_1"] = LoadTexture("resources/images/sprites/mario/SmallMario_1.png");
 	textures["SmallMario_LEFT_0"] = flipTexture(textures["SmallMario_RIGHT_0"]);
@@ -89,12 +92,201 @@ void ResourceManager::loadTextures() {
 	textures["FlowerMarioFireball_LEFT_2"] = flipTexture(textures["FlowerMarioFireball_RIGHT_2"]);
 	textures["FlowerMarioFireball_LEFT_3"] = flipTexture(textures["FlowerMarioFireball_RIGHT_3"]);
 
+
+	// Peach
+		// for choosing character
+	textures["SmallPeach_Straight"] = LoadTexture("resources/images/sprites/peach/SmallPeach_Dying.png");
+
+	textures["SmallPeach_RIGHT_0"] = LoadTexture("resources/images/sprites/peach/SmallPeach_0.png");
+	textures["SmallPeach_LEFT_0"] = flipTexture(textures["SmallPeach_RIGHT_0"]);
+	textures["SmallPeach_RIGHT_1"] = LoadTexture("resources/images/sprites/peach/SmallPeach_1.png");
+	textures["SmallPeach_LEFT_1"] = flipTexture(textures["SmallPeach_RIGHT_1"]);
+	textures["SmallPeach_RIGHT_2"] = LoadTexture("resources/images/sprites/peach/SmallPeach_2.png");
+	textures["SmallPeach_LEFT_2"] = flipTexture(textures["SmallPeach_RIGHT_2"]);
+
+	textures["SmallPeachDying"] = LoadTexture("resources/images/sprites/peach/SmallPeach_Dying.png");
+	textures["SmallPeachJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/peach/SmallPeach_Jumping.png");
+	textures["SmallPeachJumping_LEFT_0"] = flipTexture(textures["SmallPeachJumping_RIGHT_0"]);
+	textures["SmallPeachDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/peach/SmallPeachDucking.png");
+	textures["SmallPeachDucking_LEFT_0"] = flipTexture(textures["SmallPeachDucking_RIGHT_0"]);
+
+	textures["SmallPeachFalling_RIGHT_0"] = LoadTexture("resources/images/sprites/peach/SmallPeach_Jumping.png");
+	textures["SmallPeachFalling_LEFT_0"] = flipTexture(textures["SmallPeachFalling_RIGHT_0"]);
+	textures["SmallPeachVictory"] = LoadTexture("resources/images/sprites/peach/SmallPeach_Victory.png");
+
+	// super peach
+	textures["SuperPeach_RIGHT_0"] = LoadTexture("resources/images/sprites/peach/SuperPeach_0.png");
+	textures["SuperPeach_LEFT_0"] = flipTexture(textures["SuperPeach_RIGHT_0"]);
+	textures["SuperPeach_RIGHT_1"] = LoadTexture("resources/images/sprites/peach/SuperPeach_1.png");
+	textures["SuperPeach_LEFT_1"] = flipTexture(textures["SuperPeach_RIGHT_1"]);
+	textures["SuperPeach_RIGHT_2"] = LoadTexture("resources/images/sprites/peach/SuperPeach_2.png");
+	textures["SuperPeach_LEFT_2"] = flipTexture(textures["SuperPeach_RIGHT_2"]);
+
+	textures["SuperPeachDying"] = LoadTexture("resources/images/sprites/peach/SuperPeachDying.png");
+	textures["SuperPeachJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/peach/SuperPeachJumping.png");
+	textures["SuperPeachJumping_LEFT_0"] = flipTexture(textures["SuperPeachJumping_RIGHT_0"]);
+	textures["SuperPeachDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/peach/SuperPeachDucking.png");
+	textures["SuperPeachDucking_LEFT_0"] = flipTexture(textures["SuperPeachDucking_RIGHT_0"]);
+
+	textures["SuperPeachFalling_RIGHT_0"] = LoadTexture("resources/images/sprites/peach/SuperPeachFalling.png");
+	textures["SuperPeachFalling_LEFT_0"] = flipTexture(textures["SuperPeachFalling_RIGHT_0"]);
+
+	textures["SuperPeachVictory"] = LoadTexture("resources/images/sprites/peach/SuperPeachVictory.png");
+	// Fire Peach
+	textures["FirePeach_RIGHT_0"] = LoadTexture("resources/images/sprites/peach/FirePeach_0.png");
+	textures["FirePeach_LEFT_0"] = flipTexture(textures["FirePeach_RIGHT_0"]);
+	textures["FirePeach_RIGHT_1"] = LoadTexture("resources/images/sprites/peach/FirePeach_1.png");
+	textures["FirePeach_LEFT_1"] = flipTexture(textures["FirePeach_RIGHT_1"]);
+	textures["FirePeach_RIGHT_2"] = LoadTexture("resources/images/sprites/peach/FirePeach_2.png");
+	textures["FirePeach_LEFT_2"] = flipTexture(textures["FirePeach_RIGHT_2"]);
+
+	textures["FirePeachDying"] = LoadTexture("resources/images/sprites/peach/FirePeach_Dying.png");
+	textures["FirePeachJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/peach/FirePeachJumping.png");
+	textures["FirePeachJumping_LEFT_0"] = flipTexture(textures["FirePeachJumping_RIGHT_0"]);
+	textures["FirePeachDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/peach/FirePeachDucking.png");
+	textures["FirePeachDucking_LEFT_0"] = flipTexture(textures["FirePeachDucking_RIGHT_0"]);
+
+	textures["FirePeachFalling_RIGHT_0"] = LoadTexture("resources/images/sprites/peach/FirePeachFalling.png");
+	textures["FirePeachFalling_LEFT_0"] = flipTexture(textures["FirePeachFalling_RIGHT_0"]);
+
+	textures["FirePeachVictory"] = LoadTexture("resources/images/sprites/peach/FirePeach_Victory.png");
+
+	textures["FirePeachThrowingFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/peach/FirePeachFiring_0.png");
+	textures["FirePeachThrowingFireball_LEFT_0"] = flipTexture(textures["FireMarioThrowingFireball_RIGHT_0"]);
+
+		// transitioning
+		textures["TransitioningPeach_RIGHT_0"] = LoadTexture("resources/images/sprites/peach/SuperPeach_0.png");
+		textures["TransitioningPeach_LEFT_0"] = flipTexture(textures["TransitioningPeach_RIGHT_0"]);
+		textures["TransitioningFirePeach_RIGHT_0"] = LoadTexture("resources/images/sprites/peach/FirePeach_0.png");
+		textures["TransitioningFirePeach_LEFT_0"] = flipTexture(textures["TransitioningFirePeach_RIGHT_0"]);
+	// Marisa
+		// for choosing character
+	textures["SmallMarisa_Straight"] = LoadTexture("resources/images/sprites/megaman/SmallMarisa_Dying.png");
+		// Marisa
+	textures["SmallMarisa_RIGHT_0"] = LoadTexture("resources/images/sprites/megaman/SmallMarisa_0.png");
+	textures["SmallMarisa_LEFT_0"] = flipTexture(textures["SmallMarisa_RIGHT_0"]);
+	textures["SmallMarisa_RIGHT_1"] = LoadTexture("resources/images/sprites/megaman/SmallMarisa_1.png");
+	textures["SmallMarisa_LEFT_1"] = flipTexture(textures["SmallMarisa_RIGHT_1"]);
+	textures["SmallMarisa_RIGHT_2"] = LoadTexture("resources/images/sprites/megaman/SmallMarisa_2.png");
+	textures["SmallMarisa_LEFT_2"] = flipTexture(textures["SmallMarisa_RIGHT_2"]);
+
+	textures["SmallMarisaDying"] = LoadTexture("resources/images/sprites/megaman/SmallMarisa_Dying.png");
+	textures["SmallMarisaJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/megaman/SmallMarisa_Falling.png");
+	textures["SmallMarisaJumping_LEFT_0"] = flipTexture(textures["SmallMarisaJumping_RIGHT_0"]);
+	textures["SmallMarisaDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/megaman/SmallMarisa_Ducking.png");
+	textures["SmallMarisaDucking_LEFT_0"] = flipTexture(textures["SmallMarisaDucking_RIGHT_0"]);
+
+	textures["SmallMarisaFalling_RIGHT_0"] = LoadTexture("resources/images/sprites/megaman/SmallMarisa_Falling.png");
+	textures["SmallMarisaFalling_LEFT_0"] = flipTexture(textures["SmallMarisaFalling_RIGHT_0"]);
+
+	textures["SmallMarisaVictory"] = LoadTexture("resources/images/sprites/megaman/SmallMarisa_Victory.png");
+
+	// Super Marisa
+	textures["SuperMarisa_RIGHT_0"] = LoadTexture("resources/images/sprites/megaman/SuperMarisa_0.png");
+	textures["SuperMarisa_LEFT_0"] = flipTexture(textures["SuperMarisa_RIGHT_0"]);
+	textures["SuperMarisa_RIGHT_1"] = LoadTexture("resources/images/sprites/megaman/SuperMarisa_1.png");
+	textures["SuperMarisa_LEFT_1"] = flipTexture(textures["SuperMarisa_RIGHT_1"]);
+	textures["SuperMarisa_RIGHT_2"] = LoadTexture("resources/images/sprites/megaman/SuperMarisa_2.png");
+	textures["SuperMarisa_LEFT_2"] = flipTexture(textures["SuperMarisa_RIGHT_2"]);
+
+	textures["SuperMarisaDying"] = LoadTexture("resources/images/sprites/megaman/SuperMarisa_Dying.png");
+	textures["SuperMarisaJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/megaman/SuperMarisa_Jumping.png");
+	textures["SuperMarisaJumping_LEFT_0"] = flipTexture(textures["SuperMarisaJumping_RIGHT_0"]);
+	textures["SuperMarisaDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/megaman/SuperMarisa_Ducking.png");
+	textures["SuperMarisaDucking_LEFT_0"] = flipTexture(textures["SuperMarisaDucking_RIGHT_0"]);
+
+	textures["SuperMarisaFalling_RIGHT_0"] = LoadTexture("resources/images/sprites/megaman/SuperMarisa_Falling.png");
+	textures["SuperMarisaFalling_LEFT_0"] = flipTexture(textures["SuperMarisaFalling_RIGHT_0"]);
+
+	textures["SuperMarisaVictory"] = LoadTexture("resources/images/sprites/megaman/SuperMarisa_Victory.png");
+
+	// Fire Marisa
+	textures["FireMarisa_RIGHT_0"] = LoadTexture("resources/images/sprites/megaman/FireMarisa_0.png");
+	textures["FireMarisa_LEFT_0"] = flipTexture(textures["FireMarisa_RIGHT_0"]);
+	textures["FireMarisa_RIGHT_1"] = LoadTexture("resources/images/sprites/megaman/FireMarisa_1.png");
+	textures["FireMarisa_LEFT_1"] = flipTexture(textures["FireMarisa_RIGHT_1"]);
+	textures["FireMarisa_RIGHT_2"] = LoadTexture("resources/images/sprites/megaman/FireMarisa_2.png");
+	textures["FireMarisa_LEFT_2"] = flipTexture(textures["FireMarisa_RIGHT_2"]);
+
+	textures["FireMarisaDying"] = LoadTexture("resources/images/sprites/megaman/FireMarisa_Dying.png");
+	textures["FireMarisaJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/megaman/FireMarisa_Jumping.png");
+	textures["FireMarisaJumping_LEFT_0"] = flipTexture(textures["FireMarisaJumping_RIGHT_0"]);
+	textures["FireMarisaDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/megaman/FireMarisa_Ducking.png");
+	textures["FireMarisaDucking_LEFT_0"] = flipTexture(textures["FireMarisaDucking_RIGHT_0"]);
+
+	textures["FireMarisaFalling_RIGHT_0"] = LoadTexture("resources/images/sprites/megaman/FireMarisa_Falling.png");
+	textures["FireMarisaFalling_LEFT_0"] = flipTexture(textures["FireMarisaFalling_RIGHT_0"]);
+
+	textures["FireMarisaVictory"] = LoadTexture("resources/images/sprites/megaman/FireMarisa_Victory.png");
+
+	textures["FireMarisaThrowingFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/megaman/FireMarisa_Firing_0.png");
+	textures["FireMarisaThrowingFireball_LEFT_0"] = flipTexture(textures["FireMarisaThrowingFireball_RIGHT_0"]);
+		// transitioning
+				// transitioning
+	textures["TransitioningMarisa_RIGHT_0"] = LoadTexture("resources/images/sprites/megaman/SuperMarisa_0.png");
+	textures["TransitioningMarisa_LEFT_0"] = flipTexture(textures["TransitioningMarisa_RIGHT_0"]);
+	textures["TransitioningFireMarisa_RIGHT_0"] = LoadTexture("resources/images/sprites/megaman/FireMarisa_0.png");
+	textures["TransitioningFireMarisa_LEFT_0"] = flipTexture(textures["TransitioningFireMarisa_RIGHT_0"]);
+
+	// Toad
+	textures["SmallToad_Straight"] = LoadTexture("resources/images/sprites/toad/SmallToad_Straight.png");
+	textures["SmallToad_RIGHT_0"] = LoadTexture("resources/images/sprites/toad/SmallToad_0.png");
+	textures["SmallToad_RIGHT_1"] = LoadTexture("resources/images/sprites/toad/SmallToad_1.png");
+	textures["SmallToad_LEFT_0"] = flipTexture(textures["SmallToad_RIGHT_0"]);
+	textures["SmallToad_LEFT_1"] = flipTexture(textures["SmallToad_RIGHT_1"]);
+
+	textures["SmallToadJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/toad/SmallToad_Jumping.png");
+	textures["SmallToadJumping_LEFT_0"] = flipTexture(textures["SmallToadJumping_RIGHT_0"]);
+	textures["SmallToadFalling_RIGHT_0"] = LoadTexture("resources/images/sprites/toad/SmallToad_Falling.png");
+	textures["SmallToadFalling_LEFT_0"] = flipTexture(textures["SmallToadFalling_RIGHT_0"]);
+	textures["SmallToadDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/toad/SmallToad_Ducking.png");
+	textures["SmallToadDucking_LEFT_0"] = flipTexture(textures["SmallToadDucking_RIGHT_0"]);
+	textures["SmallToadDying"] = LoadTexture("resources/images/sprites/toad/SmallToad_Dying.png");
+		// super toad
+	textures["SuperToad_RIGHT_0"] = LoadTexture("resources/images/sprites/toad/SuperToad_0.png");
+	textures["SuperToad_LEFT_0"] = flipTexture(textures["SuperToad_RIGHT_0"]);
+	textures["SuperToad_RIGHT_1"] = LoadTexture("resources/images/sprites/toad/SuperToad_1.png");
+	textures["SuperToad_LEFT_1"] = flipTexture(textures["SuperToad_RIGHT_1"]);
+	textures["SuperToad_RIGHT_2"] = LoadTexture("resources/images/sprites/toad/SuperToad_2.png");
+	textures["SuperToad_LEFT_2"] = flipTexture(textures["SuperToad_RIGHT_2"]);
+
+	textures["SuperToadJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/toad/SuperToad_jumpingfalling.png");
+	textures["SuperToadJumping_LEFT_0"] = flipTexture(textures["SuperToadJumping_RIGHT_0"]);
+	textures["SuperToadFalling_RIGHT_0"] = textures["SuperToadJumping_RIGHT_0"];
+	textures["SuperToadFalling_LEFT_0"] = flipTexture(textures["SuperToadFalling_RIGHT_0"]);
+	textures["SuperToadDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/toad/SuperToad_Ducking.png");
+	textures["SuperToadDucking_LEFT_0"] = flipTexture(textures["SuperToadDucking_RIGHT_0"]);
+	textures["SuperToadDying"] = textures["SmallToadDying"];
+		// fire toad
+	textures["FireToad_RIGHT_0"] = LoadTexture("resources/images/sprites/toad/FireToad_0.png");
+	textures["FireToad_LEFT_0"] = flipTexture(textures["FireToad_RIGHT_0"]);
+	textures["FireToad_RIGHT_1"] = LoadTexture("resources/images/sprites/toad/FireToad_1.png");
+	textures["FireToad_LEFT_1"] = flipTexture(textures["FireToad_RIGHT_1"]);
+	textures["FireToad_RIGHT_2"] = LoadTexture("resources/images/sprites/toad/FireToad_2.png");
+	textures["FireToad_LEFT_2"] = flipTexture(textures["FireToad_RIGHT_2"]);
+
+	textures["FireToadJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/toad/FireToad_JumpingFalling.png");
+	textures["FireToadJumping_LEFT_0"] = flipTexture(textures["FireToadJumping_RIGHT_0"]);
+	textures["FireToadFalling_RIGHT_0"] = textures["FireToadJumping_RIGHT_0"];
+	textures["FireToadFalling_LEFT_0"] = flipTexture(textures["FireToadFalling_RIGHT_0"]);
+	textures["FireToadDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/toad/FireToad_Ducking.png");
+	textures["FireToadDucking_LEFT_0"] = flipTexture(textures["FireToadDucking_RIGHT_0"]);
+	textures["FireToadDying"] = textures["SmallToadDying"];
+	textures["FireToadThrowingFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/toad/FireToach_Firing.png");
+	textures["FireToadThrowingFireball_LEFT_0"] = flipTexture(textures["FireToadThrowingFireball_RIGHT_0"]);
+
+	textures["TransitioningToad_RIGHT_0"] = textures["SuperToad_RIGHT_0"];
+	textures["TransitioningToad_LEFT_0"] = textures["SuperToad_LEFT_0"];
+	textures["TransitioningFireToad_RIGHT_0"] = textures["FireToad_RIGHT_0"];
+	textures["TransitioningFireToad_LEFT_0"] = textures["FireToad_LEFT_0"];
+
 	//tile
-	for (int i = 0; i <= 113; i++) {
+	for (int i = 0; i <= 115; i++) {
 		std::string path = "resources/images/tiles/AllTiles/tile_" + std::to_string(i) + ".png";
 		textures["TILE_" + std::to_string(i)] = LoadTexture(path.c_str());
 	}
 		// brick
+
 	textures["Brick_0"] = LoadTexture("resources/images/tiles/AllTiles/brick.png");
 	textures["Brick_1"] = LoadTexture("resources/images/tiles/AllTiles/tile_110.png");
 		// question block
@@ -103,6 +295,11 @@ void ResourceManager::loadTextures() {
 	textures["QUESTION_2"] = LoadTexture("resources/images/sprites/blocks/Question_2.png");
 	textures["QUESTION_3"] = LoadTexture("resources/images/sprites/blocks/Question_3.png");
 	textures["EyesClosed_0"] = LoadTexture("resources/images/sprites/blocks/EyesClosed_0.png");
+		// note block
+	textures["NOTE_0"] = LoadTexture("resources/images/sprites/blocks/Note_0.png");
+	textures["NOTE_1"] = LoadTexture("resources/images/sprites/blocks/Note_1.png");
+	textures["NOTE_2"] = LoadTexture("resources/images/sprites/blocks/Note_2.png");
+	textures["NOTE_3"] = LoadTexture("resources/images/sprites/blocks/Note_3.png");
 	// background
 
 	textures["BACKGROUND_1"] = LoadTexture("resources/images/backgrounds/background1.png");
@@ -111,7 +308,7 @@ void ResourceManager::loadTextures() {
 	textures["MENU_SCREEN"] = LoadTexture("resources/images/backgrounds/Menuscreen.png");
 	textures["BACKGROUND_8"] = LoadTexture("resources/images/backgrounds/background8.png");
 	textures["WHITE"] = LoadTexture("resources/images/backgrounds/white.png");
-
+	textures["SelectionBackground"] = LoadTexture("resources/images/backgrounds/SelectCharacter.png");
 	// GUI
 	textures["HEART"] = LoadTexture("resources/images/backgrounds/heart.png");
 	textures["COIN"] = LoadTexture("resources/images/backgrounds/coin.png");
@@ -132,6 +329,8 @@ void ResourceManager::loadTextures() {
 	textures["Luigi_start"] = LoadTexture("resources/images/gui/Luigi_start.png");
 	textures["GameOver"] = LoadTexture("resources/images/gui/guiGameOver.png");
 	textures["Time_Up"] = LoadTexture("resources/images/gui/guiTimeUp.png");
+	textures["P1GUI"] = LoadTexture("resources/images/gui/P1GUI.png");
+	textures["P2GUI"] = LoadTexture("resources/images/gui/P2GUI.png");	
 
 	// coin
 	textures["Coin_0"] = LoadTexture("resources/images/sprites/items/Coin_0.png");
@@ -214,8 +413,8 @@ void ResourceManager::loadTextures() {
 	textures["Rex_Compressed_LEFT_1"] = flipTexture(textures["Rex_Compressed_RIGHT_1"]);
 	textures["Rex_Dead"] = textures["Rex_Compressed_RIGHT_0"];
 	// muncher
-	textures["Muncher_0"] = LoadTexture("resources/images/sprites/baddies/Muncher_0");
-	textures["Muncher_1"] = LoadTexture("resources/images/sprites/baddies/Muncher_1");
+	/*textures["Muncher_0"] = LoadTexture("resources/images/sprites/baddies/Muncher_0");
+	textures["Muncher_1"] = LoadTexture("resources/images/sprites/baddies/Muncher_1");*/
 }
 
 void ResourceManager::loadFonts()

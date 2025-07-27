@@ -22,6 +22,8 @@ void Map::clear() {
 	items.clear();
 	decors.clear();
 	enemies.clear();
+	covers.clear();
+	secretAreas.clear();
 }
 
 void Map::drawMap()
@@ -189,4 +191,14 @@ std::vector<Item*> Map::getItems() const
 std::vector<Blocks*> Map::getDecor() const
 {
 	return decors;
+}
+
+std::vector<Blocks*> Map::getCovers() const
+{
+	return covers;
+}
+
+std::vector<Rectangle> Map::getSecretAreas() const
+{
+	return secretAreas;
 }

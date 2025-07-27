@@ -37,6 +37,14 @@ class PlayerBrickInfo : public CollisionInfo {
 public:
 	bool HandleCollision(Entity* entityA, Entity* entityB) override;
 };
+class PlayerCloudBlockInfo : public CollisionInfo {
+public:
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
+};
+class PLayerNoteBlockInfo : public CollisionInfo {	
+public:
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
+};
 class PlayerBlockInfo : public CollisionInfo {
 public:
 	bool HandleCollision(Entity* entityA, Entity* entityB) override;

@@ -143,7 +143,7 @@ MainMenuState::~MainMenuState()
 // SettingState implementation
 SettingState::SettingState(Game* game) { 
 	this->game = game; 
-	audioButton = { {100, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Audio: ON" };
+	audioButton = { {100, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Sound: ON" };
 	musicButton = { {500, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Music: ON" };
 	backButton = { {900, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Return to Main Menu" };
 }
@@ -187,6 +187,12 @@ void SettingState::update()
 		musicButton.setText("Music: ON");
 	else if (!SETTING.isMusicEnabled() && musicButton.getText() == "Music: ON")
 		musicButton.setText("Music: OFF");
+
+	if (SETTING.isSoundEnabled() && audioButton.getText() == "Sound: OFF")
+		audioButton.setText("Sound: ON");
+	else if (!SETTING.isSoundEnabled() && audioButton.getText() == "Sound: ON")
+		audioButton.setText("Sound: OFF");
+
 }
 
 // Mode player implementation
@@ -284,49 +290,78 @@ void MapSelection::update()
 SingleCharSelection::SingleCharSelection(Game* game)
 {
 	this->game = game;
-	MarioButton = { {100, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Mario" };
-	LuigiButton = { {500, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Luigi" };
-	BackButton = { {900, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Return to Mode Player" };
+	currentPlayer = 0;
+	
+	Textures.push_back(RESOURCE_MANAGER.getTexture("SmallMario_Straight"));
+	Textures.push_back(RESOURCE_MANAGER.getTexture("SmallLuigi_Straight"));
+	Textures.push_back(RESOURCE_MANAGER.getTexture("SmallToad_Straight"));
+	Textures.push_back(RESOURCE_MANAGER.getTexture("SmallPeach_Straight"));
+	Textures.push_back(RESOURCE_MANAGER.getTexture("SmallMarisa_RIGHT_0"));
+	guiP1 = RESOURCE_MANAGER.getTexture("P1GUI");
+	selectionBg = RESOURCE_MANAGER.getTexture("SelectionBackground");
 }
 
 void SingleCharSelection::draw()
 {
-	MarioButton.draw();
-	LuigiButton.draw();
-	BackButton.draw();
+	// background
+	if (selectionBg.id == 0)
+		cout << "Cannot load selection bg" << endl;
+	else DrawTexturePro(selectionBg, { 0, 0, (float)selectionBg.width, (float)selectionBg.height },
+		{ 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() }, { 0, 0 }, 0.f, WHITE);
+	// gui1
+	// draw 4 texture of character
+
+	for (int i = 0; i <= 2; i++) {
+		DrawTexturePro(Textures[i], { 0, 0, (float)Textures[i].width, (float)Textures[i].height },
+			{ 270 + (float)i * 225, 500, 32 * 4, 40 * 4 }, { 0, 0 }, 0.f, WHITE);
+	}
+	DrawTexturePro(Textures[3], { 0, 0, (float)Textures[3].width, (float)Textures[3].height },
+		{ 270 + (float)3 * 225, 500 - 32, 32 * 4, 48 * 4 }, { 0, 0 }, 0.f, WHITE);
+
+	DrawTexturePro(Textures[4], { 0, 0, (float)Textures[4].width, (float)Textures[4].height },
+		{ 270 + (float)4 * 225, 500, 32 * 4, 40 * 4 }, { 0, 0 }, 0.f, WHITE);
+
+	DrawTexturePro(guiP1, { 0, 0, (float)guiP1.width, (float)guiP1.height }, { 280 + (float)currentPlayer * 225 + 10, 350, 75, 105 }, { 0, 0 }, 0.f, WHITE);
 }
 
 void SingleCharSelection::handleInput()
 {
-	if (MarioButton.isPressed()) {
+	if (IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT)){
+		currentPlayer--;
+		if (currentPlayer < 0) currentPlayer = 4; // wrap around to last player
+	}
+	else if (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT)) {
+		currentPlayer++;
+		if (currentPlayer > 4) currentPlayer = 0; // wrap around to first player
+	}
+	
+	if (IsKeyPressed(KEY_ENTER)) {
+		// init the game with 1 player
 		game->multiplayers.clear();
 
-		game->multiplayers.push_back(std::make_unique<Mario>());
-		
+		if (currentPlayer == 0) {
+			game->multiplayers.push_back(std::make_unique<Mario>());
+		}
+		else if (currentPlayer == 1)
+			game->multiplayers.push_back(std::make_unique<Luigi>());
+		else if (currentPlayer == 2)
+			game->multiplayers.push_back(std::make_unique<Toad>());
+		else if (currentPlayer == 3)
+			game->multiplayers.push_back(std::make_unique<Peach>());
+		else if (currentPlayer == 4)
+			game->multiplayers.push_back(std::make_unique<Marisa>());
+
 		if (globalGameEngine != nullptr) {
 			delete globalGameEngine;
 			globalGameEngine = nullptr;
 		}
 		game->returnToMainMenu();
 	}
-	else if (LuigiButton.isPressed()) {
-		game->multiplayers.clear();
-		game->multiplayers.push_back(std::make_unique<Luigi>());
-		if (globalGameEngine != nullptr) {
-			delete globalGameEngine;
-			globalGameEngine = nullptr;
-		}
-		game->returnToMainMenu();
-	}
-	else if (BackButton.isPressed())
-		game->returnToMainMenu();
 }
 
 void SingleCharSelection::update()
 {
-	MarioButton.update();
-	LuigiButton.update();
-	BackButton.update();
+
 }
 
 DualCharSelection::DualCharSelection(Game* game)
@@ -334,57 +369,64 @@ DualCharSelection::DualCharSelection(Game* game)
 	this->game = game;
 	currentPlayer1 = 0;
 	currentPlayer2 = 0;
-	textureP1 = RESOURCE_MANAGER.getTexture("SmallMario_RIGHT_0");
-	textureP2 = RESOURCE_MANAGER.getTexture("SmallLuigi_RIGHT_0");
-	Textures.push_back(textureP1);
-	Textures.push_back(textureP2);
-	guiMario = RESOURCE_MANAGER.getTexture("MarioGUI");
-	guiLuigi = RESOURCE_MANAGER.getTexture("LuigiGUI");
-	white = RESOURCE_MANAGER.getTexture("WHITE");
-	sea = RESOURCE_MANAGER.getTexture("BACKGROUND_8");
+	Textures.push_back(RESOURCE_MANAGER.getTexture("SmallMario_Straight"));
+	Textures.push_back(RESOURCE_MANAGER.getTexture("SmallLuigi_Straight"));
+	Textures.push_back(RESOURCE_MANAGER.getTexture("SmallToad_Straight"));
+	Textures.push_back(RESOURCE_MANAGER.getTexture("SmallPeach_Straight"));
+	Textures.push_back(RESOURCE_MANAGER.getTexture("SmallMarisa_RIGHT_0"));
+	GuiP1 = RESOURCE_MANAGER.getTexture("P1GUI");
+	GuiP2 = RESOURCE_MANAGER.getTexture("P2GUI");
+	selectionBg = RESOURCE_MANAGER.getTexture("SelectionBackground");
 }
 
 void DualCharSelection::draw()
 {
 	// background
-	DrawTexturePro(white, { 0, 0, (float)white.width, (float)white.height },
+	DrawTexturePro(selectionBg, { 0, 0, (float)selectionBg.width, (float)selectionBg.height },
 		{ 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() }, { 0, 0 }, 0.f, WHITE);
-	DrawTexturePro(sea, { 0, 0, (float)sea.width, (float)sea.height },
-		{ 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() }, { 0, 0 }, 0.f, WHITE);
-	
 	// gui1
-	if (currentPlayer1 == 0) {
-		DrawTexturePro(guiMario, { 0, 0, (float)guiMario.width, (float)guiMario.height },
-			{ 330, 200, 320, 64 }, { 0, 0 }, 0.f, WHITE);
-	} else DrawTexturePro(guiLuigi, { 0, 0, (float)guiLuigi.width, (float)guiLuigi.height },
-		{ 330, 200, 320, 64 }, { 0, 0 }, 0.f, WHITE);
-	
-	// gui2
-	if (currentPlayer2 == 0)
-		DrawTexturePro(guiMario, { 0, 0, (float)guiMario.width, (float)guiMario.height },
-		{ 930, 200, 320, 64 }, { 0, 0 }, 0.f, WHITE);
-	else DrawTexturePro(guiLuigi, { 0, 0, (float)guiLuigi.width, (float)guiLuigi.height },
-		{ 930, 200, 320, 64 }, { 0, 0 }, 0.f, WHITE);
-	
-	// texture 1 & 2
-	DrawTexturePro(textureP1, { 0, 0, (float)textureP1.width, (float)textureP1.height }, 
-		{400, 300, 32 * 5, 40 * 5}, { 0, 0 }, 0.f, WHITE);
-	DrawTexturePro(textureP2, { 0, 0, (float)textureP2.width, (float)textureP2.height }, 
-		{1000, 300, 32 * 5, 40 * 5}, { 0, 0 }, 0.f, WHITE);
+	// draw 4 texture of character
+
+	for (int i = 0; i <= 2; i++) {
+		DrawTexturePro(Textures[i], { 0, 0, (float)Textures[i].width, (float)Textures[i].height },
+			{ 270 + (float)i * 225, 500, 32 * 4, 40 * 4 }, { 0, 0 }, 0.f, WHITE);
+	}
+	DrawTexturePro(Textures[3], { 0, 0, (float)Textures[3].width, (float)Textures[3].height },
+		{ 270 + (float)3 * 225, 500 - 32, 32 * 4, 48 * 4 }, { 0, 0 }, 0.f, WHITE);
+
+	DrawTexturePro(Textures[4], { 0, 0, (float)Textures[4].width, (float)Textures[4].height },
+		{ 270 + (float)4 * 225, 500, 32 * 4, 40 * 4 }, { 0, 0 }, 0.f, WHITE);
+
+	if (currentPlayer1 == currentPlayer2) {
+		DrawTexturePro(GuiP1, { 0, 0, (float)GuiP1.width, (float)GuiP1.height }, { 280 + (float)currentPlayer1 * 225 - 30, 350, 75, 105}, { 0, 0 }, 0.f, WHITE);
+		DrawTexturePro(GuiP2, { 0, 0, (float)GuiP2.width, (float)GuiP2.height }, { 280 + (float)currentPlayer2 * 225 + 55, 350, 75, 105}, { 0, 0 }, 0.f, WHITE);
+
+	}
+	else {
+		DrawTexturePro(GuiP1, { 0, 0, (float)GuiP1.width, (float)GuiP1.height }, { 280 + (float)currentPlayer1 * 225 + 10, 350, 75, 105 }, { 0, 0 }, 0.f, WHITE);
+		DrawTexturePro(GuiP2, { 0, 0, (float)GuiP2.width, (float)GuiP2.height }, { 280 + (float)currentPlayer2 * 225 + 10, 350, 75, 105 }, { 0, 0 }, 0.f, WHITE);
+	}
 }
 
 void DualCharSelection::handleInput()
 {
-	if (IsKeyPressed(KEY_A) || IsKeyPressed(KEY_D)) {
+	if (IsKeyPressed(KEY_A)) {
+		currentPlayer1--;
+		if (currentPlayer1 < 0) currentPlayer1 = 4;
+	}
+	else if (IsKeyPressed(KEY_D)) {
 		currentPlayer1++;
-		if (currentPlayer1 > 1) currentPlayer1 = 0;
+		if (currentPlayer1 > 4) currentPlayer1 = 0;
 	}
-	if (IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_RIGHT)) {
+
+	if (IsKeyPressed(KEY_LEFT)) {
+		currentPlayer2--;
+		if (currentPlayer2 < 0) currentPlayer2 = 4;
+	}
+	else if (IsKeyPressed(KEY_RIGHT)) {
 		currentPlayer2++;
-		if (currentPlayer2 > 1) currentPlayer2 = 0;
+		if (currentPlayer2 > 4) currentPlayer2 = 0;
 	}
-	textureP1 = Textures[currentPlayer1];
-	textureP2 = Textures[currentPlayer2];
 
 	if (IsKeyPressed(KEY_ENTER)) {
 		// init the game with 2 players
@@ -393,12 +435,27 @@ void DualCharSelection::handleInput()
 		if (currentPlayer1 == 0) {
 			game->multiplayers.push_back(std::make_unique<Mario>());
 		}
-		else game->multiplayers.push_back(std::make_unique<Luigi>());
+		else if (currentPlayer1 == 1)
+			game->multiplayers.push_back(std::make_unique<Luigi>());
+		else if (currentPlayer1 == 2)
+			game->multiplayers.push_back(std::make_unique<Toad>());
+		else if (currentPlayer1 == 3)
+			game->multiplayers.push_back(std::make_unique<Peach>());
+		else if (currentPlayer1 == 4)
+			game->multiplayers.push_back(std::make_unique<Marisa>());
+
 
 		if (currentPlayer2 == 0) {
 			game->multiplayers.push_back(std::make_unique<Mario>());
 		}
-		else game->multiplayers.push_back(std::make_unique<Luigi>());
+		else if (currentPlayer2 == 1)
+			game->multiplayers.push_back(std::make_unique<Luigi>());
+		else if (currentPlayer2 == 2)
+			game->multiplayers.push_back(std::make_unique<Toad>());
+		else if (currentPlayer2 == 3)
+			game->multiplayers.push_back(std::make_unique<Peach>());
+		else if (currentPlayer2 == 4)
+			game->multiplayers.push_back(std::make_unique<Marisa>());
 
 		if (globalGameEngine != nullptr) {
 			delete globalGameEngine;
@@ -410,4 +467,5 @@ void DualCharSelection::handleInput()
 
 void DualCharSelection::update()
 {
+
 }

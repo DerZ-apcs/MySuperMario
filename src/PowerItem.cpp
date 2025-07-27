@@ -56,7 +56,7 @@ void PowerItem::Update() {
 	}
 
 	case EMERGING: {
-		RESOURCE_MANAGER.playSound("mushroom_appears.wav");
+		if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("mushroom_appears.wav");
 		gravityAvailable = false;
 		collisionAvailable = false;
 		float deltaTime = GetFrameTime();

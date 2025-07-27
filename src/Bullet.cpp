@@ -118,7 +118,7 @@ void FireBullet::ShootFireBall() {
 
             EnemyFireBall* fireball = new EnemyFireBall(fireBallPos, { 16, 16 }, fireBallVel, dir, 2.0f, isHoming);
             globalGameEngine->addEnemyFireBall(fireball);
-            RESOURCE_MANAGER.playSound("fireball.wav");
+            if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("fireball.wav");
         }
     }
    

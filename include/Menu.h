@@ -5,6 +5,7 @@
 #include <vector>
 #include "../include/Mario.h"
 #include "../include/Luigi.h"
+#include "../include/Toad.h"
 #include "../include/Character.h"
 #include "../include/Button.h"
 #include "../include/GameEngine.h"
@@ -45,6 +46,7 @@ public:
 	explicit SettingState(Game* game);
 	void draw() override;
 	void handleInput() override;
+
 	void update() override;
 private:
 	Button audioButton;
@@ -86,9 +88,10 @@ public:
 	void handleInput() override;
 	void update() override;
 private:
-	Button MarioButton;
-	Button LuigiButton;
-	Button BackButton;
+	Texture2D selectionBg;
+	std::vector<Texture2D> Textures;
+	int currentPlayer;
+	Texture2D guiP1;
 };
 
 class DualCharSelection : public MenuState {
@@ -98,12 +101,12 @@ public:
 	void handleInput() override;
 	void update() override;
 private:
-	Texture2D white, sea;
+	Texture2D selectionBg;
 	std::vector<Texture2D> Textures;
 	int currentPlayer1;
 	int currentPlayer2;
-	Texture2D textureP1;
-	Texture2D textureP2;
-	Texture2D guiMario, guiLuigi;
+	Texture2D GuiP1;
+	Texture2D GuiP2;
+		
 };
 #endif

@@ -7,6 +7,7 @@
 #include "../include/Brick.h"
 #include "../include/CoinBlock.h"
 #include "../include/ItemBlock.h"
+#include "../include/DecorBlock.h"
 #include "../include/Item.h"
 #include "../include/Goomba.h"
 #include <iostream>
@@ -33,7 +34,9 @@ private:
 	std::vector<Enemy*> enemies;
 	std::vector<Item*> items;
 	std::vector<Blocks*> decors;
-	
+	std::vector<Blocks*> covers; //
+	std::vector<Rectangle> secretAreas; // for secret areas
+
 public:
 	static const std::string basePath;
 	Map();
@@ -55,6 +58,8 @@ public:
 	std::vector<Enemy*> getEnemies() const;
 	std::vector<Item*> getItems() const;
 	std::vector<Blocks*> getDecor() const;
+	std::vector<Blocks*> getCovers() const;
+	std::vector<Rectangle> getSecretAreas() const;
 
 	float BgWidth;
 	float BgHeight;

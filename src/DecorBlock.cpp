@@ -1,26 +1,26 @@
 #include "../include/DecorBlock.h"
 
-DecorBlock::DecorBlock(Vector2 pos, Vector2 size):
+DecorBlock::DecorBlock(Vector2 pos, Vector2 size) :
 	Blocks(pos, size)
 {
+	setCollisionAvailable(false);
 }
 
-DecorBlock::DecorBlock(Vector2 pos, Vector2 size, std::string textureName):
+DecorBlock::DecorBlock(Vector2 pos, Vector2 size, std::string textureName) :
 	Blocks(pos, size, textureName)
 {
+	setCollisionAvailable(false);
 }
 
-void DecorBlock::draw()
-{
-}
-
-void DecorBlock::Update()
-{
-	// no update for decor
-}
+//---------------	
 
 BLOCK_TYPE DecorBlock::getBlockType() const
 {
 	return DECOR;
 }
 
+//---------------
+
+void DecorBlock::draw() {
+	DrawTexture(texture, position.x, position.y, WHITE);
+}

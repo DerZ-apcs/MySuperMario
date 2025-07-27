@@ -83,10 +83,10 @@ void PiranhaPlant::draw() {
     //Vector2 origin = { (texture.width * squashScale) / 2, (texture.height * squashScale) / 2 };
     DrawTexturePro(texture, source, dest, {0.f, 0.f}, 0.0f, WHITE);
     
-    CollNorth.draw();
+    /*CollNorth.draw();
     CollSouth.draw();
     CollEast.draw();
-    CollWest.draw();
+    CollWest.draw();*/
 }
 
 void PiranhaPlant::UpdateTexture() {

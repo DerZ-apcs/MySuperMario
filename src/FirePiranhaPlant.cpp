@@ -150,7 +150,7 @@ void RapidFirePiranha::ShootFireBall() {
             globalGameEngine->addEnemyFireBall(fireball);
         }
     }
-    RESOURCE_MANAGER.playSound("fireball.wav");
+    if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("fireball.wav");
 }
 
 HomingFirePiranha::HomingFirePiranha(Vector2 pos, Texture2D texture)
@@ -174,5 +174,5 @@ void HomingFirePiranha::ShootFireBall() {
             globalGameEngine->addEnemyFireBall(fireball);
         }
     }
-    RESOURCE_MANAGER.playSound("fireball.wav");
+    if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("fireball.wav");
 }

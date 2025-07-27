@@ -4,6 +4,9 @@
 #include "../include/Camera.h"
 #include "../include/Mario.h"
 #include "../include/Luigi.h"
+#include "../include/Peach.h"
+#include "../include/Marisa.h"
+#include "../include/Toad.h"
 #include "../include/FireBall.h"
 #include "../include/Map.h"
 #include "../include/GUI.h"
@@ -36,6 +39,8 @@ private:
     std::vector<EnemyFireBall*> enemyFireball;
     std::vector<Effect*> effects;
     std::vector<Blocks*> decor;
+	std::vector<Blocks*> covers; // for decor blocks
+	std::vector<Rectangle> secretAreas; // for secret areas
     std::vector<Entity*> testEntities;
     GameCamera camera;
     bool isvictory = false;
