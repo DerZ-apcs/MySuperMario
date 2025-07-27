@@ -27,7 +27,8 @@ Game::Game(int nwidth, int nheight, int ntargetFPS) :
 	// enemies.push_back(new GreenKoopa({ 400, 912 }, Resource_manager.getTexture("GreenKoopa_RIGHT_1")));
 	// enemies.push_back(new YellowKoopa({ 400, 912 }, Resource_manager.getTexture("YellowKoopa_RIGHT_1")));
     // enemies.push_back(new ParaKoopaRed({ 400, 912 }, Resource_manager.getTexture("ParaKoopaRed_RIGHT_1")));
-    // enemies.push_back(new PiranhaPlant({ 576, 448 }, Resource_manager.getTexture("PiranhaPlant_OPEN"),mario));
+    
+    // enemies.push_back(new PiranhaPlant({ 576, 420 }, Resource_manager.getTexture("PiranhaPlant_OPEN"),mario));
     // enemies.push_back(new FirePiranhaPlant({ 576, 448 }, Resource_manager.getTexture("FirePiranhaPlant_OPEN"), mario));
 	// enemies.push_back(new RapidFirePiranha({ 577, 448 }, Resource_manager.getTexture("FirePiranhaPlant_OPEN"), mario));
     // enemies.push_back(new HomingFirePiranha({ 576, 448 }, Resource_manager.getTexture("FirePiranhaPlant_OPEN"), mario));
@@ -41,7 +42,7 @@ Game::Game(int nwidth, int nheight, int ntargetFPS) :
 
 	// enemies.push_back(new BobOmb({ 400, 912 }, Resource_manager.getTexture("BobOmb_RIGHT_0"), &mediatorCollision));
 
-	enemies.push_back(new JumpingPiranhaPlant({ 576, 440 }, Resource_manager.getTexture("PiranhaPlant_JUMPING"), mario));
+	enemies.push_back(new JumpingPiranhaPlant({ 576, 380 }, Resource_manager.getTexture("PiranhaPlant_JUMPING_1"), mario));
 }
 
 Game::~Game()

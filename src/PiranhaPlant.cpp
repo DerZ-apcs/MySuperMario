@@ -68,7 +68,6 @@ void PiranhaPlant::Update() {
 }
 
 void PiranhaPlant::draw() {
-    //Enemy::draw();
     if (!isDead) {
         Rectangle source = { 0, 0, (float)texture.width, (float)texture.height };
         Rectangle dest = { position.x, position.y, texture.width * squashScale, texture.height * squashScale };
@@ -108,20 +107,20 @@ void PiranhaPlant::CollisionWithCharacter(Mario& mario, CollisionType collType) 
 
     bool isFullyPoppedUp = (popUpTimer >= POP_UP_DURATION && popUpTimer < POP_UP_DURATION + STAY_UP_DURATION);
 
-    // Mario nhảy lên đầu (stomp)
-    if (collType == COLLISION_TYPE_SOUTH && (mario.getState() == JUMPING || mario.getState() == FALLING)) {
+    if (collType == COLLISION_TYPE_SOUTH && (mario.getState() == JUMPING || mario.getState() == FALLING) && isFullyPoppedUp) {
         state = STATE_IS_DYING;
         velocity.x = 0;
         velocity.y = 0;
         deathTimer = ENEMY_DEATH_TIMER_DEFAULT;
         invincibilityTimer = 0.5f;
-        mario.setVelY(MARIO_BOUNCE_VELOCITY);
+        mario.setVelY(-MARIO_BOUNCE_VELOCITY);
         mario.addScore(SCORE_STOMP_GOOMBA);
         Singleton<ResourceManager>::getInstance().playSound("STOMP");
         updateSquashEffect();
         UpdateTexture();
+        return;
     }
-    else if ((collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_WEST || collType == COLLISION_TYPE_NORTH) && isFullyPoppedUp) {
+    if ((collType == COLLISION_TYPE_EAST || collType == COLLISION_TYPE_WEST || collType == COLLISION_TYPE_NORTH)) {
         if (mario.getMarioState() == STATE_SUPER || mario.getMarioState() == STATE_FIRE_BALL) {
             mario.TransitionToSmall();
             mario.setInvincibilityTimer(2.0f);
