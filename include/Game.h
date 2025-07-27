@@ -19,6 +19,7 @@
 #include "../include/BobOmb.h"
 #include "../include/ParaKoopa.h"
 #include "../include/JumpingPiranhaPlant.h"
+#include "../include/DryBones.h"
 
 class Game {
 private:

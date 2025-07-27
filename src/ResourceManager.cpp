@@ -172,6 +172,11 @@ void ResourceManager::loadTextures() {
 	textures["BobOmb_Activated_1"] = LoadTexture("resources/images/sprites/baddies/BobOmb__1.png");
 	textures["BobOmb_Explosion"] = LoadTexture("resources/images/sprites/baddies/Muncher_1.png");
 
+	textures["DryBones_LEFT_0"] = LoadTexture("resources/images/sprites/baddies/DryBones_0.png");
+	textures["DryBones_LEFT_1"] = LoadTexture("resources/images/sprites/baddies/DryBones_1.png");
+	textures["DryBones_RIGHT_0"] = flipTexture(textures["DryBones_LEFT_0"]);
+	textures["DryBones_RIGHT_1"] = flipTexture(textures["DryBones_LEFT_1"]);
+	textures["DryBones_Collapse"] = LoadTexture("resources/images/sprites/baddies/Muncher.png");
 	// tile
 	for (int i = 0; i <= 112; i++) {
 		std::string path = "resources/images/tiles/AllTiles/tile_" + std::to_string(i) + ".png";
