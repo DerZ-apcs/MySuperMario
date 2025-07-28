@@ -5,10 +5,10 @@ Floor::Floor(Vector2 pos, Vector2 size) :
 {
 }
 
-Floor::Floor(Vector2 pos, Vector2 size, std::string texturename):
-	Blocks(pos, size, texturename)
-{
-}
+//Floor::Floor(Vector2 pos, Vector2 size, std::string texturename):
+//	Blocks(pos, size, texturename)
+//{
+//}
 
 BLOCK_TYPE Floor::getBlockType() const
 {

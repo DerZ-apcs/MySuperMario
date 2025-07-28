@@ -300,6 +300,12 @@ void ResourceManager::loadTextures() {
 	textures["NOTE_1"] = LoadTexture("resources/images/sprites/blocks/Note_1.png");
 	textures["NOTE_2"] = LoadTexture("resources/images/sprites/blocks/Note_2.png");
 	textures["NOTE_3"] = LoadTexture("resources/images/sprites/blocks/Note_3.png");
+		// rotating block
+	textures["ROTATING_0"] = LoadTexture("resources/images/sprites/blocks/Rotating_0.png");
+	textures["ROTATING_1"] = LoadTexture("resources/images/sprites/blocks/Rotating_1.png");
+	textures["ROTATING_2"] = LoadTexture("resources/images/sprites/blocks/Rotating_2.png");
+	textures["ROTATING_3"] = LoadTexture("resources/images/sprites/blocks/Rotating_3.png");
+	
 	// background
 
 	textures["BACKGROUND_1"] = LoadTexture("resources/images/backgrounds/background1.png");

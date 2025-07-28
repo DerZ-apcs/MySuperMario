@@ -1,6 +1,8 @@
 #ifndef MAP_H
 #define MAP_H
 #include <raylib.h>
+#include "../include/BlockFactory.h"
+#include "../include/ItemFactory.h"
 #include "../include/Blocks.h"
 #include "../include/Floor.h"
 #include "../include/SolidBlock.h"
@@ -8,6 +10,9 @@
 #include "../include/CoinBlock.h"
 #include "../include/ItemBlock.h"
 #include "../include/DecorBlock.h"
+#include "../include/RotatingBlock.h"
+#include "../include/NoteBlock.h"
+#include "../include/CloudBlock.h"
 #include "../include/Item.h"
 #include "../include/Goomba.h"
 #include <iostream>

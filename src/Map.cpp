@@ -86,65 +86,185 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			if (blockId != 0) {
 				int texId = blockId - firstgid;
 				if (blockId == 105) {
-					Brick* brick = new Brick({ (float)x * blockwidth, (float)y * blockwidth });
+					Brick* brick = dynamic_cast<Brick*>(BlockFactory::getInstance().createBlock(BRICK,
+						{ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
+					if (!brick) {
+						throw std::runtime_error("Failed to create brick block: ");
+					}
 					blockArray.push_back(brick);
 					continue;
 				}
 				if (blockId == 114) {
-					Coin* coin = new Coin(STATIC_COIN, { (float)x * blockwidth, (float)y * blockwidth });
+					Coin* coin = dynamic_cast<Coin*>(ItemFactory::getInstance().createItem(COIN,
+						{ (float)x * blockwidth, (float)y * blockwidth }, LEFT, 0));
+					if (!coin) {
+						throw std::runtime_error("Failed to create coin: ");
+					}
 					items.push_back(coin);
+					printf("Coin at (%d, %d)\n", x, y);
 					continue;
 				}
-				if (blockId == 106) {
 
+				if (blockId == 115) {
+					NoteBlock* block = dynamic_cast<NoteBlock*>(BlockFactory::getInstance().createBlock(NOTEBLOCK, 
+						{(float)x * blockwidth, (float)y * blockwidth}, {32, 32}));
+					if (!block) {
+						throw std::runtime_error("Failed to create note block: ");
+					}
+					blockArray.push_back(block);
 					continue;
 				}
-				Blocks* solidBlocks = new SolidBlock({ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }, "TILE_" + std::to_string(blockId - 2));
-				blockArray.push_back(solidBlocks);
+
+				if (blockId == 116) {
+					CloudBlock* cloudBlock = dynamic_cast<CloudBlock*>(BlockFactory::getInstance().createBlock(CLOUDBLOCK,
+						{ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
+					if (!cloudBlock) {
+						throw std::runtime_error("Failed to create cloud block: ");
+					}
+					blockArray.push_back(cloudBlock);
+					continue;
+				}
+
+				if (blockId == 117) {
+					RotatingBlock* block = dynamic_cast<RotatingBlock*>(BlockFactory::getInstance().createBlock(ROTATINGBLOCK,
+						{ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
+					if (!block) {
+						throw std::runtime_error("Failed to create rotating block: ");
+					}
+					blockArray.push_back(block);
+					continue;
+				}
+				// else create solid block
+				SolidBlock* solidBlock = dynamic_cast<SolidBlock*>(BlockFactory::getInstance().createBlock(SOLIDBLOCK,
+					{ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));	
+				solidBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_" + std::to_string(texId)));
+				blockArray.push_back(solidBlock);
+				if (!solidBlock) {
+					throw std::runtime_error("Failed to create solid block: ");
+					blockArray.push_back(solidBlock);
+				}
 			}
 		}
 	}
-	/*nlohmann::json objectLayer = mapJson["layers"][1];
-	nlohmann::json objects = objectLayer["objects"];*/
+	nlohmann::json objectLayer = mapJson["layers"][1];
+	nlohmann::json objects = objectLayer["objects"];
 
-	//for (auto& obj : objects) {
-	//	int gid = obj["gid"];
-	//	int x = obj["x"] / 32;
-	//	int y = obj["y"] / 32 - 1;
-	//	int width = obj["width"];
-	//	int height = obj["height"];
+	for (auto& obj : objects) {
+		int gid = obj["gid"];
+		int x = obj["x"] / 32;
+		int y = obj["y"] / 32 - 1;
+		int width = obj["width"];
+		int height = obj["height"];
 
-	//	std::string name;
-	//	std::string type;
+		std::string name;
+		std::string type;
 
-	//	for (auto& prop : obj["properties"]) {
-	//		if (prop["name"] == "Name") name = prop["value"];
-	//		else if (prop["name"] == "Type") type = prop["value"];
-	//	}
-	//	// question block
-	//	if (name == "QuestionBlock") {
-	//		if (type == "Mushroom") {
-	//			blockArray.push_back(new ItemBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, MUSHROOM));
-	//		}
-	//		else if (type == "Flower") {
-	//			blockArray.push_back(new ItemBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, FLOWER));
-	//		}
-	//		else if (type == "Star") {
-	//			blockArray.push_back(new ItemBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, STAR));
-	//		}
-	//	}
-	//	// enemy
-	//	if (name == "Enemy") {
-	//		if (type == "Goomba") {
-	//			enemies.push_back(new Goomba(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0")));
-	//		}
-	//	}
-	//	// coin block
-	//	if (name == "CoinBlock") {
-	//		int texId = gid - firstgid;
-	//		blockArray.push_back(new CoinBlock({ (float)x * blockwidth, (float)y * blockwidth }, "TILE_" + std::to_string(texId), 5));
-	//	}
-	//}
+		for (auto& prop : obj["properties"]) {
+			if (prop["name"] == "Name") name = prop["value"];
+			else if (prop["name"] == "Type") type = prop["value"];
+		}
+
+		if (name == "QuestionBlock") {
+			if (type == "Mushroom") {
+				Blocks* block = dynamic_cast<ItemBlock*>(BlockFactory::getInstance().createBlock(ITEMBLOCK, {(float)x * blockwidth, (float)y * blockwidth}, {32, 32}));
+				dynamic_cast<ItemBlock*>(block)->setItem(MUSHROOM, 0);
+				blockArray.push_back(block);
+				if (!block) {
+					throw std::runtime_error("Failed to create item block: ");
+				}
+				//blockArray.push_back(new ItemBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, MUSHROOM));
+			}
+			else if (type == "Flower") {
+				Blocks* block = dynamic_cast<ItemBlock*>(BlockFactory::getInstance().createBlock(ITEMBLOCK, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
+				dynamic_cast<ItemBlock*>(block)->setItem(FLOWER, 0);
+				blockArray.push_back(block);
+				if (!block) {
+					throw std::runtime_error("Failed to create item block: ");
+				}
+				//blockArray.push_back(new ItemBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, FLOWER));
+			}
+			else if (type == "Star") {
+				Blocks* block = dynamic_cast<ItemBlock*>(BlockFactory::getInstance().createBlock(ITEMBLOCK, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
+				dynamic_cast<ItemBlock*>(block)->setItem(STAR, 0);
+				blockArray.push_back(block);
+				if (!block) {
+					throw std::runtime_error("Failed to create item block: ");
+				}
+				//blockArray.push_back(new ItemBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, STAR));
+			}
+			else if (type == "Moon") {
+				Blocks* block = dynamic_cast<ItemBlock*>(BlockFactory::getInstance().createBlock(ITEMBLOCK, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
+				dynamic_cast<ItemBlock*>(block)->setItem(MOON, 0);
+				blockArray.push_back(block);
+				if (!block) {
+					throw std::runtime_error("Failed to create item block: ");
+				}
+			}
+		}
+
+		if (name == "CoinBlock") {
+			int texId = gid - firstgid;
+			Blocks* coinBlock = dynamic_cast<CoinBlock*>(BlockFactory::getInstance().createBlock(COINBLOCK, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
+			coinBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_" + std::to_string(texId)));
+			dynamic_cast<CoinBlock*>(coinBlock)->setCount(3); // default coin count
+			if (!coinBlock) {
+				throw std::runtime_error("Failed to create coin block: ");
+			}
+			blockArray.push_back(coinBlock);
+			//blockArray.push_back(new CoinBlock({ (float)x * blockwidth, (float)y * blockwidth }, "TILE_" + std::to_string(texId), 5));
+		}
+
+		if (name == "Enemy") {
+			if (type == "Goomba") {
+				enemies.push_back(new Goomba(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0")));
+			}
+		}
+
+		if (name == "Area") {
+			int areaWidth;
+			int areaHeight;
+			for (auto& prop : obj["properties"]) {
+				if (prop["name"] == "Width") areaWidth = prop["value"];
+				else if (prop["name"] == "Height") areaHeight = prop["value"];
+			}
+			Rectangle area = { (float)x * blockwidth, (float)y * blockwidth, (float)areaWidth * blockwidth, (float)areaHeight * blockwidth };
+			secretAreas.push_back(area);
+		}
+	}
+
+	// decor layer
+	std::vector<int> decorData = mapJson["layers"][2]["data"];
+	for (int y = 0; y < height; ++y) {
+		for (int x = 0; x < width; ++x) {
+			int blockId = decorData[static_cast<std::vector<int, std::allocator<int>>::size_type>(y) * width + x];
+			if (blockId != 0) {
+				int texId = blockId - firstgid;
+				Blocks* decorBlock = dynamic_cast<DecorBlock*>(BlockFactory::getInstance().createBlock(DECOR, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
+				decorBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_" + std::to_string(texId)));
+				decors.push_back(decorBlock);
+			}
+		}
+	}
+
+	// covers layer
+	std::vector<int> coverData = mapJson["layers"][3]["data"];
+	for (int y = 0; y < height; ++y) {
+		for (int x = 0; x < width; ++x) {
+			int blockId = coverData[static_cast<std::vector<int, std::allocator<int>>::size_type>(y) * width + x];
+			if (blockId != 0) {
+				int texId = blockId - firstgid;
+				Blocks* coverBlock = dynamic_cast<SolidBlock*>(BlockFactory::getInstance().createBlock(SOLIDBLOCK, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
+				coverBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_" + std::to_string(texId)));
+				if (!coverBlock) {
+					throw std::runtime_error("Failed to create cover block: ");
+				}
+				blockArray.push_back(coverBlock);
+				//Blocks* coverBlock = new SolidBlock({ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }, "TILE_" + std::to_string(texId));
+				//covers.push_back(coverBlock);
+			}
+		}
+	}
+
 	setMapSize(Vector2{ (float)width * blockwidth, (float)height * blockwidth });
 
 }

@@ -13,13 +13,14 @@ private:
 	int coinCount;
 
 public:
-	CoinBlock(Vector2 pos, std::string tex, int count);
+	//CoinBlock(Vector2 pos, std::string tex, int count);
+	CoinBlock(Vector2 pos = { 0, 0 }, Vector2 size = { 32, 32 });
 	~CoinBlock() = default;
 
 	bool getActive() const;
 	void setActive(bool active);
 	void Activate();
-
+	void setCount(int count);
 	BLOCK_TYPE getBlockType() const override;
 
 	void draw() override;

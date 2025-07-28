@@ -37,6 +37,12 @@ BLOCK_TYPE ItemBlock::getBlockType() const
 	return ITEMBLOCK;
 }
 
+void ItemBlock::setItem(ITEM_TYPE type, int subType)
+{
+	this->heldPowerUp = type;
+	this->subType = subType;
+}
+
 void ItemBlock::draw()
 {
 	Blocks::draw();

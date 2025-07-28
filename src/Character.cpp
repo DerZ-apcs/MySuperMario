@@ -514,7 +514,7 @@ void Character::Update()
 	else if (characterType == MARISA) {
 		size = (Character_state == STATE_SMALL || Character_state == STATE_STAR) ? Vector2{ 37, 54 } : Vector2{ 51, 61 };
 	}
-	cout << size.x << " " << size.y << endl;
+	//cout << size.x << " " << size.y << endl;
 
 	updateCollision();
 	UpdateTexture();
@@ -662,7 +662,7 @@ void Character::updateCollision() // update the hitbox (4 rectangle in 4 side of
 		
 		Entity::updateCollision();
 	}
-	cout << size.x << " " << size.y << endl;
+	//cout << size.x << " " << size.y << endl;
 }
 
 void Character::UpdateTexture()

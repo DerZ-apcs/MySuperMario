@@ -156,6 +156,10 @@ void Entity::setColor(Color color)
 {
 	this->color = color;
 }
+void Entity::setTexture(Texture2D tex)
+{
+	this->texture = tex;
+}
 bool Entity::isDead() const
 {
 	return dead;

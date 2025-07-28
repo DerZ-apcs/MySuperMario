@@ -44,6 +44,11 @@ ITEM_TYPE Coin::getItemType() const
 	return COIN;
 }
 
+void Coin::setCoinType(CoinType type)
+{
+	this->type = type;
+}
+
 void Coin::Update()
 {
 	const float deltaTime = GetFrameTime();

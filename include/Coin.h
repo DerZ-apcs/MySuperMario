@@ -20,7 +20,7 @@ public:
 	const CoinType& getCoinType() const;
 	
 	ITEM_TYPE getItemType() const override;
-
+	void setCoinType(CoinType type);
 	void Update() override;
 	void draw() override;
 	//void updateCollision() override;

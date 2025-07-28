@@ -6,7 +6,7 @@
 
 class CloudBlock : public Blocks {
 public:
-	CloudBlock(Vector2 pos);
+	CloudBlock(Vector2 pos = {0, 0}, Vector2 size = {32, 32});
 	~CloudBlock() = default;
 
 	BLOCK_TYPE getBlockType() const override;

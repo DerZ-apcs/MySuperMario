@@ -68,7 +68,8 @@ enum BLOCK_TYPE {
 	DECOR, // for decor, not collision
 	COINBLOCK, // coin when hit
 	CLOUDBLOCK,
-	NOTEBLOCK // note block
+	NOTEBLOCK,// note block
+	ROTATINGBLOCK
 };
 
 enum BOUNCE_DIRECTION {
@@ -127,25 +128,25 @@ enum SHELL_TYPE {
 };
 
 enum MushroomType {
-	// Super 1.
+	// Super 0.
 	REDMUSHROOM,
-	GREENMUSHROOM, // Lives 2.
+	GREENMUSHROOM, // Lives 1
 };
 
 enum FlowerType {
-	FIRE_FLOWER // 1
+	FIRE_FLOWER // 0
 };
 enum MoonType {
 	NORMAL_MOON
 };
 enum StarType {
-	YELLOW_STAR, // 1.
-	BLUE_STAR // 2.
+	YELLOW_STAR, // 0
+	BLUE_STAR // 1
 };
 
 enum CoinType {
-	STATIC_COIN, // 1.
-	BLOCK_COIN // 2.
+	STATIC_COIN, // 0
+	BLOCK_COIN // 1
 };
 
 enum PowerUpState {

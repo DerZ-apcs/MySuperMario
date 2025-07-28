@@ -12,7 +12,7 @@ private:
 	static const float bounceMax;       // How far it moves (in pixels)
 
 public:
-	NoteBlock(Vector2 pos);
+	NoteBlock(Vector2 pos = {0, 0}, Vector2 size = {32, 32});
 	~NoteBlock() = default;
 
 	BOUNCE_DIRECTION getBounceDir() const;

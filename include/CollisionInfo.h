@@ -45,16 +45,19 @@ class PLayerNoteBlockInfo : public CollisionInfo {
 public:
 	bool HandleCollision(Entity* entityA, Entity* entityB) override;
 };
-class PlayerBlockInfo : public CollisionInfo {
+
+class PlayerRotatingBlockInfo : public CollisionInfo {
 public:
 	bool HandleCollision(Entity* entityA, Entity* entityB) override;
 };
-
 class PlayerCoinBlockInfo: public CollisionInfo {
 public:
 	bool HandleCollision(Entity * entityA, Entity * entityB) override;
 };
-
+class PlayerBlockInfo : public CollisionInfo {
+public:
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
+};
 
 // enemy vs block
 class EnemyFloorInfo : public CollisionInfo {

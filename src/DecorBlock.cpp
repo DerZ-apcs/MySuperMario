@@ -6,11 +6,11 @@ DecorBlock::DecorBlock(Vector2 pos, Vector2 size) :
 	setCollisionAvailable(false);
 }
 
-DecorBlock::DecorBlock(Vector2 pos, Vector2 size, std::string textureName) :
-	Blocks(pos, size, textureName)
-{
-	setCollisionAvailable(false);
-}
+//DecorBlock::DecorBlock(Vector2 pos, Vector2 size, std::string textureName) :
+//	Blocks(pos, size, textureName)
+//{
+//	setCollisionAvailable(false);
+//}
 
 //---------------	
 

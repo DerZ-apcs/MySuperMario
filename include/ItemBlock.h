@@ -17,6 +17,7 @@ public:
     ItemBlock(Vector2 pos = { 0, 0 }, ITEM_TYPE type = MUSHROOM, int subType = 0);
     ~ItemBlock() = default;
     BLOCK_TYPE getBlockType() const override;
+    void setItem(ITEM_TYPE type, int subType);
     void draw() override;
     void Update() override;
     void UpdateTexture() override;
