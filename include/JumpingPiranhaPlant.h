@@ -3,13 +3,15 @@
 #define JUMPINGPIRANHAPLANT_H
 
 #include "../include/PiranhaPlant.h"
+#include <raylib.h>
 
 class JumpingPiranhaPlant : public PiranhaPlant {
 private:
     float animTimer;
-    static const float ANIM_INTERVAL;     // thời gian 1 chu kỳ lên–xuống
+    static const float ANIM_INTERVAL;     
     static const float JUMP_HEIGHT;
-    void UpdateTexture();
+
+    void UpdateTexture(bool isGoingUp);
 public:
     JumpingPiranhaPlant(Vector2 pos, Texture2D texture, Mario& mario);
     void Update() override;
@@ -18,3 +20,4 @@ public:
 };
 
 #endif // JUMPINGPIRANHAPLANT_H
+

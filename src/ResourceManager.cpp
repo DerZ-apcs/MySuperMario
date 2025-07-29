@@ -136,9 +136,12 @@ void ResourceManager::loadTextures() {
 	textures["PiranhaPlant_OPEN"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_1.png");
 	textures["PiranhaPlant_CLOSED"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_0.png");
 	textures["PiranhaPlant_Dead"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_0.png");
-	textures["PiranhaPlant_JUMPING"] = LoadTexture("resources/images/sprites/baddies/JumpingPiranhaPlant_0.png");
-	textures["PiranhaPlant_JUMPING_1"] = LoadTexture("resources/images/sprites/baddies/JumpingPiranhaPlant_1.png");
-	textures["PiranhaPlant_JUMPING_2"] = LoadTexture("resources/images/sprites/baddies/JumpingPiranhaPlant_2.png");
+
+	textures["PiranhaPlant_JUMP_UP_0"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_JUMP_UP_0.png");
+	textures["PiranhaPlant_JUMP_DOWN_0"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_JUMP_DOWN_0.png");
+	textures["PiranhaPlant_JUMP_UP_1"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_JUMP_UP_1.png");
+	textures["PiranhaPlant_JUMP_DOWN_1"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_JUMP_DOWN_1.png");
+
 	textures["FirePiranhaPlant_OPEN"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_1.png");
 	textures["FirePiranhaPlant_CLOSED"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_0.png");
 
@@ -191,6 +194,7 @@ void ResourceManager::loadTextures() {
 	textures["BuzzyBeetle_Shell_2"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_Shell_2.png");
 	textures["BuzzyBeetle_Shell_1"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_Shell_1.png");
 	textures["BuzzyBeetle_Shell_0"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_Shell_0.png");
+
 	// tile
 	for (int i = 0; i <= 112; i++) {
 		std::string path = "resources/images/tiles/AllTiles/tile_" + std::to_string(i) + ".png";
