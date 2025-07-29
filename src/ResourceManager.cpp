@@ -176,7 +176,21 @@ void ResourceManager::loadTextures() {
 	textures["DryBones_LEFT_1"] = LoadTexture("resources/images/sprites/baddies/DryBones_1.png");
 	textures["DryBones_RIGHT_0"] = flipTexture(textures["DryBones_LEFT_0"]);
 	textures["DryBones_RIGHT_1"] = flipTexture(textures["DryBones_LEFT_1"]);
-	textures["DryBones_Collapse"] = LoadTexture("resources/images/sprites/baddies/Muncher.png");
+	textures["DryBones_Collapse"] = LoadTexture("resources/images/sprites/baddies/DryBones_Collapse.png");
+
+	textures["Spiny_LEFT_0"] = LoadTexture("resources/images/sprites/baddies/Spiny_LEFT_0.png");
+	textures["Spiny_LEFT_1"] = LoadTexture("resources/images/sprites/baddies/Spiny_LEFT_1.png");
+	textures["Spiny_RIGHT_0"] = flipTexture(textures["Spiny_LEFT_0"]);
+	textures["Spiny_RIGHT_1"] = flipTexture(textures["Spiny_LEFT_1"]);
+	textures["Spiny_DEAD"] = LoadTexture("resources/images/sprites/baddies/Spiny_DEAD.png");
+
+	textures["BuzzyBeetle_LEFT_0"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_LEFT_0.png");
+	textures["BuzzyBeetle_LEFT_1"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_LEFT_1.png");
+	textures["BuzzyBeetle_RIGHT_0"] = flipTexture(textures["BuzzyBeetle_LEFT_0"]);
+	textures["BuzzyBeetle_RIGHT_1"] = flipTexture(textures["BuzzyBeetle_LEFT_1"]);
+	textures["BuzzyBeetle_Shell_2"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_Shell_2.png");
+	textures["BuzzyBeetle_Shell_1"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_Shell_1.png");
+	textures["BuzzyBeetle_Shell_0"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_Shell_0.png");
 	// tile
 	for (int i = 0; i <= 112; i++) {
 		std::string path = "resources/images/tiles/AllTiles/tile_" + std::to_string(i) + ".png";

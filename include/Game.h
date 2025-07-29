@@ -20,6 +20,8 @@
 #include "../include/ParaKoopa.h"
 #include "../include/JumpingPiranhaPlant.h"
 #include "../include/DryBones.h"
+#include "../include/Spiny.h"
+#include "../include/BuzzyBeetle.h"
 
 class Game {
 private:

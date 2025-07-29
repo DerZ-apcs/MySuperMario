@@ -44,7 +44,13 @@ Game::Game(int nwidth, int nheight, int ntargetFPS) :
 
 	// enemies.push_back(new JumpingPiranhaPlant({ 576, 380 }, Resource_manager.getTexture("PiranhaPlant_JUMPING_1"), mario));
 
-	enemies.push_back(new DryBones({ 380, 600 }, Resource_manager.getTexture("DryBones_RIGHT_0")));
+	// enemies.push_back(new DryBones({ 380, 600 }, Resource_manager.getTexture("DryBones_RIGHT_0")));
+
+    // enemies.push_back(new Spiny({ 400, 908 }, Resource_manager.getTexture("Spiny_RIGHT_0")));
+
+	// enemies.push_back(new BuzzyBeetle({ 400, 912 }, Resource_manager.getTexture("YellowKoopa_RIGHT_1")));
+
+	enemies.push_back(new BuzzyBeetle({ 400, 912 }, Resource_manager.getTexture("BuzzyBeetle_LEFT_0")));
 }
 
 Game::~Game()

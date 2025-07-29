@@ -6,6 +6,7 @@ DryBones::DryBones(Vector2 pos, Texture2D tex)
 	dbState(DB_ALIVE),
 	breakTimer(0), reviveTimer(0), shakeTimer(0)
 {
+    updateCollision();
 }
 
 void DryBones::Update() {
@@ -44,9 +45,11 @@ void DryBones::Update() {
 void DryBones::draw() {
     Rectangle sourceRec = { 0, 0, (float)texture.width, (float)texture.height };
     Rectangle destRec = { position.x, position.y, texture.width * squashScale, texture.height * squashScale };
+    Vector2 origin = { 0, 0 };
+    float rotation = 0.0f;
     switch (dbState) {
     case DB_ALIVE:
-        Enemy::draw();
+        DrawTexturePro(texture, sourceRec, destRec, origin, rotation, WHITE);
         break;
 
     case DB_BROKEN:
@@ -56,7 +59,6 @@ void DryBones::draw() {
         break;
 
     case DB_REVIVING:
-        // hiệu ứng rung: alternate alpha
         shakeTimer -= GetFrameTime();
         {
             float alpha = (int(shakeTimer * 10) % 2 == 0 ? 0.5f : 1.0f);
@@ -76,7 +78,7 @@ void DryBones::CollisionWithCharacter(Mario& m, CollisionType ct) {
     if (dbState != DB_ALIVE) return;
 
     // stomp từ trên xuống
-    if (ct == COLLISION_TYPE_SOUTH && (m.getState()==JUMPING || m.getState()==FALLING)) {
+    if (ct == COLLISION_TYPE_SOUTH && m.getVelY() > 0.0f) {
         dbState = DB_BROKEN;
         breakTimer = BREAK_DURATION;
         velocity = { 0,0 };
@@ -105,11 +107,29 @@ void DryBones::HandleTileCollision(const Tile& t, CollisionType ct) {
     // đổi hướng khi chạm tường
     if (ct == COLLISION_TYPE_EAST || ct == COLLISION_TYPE_WEST) {
         direction = (direction == LEFT ? RIGHT : LEFT);
-        velocity.x = (direction == LEFT ? -WALK_SPEED : WALK_SPEED);
-        return;
+        if (ct == COLLISION_TYPE_EAST) {
+            setX(t.getX() - getWidth());
+        }
+        else if (ct == COLLISION_TYPE_WEST) {
+            setX(t.getX() + t.getWidth());
+        }
+        velocity.x = -velocity.x;
+        updateCollision();
+        UpdateTexture();
+       /* velocity.x = (direction == LEFT ? -WALK_SPEED : WALK_SPEED);
+        updateCollision();
+        UpdateTexture();*/
+       /* return;*/
     }
-    // xử lý chạm đất/đỉnh như bình thường
-    Enemy::HandleTileCollision(t, ct);
+    else if (ct == COLLISION_TYPE_SOUTH) {
+        setY(t.getY() - getHeight());
+        velocity.y = 0;
+        state = (state == STATE_SHELL) ? STATE_SHELL : ON_GROUND;
+    }
+    else if (ct == COLLISION_TYPE_NORTH) {
+        setY(t.getY() + t.getHeight());
+        velocity.y = 0;
+    }
 }
 
 

@@ -16,7 +16,7 @@ protected:
     float reviveTimer;
     float shakeTimer;
 
-    static constexpr float BREAK_DURATION = 0.5f;  // thời gian collapse
+    static constexpr float BREAK_DURATION = 1.0f;  // thời gian collapse
     static constexpr float REVIVE_DURATION = 1.5f;  // thời gian để shake rồi hồi sinh
     static constexpr float WALK_SPEED = 50.0f;
 
@@ -24,6 +24,16 @@ public:
     DryBones(Vector2 pos, Texture2D tex);
     void Update() override;
     void draw()   override;
+    void UpdateTexture() override {
+        // Cập nhật texture dựa trên trạng thái
+        if (dbState == DB_ALIVE) {
+            texture = Singleton<ResourceManager>::getInstance().getTexture(
+                std::string("DryBones_") + (direction == LEFT ? "LEFT" : "RIGHT") + "_0");
+        }
+        else if (dbState == DB_BROKEN) {
+            texture = Singleton<ResourceManager>::getInstance().getTexture("DryBones_Collapse");
+        }
+	}
     void CollisionWithCharacter(Mario& m, CollisionType ct) override;
     void HandleTileCollision(const Tile& t, CollisionType ct) override;
 };
