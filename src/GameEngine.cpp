@@ -1,4 +1,4 @@
-#include "../include/GameEngine.h"
+﻿#include "../include/GameEngine.h"
 #include"../include/Character.h"
 #include "../include/GUI.h"
 #include "../include/Effect.h"
@@ -104,7 +104,8 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std:
     Vector2 Msize = map.getMapSize();
     camera.loadRenderTexture(Msize);
 
-    blocks = map.getBlocks();
+    //blocks = map.getBlocks();
+	tileGrid = map.getTileGrid();
     enemies = map.getEnemies();
     items = map.getItems();
     decor = map.getDecor();
@@ -116,12 +117,12 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std:
     deltaTime = 0.f;
     BackGroundPos = { {0, 0}, {(float)GetScreenWidth(), 0}, {(float)GetScreenWidth() * 2, 0} };
 
-    ItemBlock* itemblock1 = new ItemBlock({ 100, 800 }, MUSHROOM, 0);
-    ItemBlock* itemblock2 = new ItemBlock({ 132, 800 }, STAR, 0);
-    ItemBlock* itemblock3 = new ItemBlock({ 164, 800 }, FLOWER, 0);
-    blocks.push_back(itemblock1);
-    blocks.push_back(itemblock2);
-    blocks.push_back(itemblock3);
+    //ItemBlock* itemblock1 = new ItemBlock({ 100, 800 }, MUSHROOM, 0);
+    //ItemBlock* itemblock2 = new ItemBlock({ 132, 800 }, STAR, 0);
+    //ItemBlock* itemblock3 = new ItemBlock({ 164, 800 }, FLOWER, 0);
+    //blocks.push_back(itemblock1);
+    //blocks.push_back(itemblock2);
+    //blocks.push_back(itemblock3);
     
     for (int i = 0; i < 10; i++) {
         Coin* coin = new Coin(STATIC_COIN, { (float)i * 50, 600 });
@@ -155,15 +156,21 @@ GameEngine::~GameEngine() {
     for (size_t i = 0; i < effects.size(); ++i) {
         delete effects[i];
     }
-    for (size_t i = 0; i < blocks.size(); ++i) {
-        delete blocks[i];
+    //for (size_t i = 0; i < blocks.size(); ++i) {
+    //    delete blocks[i];
+    //}
+    for (size_t i = 0; i < tileGrid.size(); i++) {
+        for (size_t j = 0; j < tileGrid[i].size(); j++) {
+            delete tileGrid[i][j];
+        }
     }
     for (size_t i = 0; i < covers.size(); i++) {
         delete covers[i];
     }
     //multiplayers.clear();
     enemyFireball.clear();
-    blocks.clear();
+    //blocks.clear();
+    tileGrid.clear();
     enemies.clear();
     items.clear();
     effects.clear();
@@ -200,8 +207,14 @@ void GameEngine::update()
     if ((*multiplayers).empty()) return;
     if ((*multiplayers)[0] == nullptr) return;
 
+	Rectangle cameraView = camera.getViewRect();
+    float margin = 120.0f; // Margin for camera view
+    auto isInView = [&](float x, float y, float w = 32, float h = 32) {
+        return CheckCollisionRecs(cameraView, { x - margin, y - margin, w + 2 * margin, h + 2 * margin });
+    };
+
     if (IsKeyPressed(KEY_ENTER) || GUI::setting_is_pressed) {
-        if (GUI::setting_is_pressed) 
+        if (GUI::setting_is_pressed)
             GUI::setting_is_pressed = false;
         isPaused = !isPaused;
         if (died)
@@ -262,55 +275,68 @@ void GameEngine::update()
             BackGroundPos[i].x = minX - map.BgWidth;
         }
     }
-    for (size_t i = 0; i < enemyFireball.size(); i++) {
-        if (enemyFireball[i]->isDead() || enemyFireball[i]->isMaxTime()) {
-            delete enemyFireball[i];
-            enemyFireball.erase(enemyFireball.begin() + i);
-            i--;
+	// enemy fireball update
+	for (auto* ef : enemyFireball) {
+		if (!isInCameraView(ef->getRect()))
+			continue; // skip drawing this fireball
+        if (ef->isDead() || ef->isMaxTime()) {
+            delete ef;
+            enemyFireball.erase(std::remove(enemyFireball.begin(), enemyFireball.end(), ef), enemyFireball.end());
+            continue; // skip to next iteration
         }
-        else
-            enemyFireball[i]->Update();
-    }
+        else 
+			ef->Update();
+	}
 
-    for (size_t i = 0; i < blocks.size(); i++) {
-        if (blocks[i]->isDead()) {
-            delete blocks[i];
-            blocks.erase(blocks.begin() + i);
-            i--;
+    // blocks
+    for (size_t i = 0; i < tileGrid.size(); i++) {
+        for (size_t j = 0; j < tileGrid[0].size(); j++) {
+            Blocks* block = tileGrid[i][j];
+            if (block == nullptr) continue;
+			if (!isInCameraView(block->getRect()))
+				continue; // skip drawing this block
+            if (block->isDead()) {
+                delete block;
+                tileGrid[i][j] = nullptr;
+            }
+            else {
+                block->Update();
+            }
         }
-        else
-            blocks[i]->Update();
     }
-
-    for (size_t i = 0; i < items.size(); i++) {
-        if (items[i]->isDead()) {
-            delete items[i];
-            items.erase(items.begin() + i);
-            i--;
+    // item
+    for (auto* item : items) {
+        if (!isInCameraView(item->getRect())) 
+            continue; // skip drawing this item
+        if (item->isDead()) {
+            delete item;
+            items.erase(std::remove(items.begin(), items.end(), item), items.end());
         }
         else
-            items[i]->Update();
+            item->Update();
     }
-
-    for (size_t i = 0; i < effects.size(); i++) {
-        if (effects[i]->isDead()) {
-            delete effects[i];
-            effects.erase(effects.begin() + i);
-            i--;
+    // effect
+	for (auto* ef : effects) {
+		if (!isInCameraView(ef->getRect()))
+			continue; // skip drawing this effect
+		if (ef->isDead()) {
+			delete ef;
+			effects.erase(std::remove(effects.begin(), effects.end(), ef), effects.end());
+		}
+		else
+			ef->Update();
+	}
+    // enemies
+    for (auto* e : enemies) {
+        if (!e || !isInCameraView(e->getRect()))
+            continue;
+        // skip drawing this enemy
+        if (e->isDead()) {
+            delete e;
+            enemies.erase(std::remove(enemies.begin(), enemies.end(), e), enemies.end());
         }
         else
-            effects[i]->Update();
-    }
-
-    for (size_t i = 0; i < enemies.size(); i++) {
-        if (enemies[i]->isDead()) {
-            delete enemies[i];
-            enemies[i] = nullptr;
-            enemies.erase(enemies.begin() + i);
-            i--;
-        }
-        else
-            enemies[i]->Update();
+            e->Update();
     }
 
     // player udpate
@@ -325,7 +351,8 @@ void GameEngine::update()
                 controlBindings[i].fire
             );
             (*multiplayers)[i]->Update();
-        } else std::cout << "multiplayers[" << i << "] is nullptr!\n";
+        }
+        else std::cout << "multiplayers[" << i << "] is nullptr!\n";
     }
 
     // all collision
@@ -339,54 +366,73 @@ void GameEngine::update()
     else camera.update((*multiplayers)[0]->getX(), (*multiplayers)[0]->getY());
 }
 
-void GameEngine::handleCollision()
-{    
+void GameEngine::handleCollision() {    
     // tiles (collision with character)
+
     CollisionInterface CollI;
-    bool isGrounded = false;
-    for (size_t j = 0; j < blocks.size(); j++) {
-        for (auto& p : *multiplayers) {
-            CollI.HandleCollision(p.get(), blocks[j]);
-            for (auto& fireball : *p->getFireBalls()) {
-                CollI.HandleCollision(fireball, blocks[j]);
-            }
-        }
-        
-        for (size_t i = 0; i < enemies.size(); i++)
-            CollI.HandleCollision(enemies[i], blocks[j]);
 
-        for (size_t i = 0; i < items.size(); i++) 
-            CollI.HandleCollision(items[i], blocks[j]);
-
-        for (size_t i = 0; i < enemyFireball.size(); i++)
-            CollI.HandleCollision(enemyFireball[i], blocks[j]);
+    // for player
+    for (auto& p : *multiplayers) {
+        Vector2 pos = p->getPosition();
+        auto nearbyBlocks = getNearbyBlocks(pos, 2);
+        for (Blocks* b : nearbyBlocks) {
+            if (b == nullptr) continue;
+            CollI.HandleCollision(p.get(), b);
+        }
+		for (auto& fireball : *p->getFireBalls()) {
+			auto nearby = getNearbyBlocks(fireball->getPosition(), 2);
+			for (Blocks* b : nearby) {
+				if (b == nullptr) continue;
+				CollI.HandleCollision(fireball, b);
+			}
+		}
     }
-    // for items
-    for (size_t i = 0; i < enemies.size(); i++) {
-        for (auto& p : *multiplayers) {
-            CollI.HandleCollision(p.get(), enemies[i]);
-            for (auto& fireball : *p->getFireBalls()) {
-                CollI.HandleCollision(fireball, enemies[i]);
-            }
+
+    // enemies
+    for (auto& enemy : enemies) {
+        auto nearby = getNearbyBlocks(enemy->getPosition(), 2);
+        for (Blocks* b : nearby)
+            CollI.HandleCollision(enemy, b);
+    }
+    // items    
+    for (auto& item : items) {
+        auto nearby = getNearbyBlocks(item->getPosition(), 2);
+        for (Blocks* b : nearby)
+            CollI.HandleCollision(item, b);
+    }   
+	// enemy fireball
+	for (size_t i = 0; i < enemyFireball.size(); i++) {
+		auto nearby = getNearbyBlocks(enemyFireball[i]->getPosition(), 2);
+		for (Blocks* b : nearby) {
+			CollI.HandleCollision(enemyFireball[i], b);
+		}
+	}
+
+    // player vs enemy
+    for (auto& p : *multiplayers) {
+        for (auto& e : enemies)
+            CollI.HandleCollision(p.get(), e);
+        for (auto& fireball : *p->getFireBalls()) {
+            for (auto& e : enemies)
+                CollI.HandleCollision(fireball, e);
         }
     }
-    // player item
-    for (size_t i = 0; i < items.size(); i++) {
-        for (auto& p : *multiplayers) {
-            CollI.HandleCollision(p.get(), items[i]);
-        } 
-    }
-    // enemy fireball
-    for (size_t i = 0; i < enemyFireball.size(); i++) {
+
+    // Player vs Items
+    for (auto& p : *multiplayers)
+        for (auto& item : items)
+            CollI.HandleCollision(p.get(), item);
+    // Enemy fireball ↔ player
+    for (auto& ef : enemyFireball)
         for (auto& p : *multiplayers)
-            CollI.HandleCollision(enemyFireball[i], p.get());
-    }
+            CollI.HandleCollision(ef, p.get());
 }
 // draw
 void GameEngine::draw()
 {
     camera.beginDrawing();
     ClearBackground(SKYBLUE);
+
     map.drawBackGround(camera.getSize(), camera.getScale());
     //map.drawMap();
    
@@ -398,18 +444,33 @@ void GameEngine::draw()
     bool drawCover = true;
     
     for (Entity* dec : decor) {
-        dec->draw();
+		if (!dec || !isInCameraView(dec->getRect())) continue;
+		dec->draw();
     }
 
-    for (size_t i = 0; i < enemyFireball.size(); i++) {
-        enemyFireball[i]->draw();
+    // enemy fireball draw
+    for (auto* ef : enemyFireball) {
+		if (!ef || !isInCameraView(ef->getRect())) 
+			continue; // skip drawing this fireball
+        ef->draw();
     }
-    for (size_t i = 0; i < enemies.size(); i++) {
-        enemies[i]->draw();
+	// enemy draw
+    for (auto* e : enemies) {
+        if (!e || !isInCameraView(e->getRect()))
+            continue; // skip drawing this enemy
+		e->draw();
     }
-    for (size_t i = 0; i < blocks.size(); i++) {
-        blocks[i]->draw();
-    }
+    // tile draw
+	for (size_t i = 0; i < tileGrid.size(); i++) {
+		for (size_t j = 0; j < tileGrid[i].size(); j++) {
+			if (tileGrid[i][j] != nullptr) {
+                auto* block = tileGrid[i][j];
+                if (!isInCameraView(block->getRect()))
+                    continue;
+                block->draw();
+			}
+		}
+	}
     // draw the characters
     for (size_t i = 0; i < (*multiplayers).size(); i++) {
         (*multiplayers)[i]->draw();
@@ -435,17 +496,28 @@ void GameEngine::draw()
             }
         }
     }
-    if (drawCover == true)
-        for (size_t i = 0; i < covers.size(); i++) {
-            covers[i]->draw();
-        }
-    for (size_t i = 0; i < items.size(); i++) {
-        items[i]->draw();
+    // cover
+    if (drawCover == true) {
+		for (auto* cover : covers) {
+			if (!cover || !isInCameraView(cover->getRect()))
+				continue; // skip drawing this cover
+			cover->draw();
+		}
     }
-    for (size_t i = 0; i < effects.size(); i++) {
-        effects[i]->draw();
+    // item draw
+    for (auto* item : items) {
+		if (!item || !isInCameraView(item->getRect())) 
+			continue; // skip drawing this item
+        item->draw();
     }
-
+    // effects draw
+    for (auto* ef : effects) {
+		if (!ef || !isInCameraView(ef->getRect()))
+			continue; // skip drawing this effect
+        ef->draw();
+    }
+    //Rectangle r = camera.getViewRect();
+    //DrawRectangleLines(r.x, r.y, r.width, r.height, RED);
 
     camera.endDrawing();
 
@@ -481,6 +553,7 @@ void GameEngine::draw()
             }
         }
     }
+
     EndDrawing();
 
 }
@@ -598,6 +671,11 @@ void GameEngine::resetGame()
     for (size_t i = 0; i < blocks.size(); ++i) {
         delete blocks[i];
     }
+	for (size_t i = 0; i < tileGrid.size(); i++) {
+		for (size_t j = 0; j < tileGrid[i].size(); j++) {
+			delete tileGrid[i][j];
+		}
+	}
     for (size_t i = 0; i < enemies.size(); ++i) {
         delete enemies[i];
     }
@@ -615,7 +693,8 @@ void GameEngine::resetGame()
     }
 
     enemyFireball.clear();
-    blocks.clear();
+    //blocks.clear();
+    tileGrid.clear();
     enemies.clear();
     items.clear();
     effects.clear();
@@ -630,7 +709,8 @@ void GameEngine::resetGame()
     RESOURCE_MANAGER.playMusic(level->getMusic());
     map.LoadFromJsonFile(level->getMapPath());
     map.loadBackgroundTexture(level->getBackGroundName());
-    blocks = map.getBlocks();
+    //blocks = map.getBlocks();
+	tileGrid = map.getTileGrid();
     enemies = map.getEnemies();
     items = map.getItems();
     decor = map.getDecor();
@@ -651,3 +731,23 @@ std::vector<std::unique_ptr<Character>>& GameEngine::getMultiplayers()
     return *multiplayers;
 }
 
+std::vector<Blocks*> GameEngine::getNearbyBlocks(Vector2 pos, int range)
+{
+    std::vector<Blocks*> nearbyBlocks;
+    int tileX = pos.x / 32;
+	int tileY = pos.y / 32;
+	for (int x = tileX - range; x <= tileX + range; ++x) {
+		for (int y = tileY - range; y <= tileY + range; ++y) {
+			if (x >= 0 && x < tileGrid[0].size() && y >= 0 && y < tileGrid.size()) {
+				Blocks* block = tileGrid[y][x];
+				if (block != nullptr) nearbyBlocks.push_back(block);
+			}
+		}
+	}
+	return nearbyBlocks;
+}
+
+bool GameEngine::isInCameraView(Rectangle entityRect) const {
+    Rectangle view = camera.getViewRect();
+    return CheckCollisionRecs(view, entityRect);
+}

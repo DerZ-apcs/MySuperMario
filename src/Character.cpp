@@ -75,25 +75,6 @@ Character::Character(Vector2 pos, Vector2 sz, CharacterState characterstate, Cha
 	else {
 		throw std::runtime_error("Unknown character type");
 	}
-
-	//this->size = { (float)texture.width, (float)texture.height };
-	//if (characterType == MARIO || characterType == LUIGI) {
-	//	if (characterstate == STATE_SMALL)
-	//		this->size = { 32, 40 };
-	//	else this->size = { 32, 56 };
-	//}
-	//else if (characterType == PEACH) {
-	//	/*if (characterstate == STATE_SMALL)
-	//		this->size = { 26, 46 };
-	//	else this->size = { 36, 64 };*/
-	//	size = { (float)texture.width, (float)texture.height };
-	//}
-	//else if (characterType == MARISA) {
-	//	/*if (characterstate == STATE_SMALL)
-	//		this->size = { 37, 54 };
-	//	else this->size = { 51, 61 };*/
-	//	size = { (float)texture.width, (float)texture.height };
-	//}
 	
 	CollNorth.setSize({ size.x / 2, 5 });
 	CollSouth.setSize({ size.x / 2, 5 });
@@ -514,8 +495,6 @@ void Character::Update()
 	else if (characterType == MARISA) {
 		size = (Character_state == STATE_SMALL || Character_state == STATE_STAR) ? Vector2{ 37, 54 } : Vector2{ 51, 61 };
 	}
-	//cout << size.x << " " << size.y << endl;
-
 	updateCollision();
 	UpdateTexture();
 }

@@ -5,7 +5,6 @@ T clamp(T value, T minVal, T maxVal) {
     return std::max(minVal, std::min(value, maxVal));
 }
 
-
 GameCamera::GameCamera(float width, float height, float initialScale)
     : cameraWidth(width), cameraHeight(height), cameraX(0), cameraY(0), scale(initialScale) {
     renderTexture = LoadRenderTexture(0, 0);
@@ -99,7 +98,7 @@ void GameCamera::update(float p1x, float p1y, float p2x, float p2y) {
 void GameCamera::render() const {
     Rectangle sourceRec = {
         cameraX,
-        cameraY,
+		cameraY,
         cameraWidth / scale,
         -cameraHeight / scale // Negative height to flip vertically
     };
@@ -115,6 +114,9 @@ void GameCamera::render() const {
 
 void GameCamera::beginDrawing() {
     BeginTextureMode(renderTexture);
+    Rectangle view = getViewRect();
+    DrawRectangleLines(view.x, view.y, view.width, view.height, RED);  // ✅ draw it here
+    DrawRectangle(view.x, view.y, view.width, view.height, ColorAlpha(RED, 0.2f));
     ClearBackground(RAYWHITE);
 }
 
@@ -135,6 +137,19 @@ Vector2& GameCamera::getSize() const
 float GameCamera::getScale() const
 {
     return scale;
+}
+
+Rectangle GameCamera::getViewRect() const
+{
+	float scaledWidth = cameraWidth / scale;
+	float scaledHeight = cameraHeight / scale;
+	float margin = 100.f; // Margin for camera view
+    return Rectangle{
+        cameraX - margin, // top-left x in world space
+        cameraY - margin, // top-left y in world space
+        scaledWidth + margin * 2,
+        scaledHeight + margin * 5 
+	};
 }
 
 Vector2& GameCamera::getPos() const

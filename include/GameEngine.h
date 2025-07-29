@@ -20,7 +20,6 @@
 class Enemy;
 class Effect;
 class Level;
-
 class GameEngine {
 private:
     struct PlayerControls {
@@ -40,6 +39,8 @@ private:
     std::vector<Effect*> effects;
     std::vector<Blocks*> decor;
 	std::vector<Blocks*> covers; // for decor blocks
+	std::vector<std::vector<Blocks*>> tileGrid; // for tile grid
+
 	std::vector<Rectangle> secretAreas; // for secret areas
     std::vector<Entity*> testEntities;
     GameCamera camera;
@@ -76,6 +77,8 @@ public:
     void resetGame();
     Vector2 getBound();
     std::vector<std::unique_ptr<Character>>& getMultiplayers(); 
+    std::vector<Blocks*> getNearbyBlocks(Vector2 pos, int range);
+    bool isInCameraView(Rectangle entityRect) const;;
 };
 extern GameEngine* globalGameEngine;
 

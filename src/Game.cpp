@@ -36,7 +36,7 @@ void Game::init()
 	if (backgroundTexture.id == 0) {
 		backgroundTexture = RESOURCE_MANAGER.getTexture("MENU_SCREEN");
 	}
-	SetTargetFPS(140);
+	SetTargetFPS(60);
 	
 	registerBlocks();
 	registerItems();
@@ -45,7 +45,7 @@ void Game::init()
 	RESOURCE_MANAGER.playMusic("TITLE");
 	// load map&level
 	loadedLevel.push_back(std::make_unique<Level>(
-		Map::basePath + "kmap_1.json", "BACKGROUND_1", "MUSIC_1", "1-1"));
+		Map::basePath + "MAP_1.1.json", "BACKGROUND_1", "MUSIC_1", "1 - 1"));
 	loadedLevel.push_back(std::make_unique<Level>(
 		Map::basePath + "kmap_2.json", "BACKGROUND_2", "MUSIC_2", "1-2"));
 	loadedLevel.push_back(std::make_unique<Level>(

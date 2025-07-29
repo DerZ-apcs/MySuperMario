@@ -28,5 +28,7 @@ public:
 	Vector2& getSize() const;
 	Vector2& getPos() const;
 	float getScale() const;
+	Rectangle getViewRect() const;
 };
+
 #endif

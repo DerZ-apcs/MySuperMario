@@ -36,6 +36,7 @@ private:
 	float height;
 
 	std::vector<Blocks*> blockArray; // replace tile
+	std::vector<std::vector<Blocks*>> tileGrid; // for tile grid
 	std::vector<Enemy*> enemies;
 	std::vector<Item*> items;
 	std::vector<Blocks*> decors;
@@ -60,6 +61,7 @@ public:
 	//bool stringToEnemyType(std::string& enemyTypeStr, std::string& subtype, ENEMY);
 
 	std::vector<Blocks*> getBlocks() const;
+	std::vector<std::vector<Blocks*>> getTileGrid() const;
 	std::vector<Enemy*> getEnemies() const;
 	std::vector<Item*> getItems() const;
 	std::vector<Blocks*> getDecor() const;
