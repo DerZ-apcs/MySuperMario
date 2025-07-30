@@ -3,14 +3,16 @@
 #include "../include/Enemy.h"
 
 class Goomba : public Enemy {
-private:
+protected:
     float pauseTimer;
     bool isPaused;
-    float detectMarioRange;
     bool beattacked;
+    float collisionTimer;
+    float detectMarioRange;
 public:
     bool isAttacked() const;
     ENEMY_TYPE getEnemyType() const;
+    GOOMBA_TYPE getGoombaType() const;
     Goomba(Vector2 pos, Texture2D texture);
     void Update() override;
     void draw() override;
@@ -25,13 +27,18 @@ private:
     float jumpTimer; // Timer để kiểm soát tần suất nhảy
     float detectMarioRange;
     float collisionTimer;
+    bool hasWings;
+    bool isSearchPaused;
+	float searchCooldownTimer;
 public:
     ENEMY_TYPE getEnemyType() const;
+    GOOMBA_TYPE getGoombaType() const;
     FlyingGoomba(Vector2 pos, Texture2D texture);
     void Update() override;
     void UpdateTexture() override;
     float getScores() const override;
-
+    void setJumpTimer(float time);
+    void stomped() override;
 };
 
 #endif

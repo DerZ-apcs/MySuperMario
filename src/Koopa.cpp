@@ -3,9 +3,9 @@
 
 // Koopa Class Implementation
 Koopa::Koopa(Vector2 pos, Texture2D texture)
-    : Enemy(pos, { 32, 54 }, { 0, 0 }, LEFT, ON_GROUND, texture, 0.2f, 1, GREEN),
+    : Enemy(pos, { 32, 54 }, { 0, 0 }, LEFT, FALLING, texture, 0.2f, 1, GREEN),
     reviveTimer(0.0f), isReviving(false), reviveShakeTimer(0.0f),
-    koopaState(NORMAL_KOOPA), koopaType(YELLOW_KOOPA)
+    koopaState(NORMAL_KOOPA)
 {
 }
 
@@ -91,16 +91,29 @@ void Koopa::draw() {
             DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
         }
 
-       /* CollNorth.draw();
-        CollSouth.draw();
-        CollEast.draw();
-        CollWest.draw();*/
+        if (SETTING.getDebugMode()) {
+            CollNorth.draw();
+            CollSouth.draw();
+            CollEast.draw();
+            CollWest.draw();
+        }
     }
 }
 
 void Koopa::UpdateTexture() {
     std::string dir = direction == RIGHT ? "_RIGHT_" : "_LEFT_";
-    std::string colorType = koopaType == YELLOW_KOOPA ? "Yellow" : "Green";
+    std::string colorType;
+    if (koopaType == GREEN_KOOPA)
+        colorType = "Green";
+    else if (koopaType == RED_KOOPA)
+        colorType = "Red";
+    else if (koopaType == BLUE_KOOPA)
+        colorType = "Blue";
+	else if (koopaType == YELLOW_KOOPA)
+		colorType = "Yellow";
+	else
+		colorType = "Green"; // Default to Green if type is unknown
+
     if (koopaState == SHELL_KOOPA || state == STATE_IS_DYING) {
         if (koopaState == SHELL_KOOPA && velocity.x != 0) {
             frameAcum += GetFrameTime();
@@ -196,6 +209,80 @@ void Koopa::updateCollision()
 ENEMY_TYPE FlyingKoopa::getEnemyType() const {
     return KOOPA;
 }
+
+
+GreenKoopa::GreenKoopa(Vector2 pos, Texture2D texture)
+	: Koopa(pos, texture)
+{
+	koopaType = GREEN_KOOPA;
+	setSize({ 32, 54 });
+	updateCollision();
+	// Set the initial texture for Green Koopa
+	texture = RESOURCE_MANAGER.getTexture("GreenKoopa_LEFT_0");
+	if (texture.id == 0) {
+		throw std::runtime_error("Failed to load Green Koopa texture");
+	}
+}
+
+KOOPA_TYPE GreenKoopa::getKoopaType() const
+{
+    return GREEN_KOOPA;
+}
+
+RedKoopa::RedKoopa(Vector2 pos, Texture2D texture):
+	Koopa(pos, texture)
+{
+	koopaType = RED_KOOPA;
+	setSize({ 32, 54 });
+	updateCollision();
+	// Set the initial texture for Red Koopa
+	texture = RESOURCE_MANAGER.getTexture("RedKoopa_LEFT_0");
+	if (texture.id == 0) {
+		throw std::runtime_error("Failed to load Red Koopa texture");
+	}
+}
+
+KOOPA_TYPE RedKoopa::getKoopaType() const
+{
+    return RED_KOOPA;
+}
+
+YellowKoopa::YellowKoopa(Vector2 pos, Texture2D texture) :
+	Koopa(pos, texture)
+{
+	koopaType = YELLOW_KOOPA;
+	setSize({ 32, 54 });
+	updateCollision();
+	// Set the initial texture for Yellow Koopa
+	texture = RESOURCE_MANAGER.getTexture("YellowKoopa_LEFT_0");
+	if (texture.id == 0) {
+		throw std::runtime_error("Failed to load Yellow Koopa texture");
+	}
+}
+
+KOOPA_TYPE YellowKoopa::getKoopaType() const
+{
+    return YELLOW_KOOPA;
+}
+
+BlueKoopa::BlueKoopa(Vector2 pos, Texture2D texture) :
+	Koopa(pos, texture)
+{
+	koopaType = BLUE_KOOPA;
+	setSize({ 32, 54 });
+	updateCollision();
+	// Set the initial texture for Blue Koopa
+	texture = RESOURCE_MANAGER.getTexture("BlueKoopa_LEFT_0");
+	if (texture.id == 0) {
+		throw std::runtime_error("Failed to load Blue Koopa texture");
+	}
+}
+
+KOOPA_TYPE BlueKoopa::getKoopaType() const
+{
+    return BLUE_KOOPA;
+}
+
 
 //FlyingKoopa::FlyingKoopa(Vector2 pos, Texture2D texture):
 //    Enemy(pos, { 32, 54 }, { 0, 0 }, LEFT, ON_GROUND, texture, 0.2f, 1, GREEN),

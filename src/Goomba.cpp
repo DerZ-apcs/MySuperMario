@@ -16,6 +16,10 @@ ENEMY_TYPE Goomba::getEnemyType() const
 {
     return GOOMBA;
 }
+GOOMBA_TYPE Goomba::getGoombaType() const
+{
+    return NORMAL_GOOMBA;
+}
 void Goomba::Update() {
     Entity::Update();
     if (isReadyForRemoval() || state == STATE_IS_DYING) {
@@ -118,8 +122,6 @@ void Goomba::UpdateTexture() {
 void Goomba::attacked(Direction direction)
 {
     Enemy::attacked();
-
-
 }
 
 float Goomba::getScores() const
@@ -149,14 +151,26 @@ ENEMY_TYPE FlyingGoomba::getEnemyType() const
     return GOOMBA;
 }
 
+GOOMBA_TYPE FlyingGoomba::getGoombaType() const
+{
+    return FLYING_GOOMBA;
+}
+
 // FlyingGoomba Class Implementation
 FlyingGoomba::FlyingGoomba(Vector2 pos, Texture2D texture)
     : Goomba(pos, texture), jumpTimer(0.0f), detectMarioRange(250.0f), collisionTimer(0.0f) {
     velocity.x = -FLYINGGOOMBA_SPEED;
     state = ON_GROUND;
+	hasWings = true; // Flying Goomba always has wings
+	isSearchPaused = false;
+	searchCooldownTimer = 0.0f; // Thêm biến để kiểm soát thời gian chờ
 }
 
 void FlyingGoomba::Update() {
+    if (!hasWings) {
+        Goomba::Update();
+        return;
+    }
     if (isReadyForRemoval() || state == STATE_IS_DYING) {
         if (deathTimer > 0) {
             deathTimer -= GetFrameTime();
@@ -175,51 +189,55 @@ void FlyingGoomba::Update() {
         collisionTimer -= deltaTime;
     }
 
+    bool shouldChase = false;
     for (auto& p : globalGameEngine->getMultiplayers()) {
-        if (p && p->getPhase() != CLEARLEVEL_PHASE && p->getPhase() != DEAD_PHASE && collisionTimer <= 0) {
-            float distance = Vector2Distance(position, p->getPosition());
-            if (distance <= detectMarioRange) {
-                // Mario trong phạm vi phát hiện, thay đổi hướng và tốc độ
-                if (p->getX() < position.x) {
-                    direction = LEFT;
-                    velocity.x = -FLYINGGOOMBA_SPEED * 1.2f; // Tăng tốc khi đuổi
+        if (p && !isSearchPaused && p->getPhase() != CLEARLEVEL_PHASE && p->getPhase() != DEAD_PHASE && collisionTimer <= 0) {
+            float totalDsistance = Vector2Distance(position, p->getPosition());
+            if (totalDsistance <= detectMarioRange) {
+				float horizontalDistance = fabsf(p->getX() - position.x);
+				const float horizontalDeadZone = 2.0f; 
+                if (horizontalDistance < horizontalDeadZone) {
+                    // Bị kẹt theo chiều ngang -> Bắt đầu tạm nghỉ tìm kiếm
+                    isSearchPaused = true;
+                    searchCooldownTimer = 2.0f; // Tạm nghỉ 2 giây
+                    shouldChase = false;        // Buộc quay về hành vi Tuần tra
                 }
                 else {
-                    direction = RIGHT;
-                    velocity.x = FLYINGGOOMBA_SPEED * 1.2f; // Tăng tốc khi đuổi
-                }
-                // Tăng tần suất nhảy khi gần Mario
-                if (distance < detectMarioRange * 0.5f && state == ON_GROUND && jumpTimer > FLYINGGOOMBA_JUMP_INTERVAL * 0.5f) {
-                    velocity.y = -FLYINGGOOMBA_JUMP_VELOCITY;
-                    state = JUMPING;
-                    jumpTimer = 0.0f;
+                    shouldChase = true;
                 }
             }
+        }
+        // --- 3. Thiết lập vận tốc dựa trên hành vi ---
+        if (shouldChase) {
+            // Hành vi Đuổi theo
+            if (p->getX() < position.x) {
+                direction = LEFT;
+                velocity.x = -FLYINGGOOMBA_SPEED * 1.5f;
+            }
             else {
-                // Mario ngoài phạm vi, di chuyển bình thường
-                velocity.x = (direction == LEFT) ? -FLYINGGOOMBA_SPEED : FLYINGGOOMBA_SPEED;
+                direction = RIGHT;
+                velocity.x = FLYINGGOOMBA_SPEED * 1.5f;
             }
         }
         else {
-            // Không có Mario hoặc Mario đang chết, di chuyển bình thường
+            // Hành vi Tuần tra (mặc định)
             velocity.x = (direction == LEFT) ? -FLYINGGOOMBA_SPEED : FLYINGGOOMBA_SPEED;
         }
-
     }
-   
+    // --- 4. Logic nhảy ---
+    jumpTimer += deltaTime;
+    float currentJumpInterval = shouldChase ? (FLYINGGOOMBA_JUMP_INTERVAL * 0.7f) : FLYINGGOOMBA_JUMP_INTERVAL;
+
+    if (state == ON_GROUND && jumpTimer > currentJumpInterval) {
+        velocity.y = -FLYINGGOOMBA_JUMP_VELOCITY;
+        state = JUMPING;
+        jumpTimer = 0.0f;
+    }
+    // Hiệu ứng bay lượn
     static float hoverTimer = 0.0f;
     hoverTimer += deltaTime;
     float hoverOffset = sin(hoverTimer * 3.0f) * 50.0f; // Dao động ±10 pixel
     position.y += hoverOffset * deltaTime;
-
-    // Logic nhảy
-    jumpTimer += deltaTime;
-    if (state == ON_GROUND && jumpTimer > FLYINGGOOMBA_JUMP_INTERVAL) {
-        velocity.y = -FLYINGGOOMBA_JUMP_VELOCITY; // Nhảy ngẫu nhiên
-        state = JUMPING;
-        jumpTimer = 0.0f;
-        // baseY = position.y;
-    }
 
     // Cập nhật vị trí
     position.x += velocity.x * deltaTime;
@@ -232,15 +250,18 @@ void FlyingGoomba::Update() {
             state = FALLING;
         }
     }
-    //Entity::updateCollision();
     Enemy::updateCollision();
     UpdateTexture();
 }
 
 void FlyingGoomba::UpdateTexture() {
+    if (!hasWings) {
+        Goomba::UpdateTexture();
+        return;
+    }
+
     if (state == STATE_IS_DYING) {
         texture = RESOURCE_MANAGER.getTexture("Goomba_Dead");
-        /* isFlipped = true;*/
         return;
     }
 
@@ -263,5 +284,24 @@ void FlyingGoomba::UpdateTexture() {
 float FlyingGoomba::getScores() const
 {
     return SCORE_STOMP_GOOMBA + 50;
+}
+void FlyingGoomba::setJumpTimer(float time) {
+	this->jumpTimer = time;
+}
+void FlyingGoomba::stomped()
+{
+	if (isReadyForRemoval() || state == STATE_IS_DYING) return;
+    // Handle character stomping on the flying goomba
+    if (hasWings) {
+        hasWings = false;
+        position.y += 16;
+        size = { 32, 32 };
+        velocity.y = 0;
+        velocity.x = (direction == LEFT) ? -GOOMBA_SPEED : GOOMBA_SPEED;
+        state = FALLING;
+    }
+    else {
+        Goomba::stomped();
+    }
 }
 

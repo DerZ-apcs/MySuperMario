@@ -299,6 +299,11 @@ bool Character::isInvicible() const
 	return invicibleStarTime > 0.f;
 }
 
+bool Character::isImmortal() const
+{
+	return countImmortalTime > 0.f;
+}
+
 bool Character::isDucking() const
 {
 	return isducking;
@@ -514,10 +519,12 @@ void Character::draw()
 			{ position.x, position.y, size.x, size.y }, { 0, 0 }, 0.0f, WHITE);
 		//DrawTexture(texture, position.x, position.y, WHITE);
 	// for debug
-	CollEast.draw();
-	CollSouth.draw();
-	CollNorth.draw();
-	CollWest.draw();
+	if (SETTING.getDebugMode()) {
+		CollEast.draw();
+		CollSouth.draw();
+		CollNorth.draw();
+		CollWest.draw();
+	}
 }
 
 void Character::HandleInput()

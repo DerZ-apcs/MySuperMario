@@ -42,6 +42,7 @@ public:
 	virtual CharacterState& getPrevCharacterState();
 
 	bool isInvicible() const;
+	bool isImmortal() const;
 	bool isDucking() const;
 	bool isLostLife() const;
 	bool isIdle() const;

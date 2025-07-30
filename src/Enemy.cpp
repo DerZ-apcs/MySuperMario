@@ -61,12 +61,12 @@ void Enemy::draw() {
         }
         DrawTexturePro(texture, source, { position.x, position.y, size.x, size.y }, { 0.f, 0.f }, 0.f, WHITE);
         
-//#ifdef DEBUG
-        /*CollNorth.draw();
-        CollSouth.draw();
-        CollEast.draw();
-        CollWest.draw();*/
-//#endif
+        if (SETTING.getDebugMode()) {
+            CollNorth.draw();
+            CollSouth.draw();
+            CollEast.draw();
+            CollWest.draw();
+        }
     }
 }
 
@@ -83,11 +83,14 @@ void Enemy::CollisionWithFireball(FireBall* fireball) {
     if (!isDead() && state != STATE_IS_DYING && !fireball->isDead()) {
         fireball->setEntityDead();
         state = STATE_IS_DYING;
+        //if (getEnemyType() == BOBOMB) {
+
+        //}
         deathTimer = ENEMY_DEATH_TIMER_DEFAULT;
         velocity.y = -250; // Nhảy lên nhẹ
         velocity.x = (rand() % 100) - 50; // Văng ngang ngẫu nhiên
         updateCollision();
-        RESOURCE_MANAGER.playSound("stomped.wav");
+        if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomped.wav");
         // text effect
         TextEffect* text = new TextEffect(to_string(SCORE_STOMP_GOOMBA).c_str(), Vector2{this->getCenterX(), this->getTop()});
         text->setTextColor(WHITE);

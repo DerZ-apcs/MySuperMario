@@ -81,11 +81,12 @@ void PowerItem::draw() {
 
 	DrawTexture(texture, position.x, position.y, WHITE);
 	// debug
-	/*CollNorth.draw();
-	CollSouth.draw();
-	CollEast.draw();
-	CollWest.draw();*/
-
+	if (SETTING.getDebugMode()) {
+		CollNorth.draw();
+		CollSouth.draw();
+		CollEast.draw();
+		CollWest.draw();
+	}
 }
 
 ITEM_TYPE PowerItem::getItemType() const

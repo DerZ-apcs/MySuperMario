@@ -12,7 +12,7 @@ private:
 	bool fullscreen; // fullscreen on/off
 	bool sound; // sound effect on/off
 	bool music; // music on/off
-
+	bool isdebugMode = false;
 	Setting() {};
 	Setting(const Setting& other) = delete;
 	Setting& operator=(const Setting& other) = delete;
@@ -34,6 +34,14 @@ public:
 	void setSound(bool isEnabled);
 	void setMusic(bool isEnabled);
 	void resetToDefaults();
+
+	void setDebugMode(bool isDebug) {
+		this->isdebugMode = isDebug;
+	}
+	bool getDebugMode() const {
+		return isdebugMode;
+	}
+
 };
 
 #endif

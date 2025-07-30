@@ -9,6 +9,7 @@ const float PiranhaPlant::DURATION_BETWEEN_POPUP = 1.f; // rest between two pops
 PiranhaPlant::PiranhaPlant(Vector2 pos, Texture2D texture)
     : Enemy(pos, { 32, 66 }, { 0, 0 }, RIGHT, ON_GROUND, texture, 0.2f, 1, RED),
     popUpTimer(0.0f), isPoppingUp(true), popUpHeight(66.0f), baseY(pos.y), delayTimer(0.2f), invincibilityTimer(0.0f) { 
+    gravityAvailable = true;
 }
 
 void PiranhaPlant::Update() {
@@ -83,10 +84,12 @@ void PiranhaPlant::draw() {
     //Vector2 origin = { (texture.width * squashScale) / 2, (texture.height * squashScale) / 2 };
     DrawTexturePro(texture, source, dest, {0.f, 0.f}, 0.0f, WHITE);
     
-    /*CollNorth.draw();
-    CollSouth.draw();
-    CollEast.draw();
-    CollWest.draw();*/
+    if (SETTING.getDebugMode()) {
+        CollNorth.draw();
+        CollSouth.draw();
+        CollEast.draw();
+        CollWest.draw();
+    }   
 }
 
 void PiranhaPlant::UpdateTexture() {
@@ -132,23 +135,3 @@ float PiranhaPlant::getScores() const
 {
     return SCORE_STOMP_REX;
 }
-
-//void PiranhaPlant::CollisionWithCharacter(Mario& mario, CollisionType collType) {
-
-//    // Chỉ gây sát thương khi ở trạng thái trồi lên hoàn toàn
-//    bool isFullyPoppedUp = (popUpTimer >= POP_UP_DURATION && popUpTimer < POP_UP_DURATION + STAY_UP_DURATION);
-//
-//
-//    // Mario nhảy lên đầu (stomp)
-//    if (collType == COLLISION_TYPE_SOUTH && (mario.getState() == JUMPING || mario.getState() == FALLING)) {
-//        state = STATE_IS_DYING;
-//        velocity.x = 0;
-//        velocity.y = 0;
-//        deathTimer = ENEMY_DEATH_TIMER_DEFAULT;
-//        invincibilityTimer = 0.5f;
-//        mario.setVelY(MARIO_BOUNCE_VELOCITY);
-//        mario.addScore(SCORE_STOMP_GOOMBA);
-//        RESOURCE_MANAGER.playSound("STOMP");
-//        updateSquashEffect();
-//        UpdateTexture();
-//    }

@@ -52,6 +52,12 @@ void FireBall::draw()
 {	
 	if (ismaxTime() || isDead()) return;
 	DrawTexture(texture, position.x, position.y, WHITE);
+	if (SETTING.getDebugMode()) {
+		CollNorth.draw();
+		CollSouth.draw();
+		CollEast.draw();
+		CollWest.draw();
+	}
 }
 
 void FireBall::updateCollision()

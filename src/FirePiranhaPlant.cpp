@@ -162,14 +162,21 @@ void HomingFirePiranha::ShootFireBall() {
 
     for (auto& p : globalGameEngine->getMultiplayers()) {
         if (p && p->getPhase() != CLEARLEVEL_PHASE && p->getPhase() != DEAD_PHASE) {
+			float distanceToCharacter = Vector2Distance(position, p->getPosition());
+            if (distanceToCharacter > DETECTION_RANGE)
+                continue;
             Direction dir = (p->getX() > position.x) ? RIGHT : LEFT;
             Vector2 fireBallPos = { position.x, position.y + 10 };
-            Vector2 fireBallVel = (dir == RIGHT) ? Vector2{ 200.0f, -200.0f } : Vector2{ -400.0f, -200.0f };
+            Vector2 targetPos = p->getPosition();
+			Vector2 directionToCharacter = Vector2Subtract(targetPos, fireBallPos);
+			Vector2 normalizedDirection = Vector2Normalize(directionToCharacter);
+
+            // Dat toc do cho fireball
+            const float fireballSpeed = 400.f;
+			Vector2 fireBallVel = Vector2Scale(normalizedDirection, fireballSpeed);
+            // Tạo quả cầu lửa với isHoming = false để nó không bám theo Mario
             bool isHoming = false;
-            float distanceToMario = Vector2Distance(position, p->getPosition());
-            if (distanceToMario <= DETECTION_RANGE) {
-                isHoming = true; // Kích hoạt nhắm mục tiêu khi Mario ở gần
-            }
+
             EnemyFireBall* fireball = new EnemyFireBall(fireBallPos, { 16, 16 }, fireBallVel, dir, 2.0f, isHoming);
             globalGameEngine->addEnemyFireBall(fireball);
         }

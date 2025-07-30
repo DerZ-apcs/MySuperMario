@@ -1,4 +1,4 @@
-#include "../include/CollisionInfo.h"
+﻿#include "../include/CollisionInfo.h"
 #include "../include/Character.h"
 #include "../include/Blocks.h"
 #include "../include/Floor.h"
@@ -19,6 +19,7 @@
 #include "../include/PowerItem.h"
 #include <iostream>
 #include <GameEngine.h>
+#include <BobOmb.h>
 
 inline Rectangle getProximityRect(Entity& entity, float radius)
 {
@@ -446,11 +447,15 @@ bool EnemyBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	case COLLISION_TYPE_NORTH:
 		enemy->setPosition(Vector2{ enemy->getX(), block->getY() + block->getHeight() });
 		enemy->setVelY(0);
+
 		break;
 	case COLLISION_TYPE_SOUTH:
 		enemy->setPosition(Vector2{ enemy->getX(), block->getY() - enemy->getHeight() });
 		enemy->setState(ON_GROUND);
 		enemy->setVelY(0);
+		if (enemy->getEnemyType() == GOOMBA && dynamic_cast<Goomba*>(enemy)->getGoombaType() == FLYING_GOOMBA) {
+			dynamic_cast<FlyingGoomba*>(enemy)->setJumpTimer(0.5f);
+		}
 		break;
 	case COLLISION_TYPE_EAST:
 		enemy->setPosition(Vector2{ block->getX() - enemy->getWidth(), enemy->getY() });
@@ -465,8 +470,10 @@ bool EnemyBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	default:
 		break;
 	}
-	if (enemy->getEnemyType() == REX || enemy->getEnemyType() == GOOMBA)
-		enemy->setCollisionTimer(0.5f); // vo hieu hoa duoi character 0.5s
+	if (Colltype == COLLISION_TYPE_EAST || Colltype == COLLISION_TYPE_WEST) {
+		if (enemy->getEnemyType() == REX || enemy->getEnemyType() == GOOMBA)
+			enemy->setCollisionTimer(0.5f); // vo hieu hoa duoi character 0.5s
+	}
 	return true;
 }
 
@@ -733,6 +740,22 @@ bool FireBallEnemyInfo::HandleCollision(Entity* entityA, Entity* entityB)
 		return false;
 	if (enemy->getEnemyType() == MUNCHER)
 		return false;
+	if (enemy->getEnemyType() == BOBOMB) {
+		if (enemy->isDying()) return false;
+		dynamic_cast<BobOmb*>(enemy)->Explode(); // Nổ ngay khi bị bắn
+		fireball->setEntityDead();
+		return true;
+	}
+	if (enemy->getEnemyType() == BUZZYBEETLE) {
+		fireball->setEntityDead();
+		if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomped.wav");
+		enemy->setVelY(-400); // Buzzy Beetle bị bắn sẽ bay lên
+		enemy->setState(JUMPING);
+		SmokeEffect* smokeright = new SmokeEffect(Vector2{ enemy->getCenter().x, enemy->getTop() }, Vector2{ 60, 120 });
+		globalGameEngine->addEffect(smokeright);
+		SmokeEffect* smokeleft = new SmokeEffect(Vector2{ enemy->getCenter().x, enemy->getTop() }, Vector2{ -60, 120 });
+		globalGameEngine->addEffect(smokeleft);
+	}
 	CollisionType Colltype = fireball->CheckCollision(*enemy);
 	if (Colltype == COLLISION_TYPE_NONE)
 		return false;
@@ -830,8 +853,6 @@ std::unique_ptr<CollisionInfo> CollisionInfoSelector::getInfor(EntityType typeA,
 	if (typeA == ENEMY && typeB == ENEMY) {
 		return std::make_unique<EnemyEnemyInfo>();
 	}
-
-
 	return nullptr;
 }
 

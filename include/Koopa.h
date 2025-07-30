@@ -6,15 +6,16 @@ enum KoopaState {
     NORMAL_KOOPA,
     SHELL_KOOPA
 };
+
 class Koopa : public Enemy {
-private:
+protected:
     KoopaState koopaState;
     KOOPA_TYPE koopaType;
     float reviveTimer;
     bool isReviving; // Trạng thái rung trước khi hồi sinh
     float reviveShakeTimer; // Timer cho hiệu ứng rung
 public:
-    KOOPA_TYPE getKoopaType() const;
+    virtual KOOPA_TYPE getKoopaType() const = 0;
     ENEMY_TYPE getEnemyType() const;
     Koopa(Vector2 pos, Texture2D texture);
     void setKoopaType(KOOPA_TYPE type);
@@ -26,6 +27,31 @@ public:
     void stomped();
     void kicked(Direction direction) override;
     void updateCollision() override;
+};
+
+class YellowKoopa : public Koopa {
+public:
+    YellowKoopa(Vector2 pos, Texture2D texture);
+    KOOPA_TYPE getKoopaType() const override;
+};
+
+class BlueKoopa : public Koopa {
+public:
+	BlueKoopa(Vector2 pos, Texture2D texture);
+    KOOPA_TYPE getKoopaType() const override;
+};
+
+class GreenKoopa : public Koopa {
+public:
+	GreenKoopa(Vector2 pos, Texture2D texture);
+    KOOPA_TYPE getKoopaType() const override;
+};
+
+class RedKoopa : public Koopa {
+public:
+    RedKoopa(Vector2 pos, Texture2D texture);
+    KOOPA_TYPE getKoopaType() const override;
+    //void UpdateTexture() override;
 };
 
 class FlyingKoopa : public Koopa {

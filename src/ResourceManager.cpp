@@ -190,7 +190,7 @@ void ResourceManager::loadTextures() {
 	textures["SuperMarisa_LEFT_2"] = flipTexture(textures["SuperMarisa_RIGHT_2"]);
 
 	textures["SuperMarisaDying"] = LoadTexture("resources/images/sprites/megaman/SuperMarisa_Dying.png");
-	textures["SuperMarisaJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/megaman/SuperMarisa_Jumping.png");
+	textures["SuperMarisaJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/megaman/SuperMarisa_Falling.png");
 	textures["SuperMarisaJumping_LEFT_0"] = flipTexture(textures["SuperMarisaJumping_RIGHT_0"]);
 	textures["SuperMarisaDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/megaman/SuperMarisa_Ducking.png");
 	textures["SuperMarisaDucking_LEFT_0"] = flipTexture(textures["SuperMarisaDucking_RIGHT_0"]);
@@ -209,7 +209,7 @@ void ResourceManager::loadTextures() {
 	textures["FireMarisa_LEFT_2"] = flipTexture(textures["FireMarisa_RIGHT_2"]);
 
 	textures["FireMarisaDying"] = LoadTexture("resources/images/sprites/megaman/FireMarisa_Dying.png");
-	textures["FireMarisaJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/megaman/FireMarisa_Jumping.png");
+	textures["FireMarisaJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/megaman/FireMarisa_Falling.png");
 	textures["FireMarisaJumping_LEFT_0"] = flipTexture(textures["FireMarisaJumping_RIGHT_0"]);
 	textures["FireMarisaDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/megaman/FireMarisa_Ducking.png");
 	textures["FireMarisaDucking_LEFT_0"] = flipTexture(textures["FireMarisaDucking_RIGHT_0"]);
@@ -219,7 +219,7 @@ void ResourceManager::loadTextures() {
 
 	textures["FireMarisaVictory"] = LoadTexture("resources/images/sprites/megaman/FireMarisa_Victory.png");
 
-	textures["FireMarisaThrowingFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/megaman/FireMarisa_Firing_0.png");
+	textures["FireMarisaThrowingFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/megaman/FireMarisa_Firing.png");
 	textures["FireMarisaThrowingFireball_LEFT_0"] = flipTexture(textures["FireMarisaThrowingFireball_RIGHT_0"]);
 		// transitioning
 				// transitioning
@@ -272,7 +272,7 @@ void ResourceManager::loadTextures() {
 	textures["FireToadDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/toad/FireToad_Ducking.png");
 	textures["FireToadDucking_LEFT_0"] = flipTexture(textures["FireToadDucking_RIGHT_0"]);
 	textures["FireToadDying"] = textures["SmallToadDying"];
-	textures["FireToadThrowingFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/toad/FireToach_Firing.png");
+	textures["FireToadThrowingFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/toad/FireToad_Firing.png");
 	textures["FireToadThrowingFireball_LEFT_0"] = flipTexture(textures["FireToadThrowingFireball_RIGHT_0"]);
 
 	textures["TransitioningToad_RIGHT_0"] = textures["SuperToad_RIGHT_0"];
@@ -286,8 +286,6 @@ void ResourceManager::loadTextures() {
 		textures["TILE_" + std::to_string(i)] = LoadTexture(path.c_str());
 	}
 		// brick
-
-	textures["Brick_0"] = LoadTexture("resources/images/tiles/AllTiles/brick.png");
 	textures["Brick_1"] = LoadTexture("resources/images/tiles/AllTiles/tile_110.png");
 		// question block
 	textures["QUESTION_0"] = LoadTexture("resources/images/sprites/blocks/Question_0.png");
@@ -311,7 +309,7 @@ void ResourceManager::loadTextures() {
 	textures["BACKGROUND_1"] = LoadTexture("resources/images/backgrounds/background1.png");
 	textures["BACKGROUND_2"] = LoadTexture("resources/images/backgrounds/background2.png");
 	textures["BACKGROUND_3"] = LoadTexture("resources/images/backgrounds/background3.png");
-	textures["MENU_SCREEN"] = LoadTexture("resources/images/backgrounds/Menuscreen.png");
+	textures["MENU_SCREEN"] = LoadTexture("resources/images/backgrounds/titlemario.png");
 	textures["BACKGROUND_8"] = LoadTexture("resources/images/backgrounds/background8.png");
 	textures["WHITE"] = LoadTexture("resources/images/backgrounds/white.png");
 	textures["SelectionBackground"] = LoadTexture("resources/images/backgrounds/SelectCharacter.png");
@@ -371,13 +369,13 @@ void ResourceManager::loadTextures() {
 	textures["Goomba_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/Goomba_1.png");
 	textures["Goomba_LEFT_0"] = flipTexture(textures["Goomba_RIGHT_0"]);
 	textures["Goomba_LEFT_1"] = flipTexture(textures["Goomba_RIGHT_1"]);
-	textures["Goomba_Dead"] = LoadTexture("resources/images/sprites/baddies/FlyingGoomba_0.png");
+	textures["Goomba_Dead"] = LoadTexture("resources/images/sprites/baddies/Goomba_0.png");
 
 	textures["FlyingGoomba_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/FlyingGoomba_0.png");
 	textures["FlyingGoomba_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/FlyingGoomba_1.png");
 	textures["FlyingGoomba_LEFT_0"] = flipTexture(textures["FlyingGoomba_RIGHT_0"]);
 	textures["FlyingGoomba_LEFT_1"] = flipTexture(textures["FlyingGoomba_RIGHT_1"]);
-	// yellpw koopa
+	// yellow koopa
 	textures["YellowKoopa_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_0.png");
 	textures["YellowKoopa_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/YellowKoopaTroopa_1.png");
 	textures["YellowKoopa_LEFT_0"] = flipTexture(textures["YellowKoopa_RIGHT_0"]);
@@ -387,7 +385,49 @@ void ResourceManager::loadTextures() {
 	textures["YellowKoopa_Shell_1"] = LoadTexture("resources/images/sprites/baddies/yellow_shell_1.png");
 	textures["YellowKoopa_Shell_2"] = LoadTexture("resources/images/sprites/baddies/yellow_shell_2.png");
 	textures["YellowKoopa_Shell_3"] = LoadTexture("resources/images/sprites/baddies/yellow_shell_3.png");
+	// green koopa
+	textures["GreenKoopa_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/GreenKoopaTroopa_0.png");
+	textures["GreenKoopa_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/GreenKoopaTroopa_1.png");
+	textures["GreenKoopa_LEFT_0"] = flipTexture(textures["GreenKoopa_RIGHT_0"]);
+	textures["GreenKoopa_LEFT_1"] = flipTexture(textures["GreenKoopa_RIGHT_1"]);
+	textures["GreenKoopa_Shell"] = LoadTexture("resources/images/sprites/baddies/green_shell_3.png");
+	textures["GreenKoopa_Shell_0"] = LoadTexture("resources/images/sprites/baddies/green_shell_0.png");
+	textures["GreenKoopa_Shell_1"] = LoadTexture("resources/images/sprites/baddies/green_shell_1.png");
+	textures["GreenKoopa_Shell_2"] = LoadTexture("resources/images/sprites/baddies/green_shell_2.png");
+	textures["GreenKoopa_Shell_3"] = LoadTexture("resources/images/sprites/baddies/green_shell_3.png");
+	// red koopa
+	textures["RedKoopa_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/RedKoopaTroopa_0.png");
+	textures["RedKoopa_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/RedKoopaTroopa_1.png");
+	textures["RedKoopa_LEFT_0"] = flipTexture(textures["RedKoopa_RIGHT_0"]);
+	textures["RedKoopa_LEFT_1"] = flipTexture(textures["RedKoopa_RIGHT_1"]);
+	textures["RedKoopa_Shell"] = LoadTexture("resources/images/sprites/baddies/red_shell_3.png");
+	textures["RedKoopa_Shell_0"] = LoadTexture("resources/images/sprites/baddies/red_shell_0.png");
+	textures["RedKoopa_Shell_1"] = LoadTexture("resources/images/sprites/baddies/red_shell_1.png");
+	textures["RedKoopa_Shell_2"] = LoadTexture("resources/images/sprites/baddies/red_shell_2.png");
+	textures["RedKoopa_Shell_3"] = LoadTexture("resources/images/sprites/baddies/red_shell_3.png");
+	// blue koopa
+	textures["BlueKoopa_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/BlueKoopaTroopa_0.png");
+	textures["BlueKoopa_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/BlueKoopaTroopa_1.png");
+	textures["BlueKoopa_LEFT_0"] = flipTexture(textures["BlueKoopa_RIGHT_0"]);
+	textures["BlueKoopa_LEFT_1"] = flipTexture(textures["BlueKoopa_RIGHT_1"]);
+	textures["BlueKoopa_Shell"] = LoadTexture("resources/images/sprites/baddies/blue_shell_3.png");
+	textures["BlueKoopa_Shell_0"] = LoadTexture("resources/images/sprites/baddies/blue_shell_0.png");
+	textures["BlueKoopa_Shell_1"] = LoadTexture("resources/images/sprites/baddies/blue_shell_1.png");
+	textures["BlueKoopa_Shell_2"] = LoadTexture("resources/images/sprites/baddies/blue_shell_2.png");
+	textures["BlueKoopa_Shell_3"] = LoadTexture("resources/images/sprites/baddies/blue_shell_3.png");
 
+	// parakoopa
+	textures["ParaKoopaRed_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/ParaKoopaRed_0.png");
+	textures["ParaKoopaRed_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/ParaKoopaRed_1.png");
+	textures["ParaKoopaRed_LEFT_0"] = flipTexture(textures["ParaKoopaRed_RIGHT_0"]);
+	textures["ParaKoopaRed_LEFT_1"] = flipTexture(textures["ParaKoopaRed_RIGHT_1"]);
+
+	textures["ParaKoopaBlue_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/ParaKoopaBlue_0.png");
+	textures["ParaKoopaBlue_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/ParaKoopaBlue_1.png");
+	textures["ParaKoopaBlue_LEFT_0"] = flipTexture(textures["ParaKoopaBlue_RIGHT_0"]);
+	textures["ParaKoopaBlue_LEFT_1"] = flipTexture(textures["ParaKoopaBlue_RIGHT_1"]);
+
+	// bullet
 	textures["Bullet_RIGHT"] = LoadTexture("resources/images/sprites/baddies/BulletBill_0.png");
 	textures["BenzaiBill_RIGHT"] = LoadTexture("resources/images/sprites/baddies/BanzaiBill_0.png");
 	textures["Bullet_LEFT"] = flipTexture(textures["Bullet_RIGHT"]);
@@ -408,6 +448,10 @@ void ResourceManager::loadTextures() {
 	textures["PiranhaPlant_CLOSED"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_1.png");
 	textures["FirePiranhaPlant_OPEN"] = textures["PiranhaPlant_OPEN"];
 	textures["FirePiranhaPlant_CLOSED"] = textures["PiranhaPlant_CLOSED"];
+	textures["PiranhaPlant_JUMP_UP_0"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_JUMP_UP_0.png");
+	textures["PiranhaPlant_JUMP_DOWN_0"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_JUMP_DOWN_0.png");
+	textures["PiranhaPlant_JUMP_UP_1"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_JUMP_UP_1.png");
+	textures["PiranhaPlant_JUMP_DOWN_1"] = LoadTexture("resources/images/sprites/baddies/PiranhaPlant_JUMP_DOWN_1.png");
 	// rex
 	textures["Rex_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/Rex_2_0.png");
 	textures["Rex_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/Rex_2_1.png");
@@ -417,10 +461,34 @@ void ResourceManager::loadTextures() {
 	textures["Rex_Compressed_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/Rex_1_1.png");
 	textures["Rex_Compressed_LEFT_0"] = flipTexture(textures["Rex_Compressed_RIGHT_0"]);
 	textures["Rex_Compressed_LEFT_1"] = flipTexture(textures["Rex_Compressed_RIGHT_1"]);
-	textures["Rex_Dead"] = textures["Rex_Compressed_RIGHT_0"];
+	textures["Rex_Dead"] = textures["Rex_Dead.png"];
 	// muncher
-	/*textures["Muncher_0"] = LoadTexture("resources/images/sprites/baddies/Muncher_0");
-	textures["Muncher_1"] = LoadTexture("resources/images/sprites/baddies/Muncher_1");*/
+	textures["Muncher_0"] = LoadTexture("resources/images/sprites/baddies/Muncher_0.png");
+	textures["Muncher_1"] = LoadTexture("resources/images/sprites/baddies/Muncher_1.png");
+	// bobomb
+	textures["Bobomb_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/BobOmb_0.png");
+	textures["Bobomb_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/BobOmb_1.png");
+	textures["Bobomb_LEFT_0"] = flipTexture(textures["Bobomb_RIGHT_0"]);
+	textures["Bobomb_LEFT_1"] = flipTexture(textures["Bobomb_RIGHT_1"]);
+	textures["BobOmb_Activated_0"] = textures["Bobomb_RIGHT_0"];
+	textures["BobOmb_Activated_1"] = textures["Bobomb_RIGHT_1"];
+	textures["BobOmb_Explosion"] = LoadTexture("resources/images/sprites/baddies/BobOmb_0.png");
+	//textures["DryBones_Collapse"] = LoadTexture("resources/images/sprites/baddies/DryBones_Collapse.png");
+	
+	// spiny
+	textures["Spiny_LEFT_0"] = LoadTexture("resources/images/sprites/baddies/Spiny_LEFT_0.png");
+	textures["Spiny_LEFT_1"] = LoadTexture("resources/images/sprites/baddies/Spiny_LEFT_1.png");
+	textures["Spiny_RIGHT_0"] = flipTexture(textures["Spiny_LEFT_0"]);
+	textures["Spiny_RIGHT_1"] = flipTexture(textures["Spiny_LEFT_1"]);
+	textures["Spiny_DEAD"] = LoadTexture("resources/images/sprites/baddies/Spiny_DEAD.png");
+	// buzzybeetle
+	textures["BuzzyBeetle_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_0.png");
+	textures["BuzzyBeetle_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_1.png");
+	textures["BuzzyBeetle_LEFT_0"] = flipTexture(textures["BuzzyBeetle_RIGHT_0"]);
+	textures["BuzzyBeetle_lEFT_1"] = flipTexture(textures["BuzzyBeetle_RIGHT_1"]);
+	textures["BuzzyBeetle_Shell_2"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_Shell_2.png");
+	textures["BuzzyBeetle_Shell_1"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_Shell_1.png");
+	textures["BuzzyBeetle_Shell_0"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_Shell_0.png");
 }
 
 void ResourceManager::loadFonts()

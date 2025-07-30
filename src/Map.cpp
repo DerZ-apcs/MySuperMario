@@ -93,7 +93,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 					if (!brick) {
 						throw std::runtime_error("Failed to create brick block: ");
 					}
-					//blockArray.push_back(brick);
+					brick->setTexture(RESOURCE_MANAGER.getTexture("TILE_" + std::to_string(texId)));
 					tileGrid[y][x] = brick;
 					continue;
 				}

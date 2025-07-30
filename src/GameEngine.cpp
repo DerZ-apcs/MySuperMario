@@ -8,6 +8,8 @@
 #include "../include/Level.h"
 #include "../include/Goomba.h"
 #include "../include/Koopa.h"
+#include "../include/ParaKoopa.h"
+#include "../include/BobOmb.h"
 #include "../include/Rex.h"
 #include "../include/Bullet.h"
 #include "../include/Flower.h"
@@ -136,9 +138,12 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std:
     //FirePiranhaPlant* plant = new FirePiranhaPlant({ 432, 710 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_CLOSED"));
     //enemies.push_back(plant);
 
-    Koopa* koopa = new Koopa({ 100, 500 }, RESOURCE_MANAGER.getTexture("Koopa_LEFT_0"));
-    koopa->setState(FALLING);
-    enemies.push_back(koopa);
+ //   Koopa* koopa = new YellowKoopa({ 100, 500 }, RESOURCE_MANAGER.getTexture("YellowKoopa_LEFT_0"));
+ //   enemies.push_back(koopa);
+	//enemies.push_back(new GreenKoopa({ 150, 500 }, RESOURCE_MANAGER.getTexture("GreenKoopa_LEFT_0")));
+	//enemies.push_back(new RedKoopa({ 300, 500 }, RESOURCE_MANAGER.getTexture("RedKoopa_LEFT_0")));
+    enemies.push_back(new FlyingGoomba({ 350, 500 }, RESOURCE_MANAGER.getTexture("FlyingGoomba_LEFT_0")));
+    enemies.push_back(new Goomba({ 200, 500 }, RESOURCE_MANAGER.getTexture("Goomba_LEFT_0")));
 }
 
 
@@ -206,6 +211,11 @@ void GameEngine::update()
 {
     if ((*multiplayers).empty()) return;
     if ((*multiplayers)[0] == nullptr) return;
+
+    // for debug mode
+    if (IsKeyPressed(KEY_O)) {
+		SETTING.setDebugMode(!SETTING.getDebugMode());
+    }
 
 	Rectangle cameraView = camera.getViewRect();
     float margin = 120.0f; // Margin for camera view
