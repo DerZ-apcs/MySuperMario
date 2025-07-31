@@ -63,7 +63,7 @@ else()
 
 endif()
 
-target_sources("${CMAKE_PROJECT_NAME}" PRIVATE ${MY_SOURCES} )
+target_sources("${CMAKE_PROJECT_NAME}" PRIVATE ${MY_SOURCES}  "include/Boss.h" "src/Boss.cpp")
 
 
 if(MSVC) # If using the VS compiler...
