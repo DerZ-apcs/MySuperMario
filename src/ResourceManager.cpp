@@ -489,6 +489,13 @@ void ResourceManager::loadTextures() {
 	textures["BuzzyBeetle_Shell_2"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_Shell_2.png");
 	textures["BuzzyBeetle_Shell_1"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_Shell_1.png");
 	textures["BuzzyBeetle_Shell_0"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_Shell_0.png");
+
+	//BoomBoom
+	textures["BoomBoom_IDLE_0"] = LoadTexture("resources/images/sprites/baddies/BoomBoom_IDLE_0.png");
+	textures["BoomBoom_ROLL"] = LoadTexture("resources/images/sprites/baddies/BoomBoom_ROLL.png");
+	textures["BoomBoom_SMASH"] = LoadTexture("resources/images/sprites/baddies/BoomBoom_SMASH.png");
+	textures["BoomBoom_WINDUP"] = LoadTexture("resources/images/sprites/baddies/BoomBoom_WINDUP.png");
+	textures["BoomBoom_STUN"] = LoadTexture("resources/images/sprites/baddies/BoomBoom_STUN.png");
 }
 
 void ResourceManager::loadFonts()

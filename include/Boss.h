@@ -27,6 +27,10 @@ public:
     virtual void updateBehavior() = 0;
 
     virtual void applyPhysics();
+
+    ENEMY_TYPE getEnemyType() const override {
+		return ENEMY_TYPE::BOSS;
+    }
 };
-,
+
 #endif
