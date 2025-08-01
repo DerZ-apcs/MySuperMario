@@ -15,7 +15,7 @@ protected:
     bool isReviving; // Trạng thái rung trước khi hồi sinh
     float reviveShakeTimer; // Timer cho hiệu ứng rung
 public:
-    virtual KOOPA_TYPE getKoopaType() const = 0;
+    virtual KOOPA_TYPE getKoopaType() const;
     ENEMY_TYPE getEnemyType() const;
     Koopa(Vector2 pos, Texture2D texture);
     void setKoopaType(KOOPA_TYPE type);

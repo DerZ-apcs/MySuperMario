@@ -30,7 +30,11 @@ public:
 	Character();
 	Character(Vector2 pos = { 0, 0 }, Vector2 size = { 0, 0 });
 	Character(Vector2 pos, Vector2 sz, CharacterState characterstate);
-	Character(Vector2 pos, Vector2 sz, CharacterState characterstate, CharacterType characterType);
+	Character
+	
+	
+	
+	(Vector2 pos, Vector2 sz, CharacterState characterstate, CharacterType characterType);
 	virtual ~Character();
 	EntityType getEntityType() const override;
 	virtual CharacterType getCharacterType() const = 0;
@@ -113,6 +117,7 @@ protected:
 		int Max_frame;
 	};
 	std::vector<TransitionFrame> transitionFrames;
+	std::vector<TransitionFrame> transitionFramesLuigi;
 	std::vector<TransitionFrame> transitionFramesToad;
 	std::vector<TransitionFrame> transitionFramesPeach;
 	std::vector<TransitionFrame> transitionFramesMarisa;

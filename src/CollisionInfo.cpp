@@ -17,6 +17,7 @@
 #include "../include/CoinBlock.h"
 #include "../include/Coin.h"
 #include "../include/PowerItem.h"
+#include "../include/PiranhaPlant.h"
 #include <iostream>
 #include <GameEngine.h>
 #include <BobOmb.h>
@@ -310,8 +311,10 @@ bool EnemyFloorInfo::HandleCollision(Entity* entityA, Entity* entityB)
 
 	if (!enemy || !floor || !enemy->getCollisionAvailable())
 		return false;
-	if (enemy->getEnemyType() == PIRANHA) return false;
-
+	if (enemy->getEnemyType() == PIRANHA) {
+		if (dynamic_cast<PiranhaPlant*>(enemy)->getPiranhaType() != JUMPING_PIRANHA)
+			return false; // only jumping piranha can collide with blocks
+	}
 	CollisionType Colltype = enemy->CheckCollision(*floor);
 
 	if (Colltype != COLLISION_TYPE_SOUTH)
@@ -330,8 +333,10 @@ bool EnemyBrickInfo::HandleCollision(Entity* entityA, Entity* entityB)
 
 	if (!enemy || !block || !enemy->getCollisionAvailable())
 		return false;
-	if (enemy->getEnemyType() == PIRANHA) return false;
-
+	if (enemy->getEnemyType() == PIRANHA) {
+		if (dynamic_cast<PiranhaPlant*>(enemy)->getPiranhaType() != JUMPING_PIRANHA)
+			return false; // only jumping piranha can collide with blocks
+	}
 	CollisionType Colltype = enemy->CheckCollision(*block);
 	if (Colltype == COLLISION_TYPE_NONE) 
 		return false;
@@ -383,11 +388,14 @@ bool EnemyItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 
 	if (!enemy || !block || !enemy->getCollisionAvailable())
 		return false;
-	if (enemy->getEnemyType() == PIRANHA) return false;
-
+	if (enemy->getEnemyType() == PIRANHA) {
+		if (dynamic_cast<PiranhaPlant*>(enemy)->getPiranhaType() != JUMPING_PIRANHA)
+			return false; // only jumping piranha can collide with blocks
+	}
 	CollisionType Colltype = enemy->CheckCollision(*block);
 	if (Colltype == COLLISION_TYPE_NONE) 
 		return false;
+
 	if (enemy->getEnemyType() == BULLET) {
 		enemy->setVel({ 0, 0 });
 		if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomp.wav");
@@ -442,6 +450,10 @@ bool EnemyBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 		return false;
 	if (enemy->getEnemyType() == BULLET) {
 		return false;
+	}
+	if (enemy->getEnemyType() == PIRANHA) {
+		if (dynamic_cast<PiranhaPlant*>(enemy)->getPiranhaType() != JUMPING_PIRANHA)
+			return false; // only jumping piranha can collide with blocks
 	}
 	switch (Colltype) {
 	case COLLISION_TYPE_NORTH:

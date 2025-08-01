@@ -45,6 +45,7 @@ void Enemy::Update() {
     position.y += velocity.y * deltaTime;
     if (getGravityAvailable())
         velocity.y += GRAVITY * deltaTime;
+    if (velocity.y > 20) state = FALLING;
     if (state != ON_GROUND) {
         if (velocity.y > 0 && state == JUMPING) {
             state = FALLING;

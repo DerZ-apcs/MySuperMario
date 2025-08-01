@@ -21,6 +21,11 @@ FirePiranhaPlant::~FirePiranhaPlant() {
 
 }
 
+PIRANHA_TYPE FirePiranhaPlant::getPiranhaType() const
+{
+    return FIRE_PIRANHA;
+}
+
 void FirePiranhaPlant::Update() {
     if (isDead() || state == STATE_IS_DYING) {
         if (deathTimer > 0) {

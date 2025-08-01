@@ -16,6 +16,7 @@ protected:
     static const float DURATION_BETWEEN_POPUP; // rest between two popups
 public:
     PiranhaPlant(Vector2 pos, Texture2D texture);
+	virtual PIRANHA_TYPE getPiranhaType() const; // virtual function to get Piranha type
     void Update() override;
     void draw() override;
     void UpdateTexture() override;

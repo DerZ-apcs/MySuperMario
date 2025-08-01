@@ -10,6 +10,7 @@ JumpingPiranhaPlant::JumpingPiranhaPlant(Vector2 pos, Texture2D texture)
     , animTimer(0.0f)
 {
     baseY = pos.y;
+    size = { 32, 42 };
 
     UpdateTexture(true);
 }
@@ -33,10 +34,12 @@ void JumpingPiranhaPlant::Update() {
         offsetRatio = 1.0f - (phase - 0.5f) / 0.5f;
         isGoingUp = false;
     }
+	position.y = velocity.y * dt; 
+	velocity.y += GRAVITY * dt; 
 
     // Dịch chuyển y: baseY – (offsetRatio * JUMP_HEIGHT)
     position.y = baseY - offsetRatio * JUMP_HEIGHT;
-
+    Enemy::updateCollision();
     // Cập nhật texture dựa vào phase
     UpdateTexture(isGoingUp);
 }

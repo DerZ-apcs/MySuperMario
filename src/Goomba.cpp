@@ -96,7 +96,6 @@ void Goomba::draw() {
 void Goomba::UpdateTexture() {
     if (state == STATE_IS_DYING) {
         texture = RESOURCE_MANAGER.getTexture("Goomba_Dead");
-        /*isFlipped = true;*/
         return;
     }
     if (state == ON_GROUND) {

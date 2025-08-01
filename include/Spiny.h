@@ -6,7 +6,8 @@
 
 class Spiny : public Enemy {
 protected:
-    static constexpr float SPINY_SPEED = 100.0f;
+    static constexpr float SPINY_SPEED = 120.0f;
+    static const int SCORE_STOMP_SPINY;
 public:
     Spiny(Vector2 pos, Texture2D texture);
 
@@ -14,6 +15,9 @@ public:
     void draw() override;
     void UpdateTexture() override;
 
+    void stomped() override;
+    ENEMY_TYPE getEnemyType() const override;
+    float getScores() const override;
     //void CollisionWithCharacter(Mario& mario, CollisionType collType) override;
     //void CollisionWithEnemy(Enemy& enemy, CollisionType collType) override;
     //void CollisionWithFireball(FireBall& fireball) override;

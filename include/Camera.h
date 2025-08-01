@@ -1,8 +1,9 @@
 #ifndef CAMERA_H
 #define CAMERA_H
-
-#include <iostream>
 #include <raylib.h>
+#include <iostream>
+class GameEngine;
+
 
 class GameCamera {
 private:

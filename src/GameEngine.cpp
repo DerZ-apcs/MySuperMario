@@ -10,6 +10,7 @@
 #include "../include/Koopa.h"
 #include "../include/ParaKoopa.h"
 #include "../include/BobOmb.h"
+#include "../include/BuzzyBeetle.h"
 #include "../include/Rex.h"
 #include "../include/Bullet.h"
 #include "../include/Flower.h"
@@ -17,85 +18,13 @@
 #include "../include/Mushroom.h"
 #include "../include/Moon.h"
 #include "../include/FirePiranhaPlant.h"
+#include "../include/JumpingPiranhaPlant.h"
 #include "../include/PiranhaPlant.h"
+#include "../include/DryBones.h"
+#include "../include/Spiny.h"
 #include <iostream>
 
 GameEngine* globalGameEngine = nullptr;
-
-//GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, Character*& player)
-//    : camera(screenWidth, screenHeight, 1.25f), level(&level), player(player) {
-//    map.LoadFromJsonFile(level.getMapPath());
-//    map.loadBackgroundTexture(level.getBackGroundName());
-//    Vector2 Msize = map.getMapSize();
-//    camera.loadRenderTexture(Msize);
-//    // camera
-//    if (!player) player = new Mario();
-//    // test
-//    //if (!player2) {
-//    //    std::cout << "Allocating player2\n";
-//    //    player2 = new Luigi();
-//    //}
-//    //else {
-//    //    std::cout << "player2 already exists at: " << player2 << "\n";
-//    //}
-//
-//    //if (player2) {
-//    //    player2->setState(FALLING);
-//    //    player2->setVel({ 0, 0 });
-//    //    player2->setPosition({ 36, 400 });
-//    //}
-//   
-//    multiplayers.clear();
-//    multiplayers.push_back(player);
-//    //multiplayers.push_back(player2);
-//
-//    blocks = map.getBlocks();
-//    enemies = map.getEnemies();
-//    items = map.getItems();
-//    decor = map.getDecor();
-//    isPaused = false;
-//    this->time = 300;
-//    resetTimer();
-//    deltaTime = 0.f;
-//    BackGroundPos = { {0, 0}, {(float)GetScreenWidth(), 0}, {(float)GetScreenWidth() * 2, 0} };
-//    /*for (int i = 0; i < 10; i++) {
-//        Coin* coin = new Coin(STATIC_COIN, { (float)i * 50, 600 });
-//        items.push_back(coin);
-//    }*/
-//    /*for (int i = 7; i < 10; i++) {
-//        Goomba* goomba = new Goomba({(float) 100 * i, 300 }, RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0"));
-//        goomba->setState(FALLING);
-//        enemies.push_back(goomba);
-//    }*/
-//    /*for (int i = 9; i <= 10; i++) {
-//        FlyingGoomba* flyingGoomba = new FlyingGoomba({ (float)50 * i, 300 }, RESOURCE_MANAGER.getTexture("FlyingGoomba_LEFT_0"));
-//        flyingGoomba->setState(FALLING);
-//        enemies.push_back(flyingGoomba);
-//    }*/
-
-//
-
-//    //Bullet* bullet1 = new Bullet({ 1000, 400 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
-//    //enemies.push_back(bullet1);
-//    //FireBullet* bullet2 = new FireBullet({ 1600, 500 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
-//    //enemies.push_back(bullet2);
-//    //Bullet* bullet3 = new Bullet({ 1000, 600 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT_0"), LEFT);
-//    //enemies.push_back(bullet3);
-//
-
-//    //// test brick
-//    //for (int i = 1; i < 10; i++) {
-//    //    Brick* brick = new Brick(Vector2{ (float)i * 32, 700 }, Vector2{ 32, 32 }, "Brick_0");
-//    //    blocks.push_back(brick);
-//    //}
-//    //// test coin block
-//    //for (int i = 1; i < 10; i++) {
-//    //    CoinBlock* coinBlock = new CoinBlock({ (float)i * 32, 550 }, "TILE_110", 4);
-//    //    blocks.push_back(coinBlock);
-//    //}
-//    //
-
-//}
 
 GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std::vector<std::unique_ptr<Character>>* multiplayers):
     camera(screenWidth, screenHeight, 1.25f), level(&level), multiplayers(multiplayers)
@@ -142,8 +71,14 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std:
  //   enemies.push_back(koopa);
 	//enemies.push_back(new GreenKoopa({ 150, 500 }, RESOURCE_MANAGER.getTexture("GreenKoopa_LEFT_0")));
 	//enemies.push_back(new RedKoopa({ 300, 500 }, RESOURCE_MANAGER.getTexture("RedKoopa_LEFT_0")));
-    enemies.push_back(new FlyingGoomba({ 350, 500 }, RESOURCE_MANAGER.getTexture("FlyingGoomba_LEFT_0")));
-    enemies.push_back(new Goomba({ 200, 500 }, RESOURCE_MANAGER.getTexture("Goomba_LEFT_0")));
+    //enemies.push_back(new FlyingGoomba({ 350, 500 }, RESOURCE_MANAGER.getTexture("FlyingGoomba_LEFT_0")));
+    //enemies.push_back(new Goomba({ 200, 500 }, RESOURCE_MANAGER.getTexture("Goomba_LEFT_0")));
+
+    //enemies.push_back(new BobOmb({ 200, 600 }, RESOURCE_MANAGER.getTexture("BobOmb_LEFT_0")));
+    //enemies.push_back(new BuzzyBeetle({ 200, 600 }, RESOURCE_MANAGER.getTexture("BuzzyBeetle_LEFT_0")));
+    enemies.push_back(new Spiny({ 300, 500 }, RESOURCE_MANAGER.getTexture("Spiny_DEAD")));
+	//enemies.push_back(new JumpingPiranhaPlant({ 400, 500 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_JUMP_UP_0")));
+	enemies.push_back(new DryBones({ 500, 500 }, RESOURCE_MANAGER.getTexture("DryBones_LEFT_0")));
 }
 
 

@@ -80,8 +80,85 @@ void ResourceManager::loadTextures() {
 
 	// star state for mario & luigi (small, super, fire)
 	generateStarMarioVariants(); // for star mario
-	generateLuigiVariants(); // generate all textures of luigi
+	//generateLuigiVariants(); // generate all textures of luigi
+	// ---------------------------------------------------------------------------------------------------
+	// 
+	// for luigi
+		// small luigi
+			// for choosing character
+		textures["SmallLuigi_Straight"] = LoadTexture("resources/images/sprites/luigi/SmallLuigi_Straight.png");
 
+		textures["SmallLuigi_RIGHT_0"] = LoadTexture("resources/images/sprites/luigi/SmallLuigi_0.png");
+		textures["SmallLuigi_RIGHT_1"] = LoadTexture("resources/images/sprites/luigi/SmallLuigi_1.png");
+		textures["SmallLuigi_LEFT_0"] = flipTexture(textures["SmallLuigi_RIGHT_0"]);
+		textures["SmallLuigi_LEFT_1"] = flipTexture(textures["SmallLuigi_RIGHT_1"]);
+
+		// super Luigi
+		textures["SuperLuigi_RIGHT_0"] = LoadTexture("resources/images/sprites/luigi/SuperLuigi_0.png");
+		textures["SuperLuigi_RIGHT_1"] = LoadTexture("resources/images/sprites/luigi/SuperLuigi_1.png");
+		textures["SuperLuigi_RIGHT_2"] = LoadTexture("resources/images/sprites/luigi/SuperLuigi_2.png");
+		textures["SuperLuigi_LEFT_0"] = flipTexture(textures["SuperLuigi_RIGHT_0"]);
+		textures["SuperLuigi_LEFT_1"] = flipTexture(textures["SuperLuigi_RIGHT_1"]);
+		textures["SuperLuigi_LEFT_2"] = flipTexture(textures["SuperLuigi_RIGHT_2"]);
+
+		// FireLuigi
+		textures["FireLuigi_RIGHT_0"] = LoadTexture("resources/images/sprites/luigi/FireLuigi_0.png");
+		textures["FireLuigi_RIGHT_1"] = LoadTexture("resources/images/sprites/luigi/FireLuigi_1.png");
+		textures["FireLuigi_RIGHT_2"] = LoadTexture("resources/images/sprites/luigi/FireLuigi_2.png");
+		textures["FireLuigi_LEFT_0"] = flipTexture(textures["FireLuigi_RIGHT_0"]);
+		textures["FireLuigi_LEFT_1"] = flipTexture(textures["FireLuigi_RIGHT_1"]);
+		textures["FireLuigi_LEFT_2"] = flipTexture(textures["FireLuigi_RIGHT_2"]);
+
+		// jump 
+		textures["SmallLuigiJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/luigi/SmallLuigiJumping_0.png");
+		textures["SmallLuigiJumping_LEFT_0"] = flipTexture(textures["SmallLuigiJumping_RIGHT_0"]);
+		textures["SuperLuigiJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/luigi/SuperLuigiJumping_0.png");
+		textures["SuperLuigiJumping_LEFT_0"] = flipTexture(textures["SuperLuigiJumping_RIGHT_0"]);
+
+		// fall
+			// Luigi
+		textures["SmallLuigiFalling_RIGHT_0"] = LoadTexture("resources/images/sprites/luigi/SmallLuigiFalling_0.png");
+		textures["SmallLuigiFalling_LEFT_0"] = flipTexture(textures["SmallLuigiFalling_RIGHT_0"]);
+		textures["SuperLuigiFalling_RIGHT_0"] = LoadTexture("resources/images/sprites/luigi/SuperLuigiFalling_0.png");
+		textures["SuperLuigiFalling_LEFT_0"] = flipTexture(textures["SuperLuigiFalling_RIGHT_0"]);
+
+		// duck
+		textures["SmallLuigiDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/luigi/SmallLuigiDucking_0.png");
+		textures["SmallLuigiDucking_LEFT_0"] = flipTexture(textures["SmallLuigiDucking_RIGHT_0"]);
+		textures["SuperLuigiDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/luigi/SuperLuigiDucking_0.png");
+		textures["SuperLuigiDucking_LEFT_0"] = flipTexture(textures["SuperLuigiDucking_RIGHT_0"]);
+
+		// dying
+		textures["SmallLuigiDying"] = LoadTexture("resources/images/sprites/luigi/SmallLuigiDying_0.png");
+		textures["SuperLuigiDying"] = textures["SmallLuigiDying"];
+		textures["FireLuigiDying"] = textures["SmallLuigiDying"];
+
+		// victory
+		textures["SmallLuigiVictory"] = LoadTexture("resources/images/sprites/luigi/SmallLuigiVictory_0.png");
+		textures["SuperLuigiVictory"] = LoadTexture("resources/images/sprites/luigi/SuperLuigiVictory_0.png");
+		textures["FireLuigiVictory"] = LoadTexture("resources/images/sprites/luigi/FireLuigiVictory.png");
+
+		// trasition
+
+		textures["TransitioningLuigi_RIGHT_0"] = textures["SmallLuigi_RIGHT_0"];
+		textures["TransitioningLuigi_LEFT_0"] = flipTexture(textures["TransitioningLuigi_RIGHT_0"]);
+		textures["TransitioningFireLuigi_RIGHT_0"] = textures["FireLuigi_RIGHT_0"];
+		textures["TransitioningFireLuigi_LEFT_0"] = flipTexture(textures["TransitioningFireLuigi_RIGHT_0"]);
+		// fire Luigi 
+
+		textures["FireLuigiJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/luigi/FireLuigiJumping_0.png");
+		textures["FireLuigiJumping_LEFT_0"] = flipTexture(textures["FireLuigiJumping_RIGHT_0"]);
+
+		textures["FireLuigiFalling_RIGHT_0"] = LoadTexture("resources/images/sprites/luigi/FireLuigiFalling_0.png");
+		textures["FireLuigiFalling_LEFT_0"] = flipTexture(textures["FireLuigiFalling_RIGHT_0"]);
+
+		textures["FireLuigiDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/luigi/FireLuigiDucking_0.png");
+		textures["FireLuigiDucking_LEFT_0"] = flipTexture(textures["FireLuigiDucking_RIGHT_0"]);
+
+		textures["FireLuigiThrowingFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/luigi/FireLuigi_Firing_0.png");
+		textures["FireLuigiThrowingFireball_LEFT_0"] = flipTexture(textures["FireLuigiThrowingFireball_RIGHT_0"]);
+
+	// --------------------------------------------------------------------------------------------------------------------
 	// fireball
 	textures["FlowerMarioFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FlowerMarioFireball_0.png");
 	textures["FlowerMarioFireball_RIGHT_1"] = LoadTexture("resources/images/sprites/mario/FlowerMarioFireball_1.png");
@@ -242,6 +319,7 @@ void ResourceManager::loadTextures() {
 	textures["SmallToadDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/toad/SmallToad_Ducking.png");
 	textures["SmallToadDucking_LEFT_0"] = flipTexture(textures["SmallToadDucking_RIGHT_0"]);
 	textures["SmallToadDying"] = LoadTexture("resources/images/sprites/toad/SmallToad_Dying.png");
+	textures["SmallToadVictory"] = LoadTexture("resources/images/sprites/toad/SmallToadVictory.png");
 		// super toad
 	textures["SuperToad_RIGHT_0"] = LoadTexture("resources/images/sprites/toad/SuperToad_0.png");
 	textures["SuperToad_LEFT_0"] = flipTexture(textures["SuperToad_RIGHT_0"]);
@@ -257,6 +335,7 @@ void ResourceManager::loadTextures() {
 	textures["SuperToadDucking_RIGHT_0"] = LoadTexture("resources/images/sprites/toad/SuperToad_Ducking.png");
 	textures["SuperToadDucking_LEFT_0"] = flipTexture(textures["SuperToadDucking_RIGHT_0"]);
 	textures["SuperToadDying"] = textures["SmallToadDying"];
+	textures["SuperToadVictory"] = LoadTexture("resources/images/sprites/toad/SuperToadVictory.png");
 		// fire toad
 	textures["FireToad_RIGHT_0"] = LoadTexture("resources/images/sprites/toad/FireToad_0.png");
 	textures["FireToad_LEFT_0"] = flipTexture(textures["FireToad_RIGHT_0"]);
@@ -274,6 +353,7 @@ void ResourceManager::loadTextures() {
 	textures["FireToadDying"] = textures["SmallToadDying"];
 	textures["FireToadThrowingFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/toad/FireToad_Firing.png");
 	textures["FireToadThrowingFireball_LEFT_0"] = flipTexture(textures["FireToadThrowingFireball_RIGHT_0"]);
+	textures["FireToadVictory"] = LoadTexture("resources/images/sprites/toad/FireToadVictory.png");
 
 	textures["TransitioningToad_RIGHT_0"] = textures["SuperToad_RIGHT_0"];
 	textures["TransitioningToad_LEFT_0"] = textures["SuperToad_LEFT_0"];
@@ -466,26 +546,33 @@ void ResourceManager::loadTextures() {
 	textures["Muncher_0"] = LoadTexture("resources/images/sprites/baddies/Muncher_0.png");
 	textures["Muncher_1"] = LoadTexture("resources/images/sprites/baddies/Muncher_1.png");
 	// bobomb
-	textures["Bobomb_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/BobOmb_0.png");
-	textures["Bobomb_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/BobOmb_1.png");
-	textures["Bobomb_LEFT_0"] = flipTexture(textures["Bobomb_RIGHT_0"]);
-	textures["Bobomb_LEFT_1"] = flipTexture(textures["Bobomb_RIGHT_1"]);
-	textures["BobOmb_Activated_0"] = textures["Bobomb_RIGHT_0"];
-	textures["BobOmb_Activated_1"] = textures["Bobomb_RIGHT_1"];
-	textures["BobOmb_Explosion"] = LoadTexture("resources/images/sprites/baddies/BobOmb_0.png");
-	//textures["DryBones_Collapse"] = LoadTexture("resources/images/sprites/baddies/DryBones_Collapse.png");
+	textures["BobOmb_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/BobOmb_0.png");
+	textures["BobOmb_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/BobOmb_1.png");
+	textures["BobOmb_LEFT_0"] = flipTexture(textures["BobOmb_RIGHT_0"]);
+	textures["BobOmb_LEFT_1"] = flipTexture(textures["BobOmb_RIGHT_1"]);
+	textures["BobOmb_Activated_0"] = textures["BobOmb_RIGHT_0"];
+	textures["BobOmb_Activated_1"] = textures["BobOmb_RIGHT_1"];
+	textures["BobOmb_Explosion_RIGHT"] = textures["BobOmb_RIGHT_0"];
+	textures["BobOmb_Explosion_LEFT"] = textures["BobOmb_LEFT_0"];
+	// drybones
+	textures["DryBones_LEFT_0"] = LoadTexture("resources/images/sprites/baddies/DryBones_0.png");
+	textures["DryBones_LEFT_1"] = LoadTexture("resources/images/sprites/baddies/DryBones_1.png");
+	textures["DryBones_RIGHT_0"] = flipTexture(textures["DryBones_LEFT_0"]);
+	textures["DryBones_RIGHT_1"] = flipTexture(textures["DryBones_LEFT_1"]);
+	textures["DryBones_Collapse"] = LoadTexture("resources/images/sprites/baddies/DryBones_Collapse.png");
+	textures["DryBones_Dead"] = LoadTexture("resources/images/sprites/baddies/DryBones_Dead.png");
 	
 	// spiny
-	textures["Spiny_LEFT_0"] = LoadTexture("resources/images/sprites/baddies/Spiny_LEFT_0.png");
-	textures["Spiny_LEFT_1"] = LoadTexture("resources/images/sprites/baddies/Spiny_LEFT_1.png");
+	textures["Spiny_LEFT_0"] = LoadTexture("resources/images/sprites/baddies/Spiny_0.png");
+	textures["Spiny_LEFT_1"] = LoadTexture("resources/images/sprites/baddies/Spiny_1.png");
 	textures["Spiny_RIGHT_0"] = flipTexture(textures["Spiny_LEFT_0"]);
 	textures["Spiny_RIGHT_1"] = flipTexture(textures["Spiny_LEFT_1"]);
-	textures["Spiny_DEAD"] = LoadTexture("resources/images/sprites/baddies/Spiny_DEAD.png");
+	textures["Spiny_DEAD"] = LoadTexture("resources/images/sprites/baddies/Spiny_2.png");
 	// buzzybeetle
 	textures["BuzzyBeetle_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_0.png");
 	textures["BuzzyBeetle_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_1.png");
 	textures["BuzzyBeetle_LEFT_0"] = flipTexture(textures["BuzzyBeetle_RIGHT_0"]);
-	textures["BuzzyBeetle_lEFT_1"] = flipTexture(textures["BuzzyBeetle_RIGHT_1"]);
+	textures["BuzzyBeetle_LEFT_1"] = flipTexture(textures["BuzzyBeetle_RIGHT_1"]);
 	textures["BuzzyBeetle_Shell_2"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_Shell_2.png");
 	textures["BuzzyBeetle_Shell_1"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_Shell_1.png");
 	textures["BuzzyBeetle_Shell_0"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_Shell_0.png");

@@ -311,13 +311,14 @@ void SingleCharSelection::draw()
 	// gui1
 	// draw 4 texture of character
 
-	for (int i = 0; i <= 2; i++) {
-		DrawTexturePro(Textures[i], { 0, 0, (float)Textures[i].width, (float)Textures[i].height },
-			{ 270 + (float)i * 225, 500, 32 * 4, 40 * 4 }, { 0, 0 }, 0.f, WHITE);
-	}
+	DrawTexturePro(Textures[0], { 0, 0, (float)Textures[0].width, (float)Textures[0].height },
+		{ 270, 500 - 24, 32 * 4, 46 * 4 }, { 0, 0 }, 0.f, WHITE);
+	DrawTexturePro(Textures[1], { 0, 0, (float)Textures[1].width, (float)Textures[1].height },
+		{ 270 + (float)1 * 225, 500 - 40, 32 * 4, 50 * 4 }, { 0, 0 }, 0.f, WHITE);
+	DrawTexturePro(Textures[2], { 0, 0, (float)Textures[2].width, (float)Textures[2].height },
+		{ 270 + (float)2 * 225, 500, 32 * 4, 40 * 4 }, { 0, 0 }, 0.f, WHITE);
 	DrawTexturePro(Textures[3], { 0, 0, (float)Textures[3].width, (float)Textures[3].height },
 		{ 270 + (float)3 * 225, 500 - 32, 32 * 4, 48 * 4 }, { 0, 0 }, 0.f, WHITE);
-
 	DrawTexturePro(Textures[4], { 0, 0, (float)Textures[4].width, (float)Textures[4].height },
 		{ 270 + (float)4 * 225, 500, 32 * 4, 40 * 4 }, { 0, 0 }, 0.f, WHITE);
 
@@ -387,13 +388,14 @@ void DualCharSelection::draw()
 	// gui1
 	// draw 4 texture of character
 
-	for (int i = 0; i <= 2; i++) {
-		DrawTexturePro(Textures[i], { 0, 0, (float)Textures[i].width, (float)Textures[i].height },
-			{ 270 + (float)i * 225, 500, 32 * 4, 40 * 4 }, { 0, 0 }, 0.f, WHITE);
-	}
+	DrawTexturePro(Textures[0], { 0, 0, (float)Textures[0].width, (float)Textures[0].height },
+		{ 270, 500 - 24, 32 * 4, 46 * 4 }, { 0, 0 }, 0.f, WHITE);
+	DrawTexturePro(Textures[1], { 0, 0, (float)Textures[1].width, (float)Textures[1].height },
+		{ 270 + (float)1 * 225, 500 - 40, 32 * 4, 50 * 4 }, { 0, 0 }, 0.f, WHITE);
+	DrawTexturePro(Textures[2], { 0, 0, (float)Textures[2].width, (float)Textures[2].height },
+		{ 270 + (float)2 * 225, 500, 32 * 4, 40 * 4 }, { 0, 0 }, 0.f, WHITE);
 	DrawTexturePro(Textures[3], { 0, 0, (float)Textures[3].width, (float)Textures[3].height },
 		{ 270 + (float)3 * 225, 500 - 32, 32 * 4, 48 * 4 }, { 0, 0 }, 0.f, WHITE);
-
 	DrawTexturePro(Textures[4], { 0, 0, (float)Textures[4].width, (float)Textures[4].height },
 		{ 270 + (float)4 * 225, 500, 32 * 4, 40 * 4 }, { 0, 0 }, 0.f, WHITE);
 

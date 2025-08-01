@@ -56,9 +56,11 @@ Character::Character(Vector2 pos, Vector2 sz, CharacterState characterstate, Cha
 
 	if (characterType == MARIO) {
 		texture = RESOURCE_MANAGER.getTexture("SmallMario_RIGHT_0");
+		size = { 32, 40 };
 	}
 	else if (characterType == LUIGI) {
 		texture = RESOURCE_MANAGER.getTexture("SmallLuigi_RIGHT_0");
+		size = { 32, 44 };
 	}
 	else if (characterType == PEACH) {
 		texture = RESOURCE_MANAGER.getTexture("SmallPeach_RIGHT_0");
@@ -89,24 +91,31 @@ Character::Character(Vector2 pos, Vector2 sz, CharacterState characterstate, Cha
 	
 
 	// set the transitioning
-	// for mario and luigi
-	std::string type;
-	if (characterType == MARIO) {
-		type = "Mario";
-	}
-	else if (characterType == LUIGI)
-		type = "Luigi";
+	// for mario
 	transitionFrames = {
-		{"Small" + type, {32, 40}, STATE_SMALL, 1}, // 0. small
-		{"Transitioning" + type, {32, 56}, STATE_SUPER, 2}, // 1. pre super
-		{"Super" + type, {32, 56}, STATE_SUPER, 2}, // 2. super
-		{"TransitioningFire" + type, {32, 56}, STATE_FIRE, 2}, // 3. prefire
-		{"Fire" + type, {32, 56}, STATE_FIRE, 2}, // 4. fire
-		{"StarSmall" + type, {32, 40}, STATE_STAR, 1}, // 5. star
-		{"StarTransitioning" + type, {32, 56}, STATE_SUPERSTAR, 2}, // 6. pre super star
-		{"StarSuper" + type, {32, 56}, STATE_SUPERSTAR, 2}, // 7. superstar
-		{"StarTranisitioningFire" + type, {32, 56}, STATE_FIRESTAR, 2}, // 8. pre firestar
-		{"StarFire" + type, {32, 56}, STATE_FIRESTAR, 2} // 9. firestar
+		{"SmallMario", {32, 40}, STATE_SMALL, 1}, // 0. small
+		{"TransitioningMario", {32, 56}, STATE_SUPER, 2}, // 1. pre super
+		{"SuperMario", {32, 56}, STATE_SUPER, 2}, // 2. super
+		{"TransitioningFireMario", {32, 56}, STATE_FIRE, 2}, // 3. prefire
+		{"FireMario", {32, 56}, STATE_FIRE, 2}, // 4. fire
+		{"StarSmallMario", {32, 40}, STATE_STAR, 1}, // 5. star
+		{"StarTransitioningMario", {32, 56}, STATE_SUPERSTAR, 2}, // 6. pre super star
+		{"StarSuperMario", {32, 56}, STATE_SUPERSTAR, 2}, // 7. superstar
+		{"StarTranisitioningFireMario", {32, 56}, STATE_FIRESTAR, 2}, // 8. pre firestar
+		{"StarFireMario", {32, 56}, STATE_FIRESTAR, 2} // 9. firestar
+	};
+	// for luigi
+	transitionFramesLuigi = {
+		{"SmallLuigi" , {32, 44}, STATE_SMALL, 1}, // 0. small
+		{"TransitioningLuigi", {32, 60}, STATE_SUPER, 2}, // 1. pre super
+		{"SuperLuigi", {32, 60}, STATE_SUPER, 2}, // 2. super
+		{"TransitioningFireLuigi", {32, 60}, STATE_FIRE, 2}, // 3. prefire
+		{"FireLuigi", {32, 60}, STATE_FIRE, 2}, // 4. fire
+		{"SmallLuigi", {32, 44}, STATE_STAR, 1}, // 5. star
+		{"TransitioningLuigi", {32, 60}, STATE_SUPERSTAR, 2}, // 6. pre super star
+		{"SuperLuigi" , {32, 60}, STATE_SUPERSTAR, 2}, // 7. superstar
+		{"TranisitioningFireLuigi", {32, 60}, STATE_FIRESTAR, 2}, // 8. pre firestar
+		{"FireLuigi", {32, 60}, STATE_FIRESTAR, 2} // 9. firestar
 	};
 	// for peach
 	transitionFramesPeach = {
@@ -137,15 +146,15 @@ Character::Character(Vector2 pos, Vector2 sz, CharacterState characterstate, Cha
 	// for Toad
 	transitionFramesToad = {
 		{"SmallToad", {32, 40}, STATE_SMALL, 1}, // 0. small
-		{"TransitioningToad" + type, {32, 56}, STATE_SUPER, 2}, // 1. pre super
-		{"SuperToad" + type, {32, 56}, STATE_SUPER, 2}, // 2. super
-		{"TransitioningFireToad" + type, {32, 56}, STATE_FIRE, 2}, // 3. prefire
-		{"FireToad" + type, {32, 56}, STATE_FIRE, 2}, // 4. fire
-		{"SmallToad" + type, {32, 40}, STATE_STAR, 1}, // 5. star
-		{"TransitioningToad" + type, {32, 56}, STATE_SUPERSTAR, 2}, // 6. pre super star
-		{"SuperToad" + type, {32, 56}, STATE_SUPERSTAR, 2}, // 7. superstar
-		{"TranisitioningFireToad" + type, {32, 56}, STATE_FIRESTAR, 2}, // 8. pre firestar
-		{"FireToad" + type, {32, 56}, STATE_FIRESTAR, 2} // 9. firestar
+		{"TransitioningToad", {32, 56}, STATE_SUPER, 2}, // 1. pre super
+		{"SuperToad", {32, 56}, STATE_SUPER, 2}, // 2. super
+		{"TransitioningFireToad", {32, 56}, STATE_FIRE, 2}, // 3. prefire
+		{"FireToad", {32, 56}, STATE_FIRE, 2}, // 4. fire
+		{"SmallToad", {32, 40}, STATE_STAR, 1}, // 5. star
+		{"TransitioningToad", {32, 56}, STATE_SUPERSTAR, 2}, // 6. pre super star
+		{"SuperToad", {32, 56}, STATE_SUPERSTAR, 2}, // 7. superstar
+		{"TranisitioningFireToad", {32, 56}, STATE_FIRESTAR, 2}, // 8. pre firestar
+		{"FireToad", {32, 56}, STATE_FIRESTAR, 2} // 9. firestar
 	};
 }
 
@@ -169,7 +178,7 @@ void Character::resetInGame()
 	}
 	else if (characterType == LUIGI) {
 		texture = RESOURCE_MANAGER.getTexture("SmallLuigi_RIGHT_0");
-		size = { 32, 40 };
+		size = { 32, 44 };
 	}
 	else if (characterType == PEACH) {
 		texture = RESOURCE_MANAGER.getTexture("SmallPeach_RIGHT_0");
@@ -220,7 +229,7 @@ void Character::reset()
 	}
 	else if (characterType == LUIGI) {
 		texture = RESOURCE_MANAGER.getTexture("SmallLuigi_RIGHT_0");
-		size = { 32, 40 };
+		size = { 32, 44 };
 	}
 	else if (characterType == PEACH) {
 		texture = RESOURCE_MANAGER.getTexture("SmallPeach_RIGHT_0");
@@ -491,9 +500,11 @@ void Character::Update()
 			if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("lost_suit.wav");
 		}
 	}
-	if (characterType == MARIO || characterType == LUIGI || characterType == TOAD) {
+	if (characterType == MARIO || characterType == TOAD) {
 		size = (Character_state == STATE_SMALL || Character_state == STATE_STAR) ? Vector2{ 32, 40 } : Vector2{ 32, 56 };
 	}
+	else if (characterType == LUIGI)
+		size = (Character_state == STATE_SMALL || Character_state == STATE_STAR) ? Vector2{ 32, 44 } : Vector2{ 32, 60 };
 	else if (characterType == PEACH) {
 		size = (Character_state == STATE_SMALL || Character_state == STATE_STAR) ? Vector2{ 26, 46 } : Vector2{ 36, 64 };
 	}
@@ -677,7 +688,7 @@ void Character::UpdateTexture()
 			characterState = "Fire";
 		maxFrame = 2;
 	}
-	else if (characterType == TOAD) {
+	else if (characterType == TOAD || characterType == LUIGI) {
 		if (Character_state == STATE_SMALL || Character_state == STATE_STAR){
 			characterState = "Small";
 			maxFrame = 1;
@@ -692,6 +703,7 @@ void Character::UpdateTexture()
 		}
 	}
 	else {
+		// for mario
 		if (Character_state == STATE_SMALL) {
 			characterState = "Small";
 			maxFrame = 1;
@@ -856,8 +868,10 @@ void Character::UpdateTransitioningTexture()
 	}
 
 	TransitionFrame frame;
-	if (characterType == MARIO || characterType == LUIGI)
+	if (characterType == MARIO)
 		frame = transitionFrames[transitionCurrentFrame];
+	else if (characterType == LUIGI)
+		frame = transitionFramesLuigi[transitionCurrentFrame];
 	else if (characterType == TOAD)
 		frame = transitionFramesToad[transitionCurrentFrame];
 	else if (characterType == PEACH)
@@ -867,7 +881,6 @@ void Character::UpdateTransitioningTexture()
 
 	std::string dir = this->direction == RIGHT ? "_RIGHT_" : "_LEFT_";
 	texture = RESOURCE_MANAGER.getTexture(frame.textureKey + dir + "0");
-	//this->size = { (float)texture.width, (float)texture.height};
 	this->size = frame.size;
 	this->maxFrame = frame.Max_frame;
 	updateCollision();
@@ -972,7 +985,7 @@ void Character::collisionWithEnemy(Enemy* enemy, CollisionType CollType)
 	else if (enemy->getEnemyType() != SHELL) {
 		if (countImmortalTime > 0.f)
 			return;
-		else if (CollType != COLLISION_TYPE_SOUTH || enemy->getEnemyType() == PIRANHA || enemy->getEnemyType() == MUNCHER) {
+		else if (CollType != COLLISION_TYPE_SOUTH || enemy->getEnemyType() == PIRANHA || enemy->getEnemyType() == MUNCHER || enemy->getEnemyType() == SPINY) {
 			lostSuit();
 		}
 		else  {

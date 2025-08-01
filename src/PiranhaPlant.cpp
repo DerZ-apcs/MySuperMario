@@ -12,6 +12,11 @@ PiranhaPlant::PiranhaPlant(Vector2 pos, Texture2D texture)
     gravityAvailable = true;
 }
 
+PIRANHA_TYPE PiranhaPlant::getPiranhaType() const
+{
+    return NORMAL_PIRANHA;
+}
+
 void PiranhaPlant::Update() {
     Entity::Update();
 
