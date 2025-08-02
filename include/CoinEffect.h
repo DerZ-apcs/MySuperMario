@@ -2,6 +2,7 @@
 #define COIN_EFFECT_H
 
 #include "../include/Effect.h"
+// Coin effect when hit the block
 
 class CoinEffect : public Effect {
 private:

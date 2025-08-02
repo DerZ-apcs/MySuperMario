@@ -3,12 +3,13 @@
 
 const float PowerItem::EMERGENCE_HEIGHT = 32.0f;
 const float PowerItem::EMERGENCE_SPEED = 48.0f;
-const float PowerItem::SPEED = 48.0f;
+const float PowerItem::SPEED = 150.0f;
 
 //------------------
 
-PowerItem::PowerItem(Vector2 pos, Texture2D tex, int point) :
-	Item(point), powerUpState(EMERGING)
+PowerItem::PowerItem(Vector2 pos, Vector2 sz, Direction dir, Texture2D tex) :
+	Item(pos, sz, Vector2{ SPEED * (dir == RIGHT ? 1.0f : -1.0f), 20 }, dir, FALLING, tex), powerUpState(EMERGING),
+	INTERVAL_JUMPING(1.f)
 {
 	this->texture = tex;
 	this->position = pos;
@@ -19,11 +20,12 @@ PowerItem::PowerItem(Vector2 pos, Texture2D tex, int point) :
 	CollSouth.setSize({ size.x / 2, 5 });
 	CollWest.setSize({ 5, size.y - 5 });
 	CollEast.setSize({ 5, size.y - 5 });
+	updateCollision();
+}
 
-	setAppearBottom(false);
-	setGravityAvailable(true);
-	setCollisionAvailable(false);
-	Entity::updateCollision();
+//-----------------
+void PowerItem::setItemState(PowerUpState state) {
+	powerUpState = state;
 }
 
 //------------------
@@ -35,21 +37,35 @@ PowerUpState PowerItem::getPowerUpState() const {
 //------------------
 
 void PowerItem::Update() {
-	if (powerUpState == CONSUMED) return;
+	Entity::Update();
+	if (isDead()) return;
 
 	switch (powerUpState) {
 	case ACTIVE: {
+		gravityAvailable = true;
+		collisionAvailable = true;
 		float deltaTime = GetFrameTime();
 		position.x += velocity.x * deltaTime;
 		position.y += velocity.y * deltaTime;
 
-		if (state != ON_GROUND) { if (velocity.y >= 0) { state = FALLING; } }
-		velocity.y += GRAVITY * deltaTime;
+		currtimeJumping += deltaTime;
+		if (currtimeJumping >= INTERVAL_JUMPING && state == ON_GROUND) {
+			velocity.y = -300;
+			state = JUMPING;
+			currtimeJumping = 0.f;
+		}
+		if (velocity.y >= 0) 
+			state = FALLING; 
+		if (getGravityAvailable())
+			velocity.y += GRAVITY * deltaTime;
 
 		break;
 	}
 
 	case EMERGING: {
+		if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("mushroom_appears.wav");
+		gravityAvailable = false;
+		collisionAvailable = false;
 		float deltaTime = GetFrameTime();
 		float dy = EMERGENCE_SPEED * deltaTime;
 		emergenceDis += dy; position.y -= dy;
@@ -73,7 +89,20 @@ void PowerItem::Update() {
 }
 
 void PowerItem::draw() {
+	if (isDead()) return;
 	if (this->dead == true) return;
 
 	DrawTexture(texture, position.x, position.y, WHITE);
+	// debug
+	if (SETTING.getDebugMode()) {
+		CollNorth.draw();
+		CollSouth.draw();
+		CollEast.draw();
+		CollWest.draw();
+	}
+}
+
+ITEM_TYPE PowerItem::getItemType() const
+{
+	return POWERITEM;
 }

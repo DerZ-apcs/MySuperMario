@@ -1,11 +1,11 @@
 #include "../include/NoteBlock.h"
-#include "CloudBlock.h"
+#include "../include/CloudBlock.h"
 
 CloudBlock::CloudBlock(Vector2 pos) : Blocks(pos, { 32, 32 }, "TILE_115") {}
 
 //-----------------
 
-BLOCK_TYPE CloudBlock::getBlockType() const { 
+BLOCK_TYPE CloudBlock::getBlockType() const {
 	return CLOUDBLOCK;
 }
 

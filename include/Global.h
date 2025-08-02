@@ -4,6 +4,7 @@
 #include "../include/Setting.h"
 #include "../include/Singleton.h"
 #include <map>
+#include <random>
 
 extern ResourceManager& RESOURCE_MANAGER;
 extern Setting& SETTING;
@@ -13,6 +14,7 @@ enum EntityType {
 	ENEMY,
 	ITEM,
 	FIREBALL,
+	ENEMY_FIREBALL,
 	EFFECT,
 	BLOCK
 };
@@ -26,8 +28,6 @@ enum EntityState {
 	FLYING,
 	SINKING,
 	STATE_IS_DYING,
-	STATE_SHELL
-
 };
 enum SPRITE_STATE {
 	NORMAL,
@@ -41,7 +41,10 @@ enum SPRITE_STATE {
 // Mario, luigi
 enum CharacterType { 
 	MARIO,
-	LUIGI
+	LUIGI,
+	PEACH,
+	MARISA,
+	TOAD
 };
 // State: Small, Super, Fireball
 enum CharacterState {
@@ -55,18 +58,18 @@ enum CharacterState {
 
 //Block
 enum BLOCK_TYPE {
-	FLOOR,
+	FLOOR, // only collision the upper
 	BRICK, // breakable
 	CLOUDBLOCK, // phase through
 	SOLIDBLOCK, // unmovable, unbreakable
 	MOVINGBLOCK,
-	ITEMBLOCK,
-	COINBLOCK,
-	NOTEBLOCK,
-	ROTATINGBLOCK,
-	HIDDEN,
+	ITEMBLOCK, // carry items
+	HIDDEN, 
 	TEMPBLOCK,
-	DECOR
+	DECOR, // for decor, not collision
+	COINBLOCK, // coin when hit
+	NOTEBLOCK,// note block
+	ROTATINGBLOCK
 };
 
 enum BOUNCE_DIRECTION {
@@ -81,9 +84,10 @@ enum BOUNCE_DIRECTION {
 enum ITEM_TYPE {
 	COIN,
 	MUSHROOM,
-	SUPERLEAF,
 	FLOWER,
-	STAR
+	STAR,
+	POWERITEM,
+	MOON
 };
 
 enum ENEMY_TYPE {
@@ -92,7 +96,12 @@ enum ENEMY_TYPE {
 	BULLET,
 	REX,
 	PIRANHA,
-	SHELL
+	SHELL,
+	MUNCHER,
+	BOBOMB,
+	SPINY,
+	BUZZYBEETLE
+
 };
 
 enum GOOMBA_TYPE {
@@ -100,9 +109,11 @@ enum GOOMBA_TYPE {
 	FLYING_GOOMBA
 };
 
-enum KOOPA_TROOPA_TYPE {
-	NORMAL_KOOPA,
-	FLYING_KOOPA
+enum KOOPA_TYPE {
+	YELLOW_KOOPA,
+	GREEN_KOOPA,
+	RED_KOOPA,
+	BLUE_KOOPA
 };
 
 enum BULLET_TYPE {
@@ -129,25 +140,25 @@ enum SHELL_TYPE {
 	RED_SHELL
 };
 
-enum FireBallType {
-	CHARACTER_FIREBALL,
-	ENEMY_FIREBALL
-};
-
 enum MushroomType {
-	GREENMUSHROOM, // Lives
-	REDMUSHROOM, // Super
+	// Super 0.
+	REDMUSHROOM,
+	GREENMUSHROOM, // Lives 1
 };
 
 enum FlowerType {
-	FIRE_FLOWER
+	FIRE_FLOWER // 0
+};
+enum MoonType {
+	NORMAL_MOON
 };
 enum StarType {
-	YELLOW_STAR
+	YELLOW_STAR, // 0
+	BLUE_STAR // 1
 };
 
 enum CoinType {
-	BLOCK_COIN,
-	STATIC_COIN
+	STATIC_COIN, // 0
+	BLOCK_COIN // 1
 };
 #endif

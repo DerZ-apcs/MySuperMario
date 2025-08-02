@@ -2,7 +2,6 @@
 #define BRICK_H
 
 #include <raylib.h>
-#include "../include/Tile.h"
 #include "../include/Blocks.h" 
 
 class Brick : public Blocks {
@@ -16,6 +15,8 @@ public:
 	bool getBroken() const;
 	void setBroken(bool broken);
 	BLOCK_TYPE getBlockType() const override;
+
+	void breakBrick();
 
 	void draw() override;
 };

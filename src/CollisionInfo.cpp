@@ -1,4 +1,4 @@
-#include "../include/CollisionInfo.h"
+﻿#include "../include/CollisionInfo.h"
 #include "../include/Character.h"
 #include "../include/Blocks.h"
 #include "../include/Floor.h"
@@ -7,15 +7,23 @@
 #include "../include/CloudBlock.h"
 #include "../include/NoteBlock.h"
 #include "../include/TemporaryBlock.h"
+#include "../include/RotatingBlock.h"
 #include "../include/HiddenBlock.h"
 #include "../include/SolidBlock.h"
+#include "../include/CloudBlock.h"
+#include "../include/NoteBlock.h"
 #include "../include/DecorBlock.h"
 #include "../include/Shell.h"
+#include "../include/SmokeEffect.h"
 #include "../include/ItemBlock.h"
-#include "../include/QuestionBlock.h"
 #include "../include/CoinBlock.h"
 #include "../include/RotatingBlock.h"
+#include "../include/CoinBlock.h"
+#include "../include/Coin.h"
+#include "../include/PowerItem.h"
 #include <iostream>
+#include <GameEngine.h>
+#include <BobOmb.h>
 
 inline Rectangle getProximityRect(Entity& entity, float radius)
 {
@@ -95,7 +103,7 @@ bool PlayerMovingBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 bool PlayerItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 {
 	Character* character = dynamic_cast<Character*>(entityA);
-	QuestionBlock* block = dynamic_cast<QuestionBlock*>(entityB);
+	ItemBlock* block = dynamic_cast<ItemBlock*>(entityB);
 
 	if (!character || !block || !character->getCollisionAvailable())
 		return false;
@@ -243,66 +251,6 @@ bool PlayerBrickInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	return true;
 }
 
-bool PlayerCloudBlockInfo::HandleCollision(Entity* entityA, Entity* entityB) {
-	Character* character = dynamic_cast<Character*>(entityA);
-	CloudBlock* block = dynamic_cast<CloudBlock*>(entityB);
-
-	if (!character || !block || !character->getCollisionAvailable())
-		return false;
-	CollisionType Colltype = character->CheckCollision(*block);
-
-	if (Colltype == COLLISION_TYPE_SOUTH && character->getVelY() > 0) {
-		if (character->getState() != SINKING) {
-			character->setPosition(Vector2{ character->getX(), block->getY() - character->getHeight() });
-			character->setVelY(0);
-			character->setState(SINKING);
-		}
-
-		character->setSinkingTime(0.05f); // refresh timer 
-		return true;
-	}
-
-	return false;
-}
-
-bool PlayerNoteBlockInfo::HandleCollision(Entity* entityA, Entity* entityB) {
-	Character* character = dynamic_cast<Character*>(entityA);
-	NoteBlock* block = dynamic_cast<NoteBlock*>(entityB);
-
-	if (!character || !block || !character->getCollisionAvailable())
-		return false;
-	CollisionType Colltype = character->CheckCollision(*block);
-	if (Colltype == COLLISION_TYPE_NONE)
-		return false;
-	switch (Colltype) {
-	case COLLISION_TYPE_NORTH:
-		character->setPosition(Vector2{ character->getX(), block->getY() + block->getHeight() });
-		character->setVelY(0);	
-		block->setBounceDir(BOUNCE_UP);
-		break;
-	case COLLISION_TYPE_SOUTH:
-		character->setPosition(Vector2{ character->getX(), block->getY() - character->getHeight() });
-		character->setState(JUMPING);
-		if (character->getVelY() > 35) {
-			character->setVelY(max(character->getVelY() * -1.5f, -1550.0f)); // bounce effect
-			block->setBounceDir(BOUNCE_DOWN);
-		}
-		else { character->setVelY(0); }
-		break;
-	case COLLISION_TYPE_EAST:
-		character->setPosition(Vector2{ block->getX() - character->getWidth(), character->getY() });
-		character->setVelX(0);
-		break;
-	case COLLISION_TYPE_WEST:
-		character->setPosition(Vector2{ block->getX() + block->getWidth(), character->getY() });
-		character->setVelX(0);
-		break;
-	default:
-		break;
-	}
-	return true;
-}
-
 bool PlayerBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 {
 	Character* character = dynamic_cast<Character*>(entityA);
@@ -338,6 +286,67 @@ bool PlayerBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	return true;
 }
 
+bool PlayerCloudBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
+{
+	Character* character = dynamic_cast<Character*>(entityA);
+	CloudBlock* block = dynamic_cast<CloudBlock*>(entityB);
+
+	if (!character || !block || !character->getCollisionAvailable())
+		return false;
+	CollisionType Colltype = character->CheckCollision(*block);
+
+	if (Colltype == COLLISION_TYPE_SOUTH && character->getVelY() > 0) {
+		if (character->getState() != SINKING) {
+			character->setPosition(Vector2{ character->getX(), block->getY() - character->getHeight() });
+			character->setVelY(0);
+			character->setState(SINKING);
+		}
+
+		character->setSinkingTime(0.05f); // refresh timer 
+		return true;
+	}
+
+	return false;
+}
+
+bool PLayerNoteBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
+{
+	Character* character = dynamic_cast<Character*>(entityA);
+	NoteBlock* block = dynamic_cast<NoteBlock*>(entityB);
+
+	if (!character || !block || !character->getCollisionAvailable())
+		return false;
+	CollisionType Colltype = character->CheckCollision(*block);
+	if (Colltype == COLLISION_TYPE_NONE)
+		return false;
+	switch (Colltype) {
+	case COLLISION_TYPE_NORTH:
+		character->setPosition(Vector2{ character->getX(), block->getY() + block->getHeight() });
+		character->setVelY(0);
+		block->setBounceDir(BOUNCE_UP);
+		break;
+	case COLLISION_TYPE_SOUTH:
+		character->setPosition(Vector2{ character->getX(), block->getY() - character->getHeight() });
+		character->setState(JUMPING);
+		if (character->getVelY() > 35) {
+			character->setVelY(max(character->getVelY() * -1.5f, -1550.0f)); // bounce effect
+			block->setBounceDir(BOUNCE_DOWN);
+		}
+		else { character->setVelY(0); }
+		break;
+	case COLLISION_TYPE_EAST:
+		character->setPosition(Vector2{ block->getX() - character->getWidth(), character->getY() });
+		character->setVelX(0);
+		break;
+	case COLLISION_TYPE_WEST:
+		character->setPosition(Vector2{ block->getX() + block->getWidth(), character->getY() });
+		character->setVelX(0);
+		break;
+	default:
+		break;
+	}
+	return true;
+}
 // enemy
 bool EnemyFloorInfo::HandleCollision(Entity* entityA, Entity* entityB)
 {
@@ -352,11 +361,13 @@ bool EnemyFloorInfo::HandleCollision(Entity* entityA, Entity* entityB)
 
 	if (Colltype != COLLISION_TYPE_SOUTH)
 		return false;
+	
 	enemy->setPosition(Vector2{ enemy->getX(), enemy->getY() - enemy->getHeight() });
 	enemy->setState(ON_GROUND);
 	enemy->setVelY(0);
 	return true;
 }
+
 bool EnemyBrickInfo::HandleCollision(Entity* entityA, Entity* entityB)
 {
 	Enemy* enemy = dynamic_cast<Enemy*>(entityA);
@@ -367,7 +378,14 @@ bool EnemyBrickInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	if (enemy->getEnemyType() == PIRANHA) return false;
 
 	CollisionType Colltype = enemy->CheckCollision(*block);
-	if (Colltype == COLLISION_TYPE_NONE) return false;
+	if (Colltype == COLLISION_TYPE_NONE) 
+		return false;
+	if (enemy->getEnemyType() == BULLET) {
+		enemy->setVel({ 0, 0 });
+		if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomp.wav");
+		enemy->setEntityDead();
+		return true;
+	}
 	if (enemy->getVelX() != 0 || enemy->getEnemyType() == SHELL) {
 		
 		switch (Colltype) {
@@ -395,11 +413,10 @@ bool EnemyBrickInfo::HandleCollision(Entity* entityA, Entity* entityB)
 			break;
 		}
 
-		/*if (Shell* shell = dynamic_cast<Shell*>(enemy)) {
-			if (!shell->getIsHold()) {
+		if (enemy->getEnemyType() == SHELL) {
+			if (enemy->getIsKicked())
 				block->breakBrick();
-			}
-		}*/
+		}
 	}
 	return true;
 }
@@ -416,7 +433,13 @@ bool EnemyItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	CollisionType Colltype = enemy->CheckCollision(*block);
 	if (Colltype == COLLISION_TYPE_NONE) 
 		return false;
-	if (enemy->getVelX() != 0 || enemy->getEnemyType() == SHELL) {
+	if (enemy->getEnemyType() == BULLET) {
+		enemy->setVel({ 0, 0 });
+		if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomp.wav");
+		enemy->setEntityDead();
+		return true;
+	}
+	if (enemy->getVelX() != 0 || enemy->getVelY() != 0 || enemy->getEnemyType() == SHELL) {
 
 		switch (Colltype) {
 		case COLLISION_TYPE_NORTH:
@@ -443,11 +466,11 @@ bool EnemyItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 			break;
 		}
 
-		/*if (Shell* shell = dynamic_cast<Shell*>(enemy)) {
-			if (!shell->getIsHold()) {
-				block->releaseItem(enemy);
-			}
-		}*/
+		if (enemy->getEnemyType() == SHELL) {
+			if (enemy->getIsKicked() && block->getActive())
+				//block->releaseItem(enemy);
+				block->Activate();
+		}
 	}
 	return true;
 }
@@ -456,22 +479,28 @@ bool EnemyBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	Enemy* enemy = dynamic_cast<Enemy*>(entityA);
 	Blocks* block = dynamic_cast<Blocks*>(entityB);
 
-	if (!enemy || !block || !enemy->getCollisionAvailable() || !block->getCollisionAvailable())
+	if (!enemy || !block || !enemy->getCollisionAvailable() || !block->getCollisionAvailable() || enemy->getEnemyType() == PIRANHA)
 		return false;
 	CollisionType Colltype = enemy->CheckCollision(*block);
 
 	if (Colltype == COLLISION_TYPE_NONE)
 		return false;
-
+	if (enemy->getEnemyType() == BULLET) {
+		return false;
+	}
 	switch (Colltype) {
 	case COLLISION_TYPE_NORTH:
 		enemy->setPosition(Vector2{ enemy->getX(), block->getY() + block->getHeight() });
 		enemy->setVelY(0);
+
 		break;
 	case COLLISION_TYPE_SOUTH:
 		enemy->setPosition(Vector2{ enemy->getX(), block->getY() - enemy->getHeight() });
 		enemy->setState(ON_GROUND);
 		enemy->setVelY(0);
+		if (enemy->getEnemyType() == GOOMBA && dynamic_cast<Goomba*>(enemy)->getGoombaType() == FLYING_GOOMBA) {
+			dynamic_cast<FlyingGoomba*>(enemy)->setJumpTimer(0.5f);
+		}
 		break;
 	case COLLISION_TYPE_EAST:
 		enemy->setPosition(Vector2{ block->getX() - enemy->getWidth(), enemy->getY() });
@@ -485,6 +514,10 @@ bool EnemyBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 		break;
 	default:
 		break;
+	}
+	if (Colltype == COLLISION_TYPE_EAST || Colltype == COLLISION_TYPE_WEST) {
+		if (enemy->getEnemyType() == REX || enemy->getEnemyType() == GOOMBA)
+			enemy->setCollisionTimer(0.5f); // vo hieu hoa duoi character 0.5s
 	}
 	return true;
 }
@@ -502,7 +535,7 @@ bool FireBallFloorInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	if (Colltype != COLLISION_TYPE_SOUTH)
 		return false;
 	fireball->setPosition(Vector2{ fireball->getX(), fireball->getY() - fireball->getHeight() });
-	fireball->setVelY(fireball->getVelY() * -1);
+	fireball->setVelY(fireball->getVelY() * -0.9f);
 	return true;
 }
 
@@ -517,11 +550,36 @@ bool FireBallItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	if (Colltype == COLLISION_TYPE_NONE)
 		return false;
 
-	fireball->setEntityDead();
-	fireball->setCollisionAvailable(false);
-	RESOURCE_MANAGER.playSound("bump.wav");
-	//Effect* smoke = new Effect();
-	block->releaseItem(fireball);
+	if (block->getActive()) {
+		block->Activate();
+		fireball->setEntityDead();
+		fireball->setCollisionAvailable(false);
+		if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("bump.wav");
+		SmokeEffect* smoke = new SmokeEffect(Vector2{ block->getCenter().x, block->getTop() }, Vector2{ 0, -200 });
+		globalGameEngine->addEffect(smoke);
+	}
+	switch (Colltype)
+	{
+	case COLLISION_TYPE_NORTH:
+		fireball->setPosition(Vector2{ fireball->getX(), block->getY() + block->getHeight() });
+		fireball->setVelY(0);
+		break;
+	case COLLISION_TYPE_SOUTH:
+		fireball->setPosition(Vector2{ fireball->getX(), block->getY() - fireball->getHeight() });
+		fireball->setVelY(fireball->getVelY() * -0.9f);
+		break;
+	case COLLISION_TYPE_EAST:
+		fireball->setPosition(Vector2{ block->getX() - fireball->getWidth(), fireball->getY() });
+		fireball->setVelX(fireball->getVelX() * -0.9f);
+		break;
+	case COLLISION_TYPE_WEST:
+		fireball->setPosition(Vector2{ block->getX() + block->getWidth(), fireball->getY() });
+		fireball->setVelX(fireball->getVelX() * -0.9f);
+		break;
+	default:
+		break;
+	}
+	
 	return true;
 }
 
@@ -536,11 +594,13 @@ bool FireBallBrickInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	if (Colltype == COLLISION_TYPE_NONE)
 		return false;
 	
+	block->breakBrick();
 	fireball->setEntityDead();
 	fireball->setCollisionAvailable(false);
-	RESOURCE_MANAGER.playSound("bump.wav");
-	//Effect* smoke = new Effect();
-	block->setBroken(true);
+	if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("bump.wav");
+	SmokeEffect* smoke = new SmokeEffect(Vector2{ block->getCenter().x, block->getTop() }, Vector2{ 0, -200 });
+	globalGameEngine->addEffect(smoke);
+	
 	return true;
 }
 
@@ -562,15 +622,15 @@ bool FireBallBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 		break;
 	case COLLISION_TYPE_SOUTH:
 		fireball->setPosition(Vector2{ fireball->getX(), block->getY() - fireball->getHeight() });
-		fireball->setVelY(fireball->getVelY() * -1);
+		fireball->setVelY(fireball->getVelY() * -0.9f);
 		break;
 	case COLLISION_TYPE_EAST:
 		fireball->setPosition(Vector2{ block->getX() - fireball->getWidth(), fireball->getY() });
-		fireball->setVelX(fireball->getVelX() * -1);
+		fireball->setVelX(fireball->getVelX() * -0.9f);
 		break;
 	case COLLISION_TYPE_WEST:
 		fireball->setPosition(Vector2{ block->getX() + block->getWidth(), fireball->getY() });
-		fireball->setVelX(fireball->getVelX() * -1);
+		fireball->setVelX(fireball->getVelX() * -0.9f);
 		break;
 	default:
 		break;
@@ -635,10 +695,11 @@ bool ItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	Blocks* block = dynamic_cast<Blocks*>(entityB);
 	PowerItem* powerItem = dynamic_cast<PowerItem*>(item);
 
-	if (!item || !block || item->getCollisionAvailable() == false)
+	if (!item || !block || !item->getCollisionAvailable())
 		return false;
-	if (powerItem && powerItem->getPowerUpState() != ACTIVE) 
-		return false; 
+	if (powerItem && powerItem->getPowerUpState() != ACTIVE) {
+		return false;
+	}
 	CollisionType Colltype = item->CheckCollision(*block);
 	if (Colltype == COLLISION_TYPE_NONE)
 		return false;
@@ -668,10 +729,10 @@ bool ItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	}
 	return true;
 }
-
+// enemy fireball
 bool FireBallPlayerInfo::HandleCollision(Entity* entityA, Entity* entityB)
 {
-	FireBall* fireball = dynamic_cast<FireBall*>(entityA);
+	EnemyFireBall* fireball = dynamic_cast<EnemyFireBall*>(entityA);
 	Character* character = dynamic_cast<Character*>(entityB);
 
 	if (!fireball || !character || !fireball->getCollisionAvailable() || !character->getCollisionAvailable())
@@ -684,12 +745,65 @@ bool FireBallPlayerInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	return true;
 }
 
+bool EnemyFireBallBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
+{
+	EnemyFireBall* fireball = dynamic_cast<EnemyFireBall*>(entityA);
+	Blocks* block = dynamic_cast<Blocks*>(entityB);
+
+	if (!fireball || !block || !fireball->getCollisionAvailable())
+		return false;
+	CollisionType Colltype = fireball->CheckCollision(*block);
+	if (Colltype == COLLISION_TYPE_NONE)
+		return false;
+	switch (Colltype)
+	{
+	case COLLISION_TYPE_NORTH:
+		fireball->setPosition(Vector2{ fireball->getX(), block->getY() + block->getHeight() });
+		fireball->setVelY(fireball->getVelY() * -0.9f);
+		break;
+	case COLLISION_TYPE_SOUTH:
+		fireball->setPosition(Vector2{ fireball->getX(), block->getY() - fireball->getHeight() });
+		fireball->setVelY(fireball->getVelY() * -0.9f);
+		break;
+	case COLLISION_TYPE_EAST:
+		fireball->setPosition(Vector2{ block->getX() - fireball->getWidth(), fireball->getY() });
+		fireball->setVelX(fireball->getVelX() * -0.9f);
+		break;
+	case COLLISION_TYPE_WEST:
+		fireball->setPosition(Vector2{ block->getX() + block->getWidth(), fireball->getY() });
+		fireball->setVelX(fireball->getVelX() * -0.9f);
+		break;
+	default:
+		break;
+	}
+	return true;
+}
+
+// character fireball
 bool FireBallEnemyInfo::HandleCollision(Entity* entityA, Entity* entityB)
 {
 	FireBall* fireball = dynamic_cast<FireBall*>(entityA);
 	Enemy* enemy = dynamic_cast<Enemy*>(entityB);
 	if (!fireball || !enemy || !fireball->getCollisionAvailable() || !enemy->getCollisionAvailable())
 		return false;
+	if (enemy->getEnemyType() == MUNCHER)
+		return false;
+	if (enemy->getEnemyType() == BOBOMB) {
+		if (enemy->isDying()) return false;
+		dynamic_cast<BobOmb*>(enemy)->Explode(); // Nổ ngay khi bị bắn
+		fireball->setEntityDead();
+		return true;
+	}
+	if (enemy->getEnemyType() == BUZZYBEETLE) {
+		fireball->setEntityDead();
+		if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomped.wav");
+		enemy->setVelY(-400); // Buzzy Beetle bị bắn sẽ bay lên
+		enemy->setState(JUMPING);
+		SmokeEffect* smokeright = new SmokeEffect(Vector2{ enemy->getCenter().x, enemy->getTop() }, Vector2{ 60, 120 });
+		globalGameEngine->addEffect(smokeright);
+		SmokeEffect* smokeleft = new SmokeEffect(Vector2{ enemy->getCenter().x, enemy->getTop() }, Vector2{ -60, 120 });
+		globalGameEngine->addEffect(smokeleft);
+	}
 	CollisionType Colltype = fireball->CheckCollision(*enemy);
 	if (Colltype == COLLISION_TYPE_NONE)
 		return false;
@@ -699,19 +813,26 @@ bool FireBallEnemyInfo::HandleCollision(Entity* entityA, Entity* entityB)
 
 bool EnemyEnemyInfo::HandleCollision(Entity* entityA, Entity* entityB)
 {
-	//Enemy* enemy1 = dynamic_cast<Enemy*>(entityA);
-	//Enemy* enemy2 = dynamic_cast<Enemy*>(entityB);
+	Enemy* enemy1 = dynamic_cast<Enemy*>(entityA);
+	Enemy* enemy2 = dynamic_cast<Enemy*>(entityB);
 
-	//if (!enemy1 || !enemy2 || enemy1->getCollisionAvailable() == false || enemy2->getCollisionAvailable() == false)
-	//	return false;
-	//if (enemy1->getEnemyType() != SHELL)
-	//	return false;
-	//CollisionType Colltype = enemy1->CheckCollision(*enemy2);
-	//if (Colltype == COLLISION_TYPE_NONE)
-	//	return false;
-	//enemy2->attacked(enemy1->getDir()); // enemy1 (shell) attack enemy2
-	//if (enemy2->getEnemyType() == SHELL)
-	//	enemy1->attacked(enemy2->getDir());
+	if (!enemy1 || !enemy2 || enemy1->getCollisionAvailable() == false || enemy2->getCollisionAvailable() == false)
+		return false;
+	if (enemy1->getEnemyType() != SHELL && enemy2->getEnemyType() != SHELL)
+		return false;
+	CollisionType Colltype = enemy1->CheckCollision(*enemy2);
+	if (Colltype == COLLISION_TYPE_NONE)
+		return false;
+	//enemy2->attacked(enemy1->getDir());
+	// enemy1 (shell) attack enemy
+	if (enemy1->getEnemyType() == SHELL) {
+		if (enemy1->getIsKicked())
+			enemy2->stomped();
+	}
+	else {
+		if (enemy2->getIsKicked())
+			enemy1->stomped();
+	}
 	return true;
 }
 
@@ -725,14 +846,14 @@ std::unique_ptr<CollisionInfo> CollisionInfoSelector::getInfor(EntityType typeA,
 			return std::make_unique<PlayerMovingBlockInfo>();
 		if (block && block->getBlockType() == ITEMBLOCK)
 			return std::make_unique<PlayerItemBlockInfo>();
+		if (block && block->getBlockType() == COINBLOCK)
+			return std::make_unique<PlayerCoinBlockInfo>();
 		if (block && block->getBlockType() == BRICK)
 			return std::make_unique<PlayerBrickInfo>();
 		if (block && block->getBlockType() == CLOUDBLOCK)
 			return std::make_unique<PlayerCloudBlockInfo>();
 		if (block && block->getBlockType() == NOTEBLOCK)
-			return std::make_unique<PlayerNoteBlockInfo>();
-		if (block && block->getBlockType() == COINBLOCK)
-			return std::make_unique<PlayerCoinBlockInfo>();
+			return std::make_unique<PLayerNoteBlockInfo>();
 		if (block && block->getBlockType() == ROTATINGBLOCK)
 			return std::make_unique<PlayerRotatingBlockInfo>();
 		return std::make_unique<PlayerBlockInfo>();
@@ -760,7 +881,7 @@ std::unique_ptr<CollisionInfo> CollisionInfoSelector::getInfor(EntityType typeA,
 		return std::make_unique<ItemBlockInfo>();
 	}
 
-	if (typeA == FIREBALL && typeB == CHARACTER) {
+	if (typeA == ENEMY_FIREBALL && typeB == CHARACTER) {
 		return std::make_unique<FireBallPlayerInfo>();
 	}
 	if (typeA == FIREBALL && typeB == ENEMY) {
@@ -774,11 +895,12 @@ std::unique_ptr<CollisionInfo> CollisionInfoSelector::getInfor(EntityType typeA,
 
 		return std::make_unique<FireBallBlockInfo>();
 	}
+	if (typeA == ENEMY_FIREBALL && typeB == BLOCK) {
+		return std::make_unique<EnemyFireBallBlockInfo>();
+	}
 	if (typeA == ENEMY && typeB == ENEMY) {
 		return std::make_unique<EnemyEnemyInfo>();
 	}
-
-
 	return nullptr;
 }
 

@@ -5,10 +5,10 @@ MovingBlock::MovingBlock(Vector2 pos, Vector2 size):
 {
 }
 
-MovingBlock::MovingBlock(Vector2 pos, Vector2 size, std::string textureName):
-	Blocks(pos, size, textureName)
-{
-}
+//MovingBlock::MovingBlock(Vector2 pos, Vector2 size, std::string textureName):
+//	Blocks(pos, size, textureName)
+//{
+//}
 
 BLOCK_TYPE MovingBlock::getBlockType() const
 {

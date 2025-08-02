@@ -11,7 +11,7 @@ private:
 
 public:
     MovingBlock(Vector2 pos = { 0, 0 }, Vector2 size = { 32, 32 });
-    MovingBlock(Vector2 pos = { 0, 0 }, Vector2 size = { 32, 32 }, std::string textureName = "TILE_0");
+    //MovingBlock(Vector2 pos = { 0, 0 }, Vector2 size = { 32, 32 }, std::string textureName = "TILE_0");
     BLOCK_TYPE getBlockType() const override;
     void draw() override;
     void setBounds(float left, float right, float top, float bottom);

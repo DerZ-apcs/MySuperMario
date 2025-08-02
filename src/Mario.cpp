@@ -3,7 +3,7 @@
 #include <iostream>
 
 Mario::Mario() : Mario(Vector2{ 32, 400 }, Vector2{ 32, 40 }, STATE_SMALL) {
-	/*cout << "Mario is created" << endl;*/
+	cout << "Mario is created" << endl;
 }
 	
 Mario::Mario(Vector2 nposition, Vector2 nsize, CharacterState type) :

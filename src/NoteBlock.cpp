@@ -7,25 +7,25 @@ const float NoteBlock::bounceMax = 24.0f; // Maximum bounce height in pixels
 //-----------------
 
 NoteBlock::NoteBlock(Vector2 pos) :
-	Blocks(pos, { 32, 32 }, "NOTE_0"), bounce_dir(NO_BOUNCE) {
-	this->frameAcum = 0;
-	this->currFrame = 0;
-	this->frameTime = 0.2f;
-	this->maxFrame = 4;
+    Blocks(pos, { 32, 32 }, "NOTE_0"), bounce_dir(NO_BOUNCE) {
+    this->frameAcum = 0;
+    this->currFrame = 0;
+    this->frameTime = 0.2f;
+    this->maxFrame = 4;
 }
 
 //-----------------
 
 BOUNCE_DIRECTION NoteBlock::getBounceDir() const {
-	return bounce_dir;
+    return bounce_dir;
 }
 
 void NoteBlock::setBounceDir(BOUNCE_DIRECTION dir) {
-	bounce_dir = dir;
+    bounce_dir = dir;
 }
 
 BLOCK_TYPE NoteBlock::getBlockType() const {
-	return NOTEBLOCK;
+    return NOTEBLOCK;
 }
 
 //-----------------
@@ -60,20 +60,20 @@ void NoteBlock::Update() {
     }
 
 
-	UpdateTexture();
+    UpdateTexture();
 }
 
 void NoteBlock::UpdateTexture() {
-	frameAcum += GetFrameTime();
-	if (frameAcum >= frameTime) {
-		frameAcum = 0;
-		currFrame = (currFrame + 1) % maxFrame;
+    frameAcum += GetFrameTime();
+    if (frameAcum >= frameTime) {
+        frameAcum = 0;
+        currFrame = (currFrame + 1) % maxFrame;
 
-		std::string textureName = "NOTE_" + std::to_string(currFrame);
-		texture = Singleton<ResourceManager>::getInstance().getTexture(textureName);
-	}
+        std::string textureName = "NOTE_" + std::to_string(currFrame);
+        texture = Singleton<ResourceManager>::getInstance().getTexture(textureName);
+    }
 }
 
 void NoteBlock::draw() {
-	DrawTexture(texture, position.x, position.y + bounceOffset, WHITE);
+    DrawTexture(texture, position.x, position.y + bounceOffset, WHITE);
 }

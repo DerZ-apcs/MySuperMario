@@ -3,14 +3,16 @@
 
 #include "../include/Camera.h"
 #include "../include/Mario.h"
+#include "../include/Luigi.h"
+#include "../include/Peach.h"
+#include "../include/Marisa.h"
+#include "../include/Toad.h"
 #include "../include/FireBall.h"
 #include "../include/Map.h"
 #include "../include/GUI.h"
 #include "../include/Item.h"
 #include "../include/Blocks.h"
 #include "../include/CollisionInfo.h"
-//#include "../include/Effect.h"
-//#include "../include/Enemy.h"
 #include <vector>
 #include <string>
 #include <map>
@@ -18,21 +20,28 @@
 class Enemy;
 class Effect;
 class Level;
-
 class GameEngine {
 private:
+    struct PlayerControls {
+        int left, right, up, down, fire;
+    };
+    std::vector<PlayerControls> controlBindings = {
+        {KEY_A, KEY_D, KEY_W, KEY_S, KEY_LEFT_SHIFT},
+        {KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_RIGHT_SHIFT}
+    };
     Level* level;
     Map map;
-    Character* player;
+    std::vector<std::unique_ptr<Character>>* multiplayers; // for multiplayers
     std::vector<Blocks*> blocks;
     std::vector<Enemy*> enemies;
     std::vector<Item*> items;
-    std::vector<FireBall*> fireball;
+    std::vector<EnemyFireBall*> enemyFireball;
     std::vector<Effect*> effects;
     std::vector<Blocks*> decor;
-	std::vector<Blocks*> covers; 
-	std::vector<Rectangle> secretAreas; 
-    //std::vector<Shell*> shells;
+	std::vector<Blocks*> covers; // for decor blocks
+	std::vector<std::vector<Blocks*>> tileGrid; // for tile grid
+
+	std::vector<Rectangle> secretAreas; // for secret areas
     std::vector<Entity*> testEntities;
     GameCamera camera;
     bool isvictory = false;
@@ -42,22 +51,19 @@ private:
     bool cleared = false;
     float time;
     float deltaTime;
+    int sharedLives = 5;
     Texture2D BackGroundTex;
 
-    std::vector<Tile*> Tiles;
     std::map<std::string, Texture2D> backgroundTextures;
     std::vector<Vector2> BackGroundPos;
-    //MediatorCollision mediatorCollision;
-
 public:
-    GameEngine(float screenWidth, float screenHeight, Level& level, Character*& player);
+    //GameEngine(float screenWidth, float screenHeight, Level& level, Character*& player);
+    GameEngine(float screenWidth, float screenHeight, Level& level, std::vector<std::unique_ptr<Character>>* multiplayers);
     ~GameEngine();
-    void resolveCollision();
     void addScore(int amount);
-    void addFireBall(FireBall* fireball);
+    void addEnemyFireBall(EnemyFireBall* fireball);
     void addEnemy(Enemy* enemy);
     void addEffect(Effect* effect);
-    //void addShell(Shell* shell);
     void addItem(Item* item);
     void update();
     void handleCollision();
@@ -70,7 +76,9 @@ public:
     bool isOver() const;
     void resetGame();
     Vector2 getBound();
-    Character*& getCharacter();
+    std::vector<std::unique_ptr<Character>>& getMultiplayers(); 
+    std::vector<Blocks*> getNearbyBlocks(Vector2 pos, int range);
+    bool isInCameraView(Rectangle entityRect) const;;
 };
 extern GameEngine* globalGameEngine;
 

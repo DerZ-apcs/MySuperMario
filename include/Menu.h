@@ -5,6 +5,8 @@
 #include <vector>
 #include "../include/Mario.h"
 #include "../include/Luigi.h"
+#include "../include/Toad.h"
+#include "../include/Character.h"
 #include "../include/Button.h"
 #include "../include/GameEngine.h"
 #include "../include/GUI.h"
@@ -35,8 +37,8 @@ private:
 	Button startButton;
 	Button continueButton;
 	Button settingButton;
-	Button charSelectionButton;
 	Button mapSelectionButton;
+	Button modePlayerButton;
 };
 
 class SettingState : public MenuState {
@@ -44,6 +46,7 @@ public:
 	explicit SettingState(Game* game);
 	void draw() override;
 	void handleInput() override;
+
 	void update() override;
 private:
 	Button audioButton;
@@ -51,16 +54,17 @@ private:
 	Button backButton;
 };
 
-class CharSelection : public MenuState {
+class ModePlayer : public MenuState {
 public:
-	explicit CharSelection(Game* game);
+	explicit ModePlayer(Game* game);
 	void draw() override;
 	void handleInput() override;
 	void update() override;
 private:
-	Button MarioButton;
-	Button LuigiButton;
-	Button backButton;
+	Button singleButton;
+	Button dualButton;
+	Button difficultyButton; 
+	Button returnButton;
 };
 
 class MapSelection : public MenuState {
@@ -77,4 +81,32 @@ private:
 	Button backButton;
 };
 
+class SingleCharSelection : public MenuState {
+public:
+	explicit SingleCharSelection(Game* game);
+	void draw() override;
+	void handleInput() override;
+	void update() override;
+private:
+	Texture2D selectionBg;
+	std::vector<Texture2D> Textures;
+	int currentPlayer;
+	Texture2D guiP1;
+};
+
+class DualCharSelection : public MenuState {
+public:
+	explicit DualCharSelection(Game* game);
+	void draw() override;
+	void handleInput() override;
+	void update() override;
+private:
+	Texture2D selectionBg;
+	std::vector<Texture2D> Textures;
+	int currentPlayer1;
+	int currentPlayer2;
+	Texture2D GuiP1;
+	Texture2D GuiP2;
+		
+};
 #endif

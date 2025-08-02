@@ -9,7 +9,7 @@ private:
 	bool isActive;
 
 	float rotatingTime;
-	static const float ROTATION_PERIOD; 
+	static const float ROTATION_PERIOD;
 
 public:
 	RotatingBlock(Vector2 pos);

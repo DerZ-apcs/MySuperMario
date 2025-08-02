@@ -6,16 +6,17 @@
 
 class Mushroom : public PowerItem {
 private:
-	static constexpr int POINT = 150;
-
+	MushroomType type;
 public:
-	Mushroom(Vector2 pos);
+	//Create new mushroom
+	Mushroom(MushroomType type = REDMUSHROOM, Vector2 position = { 0.f, 0.f }, Direction direction = RIGHT);
 	~Mushroom() = default;
 
+	float getPoint() const override;
+	//Get type of mush room
 	const MushroomType& getMushroomType() const;
-	EntityType getEntityType() const override;
 	ITEM_TYPE getItemType() const override;
-	const int& getPoint() const;
+	
 };
 
 #endif // !MUSHROOM_H

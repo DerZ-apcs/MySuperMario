@@ -1,7 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 #include "../include/Menu.h"
-#include "../include/Mario.h"
+#include "../include/Character.h"
 #include "../include/Map.h"
 #include "../include/GUI.h"
 #include "../include/GameEngine.h"
@@ -29,11 +29,12 @@ public:
     void returnToMainMenu();
     void setBackground(const std::string& imageName);
     void loadGUI();
-    Character* player;
+    std::vector<std::unique_ptr<Character>> multiplayers;
     Level* level;
 
 private:
-    vector<Level*> loadedLevel;
+    //vector<Level*> loadedLevel;
+    std::vector<std::unique_ptr<Level>> loadedLevel;
     bool audioEnabled;
     bool musicEnabled;
     int selectedCharacter;

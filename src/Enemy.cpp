@@ -3,10 +3,11 @@
 #include "../include/GameEngine.h"
 #include <raylib.h>
 #include <raymath.h>
+#include <SmokeEffect.h>
 
 // Enemy Class Implementation
 Enemy::Enemy(Vector2 pos, Vector2 size, Vector2 vel, Direction direction, EntityState state, Texture2D texture, float frameTime, int maxFrame, Color color)
-    : Entity(pos, size, vel, direction, state, frameTime, maxFrame, color), deathTimer(0.0f), isdead(false), squashScale(1.0f), isFlipped(false)
+    : Entity(pos, size, vel, direction, state, frameTime, maxFrame, color), deathTimer(0.0f), squashScale(1.0f), isFlipped(false), isKicked(false)
 {
     CollNorth.setSize({ size.x / 2, 5 });
     CollSouth.setSize({ size.x / 2, 5 });
@@ -16,10 +17,10 @@ Enemy::Enemy(Vector2 pos, Vector2 size, Vector2 vel, Direction direction, Entity
     CollSouth.setColor(GREEN);
     CollNorth.setColor(RED);
     CollWest.setColor(PURPLE);
-
 }
 
-Enemy::~Enemy() {}
+Enemy::~Enemy() {
+}
 
 void Enemy::stomped()
 {
@@ -33,7 +34,7 @@ void Enemy::Update() {
             deathTimer -= GetFrameTime();
             updateSquashEffect();
             if (deathTimer <= 0) {
-                isdead = true; // Mark for removal
+                dead = true; // Mark for removal
             }
         }
         UpdateTexture();
@@ -41,9 +42,10 @@ void Enemy::Update() {
     }
     const float deltaTime = GetFrameTime();
     position.x += velocity.x * deltaTime;
-    if (state != ON_GROUND && state != STATE_SHELL) {
-        position.y += velocity.y * deltaTime;
+    position.y += velocity.y * deltaTime;
+    if (getGravityAvailable())
         velocity.y += GRAVITY * deltaTime;
+    if (state != ON_GROUND) {
         if (velocity.y > 0 && state == JUMPING) {
             state = FALLING;
         }
@@ -59,12 +61,12 @@ void Enemy::draw() {
         }
         DrawTexturePro(texture, source, { position.x, position.y, size.x, size.y }, { 0.f, 0.f }, 0.f, WHITE);
         
-//#ifdef DEBUG
-        CollNorth.draw();
-        CollSouth.draw();
-        CollEast.draw();
-        CollWest.draw();
-//#endif
+        if (SETTING.getDebugMode()) {
+            CollNorth.draw();
+            CollSouth.draw();
+            CollEast.draw();
+            CollWest.draw();
+        }
     }
 }
 
@@ -78,19 +80,26 @@ void Enemy::updateSquashEffect() {
 }
 
 void Enemy::CollisionWithFireball(FireBall* fireball) {
-    if (!isDead() && state != STATE_IS_DYING) {
+    if (!isDead() && state != STATE_IS_DYING && !fireball->isDead()) {
         fireball->setEntityDead();
         state = STATE_IS_DYING;
+        //if (getEnemyType() == BOBOMB) {
+
+        //}
         deathTimer = ENEMY_DEATH_TIMER_DEFAULT;
         velocity.y = -250; // Nhảy lên nhẹ
         velocity.x = (rand() % 100) - 50; // Văng ngang ngẫu nhiên
         updateCollision();
-        RESOURCE_MANAGER.playSound("fireball.wav");
+        if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomped.wav");
         // text effect
         TextEffect* text = new TextEffect(to_string(SCORE_STOMP_GOOMBA).c_str(), Vector2{this->getCenterX(), this->getTop()});
         text->setTextColor(WHITE);
         text->setOutlineColor(BLACK);
         globalGameEngine->addEffect(text);
+        SmokeEffect* smokeright = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ 60, 120 });
+        globalGameEngine->addEffect(smokeright);
+        SmokeEffect* smokeleft = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ -60, 120 });
+        globalGameEngine->addEffect(smokeleft);
     }
 }
 
@@ -100,16 +109,11 @@ EntityType Enemy::getEntityType() const
 }
 
 bool Enemy::isDying() {
-    return isdead || state == STATE_IS_DYING;
+    return dead || state == STATE_IS_DYING;
 }
 
 bool Enemy::isReadyForRemoval() {
-    return isdead;
-}
-
-bool Enemy::isDead()
-{
-    return isdead;
+    return dead;
 }
 
 void Enemy::updateCollision() {
@@ -117,6 +121,21 @@ void Enemy::updateCollision() {
     CollSouth.setPos({ position.x + size.x / 2 - CollSouth.getWidth() / 2, position.y + size.y * squashScale - CollSouth.getHeight() });
     CollEast.setPos({ position.x + size.x * squashScale - CollEast.getWidth(), position.y + size.y * squashScale / 2 - CollEast.getHeight() / 2 });
     CollWest.setPos({ position.x, position.y + size.y * squashScale / 2 - CollWest.getHeight() / 2 });
+}
+
+void Enemy::kicked(Direction direction)
+{ 
+    // for koopa shell only
+}
+
+bool Enemy::getIsKicked() const
+{
+    return isKicked;
+}
+
+void Enemy::setIsKicked(bool isKicked)
+{
+    this->isKicked = isKicked;
 }
 
 void Enemy::UpdateTexture() {
@@ -129,4 +148,14 @@ void Enemy::attacked(Direction direction) {
     setEntityDead();
     //this->isdead = true;
     setCollisionAvailable(false);
+}
+
+void Enemy::setCollisionTimer(float time)
+{
+    collisionTimer = time;
+}
+
+void Enemy::setDeathTimer(float time)
+{
+    deathTimer = time;
 }

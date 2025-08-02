@@ -1,4 +1,5 @@
 #include "../include/Brick.h"
+#include "../include/GameEngine.h"
 #include "../include/ResourceManager.h"
 
 Brick::Brick(Vector2 pos) : Blocks(pos, { 32, 32 }, "TILE_104"), isBroken(false) {}
@@ -16,6 +17,16 @@ void Brick::setBroken(bool broken) {
 
 BLOCK_TYPE Brick::getBlockType() const {
 	return BRICK;
+}
+
+void Brick::breakBrick() {
+	if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("break_brick_block.wav");
+	TextEffect* text = new TextEffect(to_string(20), position);
+	text->setVel(Vector2{ 0, -100 });
+	globalGameEngine->addEffect(text);
+
+	isBroken = true;
+	setEntityDead();
 }
 
 //-----------------

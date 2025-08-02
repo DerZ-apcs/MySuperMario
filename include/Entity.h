@@ -68,6 +68,7 @@ public:
 
 	void setState(EntityState state);
 	void setColor(Color color);
+	void setTexture(Texture2D tex);
 
 	bool isDead() const;
 	void setEntityDead();

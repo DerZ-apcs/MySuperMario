@@ -1,5 +1,7 @@
 #include "../include/Game.h"
 #include "../include/Level.h"
+#include "../include/ItemFactory.h"
+#include "../include/BlockFactory.h"
 
 class MenuState;
 
@@ -8,7 +10,6 @@ Game::Game(): backgroundTexture({0})
 	currentState = std::make_unique<MainMenuState>(this);
 	audioEnabled = true;
 	musicEnabled = true;
-	player = new Mario();
 	level = nullptr;
 	selectedCharacter = 1;
 	selectedMap = 1;
@@ -20,8 +21,6 @@ Game::~Game()
 		UnloadTexture(backgroundTexture);
 		backgroundTexture.id = 0;
 	}
-	if (player)
-		delete player;
 }
 
 void Game::init()
@@ -37,18 +36,21 @@ void Game::init()
 	if (backgroundTexture.id == 0) {
 		backgroundTexture = RESOURCE_MANAGER.getTexture("MENU_SCREEN");
 	}
-	SetTargetFPS(140);
-
+	SetTargetFPS(60);
+	
+	registerBlocks();
+	registerItems();
 	globalGameEngine = nullptr;
-
 	RESOURCE_MANAGER.playMusic("TITLE");
 	// load map&level
-	Level level1(Map::basePath + "kmap_1.json", "BACKGROUND_1", "MUSIC_1", "1-1");
-	Level level2(Map::basePath + "kmap_2.json", "BACKGROUND_2", "MUSIC_2", "1-2");
-	Level level3(Map::basePath + "kmap_3.json", "BACKGROUND_3", "MUSIC_3", "1-3");
-	loadedLevel.push_back(&level1);
-	loadedLevel.push_back(&level2);
-	loadedLevel.push_back(&level3);
+
+	loadedLevel.push_back(std::make_unique<Level>(
+		Map::basePath + "MAP_1.1.json", "BACKGROUND_1", "MUSIC_1", "1 - 1"));
+	loadedLevel.push_back(std::make_unique<Level>(
+		Map::basePath + "kmap_2.json", "BACKGROUND_2", "MUSIC_2", "1-2"));
+	loadedLevel.push_back(std::make_unique<Level>(
+		Map::basePath + "kmap_3.json", "BACKGROUND_3", "MUSIC_3", "1-3"));
+	
 	// gui
 	loadGUI();
 
@@ -111,13 +113,13 @@ void Game::selectMap(int mapIndex)
 	switch (mapIndex)
 	{
 	case 1:
-		this->level = loadedLevel[0];
+		this->level = loadedLevel[0].get();
 		break;
 	case 2:
-		this->level = loadedLevel[1];
+		this->level = loadedLevel[1].get();
 		break;
 	case 3:
-		this->level = loadedLevel[2];
+		this->level = loadedLevel[2].get();
 		break;
 	//case 4:
 	//	this->level = loadedLevel[3];

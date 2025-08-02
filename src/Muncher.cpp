@@ -1,0 +1,47 @@
+#include "../include/Muncher.h"
+#include "../include/GameEngine.h"
+
+Muncher::Muncher(Vector2 pos, Texture2D texture)
+    : Enemy(pos, { 32, 30 }, { 0, 0 }, RIGHT, ON_GROUND, texture, 0.25f, 1, DARKGREEN) {
+    velocity = { 0, 0 };
+    this->texture = RESOURCE_MANAGER.getTexture("Muncher_1");
+}
+
+void Muncher::Update() {
+    Entity::Update();
+    Enemy::Update();
+    UpdateTexture();  
+}
+
+void Muncher::draw() {
+    Enemy::draw();
+}
+
+void Muncher::UpdateTexture() {
+    if (state == STATE_IS_DYING) {
+        texture = RESOURCE_MANAGER.getTexture("Muncher_1");
+        return;
+    }
+    frameAcum += GetFrameTime();
+    if (frameAcum >= frameTime) {
+        frameAcum -= frameTime;
+        currFrame = (currFrame + 1) % (maxFrame + 1);
+    }
+
+    texture = RESOURCE_MANAGER.getTexture("Muncher_" + to_string(currFrame));
+}
+
+void Muncher::stomped()
+{
+    if (isReadyForRemoval() || state == STATE_IS_DYING) return;
+    state = STATE_IS_DYING;
+    deathTimer = 0.3f;
+    updateSquashEffect();
+    UpdateTexture();
+    Effect* text = new TextEffect(to_string(SCORE_STOMP_GOOMBA).c_str(), getCenter());
+    globalGameEngine->addEffect(text);
+}
+
+ENEMY_TYPE Muncher::getEnemyType() const {
+    return MUNCHER;
+}

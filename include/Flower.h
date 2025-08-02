@@ -6,16 +6,18 @@
 
 class Flower : public PowerItem {
 private:
-	static constexpr int POINT = 150;
+	static constexpr int POINT = 600;
 
+	FlowerType type;
+
+	static constexpr float APPEAR_SPEED = 16.f;
 public:
-	Flower(Vector2 pos);
+	Flower(FlowerType type = FIRE_FLOWER, Vector2 position = { 0.f, 0.f }, Direction direction = RIGHT);
 	~Flower() = default;
 
 	const FlowerType& getFlowerType() const;
-	EntityType getEntityType() const override;
+	float getPoint() const override;
 	ITEM_TYPE getItemType() const override;
-	const int& getPoint() const;
 
 	void Update() override;
 	void UpdateTexture() override;

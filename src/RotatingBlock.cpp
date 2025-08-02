@@ -28,7 +28,7 @@ void RotatingBlock::Activate() {
 	if (isActive) return;
 
 	isActive = true;
-	rotatingTime = 0.0f; 
+	rotatingTime = 0.0f;
 }
 
 BLOCK_TYPE RotatingBlock::getBlockType() const {
@@ -49,7 +49,7 @@ void RotatingBlock::UpdateTexture() {
 		rotatingTime = 0.0f; // Reset 
 		isActive = false;
 		texture = Singleton<ResourceManager>::getInstance().getTexture("ROTATING_0");
-		return; 
+		return;
 	}
 
 	frameAcum += GetFrameTime();

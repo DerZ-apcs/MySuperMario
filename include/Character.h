@@ -3,18 +3,16 @@
 
 #include "../include/Entity.h"
 #include "../include/Global.h"
-#include "../include/Tile.h"
 #include <../include/TextEffect.h>
-//#include "../include/MediatorCollision.h"
 #include <../include/Item.h>
 #include "raymath.h"
 #include <list>
 
-class MediatorCollision;
 class Item;
 class Enemy;
 class Blocks;
 class FireBall;
+class EnemyFireBall;
 class GameEngine;
 
 enum Phase {
@@ -44,6 +42,7 @@ public:
 	virtual CharacterState& getPrevCharacterState();
 
 	bool isInvicible() const;
+	bool isImmortal() const;
 	bool isDucking() const;
 	bool isLostLife() const;
 	bool isIdle() const;
@@ -59,14 +58,12 @@ public:
 	float getSinkingTime() const;
 
 	void setLostLife(bool lostLife);
-	
-	//void transform(CharacterState newState);
+	void setSinkingTime(float sinkingTime);
 	void setLives(int lives);
 	void setCoins(int coins);
 	void setScores(int scores);
 	void setDucking(bool ducking);
 	void setHolding(bool holding);
-	void setSinkingTime(float sinkingTime);
 	void lostSuit();
 	void setVictory(bool victory);
 	void eatGreenMushrooms();
@@ -84,6 +81,7 @@ public:
 	virtual void Update() override;
 	virtual void draw() override;
 	virtual void HandleInput() override;
+	void HandleInput(int leftKey, int rightKey, int upKey, int downKey, int fireKey);
 	virtual void updateCollision() override;
 	virtual void UpdateTexture() override;
 	virtual void UpdateTransitioningTexture();
@@ -93,7 +91,7 @@ public:
 
 	void collisionWithItem(const Item* item);
 	void collisionWithEnemy(Enemy* enemy, CollisionType CollType = COLLISION_TYPE_NORTH);
-	void CollisionWithFireball(FireBall* fireball);
+	void CollisionWithFireball(EnemyFireBall* fireball);
 	virtual std::list<FireBall*>* getFireBalls();
 	
 	// helper struct to control texture
@@ -115,6 +113,9 @@ protected:
 		int Max_frame;
 	};
 	std::vector<TransitionFrame> transitionFrames;
+	std::vector<TransitionFrame> transitionFramesToad;
+	std::vector<TransitionFrame> transitionFramesPeach;
+	std::vector<TransitionFrame> transitionFramesMarisa;
 	Phase phase;
 	CharacterType characterType;
 	bool lostLife;

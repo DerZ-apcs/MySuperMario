@@ -1,25 +1,24 @@
 #include "../include/Mushroom.h"
 #include "../include/ResourceManager.h"
 
-Mushroom::Mushroom(Vector2 pos) :
-	PowerItem(pos, Singleton<ResourceManager>::getInstance().getTexture("MUSHROOM"), POINT) {}
+Mushroom::Mushroom(MushroomType type, Vector2 position, Direction direction):
+	PowerItem(position, { 32, 32 }, direction, type == GREENMUSHROOM ? RESOURCE_MANAGER.getTexture("GreenMushroom") : RESOURCE_MANAGER.getTexture("RedMushroom")),
+	type(type)
+{
+	INTERVAL_JUMPING = 0.8f;
+	texture = type == GREENMUSHROOM ? RESOURCE_MANAGER.getTexture("GreenMushroom") : RESOURCE_MANAGER.getTexture("RedMushroom");
+}
 
-//-----------------
+float Mushroom::getPoint() const
+{
+	return SCORE_MUSHROOM;
+}
 
 const MushroomType& Mushroom::getMushroomType() const {
 	return REDMUSHROOM; // for now only one type. to be changed later
 }
 
-EntityType Mushroom::getEntityType() const {
-	return ITEM;
-}
-
-ITEM_TYPE Mushroom::getItemType() const {
+ITEM_TYPE Mushroom::getItemType() const
+{
 	return MUSHROOM;
 }
-
-const int& Mushroom::getPoint() const {
-	return POINT;
-}
-
-//-----------------

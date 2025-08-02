@@ -1,7 +1,6 @@
 #ifndef COIN_H
 #define COIN_H
 #include <raylib.h>
-#include "../include/Tile.h"
 #include "../include/Item.h"
 
 class GameEngine;
