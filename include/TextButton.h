@@ -1,14 +1,19 @@
-#ifndef BUTTON_H
-#define BUTTON_H
+#ifndef TEXTBUTTON_H
+#define TEXTBUTTON_H	
+// TextButton.h
 #include <raylib.h>
 #include <string>
 #include "../include/Global.h"
 
-class Button {
+class TextButton {
+	friend class GUI;
 public:
-	Button();
-	Button(Vector2 pos, Vector2 size, Texture2D texture = RESOURCE_MANAGER.getTexture("BOARD1"), std::string text = "");
+	TextButton();
+	TextButton(Vector2 pos, Vector2 size, std::string text);
+	TextButton(Vector2 pos, Vector2 size, std::string text, Font* font);
+	static Font* SMW;
 	bool isHovered() const;
+	void setHovered(bool hovered);
 	bool isPressed() const;
 	void handle();
 	void draw();
@@ -19,10 +24,11 @@ public:
 	void update();
 	void setText(const std::string text);
 	std::string getText() const;
-	~Button();
-	void setTexture(Texture2D tex) { texture = tex; }
+	~TextButton();
+	void setFont(Font* font) { this->font = font; }
+	static void DrawTextWithOutline(Font* font, const std::string& text, Vector2 position, float fontSize, float spacing, Color textColor, Color outlineColor);
 private:
-	Texture2D texture;
+	Font* font;
 	Vector2 m_position;
 	Vector2 m_size;
 	bool is_hovered = false;

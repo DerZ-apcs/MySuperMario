@@ -420,20 +420,6 @@ void GameEngine::draw()
     for (size_t i = 0; i < (*multiplayers).size(); i++) {
         (*multiplayers)[i]->draw();
 
-        if ((*multiplayers).size() > 1) {
-            std::string label = "P" + std::to_string(i + 1);
-            Font font = RESOURCE_MANAGER.getFont("WinterMinie");
-            float fontSize = 20.f;
-            Vector2 pos = (*multiplayers)[i]->getPosition();
-            Vector2 size = (*multiplayers)[i]->getSize();
-            Vector2 textSize = MeasureTextEx(font, label.c_str(), fontSize, 1.0f);
-            Vector2 textPos = {
-                pos.x + size.x / 2 - textSize.x / 2,
-                pos.y - textSize.y - 10
-            };
-            DrawTextPro(font, label.c_str(), textPos, { 0, 0 }, 0.f, fontSize, 1.0f, BLACK);
-        }
-
         for (auto& area : secretAreas) {
             if (CheckCollisionPointRec((*multiplayers)[i]->getPosition(), area)) {
                 drawCover = false;

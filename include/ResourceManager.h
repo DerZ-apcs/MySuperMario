@@ -8,7 +8,7 @@
 #include <sstream>
 #include <iostream>
 #include <filesystem>
-
+#include <unordered_map>
 using namespace std;
 namespace fs = std::filesystem;
 
@@ -37,9 +37,10 @@ private:
 	std::map<std::string, Texture2D> textures;
 	std::map<std::string, Music> musics;
 	std::map<std::string, Sound> sounds;
-	std::map<std::string, Font> fonts;
+	std::unordered_map<std::string, std::unique_ptr<Font>> fonts;
 
 	mutable std::string currentMusic;
+	void loadDigitTextures();
 	void loadFonts();
 	void loadTextures();
 	void loadSounds();
@@ -50,7 +51,6 @@ private:
 	void unloadSounds();
 	void unloadMusics();
 
-	void unloadFont(std::string key);
 	void unloadTexture(std::string key);
 	void unloadSound(std::string key);
 	void unloadMusic(std::string key);
@@ -66,12 +66,16 @@ public:
 	std::map<std::string, Texture2D> getTextures();
 	std::map<std::string, Sound> getSounds();
 	std::map<std::string, Music> getMusics();
-	std::map<std::string, Font> getFonts();
+	std::unordered_map<std::string, std::unique_ptr<Font>> getFonts();
+
+	Texture2D digitTextures[10];
+	Texture2D smallDigitTextures[10];
+	Texture2D yellowDigitTextures[10];
 
 	Texture2D& getTexture(const std::string& name);
 	Sound& getSound(const std::string& name);
 	Music& getMusic(const std::string& name);
-	Font& getFont(const std::string& name);
+	Font* getFont(const std::string& name);
 
 	// play music track
 	void playMusic(const std::string& MusicName);
@@ -86,9 +90,11 @@ public:
 	void stopSound(const std::string& soundName);
 
 	void loadLuigiFromMario(const std::string& marioKey, const std::string& luigiKey, Texture2D(*converter)(Texture2D));
+	void unloadDigitTextures();
 	static Texture2D ConvertFireMarioToFireLuigi(Texture2D marioTexture);
 	static Texture2D ConvertMarioToLuigi(Texture2D marioTexture);
 	static Color getRainbowTint(float time);
+	static Texture2D ConvertWhiteDigitToYellow(Texture2D digitTex);
 	static bool IsColorNear(Color c, Color target, int tolerance = 20);
 	static Texture2D ConvertMarioToStarMario(Texture2D marioTexture);
 	static Texture2D ConvertFireStarMarioToFireStarLuigi(Texture2D marioTexture);

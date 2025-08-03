@@ -389,7 +389,7 @@ void ResourceManager::loadTextures() {
 	textures["BACKGROUND_1"] = LoadTexture("resources/images/backgrounds/background1.png");
 	textures["BACKGROUND_2"] = LoadTexture("resources/images/backgrounds/background2.png");
 	textures["BACKGROUND_3"] = LoadTexture("resources/images/backgrounds/background3.png");
-	textures["MENU_SCREEN"] = LoadTexture("resources/images/backgrounds/titlemario.png");
+	textures["MENU_SCREEN"] = LoadTexture("resources/images/backgrounds/SMW.png");
 	textures["BACKGROUND_8"] = LoadTexture("resources/images/backgrounds/background8.png");
 	textures["WHITE"] = LoadTexture("resources/images/backgrounds/white.png");
 	textures["SelectionBackground"] = LoadTexture("resources/images/backgrounds/SelectCharacter.png");
@@ -411,11 +411,15 @@ void ResourceManager::loadTextures() {
 	textures["MarioGUI"] = LoadTexture("resources/images/gui/Mario_.png");
 	textures["Mario_start"] = LoadTexture("resources/images/gui/Mario_start.png");
 	textures["Luigi_start"] = LoadTexture("resources/images/gui/Luigi_start.png");
-	textures["GameOver"] = LoadTexture("resources/images/gui/guiGameOver.png");
-	textures["Time_Up"] = LoadTexture("resources/images/gui/guiTimeUp.png");
+	textures["guiGameOver"] = LoadTexture("resources/images/gui/guiGameOver.png");
+	textures["guiTimeUp"] = LoadTexture("resources/images/gui/guiTimeUp.png");
 	textures["P1GUI"] = LoadTexture("resources/images/gui/P1GUI.png");
 	textures["P2GUI"] = LoadTexture("resources/images/gui/P2GUI.png");	
-
+	textures["choosingArrow"] = LoadTexture("resources/images/gui/choosingArrow.png");
+	textures["guiCoin"] = LoadTexture("resources/images/gui/guiCoin.png");
+	textures["guiX"] = LoadTexture("resources/images/gui/guiX.png");
+	textures["guiTime"] = LoadTexture("resources/images/gui/guiTime.png");
+	textures["guiNextItem"] = LoadTexture("resources/images/gui/guiNextItem.png");
 	// coin
 	textures["Coin_0"] = LoadTexture("resources/images/sprites/items/Coin_0.png");
 	textures["Coin_1"] = LoadTexture("resources/images/sprites/items/Coin_1.png");
@@ -578,14 +582,36 @@ void ResourceManager::loadTextures() {
 	textures["BuzzyBeetle_Shell_0"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_Shell_0.png");
 }
 
+void ResourceManager::loadDigitTextures() {
+	for (int i = 0; i <= 9; i++) {
+		std::string fileName = "resources/images/gui/gui" + std::to_string(i) + ".png";
+		digitTextures[i] = LoadTexture(fileName.c_str());
+		smallDigitTextures[i] = LoadTexture(("resources/images/gui/smallgui" + std::to_string(i) + ".png").c_str());
+		yellowDigitTextures[i] = ConvertWhiteDigitToYellow(smallDigitTextures[i]);
+	}
+}
 void ResourceManager::loadFonts()
 {
-	fonts["Vogue"] = LoadFont("resources/Font/Vogue.ttf");
-	fonts["HolenVintage"] = LoadFont("resources/Font/HolenVintage.otf");
-	fonts["Sawer"] = LoadFont("resources/Font/Sawer.ttf");
-	fonts["WinterMinie"] = LoadFont("resources/Font/WinterMinie.ttf");
-	fonts["TimesNewRoman"] = LoadFont("resources/Font/TimesNewRoman.ttf");
+	auto load = [this](const std::string& name, const std::string& path) {
+		Font font = LoadFontEx(path.c_str(), 64, nullptr, 0);
+		if (font.glyphCount == 0 || font.glyphs == nullptr || font.texture.id == 0) {
+			std::cerr << "[ERROR] Failed to load font: " << path << std::endl;
+		}
+		else {
+			fonts[name] = std::make_unique<Font>(font);
+		}
+	};
+
+	load("Vogue", "resources/Font/Vogue.ttf");
+	load("HolenVintage", "resources/Font/HolenVintage.otf");
+	load("Sawer", "resources/Font/Sawer.ttf");
+	load("WinterMinie", "resources/Font/WinterMinie.ttf");
+	load("TimesNewRoman", "resources/Font/TimesNewRoman.ttf");
+	load("SMW_Monospace", "resources/Font/SMW.Monospace.otf");
+	load("SMW_Whole", "resources/Font/SMW.Whole-Pixel.Spacing.otf");
+	load("SMW", "resources/Font/SMW.ttf");
 }
+
 
 void ResourceManager::loadSounds()
 {
@@ -617,11 +643,14 @@ void ResourceManager::loadMusics()
 
 void ResourceManager::unloadFonts()
 {
-	for (auto const& [key, val] : fonts) {
-		unloadFont(key);
+	for (auto& [key, fontPtr] : fonts) {
+		if (fontPtr) {
+			UnloadFont(*fontPtr);  // dereference unique_ptr
+		}
 	}
-	fonts.clear();
+	fonts.clear(); // unique_ptrs are destroyed here
 }
+
 
 void ResourceManager::unloadTextures() {
 	for (auto const &[key, val] : textures) {
@@ -629,6 +658,7 @@ void ResourceManager::unloadTextures() {
 	}
 	textures.clear();
 }
+
 void ResourceManager::unloadSounds()
 {
 	for (auto const& [key, val] : sounds) {
@@ -643,12 +673,7 @@ void ResourceManager::unloadMusics()
 	}
 	musics.clear();
 }
-void ResourceManager::unloadFont(std::string key)
-{
-	if (fonts.find(key) != fonts.end()) {
-		UnloadFont(fonts[key]);
-	}
-}
+
 void ResourceManager::unloadTexture(std::string key) {
 	if (textures.find(key) != textures.end()) {
 		UnloadTexture(textures[key]);
@@ -739,6 +764,7 @@ ResourceManager::~ResourceManager()
 
 void ResourceManager::LoadAllResources()
 {
+	loadDigitTextures();
 	loadTextures();
 	loadSounds();
 	loadMusics();
@@ -760,9 +786,9 @@ std::map<std::string, Music> ResourceManager::getMusics()
 	return musics;
 }
 
-std::map<std::string, Font> ResourceManager::getFonts()
+std::unordered_map<std::string, std::unique_ptr<Font>> ResourceManager::getFonts()
 {
-	return std::map<std::string, Font>();
+	return std::unordered_map<std::string, std::unique_ptr<Font>>();
 }
 
 Texture2D& ResourceManager::getTexture(const std::string& name)
@@ -780,9 +806,9 @@ Music& ResourceManager::getMusic(const std::string& name)
 	return musics[name];
 }
 
-Font& ResourceManager::getFont(const std::string& name)
+Font* ResourceManager::getFont(const std::string& name)
 {
-	return fonts[name];
+	return fonts.count(name) ? fonts.at(name).get() : nullptr;
 }
 
 void ResourceManager::playMusic(const std::string& MusicName)
@@ -846,12 +872,21 @@ void ResourceManager::loadLuigiFromMario(const std::string& marioKey, const std:
 	textures[luigiKey] = converter(marioTex);
 }
 
+void ResourceManager::unloadDigitTextures() {
+	for (int i = 0; i <= 9; i++) {
+		UnloadTexture(digitTextures[i]);
+		UnloadTexture(smallDigitTextures[i]);
+		UnloadTexture(yellowDigitTextures[i]);
+	}
+}
+
 void ResourceManager::UnloadAllResources()
 {
 	unloadTextures();
 	unloadSounds();
 	unloadMusics();
 	unloadFonts();
+	unloadDigitTextures();
 }
 Texture2D flipTexture(Texture2D& a) {
 	Image img = LoadImageFromTexture(a);
@@ -963,6 +998,23 @@ Texture2D ResourceManager::ConvertFireMarioToFireLuigi(Texture2D marioTexture) {
 	UnloadImage(image);
 	return luigiTexture;
 }
+Texture2D ResourceManager::ConvertWhiteDigitToYellow(Texture2D digitTex) {
+	Image image = LoadImageFromTexture(digitTex);
+	Color* pixels = LoadImageColors(image);
+	int count = image.width * image.height;
+	Color warmYellow = { 255, 230, 100, 255 };  // A warm yellow, adjust as needed
+
+	for (int i = 0; i < count; i++) {
+		if (IsColorNear(pixels[i], WHITE)) {
+			pixels[i] = warmYellow;
+		}
+	}
+	MemFree(image.data); // Free original data
+	image.data = pixels;
+	Texture2D yellowDigitTex = LoadTextureFromImage(image);
+	UnloadImage(image);
+	return yellowDigitTex;
+}
 
 Texture2D ResourceManager::ConvertMarioToLuigi(Texture2D marioTexture) {
 	Image image = LoadImageFromTexture(marioTexture);
@@ -985,6 +1037,8 @@ Texture2D ResourceManager::ConvertMarioToLuigi(Texture2D marioTexture) {
 	UnloadImage(image);
 	return luigiTexture;
 }
+
+
 
 Color ResourceManager::getRainbowTint(float time) {
 	unsigned char r = (unsigned char)(128 + 127 * sinf(time * 2));

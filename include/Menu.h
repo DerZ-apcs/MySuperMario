@@ -7,7 +7,7 @@
 #include "../include/Luigi.h"
 #include "../include/Toad.h"
 #include "../include/Character.h"
-#include "../include/Button.h"
+#include "../include/TextButton.h"
 #include "../include/GameEngine.h"
 #include "../include/GUI.h"
 
@@ -15,7 +15,7 @@
 class MenuState;
 class Game;
 
-class MenuState: public Button {
+class MenuState {
 public:
 	virtual void draw() = 0;
 	virtual void handleInput() = 0;
@@ -34,11 +34,14 @@ public:
 	void update() override;
 	~MainMenuState();
 private:
-	Button startButton;
-	Button continueButton;
-	Button settingButton;
-	Button mapSelectionButton;
-	Button modePlayerButton;
+	TextButton startButton;
+	TextButton continueButton;
+	TextButton settingButton;
+	TextButton mapSelectionButton;
+	TextButton modePlayerButton;
+	std::vector<int> choosingPosition = { 0, 1, 2, 3, 4 };
+	Texture2D guiArrow;
+	int currentPosition = 0;
 };
 
 class SettingState : public MenuState {
@@ -49,9 +52,12 @@ public:
 
 	void update() override;
 private:
-	Button audioButton;
-	Button musicButton;
-	Button backButton;
+	TextButton audioButton;
+	TextButton musicButton;
+	TextButton backButton;
+	std::vector<int> choosingPosition = { 0, 1, 2 };
+	Texture2D guiArrow;
+	int currentPosition = 0;
 };
 
 class ModePlayer : public MenuState {
@@ -61,10 +67,13 @@ public:
 	void handleInput() override;
 	void update() override;
 private:
-	Button singleButton;
-	Button dualButton;
-	Button difficultyButton; 
-	Button returnButton;
+	TextButton singleButton;
+	TextButton dualButton;
+	TextButton difficultyButton;
+	TextButton returnButton;
+	std::vector<int> choosingPosition = { 0, 1, 2, 3};
+	Texture2D guiArrow;
+	int currentPosition = 0;
 };
 
 class MapSelection : public MenuState {
@@ -74,11 +83,14 @@ public:
 	void handleInput() override;
 	void update() override;
 private:
-	Button map1Button,
+	TextButton map1Button,
 		   map2Button,
 		   map3Button;
 		//map4Button
-	Button backButton;
+	TextButton backButton;
+	std::vector<int> choosingPosition = { 0, 1, 2, 3};
+	Texture2D guiArrow;
+	int currentPosition = 0;
 };
 
 class SingleCharSelection : public MenuState {

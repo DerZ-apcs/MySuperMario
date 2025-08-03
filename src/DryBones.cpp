@@ -2,10 +2,13 @@
 #include "../include/GameEngine.h"
 
 DryBones::DryBones(Vector2 pos, Texture2D tex)
-    : Enemy(pos, { 32, 43 }, { 0,0 }, LEFT, ON_GROUND, tex, 0.2f, 1, WHITE),
+    : Enemy(pos, { 32, 43 }, { 0,0 }, LEFT, ON_GROUND, tex, 1.5f, 1, WHITE),
     dbState(DB_ALIVE),
     breakTimer(0), reviveTimer(0), shakeTimer(0)
 {
+	texture = RESOURCE_MANAGER.getTexture("DryBones_LEFT_0");
+	frameTime = 1.5f;
+    maxFrame = 1;
 }
 
 void DryBones::Update() {
@@ -39,6 +42,10 @@ void DryBones::Update() {
         }
         break;
     }
+    if (velocity.y > 20) state = FALLING;
+	velocity.y += GRAVITY * dt; // Gravity effect
+	position.x += velocity.x * dt;
+	position.y += velocity.y * dt;
     updateCollision();
 	UpdateTexture();
 }
@@ -49,55 +56,49 @@ void DryBones::UpdateTexture() {
         return;
     }
     const float deltaTime = getFrameTime();
-	std::string dir = (direction == LEFT ? "LEFT" : "RIGHT");
+	std::string dir = (direction == LEFT ? "_LEFT_" : "_RIGHT_");
     if (dbState == DB_ALIVE) {
         // Chọn texture dựa trên hướng và trạng thái
-		frameAcum += deltaTime;
-		if (frameAcum > frameTime) {
-			currFrame = (currFrame + 1) % (maxFrame + 1);
-			frameAcum = 0;
-		}
-        texture = RESOURCE_MANAGER.getTexture("DryBones_" + dir + std::to_string(currFrame));
+        frameAcum += deltaTime;
+        if (frameAcum > frameTime) {
+            currFrame++;
+			if (currFrame > maxFrame) {
+				currFrame = 0;
+			}
+            frameAcum = 0;
+        }
+        if (state == ON_GROUND)
+            texture = RESOURCE_MANAGER.getTexture("DryBones" + dir + std::to_string(currFrame));
+        else if (state == FALLING || state == JUMPING) {
+            texture = RESOURCE_MANAGER.getTexture("DryBones" + dir + "0");
+        }
     }
     else if (dbState == DB_BROKEN) {
         texture = RESOURCE_MANAGER.getTexture("DryBones_Collapse");
     }
     else if (dbState == DB_REVIVING) {
         // Chọn texture dựa trên hướng và trạng thái
-        texture = RESOURCE_MANAGER.getTexture("DryBones_" + dir + "_0");
+        texture = RESOURCE_MANAGER.getTexture("DryBones" + dir + "0");
     }
 }
 void DryBones::draw() {
     Rectangle sourceRec = { 0, 0, (float)texture.width, (float)texture.height };
     Rectangle destRec = { position.x, position.y, texture.width * squashScale, texture.height * squashScale };
-    switch (dbState) {
-    case DB_ALIVE:
+    if (dbState == DB_ALIVE || dbState == DB_BROKEN) {
         Enemy::draw();
-        break;
-
-    case DB_BROKEN:
-        DrawTexturePro(
-            RESOURCE_MANAGER.getTexture("DryBones_Collapse"),
-            sourceRec, destRec, { 0,0 }, 0, WHITE);
-        break;
-
-    case DB_REVIVING:
-        // hiệu ứng rung: alternate alpha
+    }
+    else {
         shakeTimer -= GetFrameTime();
         {
             float alpha = (int(shakeTimer * 10) % 2 == 0 ? 0.5f : 1.0f);
-            DrawTexturePro(
-                RESOURCE_MANAGER.getTexture(
-                    std::string("DryBones_") + (direction == LEFT ? "LEFT" : "RIGHT") + "_0"
-                ), sourceRec, destRec, { 0,0 }, 0, Fade(WHITE, alpha));
+            DrawTexturePro(texture, sourceRec, destRec, { 0,0 }, 0, Fade(WHITE, alpha));
         }
-        break;
-    }
-    if (SETTING.getDebugMode()) {
-        CollNorth.draw(); 
-        CollSouth.draw();
-        CollEast.draw(); 
-        CollWest.draw();
+        if (SETTING.getDebugMode()) {
+            CollNorth.draw();
+            CollSouth.draw();
+            CollEast.draw();
+            CollWest.draw();
+        }
     }
 }
 

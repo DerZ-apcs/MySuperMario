@@ -40,13 +40,18 @@ void TextEffect::draw()
 {
 	if (text.empty())
 		return;
-	Font myFont = RESOURCE_MANAGER.getFont("WinterMinie");
-	SetTextureFilter(myFont.texture, TEXTURE_FILTER_BILINEAR);
+	Font* myFont = RESOURCE_MANAGER.getFont("WinterMinie");
+	if (myFont == nullptr) {
+		std::cerr << "Error: Font not found!" << std::endl;
+		return;
+	}
 
-	DrawTextEx(myFont, text.c_str(), {getPosition().x, getPosition().y + outline_size}, font_size, 4 * outline_size, Outline);
-	DrawTextEx(myFont, text.c_str(), { getPosition().x, getPosition().y - outline_size }, font_size, 4 * outline_size, Outline);
-	DrawTextEx(myFont, text.c_str(), { getPosition().x + outline_size, getPosition().y }, font_size, 4 * outline_size, Outline);
-	DrawTextEx(myFont, text.c_str(), { getPosition().x - outline_size, getPosition().y }, font_size, 4 * outline_size, Outline);
+	SetTextureFilter(myFont->texture, TEXTURE_FILTER_BILINEAR);
 
-	DrawTextEx(myFont, text.c_str(), getPosition(), font_size, 4 * outline_size, TextColor);
+	DrawTextEx(*myFont, text.c_str(), {getPosition().x, getPosition().y + outline_size}, font_size, 4 * outline_size, Outline);
+	DrawTextEx(*myFont, text.c_str(), { getPosition().x, getPosition().y - outline_size }, font_size, 4 * outline_size, Outline);
+	DrawTextEx(*myFont, text.c_str(), { getPosition().x + outline_size, getPosition().y }, font_size, 4 * outline_size, Outline);
+	DrawTextEx(*myFont, text.c_str(), { getPosition().x - outline_size, getPosition().y }, font_size, 4 * outline_size, Outline);
+
+	DrawTextEx(*myFont, text.c_str(), getPosition(), font_size, 4 * outline_size, TextColor);
 }
