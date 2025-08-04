@@ -61,7 +61,7 @@ void ItemBlock::Update()
 void ItemBlock::UpdateTexture()
 {
 	if (!isActive) {
-		texture = RESOURCE_MANAGER.getTexture("EyesClosed_0");
+		texture = RESOURCE_MANAGER.getTexture("TILE_110");
 		return;
 	}
 	texture = RESOURCE_MANAGER.getTexture("QUESTION_" + std::to_string(currFrame));

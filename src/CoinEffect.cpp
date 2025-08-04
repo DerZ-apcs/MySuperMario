@@ -42,7 +42,7 @@ void CoinEffect::UpdateTexture() {
 		frameAcum = 0;
 		currFrame = (currFrame + 1) % maxFrame;
 
-		std::string textureName = "COIN_" + std::to_string(currFrame);
+		std::string textureName = "Coin_" + std::to_string(currFrame);
 		texture = Singleton<ResourceManager>::getInstance().getTexture(textureName);
 	}
 }

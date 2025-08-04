@@ -18,6 +18,7 @@ public:
 
 	bool getActive() const;
 	void setActive(bool active);
+	void setCount(int count);
 	void Activate();
 
 	BLOCK_TYPE getBlockType() const override;

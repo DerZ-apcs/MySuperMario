@@ -45,3 +45,7 @@ void Muncher::stomped()
 ENEMY_TYPE Muncher::getEnemyType() const {
     return MUNCHER;
 }
+
+float Muncher::getScores() const {
+    return SCORE_STOMP_MUNCHER;
+}

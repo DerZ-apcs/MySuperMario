@@ -12,9 +12,11 @@ static std::mt19937 gen(static_cast<unsigned int>(std::time(nullptr)));
 // Score
 const int SCORE_STOMP_GOOMBA = 100;
 const int SCORE_STOMP_KOOPA = 100;
+const int SCORE_STOMP_SPINY = 100;
 const int SCORE_KICK_KOOPA = 200;
 const int SCORE_STOMP_BULLET = 200;
 const int SCORE_STOMP_REX = 200;
+const int SCORE_STOMP_MUNCHER = 200;
 
 // Time
 const float ENEMY_DEATH_TIMER_DEFAULT = 0.3f;

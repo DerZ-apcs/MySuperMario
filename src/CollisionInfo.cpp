@@ -256,7 +256,7 @@ bool PlayerBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	Character* character = dynamic_cast<Character*>(entityA);
 	Blocks* block = dynamic_cast<Blocks*>(entityB);
 	
-	if (!character || !block || !character->getCollisionAvailable())
+	if (!character || !block || !character->getCollisionAvailable() || block->getBlockType() == DECOR)
 		return false;
 	CollisionType Colltype = character->CheckCollision(*block);
 
@@ -329,7 +329,7 @@ bool PLayerNoteBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 		character->setPosition(Vector2{ character->getX(), block->getY() - character->getHeight() });
 		character->setState(JUMPING);
 		if (character->getVelY() > 35) {
-			character->setVelY(max(character->getVelY() * -1.5f, -1550.0f)); // bounce effect
+			character->setVelY(max(character->getVelY() * -1.5f, -950.0f)); // bounce effect
 			block->setBounceDir(BOUNCE_DOWN);
 		}
 		else { character->setVelY(0); }

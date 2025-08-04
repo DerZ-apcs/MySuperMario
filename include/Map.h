@@ -15,6 +15,17 @@
 #include "../include/CloudBlock.h"
 #include "../include/Item.h"
 #include "../include/Goomba.h"
+#include "../include/Koopa.h"
+#include "../include/ParaKoopa.h"
+#include "../include/PiranhaPlant.h"
+#include "../include/JumpingPiranhaPlant.h"
+#include "../include/FirePiranhaPlant.h"
+#include "../include/Bullet.h"
+#include "../include/Rex.h"
+#include "../include/Muncher.h"
+#include "../include/BuzzyBeetle.h"
+#include "../include/Spiny.h"
+
 #include <iostream>
 #include <fstream>
 #include <sstream>

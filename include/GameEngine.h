@@ -26,8 +26,8 @@ private:
         int left, right, up, down, fire;
     };
     std::vector<PlayerControls> controlBindings = {
-        {KEY_A, KEY_D, KEY_W, KEY_S, KEY_LEFT_SHIFT},
-        {KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_RIGHT_SHIFT}
+        {KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_RIGHT_SHIFT},
+        {KEY_A, KEY_D, KEY_W, KEY_S, KEY_LEFT_SHIFT}
     };
     Level* level;
     Map map;

@@ -41,6 +41,15 @@ void Spiny::UpdateTexture() {
     texture = RESOURCE_MANAGER.getTexture("Spiny_" + dir + "_" + std::to_string(currFrame));
 }
 
+ENEMY_TYPE Spiny::getEnemyType() const {
+    return SPINY;
+}
+
+float Spiny::getScores() const {
+	return SCORE_STOMP_SPINY;
+}
+
+
 //void Spiny::CollisionWithCharacter(Mario& m, CollisionType ct) {
 //    if (isDying()) return;
 //    if (m.getInvincibilityTimer() <= 0) {

@@ -2,7 +2,7 @@
 #include "../include/GameEngine.h"
 
 CoinBlock::CoinBlock(Vector2 pos, Vector2 size) :
-	Blocks(pos, size, "TILE_110"), coinCount(1), isActive(true) {}
+	Blocks(pos, size), coinCount(1), isActive(true) {}
 
 //-----------------
 
@@ -12,6 +12,10 @@ bool CoinBlock::getActive() const {
 
 void CoinBlock::setActive(bool active) {
 	isActive = active;
+}
+
+void CoinBlock::setCount(int count) {
+	this->coinCount = count;
 }
 
 void CoinBlock::Activate() {

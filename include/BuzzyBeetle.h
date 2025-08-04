@@ -23,8 +23,8 @@ public:
 	void Update() override;
 	void stomped() override;
 	void kicked(Direction direction) override;
-	void setBuzzyBeetleState(BuzzyBeetleState newState) { state = newState; }
-	BuzzyBeetleState getBuzzyBeetleState() const { return state; }
+	void setBuzzyBeetleState(BuzzyBeetleState newState);
+	BuzzyBeetleState getBuzzyBeetleState() const;
 	float getScores() const override { return SCORE_STOMP_BUZZY; }
 	ENEMY_TYPE getEnemyType() const override;
 

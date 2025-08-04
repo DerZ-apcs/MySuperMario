@@ -14,6 +14,8 @@ public:
     void draw() override;
     void UpdateTexture() override;
 
+    ENEMY_TYPE getEnemyType() const override;
+    float getScores() const override;
     //void CollisionWithCharacter(Mario& mario, CollisionType collType) override;
     //void CollisionWithEnemy(Enemy& enemy, CollisionType collType) override;
     //void CollisionWithFireball(FireBall& fireball) override;

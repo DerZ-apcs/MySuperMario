@@ -6,7 +6,7 @@
 
 Coin::Coin(CoinType type, Vector2 pos)
 	: Item(POINT), coinType(type) {
-	this->texture = RESOURCE_MANAGER.getTexture("COIN_0");
+	this->texture = RESOURCE_MANAGER.getTexture("Coin_0");
 	this->position = pos;
 	this->size = { (float)texture.width, (float)texture.height };
 	this->dead = false;
@@ -59,7 +59,7 @@ void Coin::Update() {
 }
 
 void Coin::UpdateTexture() {
-	std::string textureName = "COIN_" + std::to_string(currFrame);
+	std::string textureName = "Coin_" + std::to_string(currFrame);
 	texture = Singleton<ResourceManager>::getInstance().getTexture(textureName);
 }
 
