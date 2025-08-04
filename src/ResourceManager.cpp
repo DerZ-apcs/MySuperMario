@@ -420,6 +420,10 @@ void ResourceManager::loadTextures() {
 	textures["guiX"] = LoadTexture("resources/images/gui/guiX.png");
 	textures["guiTime"] = LoadTexture("resources/images/gui/guiTime.png");
 	textures["guiNextItem"] = LoadTexture("resources/images/gui/guiNextItem.png");
+	textures["guiCourseClear"] = LoadTexture("resources/images/gui/Course_clear.png");
+	textures["guiFlowerNextItem"] = LoadTexture("resources/images/gui/FlowerItem.png");
+	textures["guiStarNextItem"] = LoadTexture("resources/images/gui/StarItem.png");
+	textures["guiSuperMushroomNextItem"] = LoadTexture("resources/images/gui/SuperMushroomItem.png");
 	// coin
 	textures["Coin_0"] = LoadTexture("resources/images/sprites/items/Coin_0.png");
 	textures["Coin_1"] = LoadTexture("resources/images/sprites/items/Coin_1.png");
@@ -580,6 +584,23 @@ void ResourceManager::loadTextures() {
 	textures["BuzzyBeetle_Shell_2"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_Shell_2.png");
 	textures["BuzzyBeetle_Shell_1"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_Shell_1.png");
 	textures["BuzzyBeetle_Shell_0"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_Shell_0.png");
+
+	// gui scores
+	textures["10"] = LoadTexture("resources/images/gui/gui10.png");
+	textures["20"] = LoadTexture("resources/images/gui/gui20.png");
+	textures["40"] = LoadTexture("resources/images/gui/gui40.png");
+	textures["80"] = LoadTexture("resources/images/gui/gui80.png");
+	textures["100"] = LoadTexture("resources/images/gui/gui100.png");
+	textures["200"] = LoadTexture("resources/images/gui/gui200.png");
+	textures["400"] = LoadTexture("resources/images/gui/gui400.png");
+	textures["800"] = LoadTexture("resources/images/gui/gui800.png");
+	textures["1000"] = LoadTexture("resources/images/gui/gui1000.png");
+	textures["2000"] = LoadTexture("resources/images/gui/gui2000.png");
+	textures["4000"] = LoadTexture("resources/images/gui/gui4000.png");
+	textures["8000"] = LoadTexture("resources/images/gui/gui8000.png");
+	textures["gui1Up"] = LoadTexture("resources/images/gui/gui1Up.png");
+	textures["gui2Up"] = LoadTexture("resources/images/gui/gui2Up.png");
+	textures["gui3Up"] = LoadTexture("resources/images/gui/gui3Up.png");
 }
 
 void ResourceManager::loadDigitTextures() {
@@ -872,7 +893,7 @@ void ResourceManager::loadLuigiFromMario(const std::string& marioKey, const std:
 	textures[luigiKey] = converter(marioTex);
 }
 
-void ResourceManager::unloadDigitTextures() {
+void ResourceManager::unloadDigitTextures() const {
 	for (int i = 0; i <= 9; i++) {
 		UnloadTexture(digitTextures[i]);
 		UnloadTexture(smallDigitTextures[i]);

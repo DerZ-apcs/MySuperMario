@@ -75,6 +75,10 @@ void FireBall::UpdateTexture()
 bool FireBall::ismaxTime() const {
 	return currTime >= maxTime;
 }
+float FireBall::getCurrTime() const
+{
+	return currTime;
+}
 EntityType FireBall::getEntityType() const
 {
 	return FIREBALL;

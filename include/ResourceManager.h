@@ -90,7 +90,7 @@ public:
 	void stopSound(const std::string& soundName);
 
 	void loadLuigiFromMario(const std::string& marioKey, const std::string& luigiKey, Texture2D(*converter)(Texture2D));
-	void unloadDigitTextures();
+	void unloadDigitTextures() const;
 	static Texture2D ConvertFireMarioToFireLuigi(Texture2D marioTexture);
 	static Texture2D ConvertMarioToLuigi(Texture2D marioTexture);
 	static Color getRainbowTint(float time);

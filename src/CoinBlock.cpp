@@ -32,7 +32,7 @@ void CoinBlock::setActive(bool active) {
 
 void CoinBlock::Activate() {
 	if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("coin.wav");
-	globalGameEngine->addEffect(new TextEffect((to_string(100)).c_str(), Vector2{ getCenterX() - size.x / 2, getTop() }));
+	globalGameEngine->addEffect(new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string(100).c_str()), Vector2{ getCenterX() - size.x / 2, getTop() }));
 	globalGameEngine->addEffect(new CoinEffect(Vector2{ getCenterX() - size.x / 2, getTop() - size.y }, 0.5f, 0.f));
 
 	coinCount--;

@@ -13,6 +13,8 @@
 #include "../include/Item.h"
 #include "../include/Blocks.h"
 #include "../include/CollisionInfo.h"
+#include "../include/ScoreEffect.h"
+#include "../include/GameSerialization.h"
 #include <vector>
 #include <string>
 #include <map>
@@ -79,6 +81,9 @@ public:
     std::vector<std::unique_ptr<Character>>& getMultiplayers(); 
     std::vector<Blocks*> getNearbyBlocks(Vector2 pos, int range);
     bool isInCameraView(Rectangle entityRect) const;;
+
+    /*void saveGame(const std::string& path);
+    bool loadGame(const std::string& path);*/
 };
 extern GameEngine* globalGameEngine;
 

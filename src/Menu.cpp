@@ -36,7 +36,63 @@ void MainMenuState::handleInput()
 		if (currentPosition >= choosingPosition.size()) currentPosition = 0; // wrap around to first position
 	}
 
-	if (continueButton.isPressed() || (currentPosition == 0 && IsKeyPressed(KEY_ENTER))) {
+	if (startButton.isPressed() || (currentPosition == 0 && IsKeyPressed(KEY_ENTER))) {
+		std::cout << "multiplayers size before Start pressed: " << game->multiplayers.size() << "\n";
+		if (game->multiplayers.empty()) {
+			game->multiplayers.push_back(std::make_unique<Mario>());
+			game->multiplayers[0]->setPosition({ 32, 400 });
+			game->multiplayers[0]->setVel({ 0, 0 });
+			game->multiplayers[0]->setState(FALLING);
+		}
+		else {
+			for (auto& p : game->multiplayers)
+				if (p) p->reset();
+		}
+
+		if (globalGameEngine != nullptr) {
+			delete globalGameEngine;
+			globalGameEngine = nullptr;
+		}
+		std::cout << "multiplayers size after Start pressed: " << game->multiplayers.size() << "\n";
+		globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
+
+		while (globalGameEngine != nullptr) {
+			if (globalGameEngine->run()) {
+				auto& players = globalGameEngine->getMultiplayers();
+				if (players.empty()) {
+					std::cout << "No players found in GameEngine!\n";
+					break;
+				}
+
+				if ((game->getSelectedMap() + 1) <= 4) {
+					for (auto& p : players) {
+						if (p) {
+							p->setPosition({ 16, 400 });
+							p->setVel({ 0, 0 });
+							p->setState(FALLING);
+						}
+					}
+					//auto movedPlayers = std::move(players);
+					delete globalGameEngine;
+					globalGameEngine = nullptr;
+
+					game->selectMap(game->getSelectedMap() + 1);
+					// Create a new GameEngine with the updated map and players
+					globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
+				}
+				else break;
+			}
+			else {
+				if (globalGameEngine->isOver()) {
+					//auto& players = globalGameEngine->getMultiplayers();
+					for (auto& p : game->multiplayers)
+						p->reset();
+				}
+				break;
+			}
+		}
+	}
+	else if (continueButton.isPressed() || (currentPosition == 1 && IsKeyPressed(KEY_ENTER))) {
 		if (globalGameEngine == nullptr) {
 			if (game->multiplayers.empty())
 				game->multiplayers.push_back(std::make_unique<Mario>());
@@ -67,62 +123,6 @@ void MainMenuState::handleInput()
 				if (globalGameEngine->isOver())
 					for (auto& p : game->multiplayers)
 						p->reset();
-				break;
-			}
-		}
-	}
-	else if (startButton.isPressed() || (currentPosition == 1 && IsKeyPressed(KEY_ENTER))) {
-		std::cout << "multiplayers size before Start pressed: " << game->multiplayers.size() << "\n";
-		if (game->multiplayers.empty()) {
-			game->multiplayers.push_back(std::make_unique<Mario>());
-			game->multiplayers[0]->setPosition({32, 400});
-			game->multiplayers[0]->setVel({0, 0});
-			game->multiplayers[0]->setState(FALLING);
-		}
-		else {
-			for (auto& p : game->multiplayers)
-				if (p) p->reset();
-		}
-
-		if (globalGameEngine != nullptr) {
-			delete globalGameEngine;
-			globalGameEngine = nullptr;
-		}
-		std::cout << "multiplayers size after Start pressed: " << game->multiplayers.size() << "\n";
-		globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
-
-		while (globalGameEngine != nullptr) {
-			if (globalGameEngine->run()) {
-				auto& players = globalGameEngine->getMultiplayers();
-				if (players.empty()) {
-					std::cout << "No players found in GameEngine!\n";
-					break;
-				}
-				
-				if ((game->getSelectedMap() + 1) <= 4) {
-					for (auto& p : players) {
-						if (p) {
-							p->setPosition({ 16, 400 });
-							p->setVel({ 0, 0 });
-							p->setState(FALLING);
-						}
-					}
-					//auto movedPlayers = std::move(players);
-					delete globalGameEngine;
-					globalGameEngine = nullptr;
-
-					game->selectMap(game->getSelectedMap() + 1);
-					// Create a new GameEngine with the updated map and players
-					globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
-				}
-				else break;
-			}
-			else {
-				if (globalGameEngine->isOver()) {
-					//auto& players = globalGameEngine->getMultiplayers();
-					for (auto& p : game->multiplayers)
-						p->reset();
-				}
 				break;
 			}
 		}

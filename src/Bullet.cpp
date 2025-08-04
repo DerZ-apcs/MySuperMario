@@ -62,8 +62,8 @@ void Bullet::stomped() {
     deathTimer = ENEMY_DEATH_TIMER_DEFAULT;
     updateSquashEffect();
     UpdateTexture();
-    Effect* text = new TextEffect(to_string(SCORE_STOMP_BULLET).c_str(), getCenter());
-    globalGameEngine->addEffect(text);
+    Effect* score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string(SCORE_STOMP_BULLET).c_str()), getCenter());
+    globalGameEngine->addEffect(score);
 }
 
 void Bullet::ShootFireBall() {

@@ -1,5 +1,6 @@
 #include "../include/Brick.h"
 #include "../include/GameEngine.h"
+#include <ScoreEffect.h>
 
 Brick::Brick(Vector2 pos, Vector2 size): 
 	Blocks(pos, size), isBroken(false)
@@ -20,9 +21,9 @@ BLOCK_TYPE Brick::getBlockType() const
 
 void Brick::breakBrick() {
 	if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("break_brick_block.wav");
-	TextEffect* text = new TextEffect(to_string(20), position);
-	text->setVel(Vector2{ 0, -100 });
-	globalGameEngine->addEffect(text);
+	ScoreEffect* score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string(20).c_str()), position);
+	score->setVel(Vector2{ 0, -50 });
+	globalGameEngine->addEffect(score);
 
 	isBroken = true;
 	setEntityDead();

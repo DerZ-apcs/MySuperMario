@@ -38,8 +38,8 @@ void Muncher::stomped()
     deathTimer = 0.3f;
     updateSquashEffect();
     UpdateTexture();
-    Effect* text = new TextEffect(to_string(SCORE_STOMP_GOOMBA).c_str(), getCenter());
-    globalGameEngine->addEffect(text);
+    Effect* score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string(SCORE_STOMP_GOOMBA).c_str()), getCenter());
+    globalGameEngine->addEffect(score);
 }
 
 ENEMY_TYPE Muncher::getEnemyType() const {

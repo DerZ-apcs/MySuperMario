@@ -82,3 +82,7 @@ EntityType EnemyFireBall::getEntityType() const
 {
     return ENEMY_FIREBALL;
 }
+
+float EnemyFireBall::getCurrTime() const {
+    return currTime;
+}

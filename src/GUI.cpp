@@ -173,9 +173,6 @@ void GUI::drawStatusBar(std::vector<std::unique_ptr<Character>>& multiplayers)
     //setting_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
 }
 
-
-
-
 void GUI::drawPauseMenu()
 {
     Rectangle source = { 0, 0, (float)largeBoard.width, (float)largeBoard.height};
@@ -184,109 +181,93 @@ void GUI::drawPauseMenu()
 
     const char* text = "PAUSED";
     int fontSize = 90;
-    int textWidth = MeasureText(text, fontSize);
+	Font* font = RESOURCE_MANAGER.getFont("SMW");
+    int textWidth = MeasureTextEx(*font ,text, fontSize, 0).x;
 
     // Center the text inside the destination rectangle
     float textX = dest.x + (dest.width - textWidth) / 2;
     float textY = dest.y + 100;
 
-    DrawText(text, textX, textY, fontSize, BLACK);
+    DrawTextPro(*font, text, { textX, textY }, { 0, 0 }, 0.f, fontSize, 0.f, BLACK);
 
     text = "Press Enter to continue";
     fontSize = 45;
-    textWidth = MeasureText(text, fontSize);
+    textWidth = MeasureTextEx(*font, text, fontSize, 0).x;
     textX = dest.x + (dest.width - textWidth) / 2;
     textY = dest.y + 400;
-    DrawText(text, textX, textY, fontSize, BLACK);
+    DrawTextPro(*font, text, { textX, textY }, { 0, 0 }, 0.f, fontSize, 0.f, BLACK);
 
     // restart
     source = { 0, 0, (float)restart.width, (float)restart.height };
-    dest = { textX + 100, textY - 170, 90, 90 };
+    dest = { textX + 105, textY - 170, 90, 90 };
     DrawTexturePro(restart, source, dest, { 0.f, 0.f }, 0.f, WHITE);
     restart_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsKeyPressed(KEY_R);
 
     // sound_on
     Texture2D sound = (SETTING.isMusicEnabled()) ? sound_on : sound_off;
     source = { 0, 0, (float)sound.width, (float)sound.height };
-    dest = { textX + 350, textY - 170, 90, 90 };
+    dest = { textX + 355, textY - 170, 90, 90 };
     DrawTexturePro(sound, source, dest, { 0.f, 0.f }, 0.f, WHITE);
     sound_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsKeyPressed(KEY_V);
 
     // home
     source = { 0, 0, (float)home.width, (float)home.height };
-    dest = { textX + 225, textY - 170, 90, 90 };
+    dest = { textX + 230, textY - 170, 90, 90 };
     DrawTexturePro(home, source, dest, { 0.f, 0.f }, 0.f, WHITE);
     home_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsKeyPressed(KEY_H);
-
 }
 
 void GUI::drawLevelClear()
 {
-    Rectangle source = { 0, 0, (float)largeBoard.width, (float)largeBoard.height };
-    Rectangle dest = { (float)GetScreenWidth() / 4.f , (float)GetScreenHeight() * 0.125f, (float)GetScreenWidth() / 2.f, (float)GetScreenHeight() * 0.75f };
-    DrawTexturePro(largeBoard, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+	//DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.3f));
+	Texture2D courseClear = RESOURCE_MANAGER.getTexture("guiCourseClear");
+    DrawTexturePro(courseClear, {0, 0, (float)courseClear.width, (float)courseClear.height}, {800 - 204, 400 - 26 - 150,204 * 2, 26 * 2}, {0, 0}, 0.f, WHITE);
 
-    const char* text = "CLEARED";
-    int fontSize = 90;
-    int textWidth = MeasureText(text, fontSize);
-
-    // Center the text inside the destination rectangle
-    float textX = dest.x + (dest.width - textWidth) / 2;
-    float textY = dest.y + 100;
-
-    DrawText(text, textX, textY, fontSize, BLACK);
-
-    text = "Press Enter to continue";
-    fontSize = 45;
-    textWidth = MeasureText(text, fontSize);
-    textX = dest.x + (dest.width - textWidth) / 2;
-    textY = dest.y + 400;
-    DrawText(text, textX, textY, fontSize, BLACK);
+    Font* customFont = RESOURCE_MANAGER.getFont("SMW");
+    const char* text = "Press Enter to continue";
+    int fontSize = 45;
+    int textWidth = MeasureTextEx(*customFont, text, fontSize, 0).x;
+    float textX = 800 - textWidth / 2.f; // Center the text horizontally
+    float textY = 400;
+    DrawTextPro(*customFont, text, { textX, textY }, { 0, 0 }, 0.f, fontSize, 0.f, BLACK);
 }
 
 void GUI::drawDeathScreen()
 {
+	//DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.3f));
+
     const char* text = "YOU DIED";
     int fontSize = 90;
-
-    int textWidth = MeasureText(text, fontSize);
-    int textHeight = fontSize;
-
+    Font* customFont = RESOURCE_MANAGER.getFont("SMW");
+    Vector2 textSize = MeasureTextEx(*customFont, text, fontSize, 0);
+    int textWidth = textSize.x;
+    int textHeight = textSize.y;
     int posX = ((float)GetScreenWidth() - textWidth) / 2;
-    int posY = ((float)GetScreenHeight() - textHeight) / 2 - 200;
-
-    DrawText(text, posX, posY, fontSize, RED);
+    int posY = ((float)GetScreenHeight() - textHeight) / 2 - 150;
+    DrawTextPro(*customFont, text, { (float)posX, (float)posY }, { 0, 0 }, 0.f, fontSize, 0.f, RED);
 
     text = "Press Enter to continue";
     fontSize = 45;
-    textWidth = MeasureText(text, fontSize);
+    textSize = MeasureTextEx(*customFont, text, fontSize, 0);
+    textWidth = textSize.x;
     float textX = ((float)GetScreenWidth() - textWidth) / 2;
-    float textY = posY + 200;
-    DrawText(text, textX, textY, fontSize, BLACK);
+    float textY = 400;
+    DrawTextPro(*customFont, text, { textX, textY }, { 0, 0 }, 0.f, fontSize, 0.f, BLACK);
 }
 
 void GUI::drawGameOverScreen()
 {
-    Rectangle source = { 0, 0, (float)largeBoard.width, (float)largeBoard.height };
-    Rectangle dest = { (float)GetScreenWidth() / 4.f , (float)GetScreenHeight() * 0.125f, (float)GetScreenWidth() / 2.f, (float)GetScreenHeight() * 0.75f };
-    DrawTexturePro(largeBoard, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+	//DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.5f));
+	Texture2D gameover = RESOURCE_MANAGER.getTexture("guiGameOver");
+    DrawTexturePro(gameover, { 0, 0, (float)gameover.width, (float)gameover.height }, { 800 - 160, 400 - 32 - 150,160 * 2, 32 * 2 }, { 0, 0 }, 0.f, WHITE);
 
-    const char* text = "GAME OVER";
-    int fontSize = 90;
-    int textWidth = MeasureText(text, fontSize);
-
-    // Center the text inside the destination rectangle
-    float textX = dest.x + (dest.width - textWidth) / 2;
-    float textY = dest.y + 100;
-
-    DrawText(text, textX, textY, fontSize, BLACK);
-
-    text = "Press Enter to continue";
-    fontSize = 45;
-    textWidth = MeasureText(text, fontSize);
-    textX = dest.x + (dest.width - textWidth) / 2;
-    textY = dest.y + 400;
-    DrawText(text, textX, textY, fontSize, BLACK);
+	Font* font = RESOURCE_MANAGER.getFont("SMW");
+    const char* text = "Press Enter to continue";
+    int fontSize = 45;
+    int textWidth = MeasureTextEx(*font, text, fontSize, 0).x;
+    float textX = ((float)GetScreenWidth() - textWidth) / 2;
+    float textY = 400;
+    DrawTextPro(*font, text, { textX, textY }, { 0, 0 }, 0.f, fontSize, 0.f, BLACK);
 }
 
 void GUI::drawNumber(int number, Vector2 position, float spacing)

@@ -120,7 +120,7 @@ void DryBones::stomped()
 	velocity = { 0,0 };
 	// hiệu ứng squash
 	updateSquashEffect();
-	Effect* text = new TextEffect(std::to_string(SCORE_STOMPED_DRYBONES).c_str(), getCenter());
-	globalGameEngine->addEffect(text);
+	Effect* score = new ScoreEffect(RESOURCE_MANAGER.getTexture(std::to_string(SCORE_STOMPED_DRYBONES).c_str()), getCenter());
+	globalGameEngine->addEffect(score);
 }
 

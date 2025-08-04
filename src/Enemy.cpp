@@ -93,10 +93,8 @@ void Enemy::CollisionWithFireball(FireBall* fireball) {
         updateCollision();
         if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomped.wav");
         // text effect
-        TextEffect* text = new TextEffect(to_string(SCORE_STOMP_GOOMBA).c_str(), Vector2{this->getCenterX(), this->getTop()});
-        text->setTextColor(WHITE);
-        text->setOutlineColor(BLACK);
-        globalGameEngine->addEffect(text);
+        Effect* score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string(SCORE_STOMP_GOOMBA).c_str()), Vector2{this->getCenterX(), this->getTop()});
+        globalGameEngine->addEffect(score);
         SmokeEffect* smokeright = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ 60, 120 });
         globalGameEngine->addEffect(smokeright);
         SmokeEffect* smokeleft = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ -60, 120 });

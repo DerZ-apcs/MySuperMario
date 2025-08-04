@@ -61,9 +61,9 @@ void Coin::Update()
 	if (type == BLOCK_COIN) {
 		if (lifeTime <= 0.f) {
 			setEntityDead();
-			Effect* text = new TextEffect(to_string(POINT).c_str(), getCenter());
-			text->setVelY(0.f);
-			globalGameEngine->addEffect(text);
+			Effect* score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string(POINT).c_str()), getCenter());
+			score->setVelY(0.f);
+			globalGameEngine->addEffect(score);
 		}
 	}
 	UpdateTexture();
@@ -73,10 +73,6 @@ void Coin::draw()
 {
 	DrawTexture(texture, position.x, position.y, WHITE);
 }
-
-//void Coin::updateCollision()
-//{
-//}
 
 void Coin::UpdateTexture()
 {

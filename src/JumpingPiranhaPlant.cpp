@@ -53,8 +53,8 @@ void JumpingPiranhaPlant::stomped()
     deathTimer = ENEMY_DEATH_TIMER_DEFAULT;
     invincibilityTimer = 0.5f;
     updateSquashEffect();
-    Effect* text = new TextEffect(to_string(SCORE_STOMP_REX).c_str(), getCenter());
-    globalGameEngine->addEffect(text);
+    Effect* score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string(SCORE_STOMP_REX).c_str()), getCenter());
+    globalGameEngine->addEffect(score);
 }
 
 void JumpingPiranhaPlant::UpdateTexture(bool isGoingUp) {

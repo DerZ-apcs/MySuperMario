@@ -121,7 +121,7 @@ void BuzzyBeetle::stomped()
         velocity.y = -300; // Slight upward bounce
         velocity.x = (rand() % 100) - 50; // Random horizontal velocity
         deathTimer = ENEMY_DEATH_TIMER_LONG; // Disappear after 0.5s
-        Effect* text = new TextEffect(to_string(SCORE_STOMP_BUZZY).c_str(), getCenter());
+        Effect* text = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string(SCORE_STOMP_BUZZY).c_str()), getCenter());
         globalGameEngine->addEffect(text);
     }
 }

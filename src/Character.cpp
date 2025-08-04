@@ -293,12 +293,12 @@ const Phase& Character::getPhase() const
 	return phase;
 }
 
-CharacterState& Character::getCharacterState() 
+const CharacterState& Character::getCharacterState() const
 {
 	return Character_state;
 }
 
-CharacterState& Character::getPrevCharacterState()
+const CharacterState& Character::getPrevCharacterState() const
 {
 	return PrevCharacter_state;
 }
@@ -382,6 +382,11 @@ void Character::setScores(int scores)
 void Character::setDucking(bool ducking)
 {
 	this->isducking = ducking;
+}
+
+void Character::setCharacterState(CharacterState characterState)
+{
+	this->Character_state = characterState;
 }
 
 void Character::setHolding(bool holding)
@@ -810,8 +815,14 @@ void Character::RunLeft()
 {
 	float deltaTime = GetFrameTime();
 	if (direction == RIGHT) {
-		if (velocity.x > 70 && state == ON_GROUND)
-			if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("skid.wav");
+		if (velocity.x > 70 && state == ON_GROUND) {
+			if (SETTING.isSoundEnabled()) {
+				RESOURCE_MANAGER.stopSound("skid.wav");
+				RESOURCE_MANAGER.playSound("skid.wav");
+			}
+			SmokeEffect* smoke = new SmokeEffect(Vector2{ position.x + size.x / 2, position.y + size.y / 2 }, { 50, -50 });
+			globalGameEngine->addEffect(smoke);
+		}
 		direction = LEFT;
 		velocity.x = 0;
 	}
@@ -829,8 +840,14 @@ void Character::RunRight()
 {
 	float deltaTime = GetFrameTime();
 	if (direction == LEFT) {
-		if (velocity.x < -70 && state == ON_GROUND)
-			if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("skid.wav");
+		if (velocity.x < -70 && state == ON_GROUND) {
+			if (SETTING.isSoundEnabled()) {
+				RESOURCE_MANAGER.stopSound("skid.wav");
+				RESOURCE_MANAGER.playSound("skid.wav");
+			}
+			SmokeEffect* smoke = new SmokeEffect(Vector2{ position.x + size.x / 2, position.y + size.y / 2}, { -50, -50 });
+			globalGameEngine->addEffect(smoke);
+		}
 		direction = RIGHT;
 		velocity.x = 0;
 	}
@@ -902,22 +919,18 @@ void Character::ThrowingFireBalls()
 
 void Character::collisionWithItem(const Item* item)
 {
-	TextEffect* text = nullptr;
+	Effect* score = nullptr;
 	DustEffect* dust = nullptr;
 	if (item->getItemType() == MUSHROOM) {
 		const Mushroom* mushroom = dynamic_cast<const Mushroom*>(item);
 		if (mushroom->getMushroomType() == REDMUSHROOM) {
 			scores += mushroom->getPoint();
 			eatRedMushrooms();
-			text = new TextEffect(to_string((int)mushroom->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
-			text->setTextColor(WHITE);
-			text->setOutlineColor(BLACK);
+			score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string((int)mushroom->getPoint()).c_str()), Vector2{ mushroom->getX(), mushroom->getTop() });
 		}
 		else if (mushroom->getMushroomType() == GREENMUSHROOM) {
 			eatGreenMushrooms();
-			text = new TextEffect("1 UP", Vector2{ getCenterX(), getTop() });
-			text->setTextColor(WHITE);
-			text->setOutlineColor(BLACK);
+			score = new ScoreEffect(RESOURCE_MANAGER.getTexture("gui1Up"), Vector2{ mushroom->getX(), mushroom->getTop() });
 		}	
 		dust = new DustEffect(Vector2{ mushroom->getX(), mushroom->getY() });
 	}
@@ -925,9 +938,7 @@ void Character::collisionWithItem(const Item* item)
 		const Moon* moon = dynamic_cast<const Moon*>(item);
 		lives += 3;
 		if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("1-up.wav");
-		text = new TextEffect("3 UPs", Vector2{ getCenterX(), getTop() });
-		text->setTextColor(WHITE);
-		text->setOutlineColor(BLACK);
+		score = new ScoreEffect(RESOURCE_MANAGER.getTexture("gui3Up"), Vector2{ moon->getX(), moon->getTop() });
 		dust = new DustEffect(Vector2{ moon->getX(), moon->getY() });
 	}
 	else if (item->getItemType() == STAR) {
@@ -938,7 +949,7 @@ void Character::collisionWithItem(const Item* item)
 		else if (star->getStarType() == BLUE_STAR)
 			invicibleStarTime = 18.f;
 		scores += star->getPoint();
-		text = new TextEffect(to_string((int)star->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
+		score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string((int)star->getPoint()).c_str()), Vector2{ star->getX(), star->getTop() });
 		dust = new DustEffect(Vector2{ star->getX(), star->getY() });
 	}
 	else if (item->getItemType() == FLOWER) {
@@ -946,7 +957,7 @@ void Character::collisionWithItem(const Item* item)
 		if (flower->getFlowerType() == FIRE_FLOWER) {
 			scores += flower->getPoint();
 			eatFireFlower();
-			text = new TextEffect(to_string((int)flower->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
+			score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string((int)flower->getPoint()).c_str()), Vector2{ flower->getX(), flower->getTop() });
 		}
 		dust = new DustEffect(Vector2{ flower->getX(), flower->getY() });
 
@@ -956,14 +967,14 @@ void Character::collisionWithItem(const Item* item)
 		if (coin->getCoinType() == STATIC_COIN) {
 			coins++;
 			scores += coin->getPoint();
-			text = new TextEffect(to_string((int)coin->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
+			score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string((int)coin->getPoint()).c_str()), Vector2{ coin->getX(), coin->getTop() });
 			if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("coin.wav");
 		}
 		dust = new DustEffect(Vector2{ coin->getX(), coin->getY() });
 
 	}
-	if (text != nullptr) {
-		globalGameEngine->addEffect(text);
+	if (score != nullptr) {
+		globalGameEngine->addEffect(score);
 	}
 	if (dust != nullptr)
 		globalGameEngine->addEffect(dust);

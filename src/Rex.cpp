@@ -117,8 +117,8 @@ void Rex::stomped()
         velocity.y = 0.0f;
         deathTimer = ENEMY_DEATH_TIMER_DEFAULT;
         updateSquashEffect();
-        Effect* text = new TextEffect(to_string(SCORE_STOMP_REX).c_str(), getCenter());
-        globalGameEngine->addEffect(text);
+        Effect* score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string(SCORE_STOMP_REX).c_str()), getCenter());
+        globalGameEngine->addEffect(score);
     }
 }
 

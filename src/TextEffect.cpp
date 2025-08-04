@@ -40,7 +40,7 @@ void TextEffect::draw()
 {
 	if (text.empty())
 		return;
-	Font* myFont = RESOURCE_MANAGER.getFont("WinterMinie");
+	Font* myFont = RESOURCE_MANAGER.getFont("SMW");
 	if (myFont == nullptr) {
 		std::cerr << "Error: Font not found!" << std::endl;
 		return;

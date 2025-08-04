@@ -2,6 +2,7 @@
 #include"../include/Character.h"
 #include "../include/GUI.h"
 #include "../include/Effect.h"
+#include "../include/ScoreEffect.h"
 #include "../include/Enemy.h"
 #include "../include/Coin.h"
 #include "../include/Map.h"
@@ -420,6 +421,14 @@ void GameEngine::draw()
     for (size_t i = 0; i < (*multiplayers).size(); i++) {
         (*multiplayers)[i]->draw();
 
+        // draw the gui P1 & P2
+        if ((*multiplayers).size() == 2) {
+			Texture2D guip1 = RESOURCE_MANAGER.getTexture("P1GUI");
+			Texture2D guip2 = RESOURCE_MANAGER.getTexture("P2GUI");
+            DrawTexturePro(guip1, { 0, 0, (float)guip1.width, (float)guip1.height }, {(*multiplayers)[0]->getX() + 5, (*multiplayers)[0]->getY() - 50, 150 / 7.f, 266 / 7.f }, {0, 0}, 0.f, WHITE);
+            DrawTexturePro(guip2, { 0, 0, (float)guip2.width, (float)guip2.height }, { (*multiplayers)[1]->getX() + 5, (*multiplayers)[1]->getY() - 50, 150 / 7.f, 266 / 7.f }, { 0, 0 }, 0.f, WHITE);
+        }
+
         for (auto& area : secretAreas) {
             if (CheckCollisionPointRec((*multiplayers)[i]->getPosition(), area)) {
                 drawCover = false;
@@ -464,7 +473,7 @@ void GameEngine::draw()
             GUI::drawStatusBar((*multiplayers));
 
     if (isPaused) {
-        DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.5f));
+        DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.3f));
         if (cleared) {
             GUI::drawLevelClear();
         }
@@ -682,3 +691,31 @@ bool GameEngine::isInCameraView(Rectangle entityRect) const {
     Rectangle view = camera.getViewRect();
     return CheckCollisionRecs(view, entityRect);
 }
+
+//void GameEngine::saveGame(const std::string& path)
+//{
+//    json j;
+//
+//    saveMultiCharacters(*multiplayers, j);
+//
+//    // Add enemies, blocks, level index, etc.
+//    //j["mapIndex"] = currentMapIndex;
+//
+//    std::ofstream out(path);
+//    out << j.dump(4);
+//}
+
+//bool GameEngine::loadGame(const std::string& path)
+//{
+//    std::ifstream in(path);
+//    if (!in.is_open()) return false;
+//
+//    json j;
+//    in >> j;
+//
+//    loadMultiCharacters(*multiplayers, j);
+//
+//    // Load enemies, blocks, level index
+//    //currentMapIndex = j.value("mapIndex", 0);
+//    return true;
+//}

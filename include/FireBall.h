@@ -20,6 +20,7 @@ public:
 	void updateCollision() override;
 	void UpdateTexture() override;
 	bool ismaxTime() const;
+	float getCurrTime() const;
 	EntityType getEntityType() const override;
 };
 #endif

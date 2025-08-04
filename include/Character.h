@@ -42,8 +42,8 @@ public:
 	virtual void reset();
 	virtual void setPhase(Phase phase);
 	virtual const Phase& getPhase() const;
-	virtual CharacterState& getCharacterState();
-	virtual CharacterState& getPrevCharacterState();
+	virtual const CharacterState& getCharacterState() const;
+	virtual const CharacterState& getPrevCharacterState() const;
 
 	bool isInvicible() const;
 	bool isImmortal() const;
@@ -67,6 +67,7 @@ public:
 	void setCoins(int coins);
 	void setScores(int scores);
 	void setDucking(bool ducking);
+	void setCharacterState(CharacterState characterState);
 	void setHolding(bool holding);
 	void lostSuit();
 	void setVictory(bool victory);
