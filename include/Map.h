@@ -7,6 +7,7 @@
 #include "../include/Floor.h"
 #include "../include/SolidBlock.h"
 #include "../include/Brick.h"
+#include "../include/Cannon.h"
 #include "../include/CoinBlock.h"
 #include "../include/ItemBlock.h"
 #include "../include/DecorBlock.h"

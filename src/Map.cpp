@@ -225,6 +225,21 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			//blockArray.push_back(new CoinBlock({ (float)x * blockwidth, (float)y * blockwidth }, "TILE_" + std::to_string(texId), 5));
 		}
 
+		if (name == "Cannon") {
+			Direction direction;
+			for (auto& prop : obj["properties"]) {
+				if (prop["name"] == "Direction") direction = (prop["value"] == "Left") ? LEFT : RIGHT;
+			}
+			int bullet_t = (type == "Bullet") ? 0 : 1;
+			Blocks* cannon = dynamic_cast<Cannon*>(BlockFactory::getInstance().createBlock(CANNON, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
+			dynamic_cast<Cannon*>(cannon)->setDirection(direction);
+			dynamic_cast<Cannon*>(cannon)->setBulletType(bullet_t);
+			if (!cannon) {
+				throw std::runtime_error("Failed to create cannon block: ");
+			}
+			tileGrid[y][x] = cannon;
+		}
+
 		if (name == "Enemy") {
 			if (type == "Goomba") {
 				enemies.push_back(new Goomba(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0")));
