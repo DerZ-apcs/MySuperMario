@@ -27,6 +27,7 @@ public:
     void stomped();
     void kicked(Direction direction) override;
     void updateCollision() override;
+    void setKoopaState(KoopaState state);
 };
 
 class YellowKoopa : public Koopa {

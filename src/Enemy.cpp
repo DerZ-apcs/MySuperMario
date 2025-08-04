@@ -149,6 +149,11 @@ void Enemy::attacked(Direction direction) {
     setCollisionAvailable(false);
 }
 
+float Enemy::getScores() const
+{
+    return scores;
+}
+
 void Enemy::setCollisionTimer(float time)
 {
     collisionTimer = time;

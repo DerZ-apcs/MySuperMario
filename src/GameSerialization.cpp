@@ -109,63 +109,67 @@ std::unique_ptr<Character> loadCharacter(const json& j) {
     return c;
 }
 
-std::unique_ptr<Enemy> loadEnemy(const json& j)
+Enemy* loadEnemy(const json& j)
 {
     ENEMY_TYPE type = static_cast<ENEMY_TYPE>(j.at("EnemyType").get<int>());
-    std::unique_ptr<Enemy> e;
+    Enemy* e = nullptr;
+    Vector2 pos = { j["pos"][0], j["pos"][1] };
+    Texture2D tex = loadTextureFromType(type);
     switch (type) {
     case GOOMBA:
-        e = std::make_unique<Goomba>();
+        e = new Goomba(pos, tex);
         break;
     case KOOPA:
-        e = std::make_unique<Koopa>();
+        e = new Koopa(pos, tex);
         break;
     case PIRANHA:
-        e = std::make_unique<PiranhaPlant>();
+        e = new PiranhaPlant(pos, tex);
         break;
     case BULLET:
-        e = std::make_unique<Bullet>();
+        e = new Bullet(pos, tex);
         break;
     case SHELL:
-        e = make_unique<Koopa>();
+        e = new Koopa(pos, tex);
+        dynamic_cast<Koopa*>(e)->setKoopaState(SHELL_KOOPA);
         break;
     case BOBOMB:
-        e = make_unique<BobOmb>();
+        e = new BobOmb(pos, tex);
         break;
     case REX:
-        e = make_unique<Rex>();
+        e = new Rex(pos, tex);
         break;
     case MUNCHER:
-        e = make_unique<Muncher>();
+        e = new Muncher(pos, tex);
         break;
     case SPINY:
-        e = make_unique<Spiny>();
+        e = new Spiny(pos, tex);
         break;
     case DRYBONES:
-        e = make_unique<DryBones>();
+        e = new DryBones(pos, tex);
         break;
     case BUZZYBEETLE:
-        e = make_unique<BuzzyBeetle>();
+        e = new BuzzyBeetle(pos, tex);
         break;
     default:
         std::cerr << "Unknown enemy type\n";
         return nullptr;
     }
-    e->setPosition({ j.at("pos")[0], j.at("pos")[1] });
-    e->setVel({ j.at("vel")[0], j.at("vel")[1] });
-    e->setState(static_cast<EntityState>(j.at("state").get<int>()));
-
-
+    if (e) {
+        e->setPosition({ j.at("pos")[0], j.at("pos")[1] });
+        e->setVel({ j.at("vel")[0], j.at("vel")[1] });
+        e->setState(static_cast<EntityState>(j.at("state").get<int>()));
+        e->setDirection(static_cast<Direction>(j.at("direction").get<int>()));
+    }
     return e;
     
 }
 
-std::unique_ptr<Item> loadItem(const json& j)
+Item* loadItem(const json& j)
 {
     
 }
 
-std::unique_ptr<Blocks> loadBlocks(const json& j)
+Blocks* loadBlocks(const json& j)
 {
     
 }
@@ -193,10 +197,69 @@ void loadMultiCharacters(std::vector<std::unique_ptr<Character>>& multiplayers, 
     }
 }
 
-void saveEnemies(const std::vector<Enemy> enemies, json& j)
+void saveEnemies(const std::vector<Enemy*>& enemies, json& j)
 {
+    j = json::array();
+    for (const Enemy* e : enemies) {
+        json enemyJson;
+        enemyJson["EnemyType"] = static_cast<int>(e->getEnemyType()); // You need a getType() method
+        enemyJson["pos"] = { e->getX(), e->getY()};
+        enemyJson["vel"] = { e->getVelX(), e->getVelY()};
+        enemyJson["state"] = static_cast<int>(e->getState());
+        enemyJson["direction"] = static_cast<int>(e->getDir());
+        // Add more fields if needed
+        j.push_back(enemyJson);
+    }
 }
 
-void loadEnemies(std::vector<Enemy> enemies, const json& j)
+void loadEnemies(std::vector<Enemy*>& enemies, const json& j)
 {
+    enemies.clear();
+    for (const auto& enemyJson : j) {
+        Enemy* e = loadEnemy(enemyJson);
+        if (e) enemies.push_back(e);
+    }
+}
+
+static Texture2D loadTextureFromType(ENEMY_TYPE type) {
+    std::string tex;
+    switch (type) {
+    case GOOMBA:
+        tex = "Goomba_LEFT_0";
+        break;
+    case KOOPA:
+        tex = "Koopa_LEFT_0";
+        break;
+    case BULLET:
+        tex = "Bullet_LEFT_0";
+        break;
+    case REX:
+        tex = "Rex_LEFT_0";
+        break;
+    case PIRANHA:
+        tex = "PiranhaPlant_0";
+        break;
+    case SHELL:
+        tex = "KoopaShell_LEFT_0";
+        break;
+    case MUNCHER:
+        tex = "Muncher_0";
+        break;
+    case BOBOMB:
+        tex = "BobOmb_LEFT_0";
+        break;
+    case SPINY:
+        tex = "Spiny_LEFT_0";
+        break;
+    case BUZZYBEETLE:
+        tex = "BuzzyBeetle_LEFT_0";
+        break;
+    case DRYBONES:
+        tex = "DryBones_LEFT_0";
+        break;
+    default:
+        tex = "Unknown_Enemy";
+        break;
+    }
+    return RESOURCE_MANAGER.getTexture(tex.c_str());
 }

@@ -1,6 +1,11 @@
 ﻿#include "../include/Bullet.h"
 #include "../include/GameEngine.h"
 
+Bullet::Bullet(Vector2 pos, Texture2D tex):
+    Bullet(pos, tex, RIGHT)
+{
+}
+
 // Bullet Class Implementation
 Bullet::Bullet(Vector2 pos, Texture2D texture, Direction direction)
     : Enemy(pos, { 32, 28 }, { direction == LEFT ? -BULLET_SPEED : BULLET_SPEED, 0 }, direction, FLYING, texture, 0.2f, 1, GRAY) {

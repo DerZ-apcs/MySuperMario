@@ -206,6 +206,11 @@ void Koopa::updateCollision()
     }
 }
 
+void Koopa::setKoopaState(KoopaState state)
+{
+    this->koopaState = state;
+}
+
 ENEMY_TYPE FlyingKoopa::getEnemyType() const {
     return KOOPA;
 }
