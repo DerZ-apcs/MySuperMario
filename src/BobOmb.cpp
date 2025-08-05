@@ -119,3 +119,17 @@ void BobOmb::Explode() {
         }
     }
 }
+
+void BobOmb::loadEntity(const json& j)
+{
+    Enemy::loadEntity(j);
+    isActivated = j["isActivated"];        
+    fuseTimer = j["fuseTimer"];
+}
+
+void BobOmb::saveEntity(json& j) const
+{
+    Enemy::saveEntity(j);
+    j["isActivated"] = isActivated;          
+    j["fuseTimer"] = fuseTimer;
+}

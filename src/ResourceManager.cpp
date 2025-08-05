@@ -1,4 +1,5 @@
 ﻿#include "../include/ResourceManager.h"
+#include <algorithm>
 #include <iostream>
 
 void ResourceManager::loadTextures() {
@@ -633,6 +634,59 @@ void ResourceManager::loadFonts()
 	load("SMW", "resources/Font/SMW.ttf");
 }
 
+void ResourceManager::drawAllTiles() const
+{
+	const int tileSize = 32;      
+	const int tilesPerRow = 10;
+	int i = 0;
+
+	std::vector<std::pair<int, Texture2D>> sortedTiles;
+	for (const auto& kv : textures)
+	{
+		const std::string& key = kv.first;
+
+		if (key.find("TILE_") != 0)
+			continue;
+
+		// Extract numeric ID from key
+		int id = std::stoi(key.substr(5));  
+
+		sortedTiles.emplace_back(id, kv.second);
+	}
+
+	// Sort by numeric ID
+	std::sort(sortedTiles.begin(), sortedTiles.end(),
+		[](const auto& a, const auto& b) {
+			return a.first < b.first;
+		});
+
+	// Draw 
+	for (const auto& pair : sortedTiles)
+	{
+		int id = pair.first;
+		const Texture2D& tex = pair.second;
+
+		int row = i / tilesPerRow;
+		int col = i % tilesPerRow;
+
+		int x = col * (tileSize + 16);
+		int y = row * (tileSize + 24);  
+
+		if (tex.id != 0) {
+			DrawTexture(tex, x, y, WHITE);
+		}
+		else {
+			DrawRectangle(x, y, tileSize, tileSize, RED);
+			DrawText("Missing", x + 2, y + tileSize / 2 - 5, 10, WHITE);
+		}
+
+		char label[32];
+		snprintf(label, sizeof(label), "TILE_%d", id);
+		DrawText(label, x, y + tileSize + 2, 10, DARKGRAY);
+
+		i++;
+	}
+}
 
 void ResourceManager::loadSounds()
 {

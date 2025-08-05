@@ -37,7 +37,6 @@ void MainMenuState::handleInput()
 	}
 
 	if (startButton.isPressed() || (currentPosition == 0 && IsKeyPressed(KEY_ENTER))) {
-		std::cout << "multiplayers size before Start pressed: " << game->multiplayers.size() << "\n";
 		if (game->multiplayers.empty()) {
 			game->multiplayers.push_back(std::make_unique<Mario>());
 			game->multiplayers[0]->setPosition({ 32, 400 });
@@ -53,7 +52,6 @@ void MainMenuState::handleInput()
 			delete globalGameEngine;
 			globalGameEngine = nullptr;
 		}
-		std::cout << "multiplayers size after Start pressed: " << game->multiplayers.size() << "\n";
 		globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
 
 		while (globalGameEngine != nullptr) {
@@ -64,7 +62,7 @@ void MainMenuState::handleInput()
 					break;
 				}
 
-				if ((game->getSelectedMap() + 1) <= 4) {
+				if ((game->getSelectedMap() + 1) <= 3) {
 					for (auto& p : players) {
 						if (p) {
 							p->setPosition({ 16, 400 });
@@ -72,7 +70,6 @@ void MainMenuState::handleInput()
 							p->setState(FALLING);
 						}
 					}
-					//auto movedPlayers = std::move(players);
 					delete globalGameEngine;
 					globalGameEngine = nullptr;
 
@@ -84,7 +81,6 @@ void MainMenuState::handleInput()
 			}
 			else {
 				if (globalGameEngine->isOver()) {
-					//auto& players = globalGameEngine->getMultiplayers();
 					for (auto& p : game->multiplayers)
 						p->reset();
 				}
@@ -105,7 +101,7 @@ void MainMenuState::handleInput()
 			if (globalGameEngine->run()) {
 				delete globalGameEngine;
 				globalGameEngine = nullptr;
-				if ((game->getSelectedMap() + 1) <= 4)
+				if ((game->getSelectedMap() + 1) <= 3)
 				{
 		/*			if (game->multiplayers.empty())
 						game->multiplayers.push_back(std::make_unique<Mario>());*/
@@ -262,10 +258,10 @@ void ModePlayer::handleInput()
 		game->setState(make_unique<SingleCharSelection>(game));
 	else if (dualButton.isPressed() || (currentPosition == 1 && IsKeyPressed(KEY_ENTER)))
 		game->setState(make_unique<DualCharSelection>(game));
-	else if (difficultyButton.isPressed()) {
+	else if (difficultyButton.isPressed() || (currentPosition == 2 && IsKeyPressed(KEY_ENTER))) {
 		
 	}
-	else if (returnButton.isPressed() || (currentPosition == 2 && IsKeyPressed(KEY_ENTER))) {
+	else if (returnButton.isPressed() || (currentPosition == 3 && IsKeyPressed(KEY_ENTER))) {
 		game->returnToMainMenu();
 	}
 	if (IsKeyPressed(KEY_UP)) {

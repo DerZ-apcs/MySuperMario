@@ -1,4 +1,5 @@
 #include "../include/PowerItem.h"
+#include "../include/ResourceManager.h"
 
 const float PowerItem::EMERGENCE_HEIGHT = 32.0f;
 const float PowerItem::EMERGENCE_SPEED = 48.0f;
@@ -10,6 +11,11 @@ PowerItem::PowerItem(Vector2 pos, Vector2 sz, Direction dir, Texture2D tex) :
 	Item(pos, sz, Vector2{ SPEED * (dir == RIGHT ? 1.0f : -1.0f), 20 }, dir, FALLING, tex), powerUpState(EMERGING),
 	INTERVAL_JUMPING(1.f)
 {
+	this->texture = tex;
+	this->position = pos;
+	this->size = { (float)texture.width, (float)texture.height };
+	this->dead = false;
+
 	CollNorth.setSize({ size.x / 2, 5 });
 	CollSouth.setSize({ size.x / 2, 5 });
 	CollWest.setSize({ 5, size.y - 5 });
@@ -22,8 +28,9 @@ void PowerItem::setItemState(PowerUpState state) {
 	powerUpState = state;
 }
 
-PowerUpState PowerItem::getPowerUpState() const
-{
+//------------------
+
+PowerUpState PowerItem::getPowerUpState() const {
 	return powerUpState;
 }
 
@@ -65,6 +72,10 @@ void PowerItem::Update() {
 		if (emergenceDis >= EMERGENCE_HEIGHT) {
 			powerUpState = ACTIVE;
 			emergenceDis = 0.0f;
+
+			setCollisionAvailable(true);
+			setDirection(RIGHT);
+			velocity = { SPEED, 0.0f };
 		}
 
 		break;
@@ -73,11 +84,13 @@ void PowerItem::Update() {
 	default: break;
 	}
 
-	updateCollision();
+	Entity::updateCollision();
+	UpdateTexture();
 }
 
 void PowerItem::draw() {
 	if (isDead()) return;
+	if (this->dead == true) return;
 
 	DrawTexture(texture, position.x, position.y, WHITE);
 	// debug

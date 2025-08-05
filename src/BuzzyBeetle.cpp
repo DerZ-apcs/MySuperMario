@@ -142,3 +142,15 @@ ENEMY_TYPE BuzzyBeetle::getEnemyType() const
 {
 	return BuzzyState == SHELL_BUZZY ? SHELL : BUZZYBEETLE;
 }
+
+void BuzzyBeetle::loadEntity(const json& j)
+{
+    Koopa::loadEntity(j);
+    BuzzyState = j["BuzzyState"];
+}
+
+void BuzzyBeetle::saveEntity(json& j) const
+{
+    Koopa::saveEntity(j);
+    j["BuzzyState"] = BuzzyState;
+}

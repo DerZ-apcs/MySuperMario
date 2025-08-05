@@ -1,6 +1,7 @@
 #ifndef MUSHROOM_H
 #define MUSHROOM_H
 
+#include <raylib.h>
 #include "../include/PowerItem.h"
 
 class Mushroom : public PowerItem {

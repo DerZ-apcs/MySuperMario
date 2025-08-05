@@ -163,3 +163,26 @@ void Enemy::setDeathTimer(float time)
 {
     deathTimer = time;
 }
+
+void Enemy::loadEntity(const json& j)
+{
+    Entity::loadEntity(j);
+    deathTimer = j["deathTimer"];
+    squashScale = j["squashScale"];
+    isFlipped = j["isFlipped"];
+    isKicked = j["isKicked"];
+    collisionTimer = j["collisionTimer"];
+    scores = j["scores"];
+}
+
+void Enemy::saveEntity(json& j) const
+{
+    Entity::saveEntity(j); // Save base class data
+
+    j["deathTimer"] = deathTimer;
+    j["squashScale"] = squashScale;
+    j["isFlipped"] = isFlipped;
+    j["isKicked"] = isKicked;
+    j["collisionTimer"] = collisionTimer;
+    j["scores"] = scores;
+}

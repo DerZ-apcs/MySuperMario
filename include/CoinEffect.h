@@ -16,6 +16,7 @@ public:
 	void Update() override;
 	void UpdateTexture() override;
 	void draw() override;
+
 };
 
 #endif // !COIN_EFFECT_H

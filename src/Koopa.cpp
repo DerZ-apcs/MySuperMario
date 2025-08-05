@@ -211,8 +211,24 @@ void Koopa::setKoopaState(KoopaState state)
     this->koopaState = state;
 }
 
-ENEMY_TYPE FlyingKoopa::getEnemyType() const {
-    return KOOPA;
+void Koopa::loadEntity(const json& j)
+{
+    Enemy::loadEntity(j);
+    koopaState = j["koopaState"];
+    koopaType = j["koopaType"];
+    reviveTimer = j["reviveTimer"];
+    isReviving = j["isReviving"];
+    reviveShakeTimer = j["reviveShakeTimer"];
+}
+
+void Koopa::saveEntity(json& j) const
+{
+    Enemy::saveEntity(j);
+    j["koopaState"] = koopaState;
+    j["koopaType"] = koopaType;
+    j["reviveTimer"] = reviveTimer;
+    j["isReviving"] = isReviving;
+    j["reviveShakeTimer"] = reviveShakeTimer;
 }
 
 
@@ -288,21 +304,3 @@ KOOPA_TYPE BlueKoopa::getKoopaType() const
     return BLUE_KOOPA;
 }
 
-
-//FlyingKoopa::FlyingKoopa(Vector2 pos, Texture2D texture):
-//    Enemy(pos, { 32, 54 }, { 0, 0 }, LEFT, ON_GROUND, texture, 0.2f, 1, GREEN),
-//    reviveTimer(0.0f), isReviving(false), reviveShakeTimer(0.0f),
-//    koopaState(NORMAL_KOOPA), koopaType(YELLOW_KOOPA)
-//{
-//
-//}
-
-void FlyingKoopa::Update() {
-
-}
-void FlyingKoopa::UpdateTexture() {
-
-}
-float FlyingKoopa::getScores() const {
-    return SCORE_STOMP_KOOPA;
-}

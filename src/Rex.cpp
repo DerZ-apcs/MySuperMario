@@ -122,6 +122,20 @@ void Rex::stomped()
     }
 }
 
+void Rex::loadEntity(const json& j)
+{
+    Enemy::loadEntity(j);
+    rexState = j["rexState"];
+    detectMarioRange = j["detectMarioRange"];
+}
+
+void Rex::saveEntity(json& j) const
+{
+    Enemy::saveEntity(j);
+    j["rexState"] = rexState;
+    j["detectMarioRange"] = detectMarioRange;
+}
+
 
 void Rex::updateCollision() {
     // Cập nhật kích thước hộp va chạm dựa trên trạng thái của Rex

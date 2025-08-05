@@ -12,9 +12,11 @@ static std::mt19937 gen(static_cast<unsigned int>(std::time(nullptr)));
 // Score
 const int SCORE_STOMP_GOOMBA = 100;
 const int SCORE_STOMP_KOOPA = 100;
+const int SCORE_STOMP_SPINY = 100;
 const int SCORE_KICK_KOOPA = 200;
 const int SCORE_STOMP_BULLET = 200;
 const int SCORE_STOMP_REX = 200;
+const int SCORE_STOMP_MUNCHER = 200;
 
 // Time
 const float ENEMY_DEATH_TIMER_DEFAULT = 0.3f;
@@ -61,9 +63,11 @@ public:
     void setIsKicked(bool isKicked);
     virtual void UpdateTexture(); // Update enemy texture based on state
     virtual void attacked(Direction direction = RIGHT);
-    float getScores() const;
+    virtual float getScores() const;
     void setCollisionTimer(float time);
     void setDeathTimer(float time);
+    void loadEntity(const json& j) override;
+    void saveEntity(json& j) const override;
 };
 
 #endif

@@ -1,6 +1,7 @@
 #ifndef NOTE_BLOCK_H
 #define NOTE_BLOCK_H
 
+#include <raylib.h>
 #include "../include/Blocks.h" 
 
 class NoteBlock : public Blocks {
@@ -12,7 +13,7 @@ private:
 	static const float bounceMax;       // How far it moves (in pixels)
 
 public:
-	NoteBlock(Vector2 pos = {0, 0}, Vector2 size = {32, 32});
+	NoteBlock(Vector2 pos);
 	~NoteBlock() = default;
 
 	BOUNCE_DIRECTION getBounceDir() const;

@@ -27,8 +27,8 @@ public:
 	ENEMY_TYPE getEnemyType() const override;
 	float getScores() const override;
     void stomped() override;
-    //void CollisionWithCharacter(Mario& m, CollisionType ct) override;
-    //void HandleTileCollision(const Tile& t, CollisionType ct) override;
+    void loadEntity(const json& j) override;
+    void saveEntity(json& j) const override;
 };
 
 #endif

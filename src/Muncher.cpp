@@ -42,6 +42,21 @@ void Muncher::stomped()
     globalGameEngine->addEffect(score);
 }
 
+
 ENEMY_TYPE Muncher::getEnemyType() const {
     return MUNCHER;
+}
+
+void Muncher::loadEntity(const json& j)
+{
+    Enemy::loadEntity(j);
+}
+
+void Muncher::saveEntity(json& j) const
+{
+    Enemy::saveEntity(j);
+}
+
+float Muncher::getScores() const {
+    return SCORE_STOMP_MUNCHER;
 }

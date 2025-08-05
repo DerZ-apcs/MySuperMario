@@ -6,7 +6,7 @@ const float NoteBlock::bounceMax = 24.0f; // Maximum bounce height in pixels
 
 //-----------------
 
-NoteBlock::NoteBlock(Vector2 pos, Vector2 size) :
+NoteBlock::NoteBlock(Vector2 pos) :
     Blocks(pos, { 32, 32 }, "NOTE_0"), bounce_dir(NO_BOUNCE) {
     this->frameAcum = 0;
     this->currFrame = 0;
@@ -15,6 +15,7 @@ NoteBlock::NoteBlock(Vector2 pos, Vector2 size) :
 }
 
 //-----------------
+
 BOUNCE_DIRECTION NoteBlock::getBounceDir() const {
     return bounce_dir;
 }

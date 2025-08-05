@@ -79,3 +79,13 @@ float Spiny::getScores() const
 {
     return SCORE_STOMP_SPINY;
 }
+
+void Spiny::loadEntity(const json& j)
+{
+    Enemy::loadEntity(j);
+}
+
+void Spiny::saveEntity(json& j) const
+{
+    Enemy::saveEntity(j);
+}

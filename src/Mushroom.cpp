@@ -1,4 +1,5 @@
 #include "../include/Mushroom.h"
+#include "../include/ResourceManager.h"
 
 Mushroom::Mushroom(MushroomType type, Vector2 position, Direction direction):
 	PowerItem(position, { 32, 32 }, direction, type == GREENMUSHROOM ? RESOURCE_MANAGER.getTexture("GreenMushroom") : RESOURCE_MANAGER.getTexture("RedMushroom")),
@@ -13,9 +14,8 @@ float Mushroom::getPoint() const
 	return SCORE_MUSHROOM;
 }
 
-const MushroomType& Mushroom::getMushroomType() const
-{
-	return type;
+const MushroomType& Mushroom::getMushroomType() const {
+	return REDMUSHROOM; // for now only one type. to be changed later
 }
 
 ITEM_TYPE Mushroom::getItemType() const

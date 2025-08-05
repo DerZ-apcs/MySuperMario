@@ -339,11 +339,6 @@ bool Character::isJumping() const
 	return isjumping;
 }
 
-float Character::getSinkingTime() const
-{
-	return sinkingTime;
-}
-
 int Character::getLives() const
 {
 	return lives;
@@ -357,6 +352,11 @@ int Character::getCoins() const
 int Character::getScores() const
 {
 	return scores;
+}
+
+float Character::getSinkingTime() const
+{
+	return sinkingTime;
 }
 
 bool Character::isHolding() const
@@ -394,6 +394,10 @@ void Character::setHolding(bool holding)
 	this->holding = holding;
 }
 
+void Character::setSinkingTime(float sinkingTime) {
+	this->sinkingTime = sinkingTime;
+}
+
 void Character::lostSuit()
 {
 	if (Character_state == STATE_SMALL) {
@@ -423,11 +427,6 @@ void Character::lostSuit()
 void Character::setLostLife(bool lostLife)
 {
 	this->lostLife = lostLife;
-}
-
-void Character::setSinkingTime(float sinkingTime)
-{
-	this->sinkingTime = sinkingTime;
 }
 
 void Character::Jumping()
@@ -478,14 +477,14 @@ void Character::Update()
 	if (velocity.y > 20 && state != SINKING)
 		state = FALLING;
 	velocity.y += GRAVITY * deltaTime + 2;
-	if (state == SINKING) {
+	if (state == SINKING) { 
 		sinkingTime -= deltaTime;
 		velocity.y = GRAVITY / 32;
+		//printf("SINKING\n");
 		if (sinkingTime <= 0.f) {
 			state = FALLING;
 		}
 	}
-
 	// fireball
 	for (auto i = fireballs.begin(); i != fireballs.end();) {
 		FireBall* fireball = *i;
@@ -554,7 +553,7 @@ void Character::HandleInput()
 		RunRight();
 	}
 	else Standing();
-	if (state == ON_GROUND) {
+	if (state == ON_GROUND || state == SINKING) {
 		if (IsKeyPressed(KEY_UP)) {
 			Jumping();
 		}

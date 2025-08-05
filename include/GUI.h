@@ -43,6 +43,8 @@ public:
 	static void drawStatusBar(std::vector<std::unique_ptr<Character>>& multiplayers);
 	static void drawPauseMenu();
 	static void drawLevelClear();
+	static void drawVictory();
+	static void drawTransitioningBetweenMap();
 	static void drawDeathScreen();
 	static void drawGameOverScreen();
 	static void drawNumber(int number, Vector2 position, float spacing = 10.f);

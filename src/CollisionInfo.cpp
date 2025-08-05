@@ -4,6 +4,8 @@
 #include "../include/Floor.h"
 #include "../include/MovingBlock.h"
 #include "../include/Brick.h"
+#include "../include/CloudBlock.h"
+#include "../include/NoteBlock.h"
 #include "../include/TemporaryBlock.h"
 #include "../include/RotatingBlock.h"
 #include "../include/HiddenBlock.h"
@@ -14,6 +16,8 @@
 #include "../include/Shell.h"
 #include "../include/SmokeEffect.h"
 #include "../include/ItemBlock.h"
+#include "../include/CoinBlock.h"
+#include "../include/RotatingBlock.h"
 #include "../include/CoinBlock.h"
 #include "../include/Coin.h"
 #include "../include/PowerItem.h"
@@ -111,8 +115,9 @@ bool PlayerItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	case COLLISION_TYPE_NORTH:
 		character->setPosition(Vector2{ character->getX(), block->getY() + block->getHeight() });
 		character->setVelY(0);
-		if (block->getActive())
-			block->Activate();
+		if (block->getActive()) { 
+			block->Activate(); 
+		}
 		break;
 	case COLLISION_TYPE_SOUTH:
 		character->setPosition(Vector2{ character->getX(), block->getY() - character->getHeight() });
@@ -130,6 +135,85 @@ bool PlayerItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	default:
 		break;
 	}
+	return true;
+}
+
+bool PlayerCoinBlockInfo::HandleCollision(Entity* entityA, Entity* entityB) 
+{
+	Character* character = dynamic_cast<Character*>(entityA);
+	CoinBlock* block = dynamic_cast<CoinBlock*>(entityB);
+
+	if (!character || !block || !character->getCollisionAvailable())
+		return false;
+	CollisionType Colltype = character->CheckCollision(*block);
+	if (Colltype == COLLISION_TYPE_NONE)
+		return false;
+	switch (Colltype) {
+	case COLLISION_TYPE_NORTH:
+		character->setPosition(Vector2{ character->getX(), block->getY() + block->getHeight() });
+		character->setVelY(100);
+		if (block->getActive()) { 
+			block->Activate(); 
+			character->setCoins(character->getCoins() + 1);
+			character->setScores(character->getScores() + Coin::getPoint());
+		}
+		break;
+	case COLLISION_TYPE_SOUTH:
+		character->setPosition(Vector2{ character->getX(), block->getY() - character->getHeight() });
+		character->setState(ON_GROUND);
+		character->setVelY(0);
+		break;
+	case COLLISION_TYPE_EAST:
+		character->setPosition(Vector2{ block->getX() - character->getWidth(), character->getY() });
+		character->setVelX(0);
+		break;
+	case COLLISION_TYPE_WEST:
+		character->setPosition(Vector2{ block->getX() + block->getWidth(), character->getY() });
+		character->setVelX(0);
+		break;
+	default:
+		break;
+	}
+	return true;
+}
+
+bool PlayerRotatingBlockInfo::HandleCollision(Entity* entityA, Entity* entityB) {
+	Character* character = dynamic_cast<Character*>(entityA);
+	RotatingBlock* block = dynamic_cast<RotatingBlock*>(entityB);
+
+	if (!character || !block || !character->getCollisionAvailable())
+		return false;
+	CollisionType Colltype = character->CheckCollision(*block);
+	if (Colltype == COLLISION_TYPE_NONE)
+		return false;
+	switch (Colltype) {
+	case COLLISION_TYPE_NORTH:
+		if (block->getActive() == false) {
+			character->setPosition(Vector2{ character->getX(), block->getY() + block->getHeight() });
+			character->setVelY(0);
+			block->Activate();
+		}
+		break;
+	case COLLISION_TYPE_SOUTH:
+		if (block->getActive() == false) {
+			character->setPosition(Vector2{ character->getX(), block->getY() - character->getHeight() });
+			character->setState(ON_GROUND);
+			character->setVelY(0);
+		}
+		break;
+	case COLLISION_TYPE_EAST:
+		character->setPosition(Vector2{ block->getX() - character->getWidth(), character->getY() });
+		character->setVelX(0);
+		break;
+	case COLLISION_TYPE_WEST:
+		character->setPosition(Vector2{ block->getX() + block->getWidth(), character->getY() });
+		character->setVelX(0);
+		break;
+	default:
+		break;
+	}
+	return true;
+	return true;
 }
 
 bool PlayerBrickInfo::HandleCollision(Entity* entityA, Entity* entityB)
@@ -140,12 +224,13 @@ bool PlayerBrickInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	if (!character || !block || !character->getCollisionAvailable())
 		return false;
 	CollisionType Colltype = character->CheckCollision(*block);
-	if (Colltype == COLLISION_TYPE_NONE)
+	if (Colltype == COLLISION_TYPE_NONE || block->getBroken() == true)
 		return false;
 	switch (Colltype) {
 	case COLLISION_TYPE_NORTH:
 		character->setPosition(Vector2{ character->getX(), block->getY() + block->getHeight() });
 		character->setVelY(0);
+		//block->setBroken(true);
 		block->breakBrick();
 		//state = FALLING;
 		break;
@@ -173,7 +258,7 @@ bool PlayerBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	Character* character = dynamic_cast<Character*>(entityA);
 	Blocks* block = dynamic_cast<Blocks*>(entityB);
 	
-	if (!character || !block || !character->getCollisionAvailable())
+	if (!character || !block || !character->getCollisionAvailable() || block->getBlockType() == DECOR)
 		return false;
 	CollisionType Colltype = character->CheckCollision(*block);
 
@@ -246,7 +331,7 @@ bool PLayerNoteBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 		character->setPosition(Vector2{ character->getX(), block->getY() - character->getHeight() });
 		character->setState(JUMPING);
 		if (character->getVelY() > 35) {
-			character->setVelY(max(character->getVelY() * -1.5f, -1550.0f)); // bounce effect
+			character->setVelY(max(character->getVelY() * -1.5f, -950.0f)); // bounce effect
 			block->setBounceDir(BOUNCE_DOWN);
 		}
 		else { character->setVelY(0); }
@@ -263,45 +348,6 @@ bool PLayerNoteBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 		break;
 	}
 	return true;
-}
-
-bool PlayerCoinBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
-{
-	Character* character = dynamic_cast<Character*>(entityA);
-	CoinBlock* block = dynamic_cast<CoinBlock*>(entityB);
-
-	if (!character || !block || !character->getCollisionAvailable())
-		return false;
-	CollisionType Colltype = character->CheckCollision(*block);
-	if (Colltype == COLLISION_TYPE_NONE)
-		return false;
-	switch (Colltype) {
-	case COLLISION_TYPE_NORTH:
-		character->setPosition(Vector2{ character->getX(), block->getY() + block->getHeight() });
-		character->setVelY(50);
-		if (block->getActive()) {
-			block->Activate();
-			character->setCoins(character->getCoins() + 1);
-			Coin coin;
-			character->setScores(character->getScores() + coin.getPoint());
-		}
-		break;
-	case COLLISION_TYPE_SOUTH:
-		character->setPosition(Vector2{ character->getX(), block->getY() - character->getHeight() });
-		character->setState(ON_GROUND);
-		character->setVelY(0);
-		break;
-	case COLLISION_TYPE_EAST:
-		character->setPosition(Vector2{ block->getX() - character->getWidth(), character->getY() });
-		character->setVelX(0);
-		break;
-	case COLLISION_TYPE_WEST:
-		character->setPosition(Vector2{ block->getX() + block->getWidth(), character->getY() });
-		character->setVelX(0);
-		break;
-	default:
-		break;
-	}
 }
 // enemy
 bool EnemyFloorInfo::HandleCollision(Entity* entityA, Entity* entityB)
@@ -502,7 +548,7 @@ bool FireBallFloorInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	if (Colltype != COLLISION_TYPE_SOUTH)
 		return false;
 	fireball->setPosition(Vector2{ fireball->getX(), fireball->getY() - fireball->getHeight() });
-	fireball->setVelY(fireball->getVelY() * -0.9f);
+	fireball->setVelY(fireball->getVelY() * -0.8f);
 	return true;
 }
 
@@ -533,15 +579,15 @@ bool FireBallItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 		break;
 	case COLLISION_TYPE_SOUTH:
 		fireball->setPosition(Vector2{ fireball->getX(), block->getY() - fireball->getHeight() });
-		fireball->setVelY(fireball->getVelY() * -0.9f);
+		fireball->setVelY(fireball->getVelY() * -0.8f);
 		break;
 	case COLLISION_TYPE_EAST:
 		fireball->setPosition(Vector2{ block->getX() - fireball->getWidth(), fireball->getY() });
-		fireball->setVelX(fireball->getVelX() * -0.9f);
+		fireball->setVelX(fireball->getVelX() * -0.8f);
 		break;
 	case COLLISION_TYPE_WEST:
 		fireball->setPosition(Vector2{ block->getX() + block->getWidth(), fireball->getY() });
-		fireball->setVelX(fireball->getVelX() * -0.9f);
+		fireball->setVelX(fireball->getVelX() * -0.8f);
 		break;
 	default:
 		break;
@@ -564,6 +610,7 @@ bool FireBallBrickInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	block->breakBrick();
 	fireball->setEntityDead();
 	fireball->setCollisionAvailable(false);
+
 	if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("bump.wav");
 	SmokeEffect* smoke = new SmokeEffect(Vector2{ block->getCenter().x, block->getTop() }, Vector2{ 0, -200 });
 	globalGameEngine->addEffect(smoke);
@@ -589,15 +636,15 @@ bool FireBallBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 		break;
 	case COLLISION_TYPE_SOUTH:
 		fireball->setPosition(Vector2{ fireball->getX(), block->getY() - fireball->getHeight() });
-		fireball->setVelY(fireball->getVelY() * -0.9f);
+		fireball->setVelY(fireball->getVelY() * -0.8f);
 		break;
 	case COLLISION_TYPE_EAST:
 		fireball->setPosition(Vector2{ block->getX() - fireball->getWidth(), fireball->getY() });
-		fireball->setVelX(fireball->getVelX() * -0.9f);
+		fireball->setVelX(fireball->getVelX() * -0.8f);
 		break;
 	case COLLISION_TYPE_WEST:
 		fireball->setPosition(Vector2{ block->getX() + block->getWidth(), fireball->getY() });
-		fireball->setVelX(fireball->getVelX() * -0.9f);
+		fireball->setVelX(fireball->getVelX() * -0.8f);
 		break;
 	default:
 		break;
@@ -631,6 +678,9 @@ bool PlayerItemInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	CollisionType Colltype = character->CheckCollision(*item);
 	if (Colltype == COLLISION_TYPE_NONE)
 		return false;
+	PowerItem* powerItem = dynamic_cast<PowerItem*>(item);
+	if (powerItem && powerItem->getPowerUpState() != ACTIVE) { return false; }
+	
 	character->collisionWithItem(item);
 	item->setEntityDead();
 	return true;
@@ -723,19 +773,19 @@ bool EnemyFireBallBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	{
 	case COLLISION_TYPE_NORTH:
 		fireball->setPosition(Vector2{ fireball->getX(), block->getY() + block->getHeight() });
-		fireball->setVelY(fireball->getVelY() * -0.9f);
+		fireball->setVelY(fireball->getVelY() * -0.6f);
 		break;
 	case COLLISION_TYPE_SOUTH:
 		fireball->setPosition(Vector2{ fireball->getX(), block->getY() - fireball->getHeight() });
-		fireball->setVelY(fireball->getVelY() * -0.9f);
+		fireball->setVelY(fireball->getVelY() * -0.6f);
 		break;
 	case COLLISION_TYPE_EAST:
 		fireball->setPosition(Vector2{ block->getX() - fireball->getWidth(), fireball->getY() });
-		fireball->setVelX(fireball->getVelX() * -0.9f);
+		fireball->setVelX(fireball->getVelX() * -0.6f);
 		break;
 	case COLLISION_TYPE_WEST:
 		fireball->setPosition(Vector2{ block->getX() + block->getWidth(), fireball->getY() });
-		fireball->setVelX(fireball->getVelX() * -0.9f);
+		fireball->setVelX(fireball->getVelX() * -0.6f);
 		break;
 	default:
 		break;
@@ -890,43 +940,4 @@ bool CollisionInterface::HandleCollision(Entity* entityA, Entity* entityB)
 			<< static_cast<int>(typeA) << " and " << static_cast<int>(typeB) << std::endl;
 	}
 	return false;
-}
-
-bool PlayerRotatingBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
-{
-	Character* character = dynamic_cast<Character*>(entityA);
-	RotatingBlock* block = dynamic_cast<RotatingBlock*>(entityB);
-
-	if (!character || !block || !character->getCollisionAvailable())
-		return false;
-	CollisionType Colltype = character->CheckCollision(*block);
-	if (Colltype == COLLISION_TYPE_NONE)
-		return false;
-	switch (Colltype) {
-	case COLLISION_TYPE_NORTH:
-		if (block->getActive() == false) {
-			character->setPosition(Vector2{ character->getX(), block->getY() + block->getHeight() });
-			character->setVelY(0);
-			block->Activate();
-		}
-		break;
-	case COLLISION_TYPE_SOUTH:
-		if (block->getActive() == false) {
-			character->setPosition(Vector2{ character->getX(), block->getY() - character->getHeight() });
-			character->setState(ON_GROUND);
-			character->setVelY(0);
-		}
-		break;
-	case COLLISION_TYPE_EAST:
-		character->setPosition(Vector2{ block->getX() - character->getWidth(), character->getY() });
-		character->setVelX(0);
-		break;
-	case COLLISION_TYPE_WEST:
-		character->setPosition(Vector2{ block->getX() + block->getWidth(), character->getY() });
-		character->setVelX(0);
-		break;
-	default:
-		break;
-	}
-	return true;
 }

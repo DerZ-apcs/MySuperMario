@@ -8,11 +8,12 @@
 
 class PowerItem : public Item {
 protected:
-	PowerUpState powerUpState;
+	PowerUpState powerUpState = EMERGING;
 
 	float emergenceDis = 0.0f;
 	static const float EMERGENCE_HEIGHT;
 	static const float EMERGENCE_SPEED;
+
 	static const float SPEED;
 
 	const float SCORE_MUSHROOM = 200;

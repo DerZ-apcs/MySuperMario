@@ -19,6 +19,8 @@ public:
     void draw() override;
     void UpdateTexture() override;
     virtual void ShootFireBall(); // Bắn fireball
+    void loadEntity(const json& j) override;
+    void saveEntity(json& j) const override;
 };
 
 class RapidFirePiranha : public FirePiranhaPlant {

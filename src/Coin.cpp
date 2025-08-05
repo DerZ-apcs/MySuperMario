@@ -2,77 +2,70 @@
 #include "../include/GameEngine.h"
 #include "../include/Effect.h"
 #include "../include/TextEffect.h"
+#include "../include/ResourceManager.h"
 
-Coin::Coin(CoinType type, Vector2 position): Item(POINT)
-{
-	maxFrame = 3;
-	currFrame = 0;
-	frameAcum = 0.f;
-	frameTime = 0.1f;
-	this->type = type;
-	this->lifeTime = 0.f;
-	texture = RESOURCE_MANAGER.getTexture("Coin_0");
+Coin::Coin(CoinType type, Vector2 pos)
+	: Item(POINT), coinType(type) {
+	this->texture = RESOURCE_MANAGER.getTexture("Coin_0");
+	this->position = pos;
 	this->size = { (float)texture.width, (float)texture.height };
+	this->dead = false;
 
-	if (type == BLOCK_COIN) {
-		setVelY(-COIN_UP_VELOCITY);
-		setCollisionAvailable(false);
-		this->lifeTime = BLOCK_COIN_LIFE_TIME;
-		if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("coin.wav");
-	}
-	setPosition(position);
+	this->maxFrame = 3;
+	this->currFrame = 0;
+	this->frameTime = 0.15f;
+	this->frameAcum = 0.0f;
+
 	setGravityAvailable(false);
 	setCollisionAvailable(true);
+	Entity::updateCollision();
+	}
+
+//------------------
+
+const int& Coin::getPoint() {
+	return POINT;
 }
 
-Coin::~Coin()
-{
+ITEM_TYPE Coin::getItemType() const {
+	return COIN;
 }
 
-EntityType Coin::getEntityType() const
-{
+EntityType Coin::getEntityType() const {
 	return ITEM;
 }
 
 const CoinType& Coin::getCoinType() const
 {
-	return type;
+	return STATIC_COIN;
 }
 
-ITEM_TYPE Coin::getItemType() const
-{
-	return COIN;
-}
+//------------------
 
-void Coin::setCoinType(CoinType type)
-{
-	this->type = type;
-}
+void Coin::Update() {
 
-void Coin::Update()
-{
+	if (this->dead == true) return; 
 	const float deltaTime = GetFrameTime();
-
+	//printf("Coin Update\n");
 	Entity::Update();
 	if (isDead()) return;
 	if (gravityAvailable) {
 		setVelY(velocity.y + GRAVITY * deltaTime);
 	}
-	if (type == BLOCK_COIN) {
-		if (lifeTime <= 0.f) {
-			setEntityDead();
-			Effect* score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string(POINT).c_str()), getCenter());
-			score->setVelY(0.f);
-			globalGameEngine->addEffect(score);
-		}
-	}
+
 	UpdateTexture();
+	Entity::updateCollision();
 }
 
 void Coin::draw()
 {
 	DrawTexture(texture, position.x, position.y, WHITE);
 }
+
+//void Coin::UpdateTexture() {
+//	std::string textureName = "Coin_" + std::to_string(currFrame);
+//	texture = Singleton<ResourceManager>::getInstance().getTexture(textureName);
+//}
 
 void Coin::UpdateTexture()
 {

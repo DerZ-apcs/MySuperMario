@@ -14,11 +14,11 @@ public:
     void draw() override;
     void UpdateTexture() override;
     void stomped() override;
-    float getScore() override;
-    ENEMY_TYPE getEnemyType() const override;
-    //void CollisionWithCharacter(Mario& mario, CollisionType collType) override;
-    //void CollisionWithFireball(FireBall& fireball) override;
-    //void HandleTileCollision(const Tile& tile, CollisionType collType) override;
+    float getScores() const override;
+    ENEMY_TYPE getEnemyType() const override;    
+    void loadEntity(const json& j) override;
+    void saveEntity(json& j) const override;
+    
 };
 
 #endif 

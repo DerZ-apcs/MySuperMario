@@ -6,7 +6,7 @@ const float RotatingBlock::ROTATION_PERIOD = 1.6f; // seconds
 
 //-----------------
 
-RotatingBlock::RotatingBlock(Vector2 pos, Vector2 size) :
+RotatingBlock::RotatingBlock(Vector2 pos) :
 	Blocks(pos, { 32, 32 }, "ROTATING_0"), isActive(false), rotatingTime(0.0f) {
 	this->frameAcum = 0;
 	this->currFrame = 0;

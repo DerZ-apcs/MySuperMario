@@ -21,6 +21,7 @@ void Map::clear() {
 	blockArray.clear();
 	items.clear();
 	decors.clear();
+	covers.clear();
 	enemies.clear();
 	covers.clear();
 	secretAreas.clear();
@@ -104,7 +105,6 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 						throw std::runtime_error("Failed to create coin: ");
 					}
 					items.push_back(coin);
-					printf("Coin at (%d, %d)\n", x, y);
 					continue;
 				}
 
@@ -153,7 +153,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			}
 		}
 	}
-	/*
+	
 	nlohmann::json objectLayer = mapJson["layers"][1];
 	nlohmann::json objects = objectLayer["objects"];
 
@@ -221,14 +221,49 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 				throw std::runtime_error("Failed to create coin block: ");
 			}
 			tileGrid[y][x] = coinBlock;
-			//blockArray.push_back(coinBlock);
-			//blockArray.push_back(new CoinBlock({ (float)x * blockwidth, (float)y * blockwidth }, "TILE_" + std::to_string(texId), 5));
 		}
 
 		if (name == "Enemy") {
 			if (type == "Goomba") {
 				enemies.push_back(new Goomba(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0")));
 			}
+			else if (type == "FlyingGoomba") {
+				enemies.push_back(new FlyingGoomba(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FlyingGoomba_RIGHT_0")));
+			}
+			else if (type == "PiranhaPlant") {
+				enemies.push_back(new PiranhaPlant(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("PiranhaPlant_OPEN")));
+			}
+			else if (type == "JumpingPiranha") {
+				enemies.push_back(new JumpingPiranhaPlant(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("JumpingPiranha_OPEN")));
+			}
+			else if (type == "FirePiranha") {
+				enemies.push_back(new FirePiranhaPlant(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FirePiranha_OPEN")));
+			}
+			else if (type == "Koopa") {
+				enemies.push_back(new GreenKoopa(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Koopa_RIGHT_0")));
+			}
+			else if (type == "ParaKoopa") {
+				//enemies.push_back(new ParaKoopa(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("ParaKoopa_RIGHT_0")));
+			}
+			else if (type == "Bullet") {
+				enemies.push_back(new Bullet(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Bullet"), LEFT));
+			}
+			else if (type == "FireBullet") {
+				enemies.push_back(new FireBullet(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FireBullet"), LEFT));
+			}
+			else if (type == "Muncher") {
+				enemies.push_back(new Muncher(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Muncher")));
+			}
+			else if (type == "Rex") {
+				enemies.push_back(new Rex(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Rex_RIGHT_0")));
+			}
+			else if (type == "BuzzyBeetle") {
+				//enemies.push_back(new BuzzyBeetle(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("BuzzyBeetle_RIGHT_0")));
+			}
+			else if (type == "Spiny") {
+				enemies.push_back(new Spiny(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Spiny_RIGHT_0")));
+			}
+			else { std::cerr << "Unknown enemy type: " << type << std::endl; }
 		}
 
 		if (name == "Area") {
@@ -242,7 +277,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			secretAreas.push_back(area);
 		}
 	}
-
+	
 	 //decor layer
 	std::vector<int> decorData = mapJson["layers"][2]["data"];
 	for (int y = 0; y < height; ++y) {
@@ -279,7 +314,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 				//covers.push_back(coverBlock);
 			}
 		}
-	}*/
+	}
 
 	setMapSize(Vector2{ (float)width * blockwidth, (float)height * blockwidth });
 }
@@ -325,7 +360,7 @@ std::vector<Enemy*> Map::getEnemies() const
 
 std::vector<Item*> Map::getItems() const
 {
-	return items;
+	return this->items;
 }
 
 std::vector<Blocks*> Map::getDecor() const

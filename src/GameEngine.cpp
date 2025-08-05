@@ -39,31 +39,17 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std:
     //blocks = map.getBlocks();
 	tileGrid = map.getTileGrid();
     enemies = map.getEnemies();
-    items = map.getItems();
+	items = map.getItems();  
     decor = map.getDecor();
 	covers = map.getCovers();
 	secretAreas = map.getSecretAreas();
+
     isPaused = false;
     this->time = 300;
     resetTimer();
     deltaTime = 0.f;
     BackGroundPos = { {0, 0}, {(float)GetScreenWidth(), 0}, {(float)GetScreenWidth() * 2, 0} };
-
-    //ItemBlock* itemblock1 = new ItemBlock({ 100, 800 }, MUSHROOM, 0);
-    //ItemBlock* itemblock2 = new ItemBlock({ 132, 800 }, STAR, 0);
-    //ItemBlock* itemblock3 = new ItemBlock({ 164, 800 }, FLOWER, 0);
-    //blocks.push_back(itemblock1);
-    //blocks.push_back(itemblock2);
-    //blocks.push_back(itemblock3);
-    
-    for (int i = 0; i < 10; i++) {
-        Coin* coin = new Coin(STATIC_COIN, { (float)i * 50, 600 });
-        items.push_back(coin);
-    }
-
-    //Rex* rex = new Rex({ 400, 500 }, RESOURCE_MANAGER.getTexture("Rex_LEFT_0"));
-    //rex->setState(FALLING);
-    //enemies.push_back(rex);
+    //items.push_back();
 
     //FirePiranhaPlant* plant = new FirePiranhaPlant({ 432, 710 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_CLOSED"));
     //enemies.push_back(plant);
@@ -93,6 +79,9 @@ GameEngine::~GameEngine() {
     }
     for (size_t i = 0; i < decor.size(); ++i) {
         delete decor[i];
+    }
+    for (size_t i = 0; i < covers.size(); ++i) {
+        delete covers[i];
     }
     for (size_t i = 0; i < effects.size(); ++i) {
         delete effects[i];
@@ -159,7 +148,7 @@ void GameEngine::update()
         return CheckCollisionRecs(cameraView, { x - margin, y - margin, w + 2 * margin, h + 2 * margin });
     };
 
-    if (IsKeyPressed(KEY_ENTER) || GUI::setting_is_pressed) {
+    if (IsKeyPressed(KEY_SPACE) || GUI::setting_is_pressed) {
         if (GUI::setting_is_pressed)
             GUI::setting_is_pressed = false;
         isPaused = !isPaused;
@@ -625,6 +614,9 @@ void GameEngine::resetGame()
     for (size_t i = 0; i < decor.size(); ++i) {
         delete decor[i];
     }
+    for (size_t i = 0; i < covers.size(); ++i) {
+        delete covers[i];
+    }
     for (size_t i = 0; i < effects.size(); ++i) {
         delete effects[i];
     }
@@ -655,7 +647,8 @@ void GameEngine::resetGame()
     items = map.getItems();
     decor = map.getDecor();
     covers = map.getCovers();
-    secretAreas = map.getSecretAreas();
+	secretAreas = map.getSecretAreas();
+
     isPaused = false;
     this->time = 300;
     resetTimer();

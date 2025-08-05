@@ -1,21 +1,21 @@
 #include "../include/CoinEffect.h"
 
-CoinEffect::CoinEffect(Vector2 pos, float duration, float delay) :
+CoinEffect::CoinEffect(Vector2 pos, float duration, float delay):
 	Effect(pos, delay, duration)
 {
-	this->texture = RESOURCE_MANAGER.getTexture("Coin_0");
+	this->texture = RESOURCE_MANAGER.getTexture("COIN_0");
 	setSize({ 32.f, 32.f });
-	setVel({ 0.f, -200.f });
+	setVel({ 0.f, -350.f });
 
-	this->animations.push_back(RESOURCE_MANAGER.getTexture("Coin_0"));
-	this->animations.push_back(RESOURCE_MANAGER.getTexture("Coin_1"));
-	this->animations.push_back(RESOURCE_MANAGER.getTexture("Coin_2"));
-	this->animations.push_back(RESOURCE_MANAGER.getTexture("Coin_3"));
+	this->animations.push_back(Singleton<ResourceManager>::getInstance().getTexture("COIN_0"));
+	this->animations.push_back(Singleton<ResourceManager>::getInstance().getTexture("COIN_1"));
+	this->animations.push_back(Singleton<ResourceManager>::getInstance().getTexture("COIN_2"));
+	this->animations.push_back(Singleton<ResourceManager>::getInstance().getTexture("COIN_3"));
 	this->currFrame = 0;
 	this->maxFrame = 4;
 }
 
-CoinEffect::CoinEffect(Vector2 pos, std::vector<Texture2D> animations, float duration, float delay) :
+CoinEffect::CoinEffect(Vector2 pos, std::vector<Texture2D> animations, float duration, float delay):
 	Effect(pos, duration, animations, delay)
 {
 	if (!animations.empty()) this->texture = animations[0];
@@ -43,7 +43,7 @@ void CoinEffect::UpdateTexture() {
 		currFrame = (currFrame + 1) % maxFrame;
 
 		std::string textureName = "Coin_" + std::to_string(currFrame);
-		texture = RESOURCE_MANAGER.getTexture(textureName);
+		texture = Singleton<ResourceManager>::getInstance().getTexture(textureName);
 	}
 }
 

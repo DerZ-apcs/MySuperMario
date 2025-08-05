@@ -21,6 +21,8 @@ public:
     void UpdateTexture() override;
     void stomped() override;
     void Explode(); // Hàm xử lý logic vụ nổ
+    void loadEntity(const json& j) override;
+    void saveEntity(json& j) const override;
 };
 
 #endif // BOBOMB_H

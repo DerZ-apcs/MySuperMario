@@ -20,6 +20,8 @@ public:
     void attacked(Direction direction) override;
     float getScores() const override;
     void stomped() override;
+    void loadEntity(const json& j) override;
+    void saveEntity(json& j) const override;
 };
 
 class FlyingGoomba : public Goomba {
@@ -39,6 +41,8 @@ public:
     float getScores() const override;
     void setJumpTimer(float time);
     void stomped() override;
+    void loadEntity(const json& j) override;
+    void saveEntity(json& j) const override;
 };
 
 #endif

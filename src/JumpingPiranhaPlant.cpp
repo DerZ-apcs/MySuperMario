@@ -57,6 +57,18 @@ void JumpingPiranhaPlant::stomped()
     globalGameEngine->addEffect(score);
 }
 
+void JumpingPiranhaPlant::loadEntity(const json& j)
+{
+    PiranhaPlant::loadEntity(j);
+    animTimer = j["animTimer"];
+}
+
+void JumpingPiranhaPlant::saveEntity(json& j) const
+{
+    PiranhaPlant::saveEntity(j);
+    j["animTimer"] = animTimer;
+}
+
 void JumpingPiranhaPlant::UpdateTexture(bool isGoingUp) {
     // Dùng texture Up trong nửa đầu chu kỳ, Down nửa sau
     frameAcum += GetFrameTime();

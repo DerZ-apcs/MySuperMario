@@ -142,7 +142,7 @@ Enemy* loadEnemy(const json& j)
         e = new Muncher(pos, tex);
         break;
     case SPINY:
-        e = new Spiny(pos, tex);
+        //e = new Spiny(pos, tex);
         break;
     case DRYBONES:
         e = new DryBones(pos, tex);
@@ -164,25 +164,25 @@ Enemy* loadEnemy(const json& j)
     
 }
 
-Item* loadItem(const json& j)
-{
-    
-}
+//Item* loadItem(const json& j)
+//{
+//    
+//}
+//
+//Blocks* loadBlocks(const json& j)
+//{
+//    
+//}
 
-Blocks* loadBlocks(const json& j)
-{
-    
-}
+//FireBall loadFireBall(const json& j)
+//{
+//    
+//}
 
-FireBall loadFireBall(const json& j)
-{
-    
-}
-
-EnemyFireBall loadEnemyFireBall(const json& j)
-{
-    
-}
+//EnemyFireBall loadEnemyFireBall(const json& j)
+//{
+//    
+//}
 
 
 void saveMultiCharacters(const std::vector<std::unique_ptr<Character>>& multiplayers, json& j) {

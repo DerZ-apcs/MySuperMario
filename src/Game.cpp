@@ -45,7 +45,7 @@ void Game::init()
 	// load map&level
 
 	loadedLevel.push_back(std::make_unique<Level>(
-		Map::basePath + "MAP_1.1.json", "BACKGROUND_1", "MUSIC_1", "1 - 1"));
+		Map::basePath + "kmap_1.json", "BACKGROUND_1", "MUSIC_1", "1-1"));
 	loadedLevel.push_back(std::make_unique<Level>(
 		Map::basePath + "kmap_2.json", "BACKGROUND_2", "MUSIC_2", "1-2"));
 	loadedLevel.push_back(std::make_unique<Level>(
@@ -67,6 +67,7 @@ void Game::init()
 			{ 0, 0 },
 			0.0f,
 			WHITE);
+		//RESOURCE_MANAGER.drawAllTiles(); // debug purpose
 		if (SETTING.isMusicEnabled())
 			UpdateMusicStream(RESOURCE_MANAGER.getMusic("TITLE"));
 		if (currentState) {

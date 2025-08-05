@@ -124,3 +124,21 @@ void DryBones::stomped()
 	globalGameEngine->addEffect(score);
 }
 
+void DryBones::loadEntity(const json& j)
+{
+    Enemy::loadEntity(j);
+    dbState = j["dbState"];
+    breakTimer = j["breakTimer"];
+    reviveTimer = j["reviveTimer"];
+    shakeTimer = j["shakeTimer"];
+}
+
+void DryBones::saveEntity(json& j) const
+{
+    Enemy::saveEntity(j);
+    j["dbState"] = dbState;
+    j["breakTimer"] = breakTimer;
+    j["reviveTimer"] = reviveTimer;
+    j["shakeTimer"] = shakeTimer;
+}
+

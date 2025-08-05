@@ -13,7 +13,7 @@ private:
 	float targetY = 0.f;
 	float cameraWidth;
 	float cameraHeight;
-	float verticalOffset = 100.f; // to make the ground up
+	float verticalOffset = 200.f; // to make the ground up
 	float scale; // Scaling factor
 	RenderTexture2D renderTexture;
 public:

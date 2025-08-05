@@ -142,6 +142,27 @@ void Goomba::stomped() {
     globalGameEngine->addEffect(score);
 }
 
+void Goomba::loadEntity(const json& j)
+{
+    Enemy::loadEntity(j);
+    pauseTimer = j["pauseTimer"];
+    isPaused = j["isPaused"];
+    beattacked = j["beattacked"];
+    collisionTimer = j["collisionTimer"]; // overrides Enemy’s if needed
+    detectMarioRange = j["detectMarioRange"];
+}
+
+void Goomba::saveEntity(json& j) const
+{
+    Enemy::saveEntity(j); // Save base Enemy and Entity attributes
+
+    j["pauseTimer"] = pauseTimer;
+    j["isPaused"] = isPaused;
+    j["beattacked"] = beattacked;
+    j["collisionTimer"] = collisionTimer; // saves Goomba's value
+    j["detectMarioRange"] = detectMarioRange;
+}
+
 // ---------------------------------------------- FLYINGGOOMBA --------------------------------------------------------- 
 
 
@@ -302,5 +323,29 @@ void FlyingGoomba::stomped()
     else {
         Goomba::stomped();
     }
+}
+
+void FlyingGoomba::loadEntity(const json& j)
+{
+    Goomba::loadEntity(j);
+
+    jumpTimer = j["jumpTimer"];
+    hasWings = j["hasWings"];
+    isSearchPaused = j["isSearchPaused"];
+    collisionTimer = j["collisionTimer"]; // overrides Goomba if needed
+    detectMarioRange = j["detectMarioRange"];
+    searchCooldownTimer = j["searchCooldownTimer"];
+}
+
+void FlyingGoomba::saveEntity(json& j) const
+{
+    Goomba::saveEntity(j);
+    j["jumpTimer"] = jumpTimer;
+    j["hasWings"] = hasWings;
+    j["isSearchPaused"] = isSearchPaused;
+    j["collisionTimer"] = collisionTimer; // saves Goomba's value
+    j["detectMarioRange"] = detectMarioRange;
+    j["searchCooldownTimer"] = searchCooldownTimer;
+
 }
 

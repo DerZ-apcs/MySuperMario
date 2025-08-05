@@ -53,13 +53,13 @@ public:
 	bool isStandingUp() const;
 	bool isJumping() const;
 
-	float getSinkingTime() const;
 	int getLives() const;
 	int getCoins() const;
 	int getScores() const;
 	bool isHolding() const;
 	bool getVictory() const;
 	bool getExitLevel() const;
+	float getSinkingTime() const;
 
 	void setLostLife(bool lostLife);
 	void setSinkingTime(float sinkingTime);
@@ -129,8 +129,8 @@ protected:
 	int scores;
 	int coins;
 	int lives;
-	float sinkingTime;
 	float invicibleStarTime;
+	float sinkingTime;
 
 	bool holding;
 	bool isThrowing;

@@ -31,6 +31,8 @@ public:
     FireBullet(Vector2 pos, Texture2D texture, Direction direction);
     void Update() override;
     void ShootFireBall() override;
+    void loadEntity(const json& j) override;
+    void saveEntity(json& j) const override;
 };
 
 #endif

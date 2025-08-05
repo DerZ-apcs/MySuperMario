@@ -71,6 +71,7 @@ void Bullet::stomped() {
     globalGameEngine->addEffect(score);
 }
 
+
 void Bullet::ShootFireBall() {
     // Không làm gì vì Bullet cơ bản không bắn fireball
 }
@@ -127,4 +128,16 @@ void FireBullet::ShootFireBall() {
         }
     }
    
+}
+
+void FireBullet::loadEntity(const json& j)
+{
+    Enemy::loadEntity(j);
+    fireBallTimer = j["fireBallTimer"];
+}
+
+void FireBullet::saveEntity(json& j) const
+{
+    Enemy::saveEntity(j);
+    j["fireBallTimer"] = fireBallTimer;
 }

@@ -12,7 +12,7 @@ private:
 	static const float ROTATION_PERIOD;
 
 public:
-	RotatingBlock(Vector2 pos = {0, 0}, Vector2 size = {32, 32});
+	RotatingBlock(Vector2 pos);
 	~RotatingBlock() = default;
 
 	bool getActive() const;

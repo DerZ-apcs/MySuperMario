@@ -190,7 +190,7 @@ void GUI::drawPauseMenu()
 
     DrawTextPro(*font, text, { textX, textY }, { 0, 0 }, 0.f, fontSize, 0.f, BLACK);
 
-    text = "Press Enter to continue";
+    text = "Press Space to continue";
     fontSize = 45;
     textWidth = MeasureTextEx(*font, text, fontSize, 0).x;
     textX = dest.x + (dest.width - textWidth) / 2;
@@ -224,7 +224,7 @@ void GUI::drawLevelClear()
     DrawTexturePro(courseClear, {0, 0, (float)courseClear.width, (float)courseClear.height}, {800 - 204, 400 - 26 - 150,204 * 2, 26 * 2}, {0, 0}, 0.f, WHITE);
 
     Font* customFont = RESOURCE_MANAGER.getFont("SMW");
-    const char* text = "Press Enter to continue";
+    const char* text = "Press Space to continue";
     int fontSize = 45;
     int textWidth = MeasureTextEx(*customFont, text, fontSize, 0).x;
     float textX = 800 - textWidth / 2.f; // Center the text horizontally
@@ -232,6 +232,12 @@ void GUI::drawLevelClear()
     DrawTextPro(*customFont, text, { textX, textY }, { 0, 0 }, 0.f, fontSize, 0.f, BLACK);
 }
 
+void GUI::drawVictory() {
+
+}
+void GUI::drawTransitioningBetweenMap() {
+
+}
 void GUI::drawDeathScreen()
 {
 	//DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.3f));
@@ -246,7 +252,7 @@ void GUI::drawDeathScreen()
     int posY = ((float)GetScreenHeight() - textHeight) / 2 - 150;
     DrawTextPro(*customFont, text, { (float)posX, (float)posY }, { 0, 0 }, 0.f, fontSize, 0.f, RED);
 
-    text = "Press Enter to continue";
+    text = "Press Space to continue";
     fontSize = 45;
     textSize = MeasureTextEx(*customFont, text, fontSize, 0);
     textWidth = textSize.x;
@@ -262,7 +268,7 @@ void GUI::drawGameOverScreen()
     DrawTexturePro(gameover, { 0, 0, (float)gameover.width, (float)gameover.height }, { 800 - 160, 400 - 32 - 150,160 * 2, 32 * 2 }, { 0, 0 }, 0.f, WHITE);
 
 	Font* font = RESOURCE_MANAGER.getFont("SMW");
-    const char* text = "Press Enter to continue";
+    const char* text = "Press Space to continue";
     int fontSize = 45;
     int textWidth = MeasureTextEx(*font, text, fontSize, 0).x;
     float textX = ((float)GetScreenWidth() - textWidth) / 2;

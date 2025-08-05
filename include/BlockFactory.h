@@ -71,7 +71,7 @@ inline void registerBlocks() {
 		});
 
 	factory.registerBlock(BRICK, [](Vector2 pos, Vector2 size) {
-		return new Brick(pos, size);
+		return new Brick(pos);
 		});
 
 	factory.registerBlock(SOLIDBLOCK, [](Vector2 pos, Vector2 size) {
@@ -91,11 +91,11 @@ inline void registerBlocks() {
 		});
 	
 	factory.registerBlock(NOTEBLOCK, [](Vector2 pos, Vector2 size) {
-		return new NoteBlock(pos, size);
+		return new NoteBlock(pos);
 		});
 	
 	factory.registerBlock(CLOUDBLOCK, [](Vector2 pos, Vector2 size) {
-		return new CloudBlock(pos, size);
+		return new CloudBlock(pos);
 		});
 	
 	factory.registerBlock(COINBLOCK, [](Vector2 pos, Vector2 size) {
@@ -103,7 +103,7 @@ inline void registerBlocks() {
 		});
 	
 	factory.registerBlock(ROTATINGBLOCK, [](Vector2 pos, Vector2 size) {
-		return new RotatingBlock(pos, size);
+		return new RotatingBlock(pos);
 		});
 }
 //inline void registerBlocks() {

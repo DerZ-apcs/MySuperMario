@@ -23,6 +23,8 @@ public:
     ENEMY_TYPE getEnemyType() const override;
     void stomped() override;
     float getScores() const override;
+    void loadEntity(const json& j) override;
+    void saveEntity(json& j) const override;
 };
 
 

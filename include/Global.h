@@ -26,8 +26,8 @@ enum EntityState {
 	ON_GROUND,
 	IDLING,
 	FLYING,
+	SINKING,
 	STATE_IS_DYING,
-	SINKING
 };
 enum SPRITE_STATE {
 	NORMAL,
@@ -60,6 +60,7 @@ enum CharacterState {
 enum BLOCK_TYPE {
 	FLOOR, // only collision the upper
 	BRICK, // breakable
+	CLOUDBLOCK, // phase through
 	SOLIDBLOCK, // unmovable, unbreakable
 	MOVINGBLOCK,
 	ITEMBLOCK, // carry items
@@ -67,7 +68,6 @@ enum BLOCK_TYPE {
 	TEMPBLOCK,
 	DECOR, // for decor, not collision
 	COINBLOCK, // coin when hit
-	CLOUDBLOCK,
 	NOTEBLOCK,// note block
 	ROTATINGBLOCK
 };
@@ -79,6 +79,7 @@ enum BOUNCE_DIRECTION {
 	BOUNCE_RIGHT,
 	NO_BOUNCE
 };
+
 
 enum ITEM_TYPE {
 	COIN,
@@ -130,6 +131,12 @@ enum PIRANHA_TYPE {
 
 };
 
+enum PowerUpState {
+	EMERGING,
+	ACTIVE,
+	CONSUMED
+};
+
 enum SHELL_TYPE {
 	GREEN_SHELL,
 	RED_SHELL
@@ -155,10 +162,5 @@ enum StarType {
 enum CoinType {
 	STATIC_COIN, // 0
 	BLOCK_COIN // 1
-};
-
-enum PowerUpState {
-	EMERGING,
-	ACTIVE
 };
 #endif

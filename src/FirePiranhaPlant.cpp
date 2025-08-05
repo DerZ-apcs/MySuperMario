@@ -139,6 +139,18 @@ void FirePiranhaPlant::ShootFireBall() {
     //RESOURCE_MANAGER.playSound("fireball.wav");
 }
 
+void FirePiranhaPlant::loadEntity(const json& j)
+{
+    PiranhaPlant::loadEntity(j);
+    fireBallTimer = j["fireBallTimer"];
+}
+
+void FirePiranhaPlant::saveEntity(json& j) const
+{
+    PiranhaPlant::saveEntity(j);
+    j["fireBallTimer"] = fireBallTimer; 
+}
+
 // RapidFirePiranha Class Implementation
 RapidFirePiranha::RapidFirePiranha(Vector2 pos, Texture2D texture)
     : FirePiranhaPlant(pos, texture) {

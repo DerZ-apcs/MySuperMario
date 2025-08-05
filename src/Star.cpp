@@ -1,4 +1,5 @@
 #include "../include/Star.h"
+#include "../include/ResourceManager.h"
 
 Star::Star(StarType type, Vector2 position, Direction direction) :
 	PowerItem(position, {32, 32}, direction, YELLOW_STAR ? RESOURCE_MANAGER.getTexture("YellowStar") : RESOURCE_MANAGER.getTexture("BlueStar")),
@@ -19,7 +20,8 @@ const StarType& Star::getStarType() const
 	return type;
 }
 
-ITEM_TYPE Star::getItemType() const
-{
+ITEM_TYPE Star::getItemType() const {
 	return STAR;
 }
+
+//-----------------
