@@ -4,6 +4,7 @@
 Bullet::Bullet(Vector2 pos, Texture2D tex):
     Bullet(pos, tex, RIGHT)
 {
+    enemyType = BULLET;
 }
 
 // Bullet Class Implementation

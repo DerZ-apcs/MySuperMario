@@ -173,6 +173,7 @@ void Enemy::loadEntity(const json& j)
     isKicked = j["isKicked"];
     collisionTimer = j["collisionTimer"];
     scores = j["scores"];
+    enemyType = j["enemyType"];
 }
 
 void Enemy::saveEntity(json& j) const
@@ -185,4 +186,5 @@ void Enemy::saveEntity(json& j) const
     j["isKicked"] = isKicked;
     j["collisionTimer"] = collisionTimer;
     j["scores"] = scores;
+    j["enemyType"] = enemyType;
 }

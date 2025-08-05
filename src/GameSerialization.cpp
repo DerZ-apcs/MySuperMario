@@ -10,79 +10,9 @@
 #include "Shell.h"
 #include "BuzzyBeetle.h"
 #include "Muncher.h"
+#include "ItemFactory.h"
+#include "BlockFactory.h"
 
-void to_json(json& j, const Character& c) {
-    j = json{
-        {"type", static_cast<int>(c.getCharacterType())},
-        {"pos", {c.getX(), c.getY()}},
-        {"vel", {c.getVelX(), c.getVelY()}},
-        {"state", static_cast<int>(c.getState())},
-        {"characterState", static_cast<int>(c.getCharacterState())},
-        {"lives", c.getLives()},
-        {"scores", c.getScores()},
-        {"coins", c.getCoins()},
-        {"phase", static_cast<int>(c.getPhase())},
-        {"direction", static_cast<int>(c.getDir())}
-    };
-}
-
-void to_json(json& j, const Enemy& e)
-{
-    j = json{
-        {"EnemyType", static_cast<int>(e.getEnemyType())},
-        {"pos", {e.getX(), e.getY()}},
-        {"vel", {e.getVelX(), e.getVelY()}},
-        {"state", static_cast<int>(e.getState())},
-        {"scores", e.getScores()},
-        {"direction", static_cast<int>(e.getDir())}
-    };
-}
-
-void to_json(json& j, const Item& item)
-{
-    j = json{
-        {"ItemType", static_cast<int>(item.getItemType())},
-        {"pos", {item.getX(), item.getY()}},
-        {"vel", {item.getVelX(), item.getVelY()}},
-        {"direction", static_cast<int>(item.getDir()) }
-    };
-}
-
-void to_json(json& j, const Blocks& b)
-{
-    j = json{
-        {"type", static_cast<int>(b.getBlockType())},
-        {"pos", {b.getX(), b.getY()}}
-    };
-}
-
-void to_json(json& j, const FireBall& fb)
-{
-    j = json{
-        {"pos", {fb.getX(), fb.getY()}},
-        {"vel", {fb.getVelX(), fb.getVelY()}},
-        {"direction", static_cast<int>(fb.getDir())},
-        {"currtime", fb.getCurrTime()}
-    };
-}
-
-void to_json(json& j, const EnemyFireBall& ef)
-{
-    j = json{
-        {"pos", {ef.getX(), ef.getY()}},
-        {"vel", {ef.getVelX(), ef.getVelY()}},
-        {"direction", static_cast<int>(ef.getDir())},
-        {"currtime", ef.getCurrTime()}
-    };
-}
-
-void to_json(json& j, const int remainedTime, const int level)
-{
-    j = json{
-        {"remainedTime", remainedTime},
-        {"level", level}
-    };
-}
 
 std::unique_ptr<Character> loadCharacter(const json& j) {
     CharacterType type = static_cast<CharacterType>(j.at("type").get<int>());
@@ -165,14 +95,33 @@ Enemy* loadEnemy(const json& j)
 }
 
 void saveMultiCharacters(const std::vector<std::unique_ptr<Character>>& multiplayers, json& j) {
-    for (const auto& c : multiplayers)
-        if (c) j["players"].push_back(*c);
+    j["players"] = json::array();
+    for (const auto& c : multiplayers) {
+        if (!c) continue;
+        json charJson;
+        charJson["characterType"] = c->getCharacterType();
+        c->saveEntity(charJson);
+        j["players"].push_back(charJson);
+    }
 }
 
 void loadMultiCharacters(std::vector<std::unique_ptr<Character>>& multiplayers, const json& j) {
     multiplayers.clear();
     for (const auto& entry : j.at("players")) {
-        multiplayers.push_back(loadCharacter(entry));
+        CharacterType type = static_cast<CharacterType>(entry.at("characterType"));
+        Character* c = nullptr;
+        if (type == MARIO)
+            c = new Mario();
+        else if (type == LUIGI)
+            c = new Luigi();
+        else if (type == PEACH)
+            c = new Peach();
+        else if (type == TOAD)
+            c = new Toad();
+        else if (type == MARISA)
+            c = new Marisa;
+        c->loadEntity(entry);
+        multiplayers.emplace_back(c);// Wrap raw pointer into unique_ptr
     }
 }
 
@@ -182,7 +131,7 @@ void saveEnemies(const std::vector<Enemy*>& enemies, json& j)
     for (Enemy* e : enemies) {
         if (!e) continue;
         json enemyJson;
-        enemyJson["EnemyType"] = e->getEnemyType();
+        enemyJson["enemyType"] = e->getEnemyType();
         e->saveEntity(enemyJson);
         j.push_back(enemyJson);
     }
@@ -196,7 +145,7 @@ void loadEnemies(std::vector<Enemy*>& enemies, const json& j)
     enemies.clear();
     // load new enemies
     for (const auto& enemyJson : j) {
-        ENEMY_TYPE type = static_cast<ENEMY_TYPE>(enemyJson["EnemyType"].get<int>());
+        ENEMY_TYPE type = static_cast<ENEMY_TYPE>(enemyJson["enemyType"].get<int>());
         Enemy* e = nullptr;
         Vector2 pos = { enemyJson["pos"][0], enemyJson["pos"][1] };
         Texture2D tex = loadTextureFromType(type);
@@ -205,7 +154,11 @@ void loadEnemies(std::vector<Enemy*>& enemies, const json& j)
         case KOOPA: e = new Koopa(pos, tex); break;
         case PIRANHA: e = new PiranhaPlant(pos, tex); break;
         case BULLET: e = new Bullet(pos, tex); break;
-        case SHELL: e = new Koopa(pos, tex); break;  // or Shell if different class
+        case SHELL: {
+            e = new Koopa(pos, tex); 
+            dynamic_cast<Koopa*>(e)->setKoopaState(SHELL_KOOPA);
+            break;
+        }
         case BOBOMB: e = new BobOmb(pos, tex); break;
         case REX: e = new Rex(pos, tex); break;
         case MUNCHER: e = new Muncher(pos, tex); break;
@@ -220,6 +173,116 @@ void loadEnemies(std::vector<Enemy*>& enemies, const json& j)
             e->loadEntity(enemyJson);
             enemies.push_back(e);
         }
+    }
+}
+
+void saveItems(const std::vector<Item*> items, json& j)
+{
+    j = json::array();
+    for (Item* i : items) {
+        if (!i) continue;
+        json itemJson;
+        itemJson["itemType"] = static_cast<int>(i->getItemType());
+        i->saveEntity(itemJson);
+        j.push_back(itemJson);
+    }
+}
+
+void loadItems(std::vector<Item*>& items, const json& j)
+{
+    items.clear();
+    for (const auto& entry : j) {
+        ITEM_TYPE type = static_cast<ITEM_TYPE>(entry.at("itemType").get<int>());
+        Vector2 pos = { entry["pos"][0], entry["pos"][1] };
+        int subType = entry["subType"];
+        Direction dir = static_cast<Direction>(entry.at("direction").get<int>());
+        Item* item = ItemFactory::getInstance().createItem(type, pos, dir, subType);
+        if (!item) continue;
+        item->loadEntity(entry);
+        items.push_back(item);
+    }
+}
+
+void saveTileGrids(const std::vector<std::vector<Blocks*>> tileGrid, json& j)
+{
+    j = json::array();
+   /* for (const auto& row : tileGrid) {
+        json rowJson = json::array();
+        for (Blocks* block : row) {
+            if (!block) {
+                continue;
+            }
+            json blockJson;
+            blockJson["blockType"] = static_cast<int>(block->getBlockType());
+            block->saveEntity(blockJson);
+            rowJson.push_back(blockJson);
+        } 
+        j.push_back(rowJson);
+    }*/
+    for (size_t y = 0; y < tileGrid.size(); ++y) {
+        for (size_t x = 0; x < tileGrid[y].size(); ++x) {
+            Blocks* block = tileGrid[y][x];
+            if (!block) continue;
+
+            json blockJson;
+            blockJson["x"] = x;
+            blockJson["y"] = y;
+            blockJson["blockType"] = static_cast<int>(block->getBlockType());
+            block->saveEntity(blockJson["data"]);
+            j.push_back(blockJson);
+        }
+    }
+}
+
+void loadTileGrids(std::vector<std::vector<Blocks*>>& tileGrid, const json& j)
+{
+    //tileGrid.clear();
+    //for (const auto& rowJson : j) {
+    //    std::vector<Blocks*> row;
+    //    for (const auto& blockJson : rowJson) {
+    //        if (blockJson.is_null()) {
+    //            row.push_back(nullptr);
+    //        }
+    //        else {
+    //            BLOCK_TYPE type = static_cast<BLOCK_TYPE>(blockJson.at("blockType").get<int>());
+    //            Vector2 pos = { blockJson["pos"][0], blockJson["pos"][1] };
+    //            Blocks* block = BlockFactory::getInstance().createBlock(type, pos); // Factory function
+    //            if (block) {
+    //                block->loadEntity(blockJson);
+    //            }
+    //            row.push_back(block);
+    //        }
+    //    }
+    //    tileGrid.push_back(std::move(row));
+    //}
+    // Clear old grid
+    for (auto& row : tileGrid)
+        for (Blocks*& block : row)
+            delete block;
+    tileGrid.clear();
+
+    // Determine max width/height from saved data
+    size_t maxY = 0, maxX = 0;
+    for (const auto& blockJson : j) {
+        maxX = std::max(maxX, static_cast<size_t>(blockJson["x"]));
+        maxY = std::max(maxY, static_cast<size_t>(blockJson["y"]));
+    }
+    // Resize grid
+    tileGrid.resize(maxY + 1);
+    for (auto& row : tileGrid)
+        row.resize(maxX + 1, nullptr);
+
+    // Rebuild blocks
+    for (const auto& blockJson : j) {
+        int x = blockJson["x"];
+        int y = blockJson["y"];
+        BLOCK_TYPE type = static_cast<BLOCK_TYPE>(blockJson["blockType"]);
+        Vector2 pos = { (float)32 * x, (float)32 * y };
+        Blocks* block = BlockFactory::getInstance().createBlock(type, pos);
+        if (block)
+            block->loadEntity(blockJson["data"]);
+
+        tileGrid[y][x] = block;
     }
 }
 

@@ -7,6 +7,7 @@ Goomba::Goomba(Vector2 pos, Texture2D texture)
     pauseTimer(0.0f), isPaused(false), detectMarioRange(200.0f), beattacked(false) {
     velocity.x = -GOOMBA_SPEED;
     collisionTimer = 0.f;
+    enemyType = GOOMBA;
 }
 bool Goomba::isAttacked() const
 {

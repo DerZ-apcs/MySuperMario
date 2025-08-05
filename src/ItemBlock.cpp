@@ -87,3 +87,19 @@ void ItemBlock::Activate()
 	Item* item = factory.createItem(heldPowerUp, { position.x, position.y}, getRandomDirection(), subType);
 	globalGameEngine->addItem(item);
 }
+
+void ItemBlock::loadEntity(const json& j)
+{
+	Blocks::loadEntity(j);
+	isActive = j["isActive"];
+	heldPowerUp = static_cast<ITEM_TYPE>(j["heldPowerUp"].get<int>());
+	subType = j["subType"];
+}
+
+void ItemBlock::saveEntity(json& j) const
+{
+	Blocks::saveEntity(j);
+	j["isActive"] = isActive;
+	j["heldPowerUp"] = static_cast<int>(heldPowerUp);
+	j["subType"] = subType;
+}

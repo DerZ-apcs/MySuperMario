@@ -46,21 +46,6 @@ private:
 	BlockFactory& operator=(const BlockFactory&) = delete;
 };
 
-// Block creation functions
-//Blocks* createFloor(Vector2 pos, Vector2 size) { return new Floor(pos, size); }
-//Blocks* createBrick(Vector2 pos, Vector2 size) { return new Brick(pos, size); }
-//Blocks* createSolidBlock(Vector2 pos, Vector2 size) { return new SolidBlock(pos, size); }
-//Blocks* createMovingBlock(Vector2 pos, Vector2 size) { return new MovingBlock(pos, size); }
-//Blocks* createItemBlock(Vector2 pos, Vector2 size) { return new ItemBlock(pos, size); }
-//Blocks* createHiddenBlock(Vector2 pos, Vector2 size) { return new HiddenBlock(pos, size); }
-//Blocks* createDecorBlock(Vector2 pos, Vector2 size) { return new DecorBlock(pos, size); }
-//Blocks* createCloudBlock(Vector2 pos, Vector2 size) { return new CloudBlock(pos, size); }
-//Blocks* createNoteBlock(Vector2 pos, Vector2 size) { return new NoteBlock(pos, size); }
-//Blocks* createRotatingBlock(Vector2 pos, Vector2 size) { return new RotatingBlock(pos, size); }
-//Blocks* createCoinBlock(Vector2 pos, Vector2 size) { return new CoinBlock(pos, size); }
-//Blocks* createTempBlock(Vector2 pos, Vector2 size) { return new TemporaryBlock(pos, size); }
-
-
 // register all blocks types
 
 inline void registerBlocks() {

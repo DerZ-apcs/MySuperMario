@@ -46,7 +46,6 @@ Character::Character(Vector2 pos, Vector2 sz, CharacterState characterstate, Cha
 	transitionCurrentFrame(0),
 	transitionCurrentFramePos(0),
 	Character_state(characterstate),
-	PrevCharacter_state(characterstate),
 	characterType(characterType),
 	Character_sprite_State(NORMAL),
 	victory(false),
@@ -207,7 +206,6 @@ void Character::resetInGame()
 	invicibleStarTime = 0.f;
 	countThrowTime = 0.f;
 	countImmortalTime = 0.f;
-	specificVelocity = { 0, 0 };
 	isThrowing = isducking = false;
 	state = FALLING;
 	CollNorth.setSize({ size.x / 2, 5 });
@@ -260,7 +258,6 @@ void Character::reset()
 	invicibleStarTime = 0.f;
 	countThrowTime = 0.f;
 	countImmortalTime = 0.f;
-	specificVelocity = { 0, 0 };
 	isThrowing = isducking = false;
 	state = FALLING;
 	CollNorth.setSize({ size.x / 2, 5 });
@@ -296,11 +293,6 @@ const Phase& Character::getPhase() const
 const CharacterState& Character::getCharacterState() const
 {
 	return Character_state;
-}
-
-const CharacterState& Character::getPrevCharacterState() const
-{
-	return PrevCharacter_state;
 }
 
 bool Character::isInvicible() const
@@ -1048,6 +1040,65 @@ void Character::CollisionWithFireball(EnemyFireBall* fireball)
 std::list<FireBall*>* Character::getFireBalls()
 {
 	return &fireballs;
+}
+
+void Character::loadEntity(const json& j)
+{
+	Entity::loadEntity(j);
+	phase = static_cast<Phase>(j["phase"].get<int>());
+	characterType = static_cast<CharacterType>(j["characterType"].get<int>());
+	lostLife = j["lostLife"];
+	isducking = j["isducking"];
+	scores = j["scores"];
+	coins = j["coins"];
+	lives = j["lives"];
+	invicibleStarTime = j["invicibleStarTime"];
+	sinkingTime = j["sinkingTime"];
+	holding = j["holding"];
+	isThrowing = j["isThrowing"];
+	standingUp = j["standingUp"];
+	transitioningFrameTime = j["transitioningFrameTime"];
+	transitioningFrameAcum = j["transitioningFrameAcum"];
+	transitionSteps = j["transitionSteps"];
+	transitionCurrentFrame = j["transitionCurrentFrame"];
+	transitionCurrentFramePos = j["transitionCurrentFramePos"];
+	Character_state = static_cast<CharacterState>(j["Character_state"].get<int>());
+	Character_sprite_State = static_cast<SPRITE_STATE>(j["Character_sprite_State"].get<int>());
+	victory = j["victory"];
+	exitlevel = j["exitlevel"];
+	lostSuitTrigger = j["lostSuitTrigger"];
+	throwFrameCounter = j["throwFrameCounter"];
+	victoryFrameCounter = j["victoryFrameCounter"];
+}
+
+void Character::saveEntity(json& j) const
+{
+	Entity::saveEntity(j);
+	j["phase"] = static_cast<int>(phase);
+	j["characterType"] = static_cast<int>(characterType);
+	j["lostLife"] = lostLife;
+	j["isducking"] = isducking;
+	j["scores"] = scores;
+	j["coins"] = coins;
+	j["lives"] = lives;
+	j["invicibleStarTime"] = invicibleStarTime;
+	j["sinkingTime"] = sinkingTime;
+	j["holding"] = holding;
+	j["isThrowing"] = isThrowing;
+	j["standingUp"] = standingUp;
+	j["transitioningFrameTime"] = transitioningFrameTime;
+	j["transitioningFrameAcum"] = transitioningFrameAcum;
+	j["transitionSteps"] = transitionSteps;
+	j["transitionCurrentFrame"] = transitionCurrentFrame;
+	j["transitionCurrentFramePos"] = transitionCurrentFramePos;
+	j["Character_state"] = static_cast<int>(Character_state);
+	j["Character_sprite_State"] = static_cast<int>(Character_sprite_State);
+	j["victory"] = victory;
+	j["exitlevel"] = exitlevel;
+	j["lostSuitTrigger"] = lostSuitTrigger;
+	j["throwFrameCounter"] = throwFrameCounter;
+	j["victoryFrameCounter"] = victoryFrameCounter;
+
 }
 
 void Character::setVictory(bool victory)

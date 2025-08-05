@@ -22,3 +22,15 @@ ITEM_TYPE Mushroom::getItemType() const
 {
 	return MUSHROOM;
 }
+
+void Mushroom::loadEntity(const json& j)
+{
+	PowerItem::loadEntity(j);
+	type = static_cast<MushroomType>(j["type"].get<int>());
+}
+
+void Mushroom::saveEntity(json& j) const
+{
+	PowerItem::saveEntity(j);
+	j["type"] = static_cast<int>(type);
+}

@@ -10,6 +10,7 @@ PiranhaPlant::PiranhaPlant(Vector2 pos, Texture2D texture)
     : Enemy(pos, { 32, 66 }, { 0, 0 }, RIGHT, ON_GROUND, texture, 0.2f, 1, RED),
     popUpTimer(0.0f), isPoppingUp(true), popUpHeight(66.0f), baseY(pos.y), delayTimer(0.2f), invincibilityTimer(0.0f) { 
     gravityAvailable = true;
+    enemyType = PIRANHA;
 }
 
 PIRANHA_TYPE PiranhaPlant::getPiranhaType() const

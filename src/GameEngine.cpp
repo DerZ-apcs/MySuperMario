@@ -23,7 +23,9 @@
 #include "../include/PiranhaPlant.h"
 #include "../include/DryBones.h"
 #include "../include/Spiny.h"
+#include "../include/json.hpp"
 #include <iostream>
+using json = nlohmann::json;
 
 GameEngine* globalGameEngine = nullptr;
 
@@ -148,6 +150,25 @@ void GameEngine::update()
         return CheckCollisionRecs(cameraView, { x - margin, y - margin, w + 2 * margin, h + 2 * margin });
     };
 
+    if (IsKeyPressed(KEY_F5)) {
+        saveGame(1);
+        const char* text = "Game has been saved";
+
+        Font* font = RESOURCE_MANAGER.getFont("SMW");
+        if (font) {
+            Vector2 position = { 400, 300 }; // Example position (adjust as needed)
+            float fontSize = 30.0f;
+            float spacing = 1.0f;
+            // Get size of the text to center it
+            Vector2 textSize = MeasureTextEx(*font, text, fontSize, spacing);
+            Vector2 origin = { textSize.x / 2, textSize.y / 2 };
+            DrawTextPro(*font, text, position, origin, 0.0f, fontSize, spacing, WHITE);
+        }
+
+    }
+    if (IsKeyPressed(KEY_F9)) {
+        loadGame(1);
+    }
     if (IsKeyPressed(KEY_SPACE) || GUI::setting_is_pressed) {
         if (GUI::setting_is_pressed)
             GUI::setting_is_pressed = false;
@@ -685,30 +706,39 @@ bool GameEngine::isInCameraView(Rectangle entityRect) const {
     return CheckCollisionRecs(view, entityRect);
 }
 
-//void GameEngine::saveGame(const std::string& path)
-//{
-//    json j;
-//
-//    saveMultiCharacters(*multiplayers, j);
-//
-//    // Add enemies, blocks, level index, etc.
-//    //j["mapIndex"] = currentMapIndex;
-//
-//    std::ofstream out(path);
-//    out << j.dump(4);
-//}
+void GameEngine::saveGame(int slot)
+{
+    json j;
+    saveMultiCharacters(*multiplayers, j);
+    saveEnemies(enemies, j["enemies"]);
+    saveItems(items, j["items"]);
+    saveTileGrids(tileGrid, j["tileGrid"]);
 
-//bool GameEngine::loadGame(const std::string& path)
-//{
-//    std::ifstream in(path);
-//    if (!in.is_open()) return false;
-//
-//    json j;
-//    in >> j;
-//
-//    loadMultiCharacters(*multiplayers, j);
-//
-//    // Load enemies, blocks, level index
-//    //currentMapIndex = j.value("mapIndex", 0);
-//    return true;
-//}
+    std::string path = SaveManager::getSlotPath(slot);
+    SaveManager::ensureSaveDirectoryExists();
+
+    std::ofstream fout(path);
+    if (fout.is_open()) {
+        fout << j.dump(4); // pretty print
+        fout.close();
+    }
+    std::cout << "Game is saved successfully" << std::endl;
+}
+
+void GameEngine::loadGame(int slot)
+{
+    std::string path = SaveManager::getSlotPath(slot);
+    std::ifstream file(path);
+    if (!file.is_open()) {
+        std::cerr << "Cannot open file with path" << path << std::endl;
+        return;
+    }
+    json j;
+    file >> j;
+    loadMultiCharacters(*multiplayers, j); // save character
+    loadEnemies(enemies, j.at("enemies"));
+    loadItems(items, j.at("items"));
+    saveTileGrids(tileGrid, j.at("tileGrid"));
+    std::cout << "Game is loaded successfully" << std::endl;
+    
+}

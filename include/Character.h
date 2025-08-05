@@ -30,11 +30,7 @@ public:
 	Character();
 	Character(Vector2 pos = { 0, 0 }, Vector2 size = { 0, 0 });
 	Character(Vector2 pos, Vector2 sz, CharacterState characterstate);
-	Character
-	
-	
-	
-	(Vector2 pos, Vector2 sz, CharacterState characterstate, CharacterType characterType);
+	Character(Vector2 pos, Vector2 sz, CharacterState characterstate, CharacterType characterType);
 	virtual ~Character();
 	EntityType getEntityType() const override;
 	virtual CharacterType getCharacterType() const = 0;
@@ -43,7 +39,6 @@ public:
 	virtual void setPhase(Phase phase);
 	virtual const Phase& getPhase() const;
 	virtual const CharacterState& getCharacterState() const;
-	virtual const CharacterState& getPrevCharacterState() const;
 
 	bool isInvicible() const;
 	bool isImmortal() const;
@@ -110,6 +105,9 @@ public:
 				std::tie(other.character_state, other.entity_state, other.direction, other.frame);
 		}
 	};
+
+	void loadEntity(const json& j) override;
+	void saveEntity(json& j) const override;
 protected:
 	struct TransitionFrame {
 		std::string textureKey;
@@ -134,12 +132,9 @@ protected:
 
 	bool holding;
 	bool isThrowing;
-	Vector2 specificVelocity;
 
 	float countThrowTime;
 	float countImmortalTime;
-	unsigned indexRender;
-	vector<bool> renderImmortal;
 	bool standingUp;
 
 	float transitioningFrameTime;
@@ -152,7 +147,6 @@ protected:
 	std::vector<int> transitionFrameOrder;
 
 	CharacterState Character_state;
-	CharacterState PrevCharacter_state;
 	SPRITE_STATE Character_sprite_State;
 	std::list<FireBall*> fireballs;
 

@@ -22,6 +22,8 @@ public:
 	void Update() override;
 	void draw() override;
 	void UpdateTexture() override;
+	void loadEntity(const json& j) override;
+	void saveEntity(json& j) const override;
 
 };
 

@@ -34,3 +34,16 @@ void Brick::draw() {
 
 	DrawTexture(texture, position.x, position.y, WHITE);
 }
+
+void Brick::loadEntity(const json& j)
+{
+	Blocks::loadEntity(j);
+	isBroken = j["isBroken"];
+}
+
+void Brick::saveEntity(json& j) const
+{
+	Blocks::saveEntity(j);
+	j["isBroken"] = isBroken;
+}
+

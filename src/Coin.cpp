@@ -62,11 +62,6 @@ void Coin::draw()
 	DrawTexture(texture, position.x, position.y, WHITE);
 }
 
-//void Coin::UpdateTexture() {
-//	std::string textureName = "Coin_" + std::to_string(currFrame);
-//	texture = Singleton<ResourceManager>::getInstance().getTexture(textureName);
-//}
-
 void Coin::UpdateTexture()
 {
 	const float deltaTime = GetFrameTime();
@@ -78,4 +73,16 @@ void Coin::UpdateTexture()
 		frameAcum -= frameTime;
 	}
 	texture = RESOURCE_MANAGER.getTexture("Coin_" + std::to_string(currFrame));
+}
+
+void Coin::loadEntity(const json& j)
+{
+	Item::loadEntity(j);
+	coinType = static_cast<CoinType>(j["coinType"].get<int>());
+}
+
+void Coin::saveEntity(json& j) const
+{
+	Item::saveEntity(j);
+	j["coinType"] = static_cast<int>(coinType);
 }

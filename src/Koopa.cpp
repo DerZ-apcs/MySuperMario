@@ -7,6 +7,7 @@ Koopa::Koopa(Vector2 pos, Texture2D texture)
     reviveTimer(0.0f), isReviving(false), reviveShakeTimer(0.0f),
     koopaState(NORMAL_KOOPA)
 {
+    enemyType = KOOPA;
 }
 
 void Koopa::setKoopaType(KOOPA_TYPE type)
@@ -214,8 +215,8 @@ void Koopa::setKoopaState(KoopaState state)
 void Koopa::loadEntity(const json& j)
 {
     Enemy::loadEntity(j);
-    koopaState = j["koopaState"];
-    koopaType = j["koopaType"];
+    koopaState = static_cast<KoopaState>(j["koopaState"].get<int>());
+    koopaType = static_cast<KOOPA_TYPE>(j["koopaType"].get<int>());
     reviveTimer = j["reviveTimer"];
     isReviving = j["isReviving"];
     reviveShakeTimer = j["reviveShakeTimer"];
@@ -224,8 +225,8 @@ void Koopa::loadEntity(const json& j)
 void Koopa::saveEntity(json& j) const
 {
     Enemy::saveEntity(j);
-    j["koopaState"] = koopaState;
-    j["koopaType"] = koopaType;
+    j["koopaState"] = static_cast<int>(koopaState);
+    j["koopaType"] = static_cast<int>(koopaType);
     j["reviveTimer"] = reviveTimer;
     j["isReviving"] = isReviving;
     j["reviveShakeTimer"] = reviveShakeTimer;

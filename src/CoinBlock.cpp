@@ -40,3 +40,17 @@ BLOCK_TYPE CoinBlock::getBlockType() const {
 void CoinBlock::draw() {
 	DrawTexture(texture, position.x, position.y, WHITE);
 }
+
+void CoinBlock::loadEntity(const json& j)
+{
+	Blocks::loadEntity(j);
+	isActive = j["isActive"];
+	coinCount = j["coinCount"];
+}
+
+void CoinBlock::saveEntity(json& j) const
+{
+	Blocks::saveEntity(j);
+	j["isActive"] = isActive;
+	j["coinCount"] = coinCount;
+}

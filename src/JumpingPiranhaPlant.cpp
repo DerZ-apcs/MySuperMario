@@ -11,7 +11,7 @@ JumpingPiranhaPlant::JumpingPiranhaPlant(Vector2 pos, Texture2D texture)
 {
     baseY = pos.y;
     size = { 32, 42 };
-
+    
     UpdateTexture(true);
 }
 

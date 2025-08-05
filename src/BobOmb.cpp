@@ -10,6 +10,7 @@ BobOmb::BobOmb(Vector2 pos, Texture2D texture)
     fuseTimer(BOBOMB_FUSE_TIME) 
 {
     velocity.x = -BOBOMB_WALK_SPEED;
+    enemyType = BOBOMB;
 }
 
 BobOmb::~BobOmb() {}

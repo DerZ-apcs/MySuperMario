@@ -38,6 +38,7 @@ const float REX_COMPRESSED_SPEED = 180.0f;
 // Base class for enemies, inheriting from Entity
 class Enemy : public Entity {
 protected:
+    ENEMY_TYPE enemyType;
     float deathTimer; // Timer for death animation
     float squashScale; // Scale for squash effect when dying 
     bool isFlipped;

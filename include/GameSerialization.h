@@ -12,21 +12,6 @@
 
 using json = nlohmann::json;
 
-void to_json(json& j, const Character& c);
-void to_json(json& j, const Enemy& e);
-void to_json(json& j, const Item& item);
-void to_json(json& j, const Blocks& b);
-void to_json(json& j, const FireBall& fb);
-void to_json(json& j, const EnemyFireBall& ef);
-void to_json(json& j, const int remainedTime, const int level);
-
-std::unique_ptr<Character> loadCharacter(const json& j);
-Enemy* loadEnemy(const json& j);
-Item* loadItem(const json& j);
-Blocks* loadBlocks(const json& j);
-FireBall loadFireBall(const json& j);
-EnemyFireBall loadEnemyFireBall(const json& j);
-
 void saveMultiCharacters(const std::vector<std::unique_ptr<Character>>& multiplayers, json& j);
 void loadMultiCharacters(std::vector<std::unique_ptr<Character>>& multiplayers, const json& j);
 

@@ -4,6 +4,7 @@
 
 Mario::Mario() : Mario(Vector2{ 32, 400 }, Vector2{ 32, 40 }, STATE_SMALL) {
 	cout << "Mario is created" << endl;
+	characterType = MARIO;
 }
 	
 Mario::Mario(Vector2 nposition, Vector2 nsize, CharacterState type) :

@@ -6,6 +6,8 @@
 Peach::Peach() : 
 	Peach(Vector2{ 32, 400 }, Vector2{ 26, 46 }, STATE_SMALL) {
 	std::cout << "Peach is created" << std::endl;
+	characterType = PEACH;
+
 }
 
 Peach::Peach(Vector2 nposition, Vector2 nsize, CharacterState type) :

@@ -15,6 +15,7 @@
 #include "../include/CollisionInfo.h"
 #include "../include/ScoreEffect.h"
 #include "../include/GameSerialization.h"
+#include "SaveManager.h"
 #include <vector>
 #include <string>
 #include <map>
@@ -82,8 +83,8 @@ public:
     std::vector<Blocks*> getNearbyBlocks(Vector2 pos, int range);
     bool isInCameraView(Rectangle entityRect) const;;
 
-    /*void saveGame(const std::string& path);
-    bool loadGame(const std::string& path);*/
+    void saveGame(int slot);
+    void loadGame(int slot);
 };
 extern GameEngine* globalGameEngine;
 
