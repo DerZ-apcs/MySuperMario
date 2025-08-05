@@ -19,6 +19,7 @@ void Boss::takeDamage(int amount) {
 void Boss::die() {
     setDeathTimer(ENEMY_DEATH_TIMER_LONG);
     vulnerable = false;
+    setCollisionAvailable(false);
     onDeath();
 }
 

@@ -1,36 +1,61 @@
-#ifndef BOOMBOOM_H
+﻿#ifndef BOOMBOOM_H
 #define BOOMBOOM_H
 
 #include "Boss.h"
-#include "CollisionInfo.h"
+#include "Character.h" // Cần để tham chiếu đến người chơi
 
-enum class BoomBoomState { IDLE, PREPARE_SMASH, SMASH, ROLL, STUN, DEAD };
+enum class BoomBoomState {
+    WALKING,    // Đi bộ qua lại
+    JUMPING,    // Nhảy lên cao và tấn công
+    SPINNING,   // Quay tròn, chuẩn bị lao tới
+    CHARGING,   // Lao về phía người chơi
+    STUNNED,    // Bị choáng sau khi lao hoặc bị tấn công
+    HIDDEN      // Trạng thái ẩn mình sau khi bị dẫm lên
+};
 
 class BoomBoom : public Boss {
 private:
-    BoomBoomState state;
+    BoomBoomState currentState;
+    Character* target; // Tham chiếu đến người chơi để xác định vị trí
 
-    // Timing constants
-    static constexpr float PREPARE_TIME = 0.5f;
-    static constexpr float SMASH_DURATION = 0.3f;
-    static constexpr float ROLL_DURATION = 1.2f;
-    static constexpr float STUN_DURATION = 1.0f;
+    // Thuộc tính di chuyển và tấn công
+    float walkSpeed;
+    float chargeSpeed;
+    float jumpPower;
 
-    // Movement constants
-    static constexpr float ROLL_SPEED = 200.0f;
-    static constexpr float SMASH_VELOCITY_Y = -600.0f;
+    // Timer để điều khiển các trạng thái và hành động
+    float actionTimer;      // Timer để quyết định hành động tiếp theo
+    float statePhaseTimer;  // Timer cho các giai đoạn trong một trạng thái (ví dụ: thời gian choáng)
 
-    void changeState(BoomBoomState newState);
-    void performSmash();
-    void performRoll();
+    // Hàm riêng để xử lý logic cho từng trạng thái
+    void updateWalking();
+    void updateJumping();
+    void updateSpinning();
+    void updateCharging();
+    void updateStunned();
+    void updateHidden();
+
+    void enterState(BoomBoomState newState);
+
+    std::vector<Texture2D> walkLeftTextures;
+    std::vector<Texture2D> walkRightTextures;
+    int currentFrame;
+    float frameTimer;
+    float frameDuration; 
+
+    void loadAnimations();
 
 public:
-    BoomBoom(Vector2 pos, Texture2D texture);
+    BoomBoom(Vector2 pos, Character* player);
+    virtual ~BoomBoom() = default;
+
     void updateBehavior() override;
-    void onHit() override;
     void onDeath() override;
-    void UpdateTexture() override;
-	float getScores() const override { return 1000.0f; } 
+    void onHit() override;
+    float getScores() const override;
+
+    void stomped() override; 
+    void CollisionWithFireball(FireBall* fireball) override; 
 };
 
 #endif // BOOMBOOM_H

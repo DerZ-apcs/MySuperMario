@@ -1,94 +1,208 @@
-#include "BoomBoom.h"
-#include "ResourceManager.h"
-#include <raylib.h>
+﻿#include "../include/BoomBoom.h"
+#include "../include/GameEngine.h" // Để lấy FrameTime và thêm hiệu ứng
+#include "../include/ResourceManager.h" // Để quản lý texture (giả định)
 
-BoomBoom::BoomBoom(Vector2 pos, Texture2D texture)
-    : Boss(pos, { (float)texture.width, (float)texture.height }, texture, 3),
-    state(BoomBoomState::IDLE)
+const float BOOMBOOM_WALK_SPEED = 100.0f;
+const float BOOMBOOM_CHARGE_SPEED = 450.0f;
+const float BOOMBOOM_JUMP_POWER = -900.0f;
+const float BOOMBOOM_ACTION_INTERVAL = 3.0f; // Thời gian giữa các hành động
+const float BOOMBOOM_SPIN_DURATION = 1.0f;   // Thời gian quay trước khi lao
+const float BOOMBOOM_STUN_DURATION = 1.5f;   // Thời gian bị choáng
+const float BOOMBOOM_CHARGE_DURATION = 1.5f;
+const int   BOOMBOOM_INITIAL_HP = 3;         // Máu khởi điểm
+
+BoomBoom::BoomBoom(Vector2 pos, Character* player)
+    : Boss(pos, { 64, 64 }, RESOURCE_MANAGER.getTexture("boomboom_walk"), BOOMBOOM_INITIAL_HP),
+    target(player),
+    walkSpeed(BOOMBOOM_WALK_SPEED),
+    chargeSpeed(BOOMBOOM_CHARGE_SPEED),
+    jumpPower(BOOMBOOM_JUMP_POWER),
+    actionTimer(BOOMBOOM_ACTION_INTERVAL)
 {
-    UpdateTexture();
-    velocity.x = -GOOMBA_SPEED;
+    currentFrame = 0;
+    frameTimer = 0.0f;
+    frameDuration = 0.15f; 
+
+    loadAnimations(); 
+    enterState(BoomBoomState::WALKING);
 }
 
-void BoomBoom::changeState(BoomBoomState newState) {
-    state = newState;
-    switch (state) {
-    case BoomBoomState::PREPARE_SMASH:
-        stateTimer = PREPARE_TIME; break;
-    case BoomBoomState::SMASH:
-        velocity.y = SMASH_VELOCITY_Y;
-        stateTimer = SMASH_DURATION;
-        vulnerable = false;
+void BoomBoom::loadAnimations() {
+    walkLeftTextures.push_back(RESOURCE_MANAGER.getTexture("boomboom_walk_left_0"));
+    walkLeftTextures.push_back(RESOURCE_MANAGER.getTexture("boomboom_walk_left_1"));
+    walkLeftTextures.push_back(RESOURCE_MANAGER.getTexture("boomboom_walk_left_2"));
+
+    walkRightTextures.push_back(RESOURCE_MANAGER.getTexture("boomboom_walk_right_0"));
+    walkRightTextures.push_back(RESOURCE_MANAGER.getTexture("boomboom_walk_right_1"));
+    walkRightTextures.push_back(RESOURCE_MANAGER.getTexture("boomboom_walk_right_2"));
+}
+
+float BoomBoom::getScores() const { 
+    return 1000.0f; 
+}
+
+void BoomBoom::enterState(BoomBoomState newState) {
+    currentState = newState;
+    stateTimer = 0.0f; // Reset state-wide timer
+
+    switch (currentState) {
+    case BoomBoomState::WALKING:
+        vulnerable = true;
+        velocity.x = walkSpeed * (direction == RIGHT ? 1 : -1);
+        velocity.y = 0;
+        actionTimer = BOOMBOOM_ACTION_INTERVAL; // Reset bộ đếm hành động
+        currentFrame = 0;
+        frameTimer = 0.0f;
+        if (direction == LEFT) {
+            setTexture(walkLeftTextures[currentFrame]);
+        }
+        else {
+            setTexture(walkRightTextures[currentFrame]);
+        }
         break;
-    case BoomBoomState::ROLL:
-        velocity.x = (direction == LEFT ? -ROLL_SPEED : ROLL_SPEED);
-        stateTimer = ROLL_DURATION;
-        vulnerable = false;
+
+    case BoomBoomState::JUMPING:
+        vulnerable = true;
+        velocity.y = jumpPower;
+        setState(JUMPING); // Set trạng thái của Enemy base class
+        setTexture(RESOURCE_MANAGER.getTexture("boomboom_jump"));
         break;
-    case BoomBoomState::STUN:
-        velocity = { 0,0 };
-        stateTimer = STUN_DURATION;
-        vulnerable = false;
+
+    case BoomBoomState::SPINNING:
+        vulnerable = false; // Bất tử khi đang quay
+        velocity.x = 0;
+        statePhaseTimer = BOOMBOOM_SPIN_DURATION;
+        setTexture(RESOURCE_MANAGER.getTexture("boomboom_spin"));
         break;
-    default: break;
+
+    case BoomBoomState::CHARGING:
+        vulnerable = false;
+        if (direction == LEFT) {
+            velocity.x = -chargeSpeed;
+        }
+        else { 
+            velocity.x = chargeSpeed;
+        }
+        statePhaseTimer = BOOMBOOM_CHARGE_DURATION;
+        setTexture(RESOURCE_MANAGER.getTexture("boomboom_charge"));
+        break;
+
+    case BoomBoomState::STUNNED:
+        vulnerable = true; // Có thể bị tấn công khi choáng
+        velocity.x = 0;
+        statePhaseTimer = BOOMBOOM_STUN_DURATION;
+        setTexture(RESOURCE_MANAGER.getTexture("boomboom_stunned"));
+        break;
+
+    case BoomBoomState::HIDDEN:
+        vulnerable = false; // Bất tử khi ở trong mai
+        velocity.x = 0;
+        statePhaseTimer = 3.0f; // Thời gian ẩn mình
+        setTexture(RESOURCE_MANAGER.getTexture("boomboom_hidden"));
+        break;
     }
-}
-
-void BoomBoom::performSmash() {
-    changeState(BoomBoomState::SMASH);
-}
-
-void BoomBoom::performRoll() {
-    direction = (direction == LEFT ? RIGHT : LEFT);
-    changeState(BoomBoomState::ROLL);
 }
 
 void BoomBoom::updateBehavior() {
     float dt = GetFrameTime();
-    switch (state) {
-    case BoomBoomState::IDLE:
-        if (GetRandomValue(0, 1000) < 5) changeState(BoomBoomState::PREPARE_SMASH);
-        else if (GetRandomValue(0, 1000) < 5) changeState(BoomBoomState::ROLL);
-        break;
-    case BoomBoomState::PREPARE_SMASH:
-        stateTimer -= dt;
-        if (stateTimer <= 0) performSmash();
-        break;
-    case BoomBoomState::SMASH:
-    case BoomBoomState::ROLL:
-        stateTimer -= dt;
-        if (stateTimer <= 0) changeState(BoomBoomState::STUN);
-        break;
-    case BoomBoomState::STUN:
-        stateTimer -= dt;
-        if (stateTimer <= 0 && currentHp > 0) {
-            state = BoomBoomState::IDLE;
-            vulnerable = true;
-            velocity.x = (direction == LEFT ? -GOOMBA_SPEED : GOOMBA_SPEED);
-        }
-        break;
-    default: break;
+    stateTimer += dt;
+
+    switch (currentState) {
+    case BoomBoomState::WALKING:  updateWalking();  break;
+    case BoomBoomState::JUMPING:  updateJumping();  break;
+    case BoomBoomState::SPINNING: updateSpinning(); break;
+    case BoomBoomState::CHARGING: updateCharging(); break;
+    case BoomBoomState::STUNNED:  updateStunned();  break;
+    case BoomBoomState::HIDDEN:   updateHidden();   break;
     }
 }
 
+void BoomBoom::updateWalking() {
+    frameTimer += GetFrameTime();
+    if (frameTimer >= frameDuration) {
+        frameTimer = 0.0f;
+        currentFrame = (currentFrame + 1) % walkLeftTextures.size();
+    }
+
+    if (direction == LEFT) {
+        setTexture(walkLeftTextures[currentFrame]);
+    }
+    else {
+        setTexture(walkRightTextures[currentFrame]);
+    }
+    actionTimer -= GetFrameTime();
+    if (actionTimer <= 0) {
+        int choice = GetRandomValue(0, 1);
+        if (choice == 0) {
+            enterState(BoomBoomState::JUMPING);
+        }
+        else {
+            enterState(BoomBoomState::SPINNING);
+        }
+    }
+}
+
+void BoomBoom::updateJumping() {
+    if (state == ON_GROUND && velocity.y == 0) {
+        enterState(BoomBoomState::WALKING);
+    }
+}
+
+void BoomBoom::updateSpinning() {
+    statePhaseTimer -= GetFrameTime();
+    if (statePhaseTimer <= 0) {
+        enterState(BoomBoomState::CHARGING);
+    }
+}
+
+void BoomBoom::updateCharging() {
+    statePhaseTimer -= GetFrameTime(); 
+    if (statePhaseTimer <= 0) {
+        enterState(BoomBoomState::STUNNED);
+    }
+}
+
+void BoomBoom::updateStunned() {
+    statePhaseTimer -= GetFrameTime();
+    if (statePhaseTimer <= 0) {
+        enterState(BoomBoomState::WALKING);
+    }
+}
+
+void BoomBoom::updateHidden() {
+    statePhaseTimer -= GetFrameTime();
+    if (statePhaseTimer <= 0) {
+        enterState(BoomBoomState::WALKING);
+    }
+}
+
+
 void BoomBoom::onHit() {
-    changeState(BoomBoomState::STUN);
+    if (currentState != BoomBoomState::HIDDEN) {
+        enterState(BoomBoomState::HIDDEN);
+    }
 }
 
 void BoomBoom::onDeath() {
-    state = BoomBoomState::DEAD;
-    velocity = { 0,-200 };
+    setGravityAvailable(false);
+    velocity = { (float)GetRandomValue(-100, 100), -600 };
 }
 
-void BoomBoom::UpdateTexture() {
-    std::string name;
-    switch (state) {
-    case BoomBoomState::IDLE:        name = "BoomBoom_IDLE_0"; break;
-    case BoomBoomState::PREPARE_SMASH:name = "BoomBoom_WINDUP"; break;
-    case BoomBoomState::SMASH:       name = "BoomBoom_SMASH"; break;
-    case BoomBoomState::ROLL:        name = "BoomBoom_ROLL"; break;
-    case BoomBoomState::STUN:        name = "BoomBoom_STUN"; break;
-    default:                          name = "BoomBoom_IDLE_0"; break;
+void BoomBoom::stomped() {
+    if (isDying()) return;
+
+    // Chỉ có thể bị dẫm khi không ở trong mai hoặc không choáng
+    if (currentState == BoomBoomState::WALKING || currentState == BoomBoomState::JUMPING || currentState == BoomBoomState::STUNNED) {
+        takeDamage(1);
     }
-    texture = RESOURCE_MANAGER.getTexture(name);
+}
+
+void BoomBoom::CollisionWithFireball(FireBall* fireball) {
+    if (isDying() || !vulnerable) {
+        fireball->setEntityDead();
+        return;
+    }
+
+    enterState(BoomBoomState::STUNNED);
+    fireball->setEntityDead(); 
 }

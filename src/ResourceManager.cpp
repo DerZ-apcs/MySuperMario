@@ -491,11 +491,17 @@ void ResourceManager::loadTextures() {
 	textures["BuzzyBeetle_Shell_0"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_Shell_0.png");
 
 	//BoomBoom
-	textures["BoomBoom_IDLE_0"] = LoadTexture("resources/images/sprites/baddies/BoomBoom_IDLE_0.png");
-	textures["BoomBoom_ROLL"] = LoadTexture("resources/images/sprites/baddies/BoomBoom_ROLL.png");
-	textures["BoomBoom_SMASH"] = LoadTexture("resources/images/sprites/baddies/BoomBoom_SMASH.png");
-	textures["BoomBoom_WINDUP"] = LoadTexture("resources/images/sprites/baddies/BoomBoom_WINDUP.png");
-	textures["BoomBoom_STUN"] = LoadTexture("resources/images/sprites/baddies/BoomBoom_STUN.png");
+	textures["boomboom_walk_right_0"] = LoadTexture("resources/images/sprites/baddies/boomboom_walk_0.png");
+	textures["boomboom_walk_right_1"] = LoadTexture("resources/images/sprites/baddies/boomboom_walk_1.png");
+	textures["boomboom_walk_right_2"] = LoadTexture("resources/images/sprites/baddies/boomboom_walk_2.png");
+	textures["boomboom_walk_left_0"] = flipTexture(textures["boomboom_walk_right_0"]);
+	textures["boomboom_walk_left_1"] = flipTexture(textures["boomboom_walk_right_1"]);
+	textures["boomboom_walk_left_2"] = flipTexture(textures["boomboom_walk_right_2"]);
+	textures["boomboom_spin"] = LoadTexture("resources/images/sprites/baddies/boomboom_spin.png");
+	textures["boomboom_jump"] = LoadTexture("resources/images/sprites/baddies/boomboom_jump.png");
+	textures["boomboom_charge"] = LoadTexture("resources/images/sprites/baddies/boomboom_charge.png");
+	textures["boomboom_stunned"] = LoadTexture("resources/images/sprites/baddies/boomboom_stunned.png");
+	textures["boomboom_hidden"] = LoadTexture("resources/images/sprites/baddies/boomboom_hidden.png");
 }
 
 void ResourceManager::loadFonts()
