@@ -158,17 +158,24 @@ GOOMBA_TYPE FlyingGoomba::getGoombaType() const
 
 // FlyingGoomba Class Implementation
 FlyingGoomba::FlyingGoomba(Vector2 pos, Texture2D texture)
-    : Goomba(pos, texture), jumpTimer(0.0f), detectMarioRange(250.0f), collisionTimer(0.0f) {
+    : Goomba(pos, texture) {
     velocity.x = -FLYINGGOOMBA_SPEED;
-    state = ON_GROUND;
-	hasWings = true; // Flying Goomba always has wings
-	isSearchPaused = false;
-	searchCooldownTimer = 0.0f; // Thêm biến để kiểm soát thời gian chờ
+    state = JUMPING;
+    hasWings = true;
+
+    const float flyRange = 96.0f;
+    this->bottomY = pos.y;
+    this->topY = pos.y - flyRange;
+    this->velocity.y = -FLYINGGOOMBA_SPEED * 0.8f;
+
+    const float patrolRange = 160.0f; // Phạm vi tuần tra (ví dụ: 5 ô)
+    this->leftPatrolX = pos.x; // Bắt đầu từ vị trí xuất hiện
+    this->rightPatrolX = pos.x + patrolRange;
 }
 
 void FlyingGoomba::Update() {
     if (!hasWings) {
-        Goomba::Update();
+        Goomba::Update(); 
         return;
     }
     if (isReadyForRemoval() || state == STATE_IS_DYING) {
@@ -189,67 +196,29 @@ void FlyingGoomba::Update() {
         collisionTimer -= deltaTime;
     }
 
-    bool shouldChase = false;
-    for (auto& p : globalGameEngine->getMultiplayers()) {
-        if (p && !isSearchPaused && p->getPhase() != CLEARLEVEL_PHASE && p->getPhase() != DEAD_PHASE && collisionTimer <= 0) {
-            float totalDsistance = Vector2Distance(position, p->getPosition());
-            if (totalDsistance <= detectMarioRange) {
-				float horizontalDistance = fabsf(p->getX() - position.x);
-				const float horizontalDeadZone = 2.0f; 
-                if (horizontalDistance < horizontalDeadZone) {
-                    // Bị kẹt theo chiều ngang -> Bắt đầu tạm nghỉ tìm kiếm
-                    isSearchPaused = true;
-                    searchCooldownTimer = 2.0f; // Tạm nghỉ 2 giây
-                    shouldChase = false;        // Buộc quay về hành vi Tuần tra
-                }
-                else {
-                    shouldChase = true;
-                }
-            }
-        }
-        // --- 3. Thiết lập vận tốc dựa trên hành vi ---
-        if (shouldChase) {
-            // Hành vi Đuổi theo
-            if (p->getX() < position.x) {
-                direction = LEFT;
-                velocity.x = -FLYINGGOOMBA_SPEED * 1.5f;
-            }
-            else {
-                direction = RIGHT;
-                velocity.x = FLYINGGOOMBA_SPEED * 1.5f;
-            }
-        }
-        else {
-            // Hành vi Tuần tra (mặc định)
-            velocity.x = (direction == LEFT) ? -FLYINGGOOMBA_SPEED : FLYINGGOOMBA_SPEED;
-        }
-    }
-    // --- 4. Logic nhảy ---
-    jumpTimer += deltaTime;
-    float currentJumpInterval = shouldChase ? (FLYINGGOOMBA_JUMP_INTERVAL * 0.7f) : FLYINGGOOMBA_JUMP_INTERVAL;
-
-    if (state == ON_GROUND && jumpTimer > currentJumpInterval) {
-        velocity.y = -FLYINGGOOMBA_JUMP_VELOCITY;
-        state = JUMPING;
-        jumpTimer = 0.0f;
-    }
-    // Hiệu ứng bay lượn
-    static float hoverTimer = 0.0f;
-    hoverTimer += deltaTime;
-    float hoverOffset = sin(hoverTimer * 3.0f) * 50.0f; // Dao động ±10 pixel
-    position.y += hoverOffset * deltaTime;
-
-    // Cập nhật vị trí
-    position.x += velocity.x * deltaTime;
     position.y += velocity.y * deltaTime;
-
-    // Áp dụng trọng lực nhẹ
-    if (state != ON_GROUND) {
-        velocity.y += GRAVITY * deltaTime * 0.5f; // Trọng lực nhẹ hơ
-        if (velocity.y > 0 && state == JUMPING) {
-            state = FALLING;
-        }
+    if (position.y < topY) {
+        position.y = topY;
+        velocity.y *= -1;
     }
+    else if (position.y > bottomY) {
+        position.y = bottomY;
+        velocity.y *= -1;
+    }
+    state = (velocity.y < 0) ? JUMPING : FALLING;
+
+    position.x += velocity.x * deltaTime;
+    if (position.x < leftPatrolX) {
+        position.x = leftPatrolX;
+        velocity.x *= -1; // Đảo hướng
+        direction = RIGHT;
+    }
+    else if (position.x > rightPatrolX) {
+        position.x = rightPatrolX;
+        velocity.x *= -1; // Đảo hướng
+        direction = LEFT;
+    }
+
     Enemy::updateCollision();
     UpdateTexture();
 }
@@ -285,13 +254,14 @@ float FlyingGoomba::getScores() const
 {
     return SCORE_STOMP_GOOMBA + 50;
 }
+
 void FlyingGoomba::setJumpTimer(float time) {
-	this->jumpTimer = time;
+
 }
+
 void FlyingGoomba::stomped()
 {
 	if (isReadyForRemoval() || state == STATE_IS_DYING) return;
-    // Handle character stomping on the flying goomba
     if (hasWings) {
         hasWings = false;
         position.y += 16;
@@ -299,6 +269,7 @@ void FlyingGoomba::stomped()
         velocity.y = 0;
         velocity.x = (direction == LEFT) ? -GOOMBA_SPEED : GOOMBA_SPEED;
         state = FALLING;
+		setGravityAvailable(true);
     }
     else {
         Goomba::stomped();

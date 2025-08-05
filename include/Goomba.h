@@ -24,12 +24,11 @@ public:
 
 class FlyingGoomba : public Goomba {
 private:
-    float jumpTimer; // Timer để kiểm soát tần suất nhảy
-    float detectMarioRange;
-    float collisionTimer;
     bool hasWings;
-    bool isSearchPaused;
-	float searchCooldownTimer;
+    float topY;
+    float bottomY;
+    float leftPatrolX;  
+    float rightPatrolX;
 public:
     ENEMY_TYPE getEnemyType() const;
     GOOMBA_TYPE getGoombaType() const;

@@ -141,11 +141,10 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std:
 
  //   Koopa* koopa = new YellowKoopa({ 100, 500 }, RESOURCE_MANAGER.getTexture("YellowKoopa_LEFT_0"));
  //   enemies.push_back(koopa);
-	//enemies.push_back(new GreenKoopa({ 150, 500 }, RESOURCE_MANAGER.getTexture("GreenKoopa_LEFT_0")));
+	//enemies.push_back(new GreenKoopa({ 200, 500 }, RESOURCE_MANAGER.getTexture("GreenKoopa_LEFT_0")));
 	//enemies.push_back(new RedKoopa({ 300, 500 }, RESOURCE_MANAGER.getTexture("RedKoopa_LEFT_0")));
-    //enemies.push_back(new FlyingGoomba({ 350, 500 }, RESOURCE_MANAGER.getTexture("FlyingGoomba_LEFT_0")));
-   // enemies.push_back(new Goomba({ 200, 500 }, RESOURCE_MANAGER.getTexture("Goomba_LEFT_0")));
-	enemies.push_back(new BoomBoom({ 250, 500 }, RESOURCE_MANAGER.getTexture("BoomBoom_IDLE_0")));
+   enemies.push_back(new FlyingGoomba({ 250, 600 }, RESOURCE_MANAGER.getTexture("FlyingGoomba_LEFT_0")));
+   //enemies.push_back(new Goomba({ 200, 500 }, RESOURCE_MANAGER.getTexture("Goomba_LEFT_0")));
 
 }
 

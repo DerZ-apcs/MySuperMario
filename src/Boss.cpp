@@ -36,6 +36,7 @@ void Boss::Update() {
         return;
     }
     updateBehavior();
+	UpdateTexture();
     applyPhysics();
     updateCollision();
     Enemy::Update();

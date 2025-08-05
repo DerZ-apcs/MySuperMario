@@ -6,6 +6,7 @@ BoomBoom::BoomBoom(Vector2 pos, Texture2D texture)
     : Boss(pos, { (float)texture.width, (float)texture.height }, texture, 3),
     state(BoomBoomState::IDLE)
 {
+    UpdateTexture();
     velocity.x = -GOOMBA_SPEED;
 }
 
