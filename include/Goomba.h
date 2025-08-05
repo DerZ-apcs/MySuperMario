@@ -9,6 +9,9 @@ protected:
     bool beattacked;
     float collisionTimer;
     float detectMarioRange;
+    bool isChasing;
+    bool isChaseOnCooldown;
+    float chaseTimer;
 public:
     bool isAttacked() const;
     ENEMY_TYPE getEnemyType() const;

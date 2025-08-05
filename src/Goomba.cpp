@@ -4,7 +4,8 @@
 // Goomba Class Implementation
 Goomba::Goomba(Vector2 pos, Texture2D texture)
     : Enemy(pos, { (float)texture.width, (float)texture.height }, { 0, 0 }, LEFT, ON_GROUND, texture, 0.2f, 1, BROWN),
-    pauseTimer(0.0f), isPaused(false), detectMarioRange(200.0f), beattacked(false) {
+    pauseTimer(0.0f), isPaused(false), detectMarioRange(200.0f), beattacked(false),
+    isChasing(false), isChaseOnCooldown(false), chaseTimer(0.0f) { 
     velocity.x = -GOOMBA_SPEED;
     collisionTimer = 0.f;
 }
@@ -28,52 +29,87 @@ void Goomba::Update() {
     }
     const float deltaTime = GetFrameTime();
 
+    const float MAX_CHASE_TIME = 5.0f;
+    const float CHASE_COOLDOWN = 3.0f;
+    const float HORIZONTAL_DEAD_ZONE = 2.0f; 
+
     if (collisionTimer > 0) {
         collisionTimer -= deltaTime;
     }
 
-    //Character* character = globalGameEngine->getMultiplayers() ? globalGameEngine->getCharacter() : nullptr;
-    for (auto& p : globalGameEngine->getMultiplayers()) {
-        if (p != nullptr && p->getPhase() != DEAD_PHASE && p->getPhase() != CLEARLEVEL_PHASE && collisionTimer <= 0) {
-            float distance = Vector2Distance(position, p->getPosition());
-            if (distance <= detectMarioRange) {
-                // Mario trong phạm vi phát hiện, thay đổi hành vi
-                if (p->getX() < position.x) {
-                    direction = LEFT;
-                    velocity.x = -GOOMBA_SPEED * 1.5f; // Tăng tốc độ khi đuổi
-                }
-                else {
-                    direction = RIGHT;
-                    velocity.x = GOOMBA_SPEED * 1.5f; // Tăng tốc độ khi đuổi
-                }
-            }
-            else {
-                // Mario ngoài phạm vi, di chuyển bình thường
-                if (state == ON_GROUND) {
-                    velocity.x = (direction == LEFT) ? -GOOMBA_SPEED : GOOMBA_SPEED;
+    // 1. Xử lý trạng thái hồi chiêu (cooldown)
+    if (isChaseOnCooldown) {
+        chaseTimer += deltaTime;
+        if (chaseTimer >= CHASE_COOLDOWN) {
+            isChaseOnCooldown = false;
+            chaseTimer = 0.0f;
+        }
+    }
+
+    // 2. Logic phát hiện và quyết định truy đuổi
+    bool marioDetected = false;
+    if (!isChasing && !isChaseOnCooldown && collisionTimer <= 0) {
+        for (auto& p : globalGameEngine->getMultiplayers()) {
+            if (p != nullptr && p->getPhase() != DEAD_PHASE && p->getPhase() != CLEARLEVEL_PHASE) {
+                if (Vector2Distance(position, p->getPosition()) <= detectMarioRange) {
+                    isChasing = true;
+                    chaseTimer = 0.0f;
+                    marioDetected = true;
+                    break;
                 }
             }
         }
-        else {
-            if (isPaused) {
-                pauseTimer -= deltaTime;
-                if (pauseTimer <= 0) {
-                    isPaused = false;
-                    direction = (direction == LEFT) ? RIGHT : LEFT;
-                    velocity.x = (direction == LEFT) ? -GOOMBA_SPEED : GOOMBA_SPEED;
+    }
+
+    // 3. Cập nhật trạng thái và vận tốc
+    if (isChasing) {
+        chaseTimer += deltaTime;
+        bool marioStillInRange = false;
+
+        for (auto& p : globalGameEngine->getMultiplayers()) {
+            if (p != nullptr && p->getPhase() != DEAD_PHASE && Vector2Distance(position, p->getPosition()) <= detectMarioRange) {
+                marioStillInRange = true;
+
+                // --- SỬA ĐỔI: Logic kiểm tra hướng với "vùng chết" ---
+                float horizontalDistance = p->getX() - position.x;
+
+                if (horizontalDistance < -HORIZONTAL_DEAD_ZONE) { // Mario ở rõ ràng bên trái
+                    direction = LEFT;
+                    velocity.x = -GOOMBA_SPEED * 1.5f;
                 }
-                velocity.x = 0;
+                else if (horizontalDistance > HORIZONTAL_DEAD_ZONE) { // Mario ở rõ ràng bên phải
+                    direction = RIGHT;
+                    velocity.x = GOOMBA_SPEED * 1.5f;
+                }
+                else {
+                    // Mario đang ở trong "vùng chết" (ngay trên đầu), dừng di chuyển ngang
+                    velocity.x = 0;
+                }
+                break;
             }
-            else {
-                if (state == ON_GROUND) {
-                    if (collisionTimer <= 0) {
-                        velocity.x = (direction == LEFT) ? -GOOMBA_SPEED : GOOMBA_SPEED;
-                    }
-                    if (GetRandomValue(0, 1000) < 3) { // 0.3% cơ hội dừng lại
-                        isPaused = true;
-                        pauseTimer = GetRandomValue(5, 15) / 10.0f; // Dừng 0.5-1.5 giây
-                    }
-                }
+        }
+
+        if (!marioStillInRange || chaseTimer >= MAX_CHASE_TIME) {
+            isChasing = false;
+            isChaseOnCooldown = true;
+            chaseTimer = 0.0f;
+        }
+    }
+
+    if (!isChasing) {
+        if (isPaused) {
+            pauseTimer -= deltaTime;
+            if (pauseTimer <= 0) {
+                isPaused = false;
+                direction = (direction == LEFT) ? RIGHT : LEFT;
+            }
+            velocity.x = 0;
+        }
+        else {
+            velocity.x = (direction == LEFT) ? -GOOMBA_SPEED : GOOMBA_SPEED;
+            if (GetRandomValue(0, 1000) < 3) {
+                isPaused = true;
+                pauseTimer = GetRandomValue(5, 15) / 10.0f;
             }
         }
     }
@@ -88,7 +124,6 @@ void Goomba::Update() {
     Entity::updateCollision();
     UpdateTexture();
 }
-
 void Goomba::draw() {
     Enemy::draw();
 }
@@ -96,7 +131,7 @@ void Goomba::draw() {
 void Goomba::UpdateTexture() {
     if (state == STATE_IS_DYING) {
         texture = RESOURCE_MANAGER.getTexture("Goomba_Dead");
-        /*isFlipped = true;*/
+        isFlipped = true;
         return;
     }
     if (state == ON_GROUND) {
