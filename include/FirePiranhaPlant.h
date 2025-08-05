@@ -43,7 +43,7 @@ public:
     void ShootFireBall() override; // Ghi đè để bắn fireball nhắm mục tiêu
     PIRANHA_TYPE getPiranhaType() const override {
         return HOMING_PIRANHA;
-    } // Trả về loại Homing Fire Piranha
+    } 
 };
 
 #endif

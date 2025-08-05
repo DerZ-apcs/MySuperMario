@@ -164,27 +164,6 @@ Enemy* loadEnemy(const json& j)
     
 }
 
-//Item* loadItem(const json& j)
-//{
-//    
-//}
-//
-//Blocks* loadBlocks(const json& j)
-//{
-//    
-//}
-
-//FireBall loadFireBall(const json& j)
-//{
-//    
-//}
-
-//EnemyFireBall loadEnemyFireBall(const json& j)
-//{
-//    
-//}
-
-
 void saveMultiCharacters(const std::vector<std::unique_ptr<Character>>& multiplayers, json& j) {
     for (const auto& c : multiplayers)
         if (c) j["players"].push_back(*c);
@@ -200,24 +179,47 @@ void loadMultiCharacters(std::vector<std::unique_ptr<Character>>& multiplayers, 
 void saveEnemies(const std::vector<Enemy*>& enemies, json& j)
 {
     j = json::array();
-    for (const Enemy* e : enemies) {
+    for (Enemy* e : enemies) {
+        if (!e) continue;
         json enemyJson;
-        enemyJson["EnemyType"] = static_cast<int>(e->getEnemyType()); // You need a getType() method
-        enemyJson["pos"] = { e->getX(), e->getY()};
-        enemyJson["vel"] = { e->getVelX(), e->getVelY()};
-        enemyJson["state"] = static_cast<int>(e->getState());
-        enemyJson["direction"] = static_cast<int>(e->getDir());
-        // Add more fields if needed
+        enemyJson["EnemyType"] = e->getEnemyType();
+        e->saveEntity(enemyJson);
         j.push_back(enemyJson);
     }
 }
 
 void loadEnemies(std::vector<Enemy*>& enemies, const json& j)
 {
+    for (Enemy* e : enemies) {
+        delete e;
+    }
     enemies.clear();
+    // load new enemies
     for (const auto& enemyJson : j) {
-        Enemy* e = loadEnemy(enemyJson);
-        if (e) enemies.push_back(e);
+        ENEMY_TYPE type = static_cast<ENEMY_TYPE>(enemyJson["EnemyType"].get<int>());
+        Enemy* e = nullptr;
+        Vector2 pos = { enemyJson["pos"][0], enemyJson["pos"][1] };
+        Texture2D tex = loadTextureFromType(type);
+        switch (type) {
+        case GOOMBA: e = new Goomba(pos, tex); break;
+        case KOOPA: e = new Koopa(pos, tex); break;
+        case PIRANHA: e = new PiranhaPlant(pos, tex); break;
+        case BULLET: e = new Bullet(pos, tex); break;
+        case SHELL: e = new Koopa(pos, tex); break;  // or Shell if different class
+        case BOBOMB: e = new BobOmb(pos, tex); break;
+        case REX: e = new Rex(pos, tex); break;
+        case MUNCHER: e = new Muncher(pos, tex); break;
+        case SPINY: e = new Spiny(pos, tex); break;
+        case DRYBONES: e = new DryBones(pos, tex); break;
+        case BUZZYBEETLE: e = new BuzzyBeetle(pos, tex); break;
+        default:
+            std::cerr << "Unknown enemy type\n";
+            continue;
+        }
+        if (e) {
+            e->loadEntity(enemyJson);
+            enemies.push_back(e);
+        }
     }
 }
 
