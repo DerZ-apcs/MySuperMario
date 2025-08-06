@@ -12,6 +12,14 @@ Blocks::Blocks(Vector2 pos, Vector2 size, std::string textureName)
 	this->size = size;
 }
 
+void Blocks::setId(int id) {
+	this->id = id;
+}
+
+int Blocks::getId() const {
+	return id;
+}
+
 EntityType Blocks::getEntityType() const
 {
 	return BLOCK;

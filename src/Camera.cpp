@@ -157,4 +157,74 @@ Vector2& GameCamera::getPos() const
     return Vector2{ cameraX, cameraY };
 }
 
+//------------------------
 
+EditorCamera::EditorCamera() : position{ 0, 0 }, zoom(1.0f), isDragging(false) {}
+
+void EditorCamera::beginDrawing() {
+    BeginMode2D(GetCamera2D());
+}
+
+void EditorCamera::endDrawing() {
+    EndMode2D();
+}
+
+void EditorCamera::handleInput() {
+    if (IsMouseButtonPressed(MOUSE_BUTTON_MIDDLE)) {
+        isDragging = true;
+        dragStart = GetMousePosition();
+    }
+
+    if (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE) && isDragging) {
+        Vector2 mouseNow = GetMousePosition();
+        Vector2 delta = Vector2Subtract(dragStart, mouseNow);
+        position = Vector2Add(position, Vector2Scale(delta, 1.0f / zoom));
+        dragStart = mouseNow;
+    }
+
+    if (IsMouseButtonReleased(MOUSE_BUTTON_MIDDLE)) {
+        isDragging = false;
+    }
+
+    float scroll = GetMouseWheelMove();
+    if (scroll != 0) {
+        zoom += scroll * 0.1f;
+        if (zoom < 0.5f) zoom = 0.5f;
+        if (zoom > 2.0f) zoom = 2.0f;
+    }
+}
+
+Camera2D EditorCamera::GetCamera2D() const {
+    return Camera2D{
+        { GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f },
+        position,
+        0.0f,
+        zoom
+    };
+}
+
+Vector2 EditorCamera::getWorldPos(Vector2 screenPos) const {
+    Vector2 screenCenter = { GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f };
+    Vector2 offsetFromCenter = Vector2Subtract(screenPos, screenCenter);
+    return Vector2Add(position, Vector2Scale(offsetFromCenter, 1.0f / zoom));
+}
+
+Vector2 EditorCamera::getPosition() const {
+    return position;
+}
+
+float EditorCamera::getZoom() const {
+    return zoom;
+}
+
+Rectangle EditorCamera::getViewRect() const {
+    float viewWidth = GetScreenWidth() / zoom;
+    float viewHeight = GetScreenHeight() / zoom;
+
+    return {
+        position.x - viewWidth / 2.0f,
+        position.y - viewHeight / 2.0f,
+        viewWidth,
+        viewHeight
+    };
+}

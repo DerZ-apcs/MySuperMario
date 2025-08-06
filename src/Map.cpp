@@ -79,9 +79,13 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 	int blockwidth = mapJson["tilewidth"];
 	std::vector<int> data = mapJson["layers"][0]["data"];
 
-	int firstgid = mapJson["tilesets"][0]["firstgid"];
+	int firstgid = 1;
+	if (mapJson.contains("tilesets") && !mapJson["tilesets"].empty() && mapJson["tilesets"][0].contains("firstgid")) {
+		firstgid = mapJson["tilesets"][0]["firstgid"].get<int>();
+	}
 
 	tileGrid.resize(height, std::vector<Blocks*>(width, nullptr));
+	setMapSize(Vector2{ (float)width * blockwidth, (float)height * blockwidth });
 
 	for (int y = 0; y < height; ++y) {
 		for (int x = 0; x < width; ++x) {
@@ -154,6 +158,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 		}
 	}
 	
+	if (mapJson["layers"].size() < 2) { return; }
 	nlohmann::json objectLayer = mapJson["layers"][1];
 	nlohmann::json objects = objectLayer["objects"];
 
@@ -296,6 +301,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 	}
 	
 	 //decor layer
+	if (mapJson["layers"].size() < 3) { return; }
 	std::vector<int> decorData = mapJson["layers"][2]["data"];
 	for (int y = 0; y < height; ++y) {
 		for (int x = 0; x < width; ++x) {
@@ -314,6 +320,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 	}
 
 	// covers layer
+	if (mapJson["layers"].size() < 4) { return; }
 	std::vector<int> coverData = mapJson["layers"][3]["data"];
 	for (int y = 0; y < height; ++y) {
 		for (int x = 0; x < width; ++x) {
@@ -332,8 +339,6 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			}
 		}
 	}
-
-	setMapSize(Vector2{ (float)width * blockwidth, (float)height * blockwidth });
 }
 
 void Map::loadBackgroundTexture(const std::string& backgroundName)

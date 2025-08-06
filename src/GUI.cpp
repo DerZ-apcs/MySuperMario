@@ -1,6 +1,8 @@
 #include "../include/GUI.h"
-#include"../include/Character.h"
+#include "../include/Level.h"
+#include "../include/Character.h"
 #include "../include/GameEngine.h"
+#include "../include/EditorEngine.h"
 
 Texture2D GUI::coinTexture;
 Texture2D GUI::heartTexture;
@@ -281,4 +283,53 @@ void GUI::drawGameOverScreen()
     textX = dest.x + (dest.width - textWidth) / 2;
     textY = dest.y + 400;
     DrawText(text, textX, textY, fontSize, BLACK);
+}
+
+void GUI::drawEditorUI() {
+    DrawRectangle(0, 0, 300, GetScreenHeight(), Fade(LIGHTGRAY, 0.8f)); // sidebar
+    DrawText("Editor Menu", 20, 20, 30, BLACK);
+
+    DrawText(TextFormat("Grid: %d x %d", 150, 30), 20, 60, 20, DARKGRAY);
+
+	Rectangle saveButton = { 20, 100, 100, 30 };
+	DrawRectangleRec(saveButton, DARKGRAY);
+    DrawText("Save", 30, 108, 16, WHITE);
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), saveButton)) {
+        globalEditorEngine->saveToJson();
+		printf("Map saved successfully!\n");
+	}
+
+	Rectangle loadButton = { 20, 140, 100, 30 };
+	DrawRectangleRec(loadButton, DARKGRAY);
+	DrawText("Load", 30, 148, 16, WHITE);
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), loadButton)) {
+        if (globalGameEngine != nullptr) {
+            delete globalGameEngine;
+            globalGameEngine = nullptr;
+        }
+		printf("Loading level...\n");
+		Level* level = make_unique<Level>(Map::basePath + "emap_1.json", "BACKGROUND_1", "MUSIC_1", "2 - 1").release();
+        std::vector<std::unique_ptr<Character>> character;
+        character.push_back(std::make_unique<Mario>());
+        character[0]->setPosition({ 20, 200 });
+        character[0]->setVel({ 0, 0 });
+        character[0]->setState(FALLING);
+        globalGameEngine = new GameEngine(1600, 800, *level, &character);
+
+        while (globalGameEngine != nullptr) {
+            if (globalGameEngine->run()) { break; }
+        }
+        delete globalGameEngine;
+        globalGameEngine = nullptr;
+    }
+
+    std::vector<TileSelector> tiles = globalEditorEngine->getTiles();
+	int selectedBlockId = globalEditorEngine->getSelectedBlockId();
+
+    for (const auto& tile : tiles) {
+		DrawTexture(RESOURCE_MANAGER.getTexture("TILE_" + std::to_string(tile.id)), tile.rect.x, tile.rect.y, WHITE);
+        if (tile.id == selectedBlockId) {
+            DrawRectangleLinesEx(tile.rect, 2, RED); // Highlight selected tile
+		}
+    }
 }

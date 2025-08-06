@@ -30,6 +30,7 @@ public:
 	static void drawLevelClear();
 	static void drawDeathScreen();
 	static void drawGameOverScreen();
+	static void drawEditorUI();
 
 	static bool home_is_pressed;
 	static bool restart_is_pressed;

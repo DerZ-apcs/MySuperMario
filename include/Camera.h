@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <raylib.h>
+#include <raymath.h>
 
 class GameCamera {
 private:
@@ -29,6 +30,30 @@ public:
 	Vector2& getPos() const;
 	float getScale() const;
 	Rectangle getViewRect() const;
+};
+
+//------------
+
+class EditorCamera {
+private:
+	Vector2 position; // world offset
+	float zoom;
+	bool isDragging;
+	Vector2 dragStart;
+
+public:
+	EditorCamera();
+
+	void beginDrawing();
+	void endDrawing();
+	Camera2D GetCamera2D() const;
+	Vector2 getWorldPos(Vector2 screenPos) const; // Converts screen coordinates to world coordinates
+
+	Vector2 getPosition() const;
+	float getZoom() const;
+	Rectangle getViewRect() const;
+
+	void handleInput();
 };
 
 #endif

@@ -62,7 +62,7 @@ else()
 endif()
 
 
-target_sources("${CMAKE_PROJECT_NAME}" PRIVATE ${MY_SOURCES}  "include/Coin.h" "src/Coin.cpp" "include/Brick.h" "src/Brick.cpp"   "include/Mushroom.h" "src/Mushroom.cpp" "include/PowerItem.h" "src/PowerItem.cpp" "include/Star.h" "src/Star.cpp" "include/Flower.h" "src/Flower.cpp" "include/CoinBlock.h" "src/CoinBlock.cpp" "include/CoinEffect.h" "src/CoinEffect.cpp" "include/NoteBlock.h" "src/NoteBlock.cpp" "include/CloudBlock.h" "src/CloudBlock.cpp" "include/RotatingBlock.h" "src/RotatingBlock.cpp" "include/Cannon.h" "src/Cannon.cpp")
+target_sources("${CMAKE_PROJECT_NAME}" PRIVATE ${MY_SOURCES}  "include/Coin.h" "src/Coin.cpp" "include/Brick.h" "src/Brick.cpp"   "include/Mushroom.h" "src/Mushroom.cpp" "include/PowerItem.h" "src/PowerItem.cpp" "include/Star.h" "src/Star.cpp" "include/Flower.h" "src/Flower.cpp" "include/CoinBlock.h" "src/CoinBlock.cpp" "include/CoinEffect.h" "src/CoinEffect.cpp" "include/NoteBlock.h" "src/NoteBlock.cpp" "include/CloudBlock.h" "src/CloudBlock.cpp" "include/RotatingBlock.h" "src/RotatingBlock.cpp" "include/Cannon.h" "src/Cannon.cpp" "include/EditorEngine.h" "src/EditorEngine.cpp")
 
 
 if(MSVC) # If using the VS compiler...

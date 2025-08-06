@@ -9,6 +9,7 @@
 #include "../include/Character.h"
 #include "../include/Button.h"
 #include "../include/GameEngine.h"
+#include "../include/EditorEngine.h"
 #include "../include/GUI.h"
 
 // forward declaration
