@@ -15,6 +15,8 @@ FirePiranhaPlant::FirePiranhaPlant(Vector2 pos, Texture2D texture)
     size = { 32, 66 };
     frameTime = 0.15f;
     maxFrame = 1;
+    scores = 200.f;
+    piranhaType = FIRE_PIRANHA;
 }
 
 FirePiranhaPlant::~FirePiranhaPlant() {
@@ -154,6 +156,8 @@ void FirePiranhaPlant::saveEntity(json& j) const
 // RapidFirePiranha Class Implementation
 RapidFirePiranha::RapidFirePiranha(Vector2 pos, Texture2D texture)
     : FirePiranhaPlant(pos, texture) {
+    scores = 200.f;
+    piranhaType = RAPIDFIRE_PIRANHA;
 }
 
 void RapidFirePiranha::ShootFireBall() {
@@ -172,6 +176,8 @@ void RapidFirePiranha::ShootFireBall() {
 
 HomingFirePiranha::HomingFirePiranha(Vector2 pos, Texture2D texture)
     : FirePiranhaPlant(pos, texture) {
+    scores = 200.f;
+    piranhaType = HOMING_PIRANHA;
 }
 
 void HomingFirePiranha::ShootFireBall() {

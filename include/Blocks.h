@@ -19,5 +19,7 @@ public:
     virtual void Update() override;
     virtual void draw() override;
     virtual void UpdateTexture() override;
+    void loadEntity(const json& j) override;
+    void saveEntity(json& j) const override;
 };
 #endif

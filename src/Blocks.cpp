@@ -30,3 +30,13 @@ void Blocks::draw()
 void Blocks::UpdateTexture()
 {
 }
+
+void Blocks::loadEntity(const json& j)
+{
+	Entity::loadEntity(j);
+}
+
+void Blocks::saveEntity(json& j) const
+{
+	Entity::saveEntity(j);
+}

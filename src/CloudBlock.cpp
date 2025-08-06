@@ -14,3 +14,13 @@ BLOCK_TYPE CloudBlock::getBlockType() const {
 void CloudBlock::draw() {
 	DrawTexture(texture, position.x, position.y, WHITE);
 }
+
+void CloudBlock::loadEntity(const json& j)
+{
+	Blocks::loadEntity(j);
+}
+
+void CloudBlock::saveEntity(json& j) const
+{
+	Blocks::saveEntity(j);
+}

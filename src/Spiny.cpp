@@ -10,6 +10,7 @@ Spiny::Spiny(Vector2 pos, Texture2D texture)
 	texture = RESOURCE_MANAGER.getTexture("Spiny_LEFT_0");
     updateCollision();
     frameTime = 0.1f;
+    scores = SCORE_STOMP_SPINY;
 }
 
 void Spiny::Update() {

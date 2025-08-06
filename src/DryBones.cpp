@@ -9,6 +9,7 @@ DryBones::DryBones(Vector2 pos, Texture2D tex)
 	texture = RESOURCE_MANAGER.getTexture("DryBones_LEFT_0");
 	frameTime = 1.5f;
     maxFrame = 1;
+    scores = SCORE_STOMPED_DRYBONES;
 }
 
 void DryBones::Update() {
@@ -127,7 +128,7 @@ void DryBones::stomped()
 void DryBones::loadEntity(const json& j)
 {
     Enemy::loadEntity(j);
-    dbState = j["dbState"];
+    dbState = static_cast<DryBonesState>(j["dbState"].get<int>());
     breakTimer = j["breakTimer"];
     reviveTimer = j["reviveTimer"];
     shakeTimer = j["shakeTimer"];
@@ -136,7 +137,7 @@ void DryBones::loadEntity(const json& j)
 void DryBones::saveEntity(json& j) const
 {
     Enemy::saveEntity(j);
-    j["dbState"] = dbState;
+    j["dbState"] = static_cast<int>(dbState);
     j["breakTimer"] = breakTimer;
     j["reviveTimer"] = reviveTimer;
     j["shakeTimer"] = shakeTimer;

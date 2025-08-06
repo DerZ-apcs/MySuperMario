@@ -11,23 +11,38 @@ static constexpr float BLUE_JUMP_VELOCITY = 180.0f;
 static constexpr float BLUE_RUN_SPEED = 40.0f;
 
 ParaKoopa::ParaKoopa(Vector2 pos, Texture2D texture)
-    : Koopa(pos, texture), jumpTimer(0.0f) {
+    : Koopa(pos, texture), jumpTimer(0.0f),
+    paraKoopaType(RED_PARAKOOPA)
+{
+    scores = SCORE_STOMP_KOOPA;
+}
+
+float ParaKoopa::getScores() const
+{
+    return scores;
+}
+
+ENEMY_TYPE ParaKoopa::getEnemyType() const
+{
+    return PARAKOOPA;
 }
 
 void ParaKoopa::loadEntity(const json& j)
 {
     Koopa::loadEntity(j);
     jumpTimer = j["jumpTimer"];
+    paraKoopaType = static_cast<PARAKOOPA_TYPE>(j["paraKoopaType"].get<int>());
 }
 
 void ParaKoopa::saveEntity(json& j) const
 {
     Koopa::saveEntity(j);
     j["jumpTimer"] = jumpTimer;
+    j["paraKoopaType"] = static_cast<int>(paraKoopaType);
 }
 
 ParaKoopaRed::ParaKoopaRed(Vector2 pos, Texture2D texture) : ParaKoopa(pos, texture) {
-
+    paraKoopaType = RED_PARAKOOPA;
 }
 
 void ParaKoopaRed::Update() {
@@ -71,6 +86,7 @@ void ParaKoopaRed::UpdateTexture() {
 
 ParaKoopaBlue::ParaKoopaBlue(Vector2 pos, Texture2D texture)
     : ParaKoopa(pos, texture) {
+    paraKoopaType = BLUE_PARAKOOPA;
 }
 
 void ParaKoopaBlue::Update() {
@@ -110,4 +126,32 @@ void ParaKoopaBlue::UpdateTexture() {
     else {
         texture = RESOURCE_MANAGER.getTexture("ParaKoopaBlue_RIGHT_" + std::to_string(currFrame));
     }
+}
+
+ParaKoopaGreen::ParaKoopaGreen(Vector2 pos, Texture2D texture):
+    ParaKoopa(pos, texture)
+{
+    paraKoopaType = GREEN_PARAKOOPA;
+}
+
+void ParaKoopaGreen::Update()
+{
+}
+
+void ParaKoopaGreen::UpdateTexture()
+{
+}
+
+ParaKoopaYellow::ParaKoopaYellow(Vector2 pos, Texture2D texture):
+    ParaKoopa(pos, texture)
+{
+    paraKoopaType = YELLOW_PARAKOOPA;
+}
+
+void ParaKoopaYellow::Update()
+{
+}
+
+void ParaKoopaYellow::UpdateTexture()
+{
 }

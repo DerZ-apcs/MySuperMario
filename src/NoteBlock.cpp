@@ -77,3 +77,17 @@ void NoteBlock::UpdateTexture() {
 void NoteBlock::draw() {
     DrawTexture(texture, position.x, position.y + bounceOffset, WHITE);
 }
+
+void NoteBlock::loadEntity(const json& j)
+{
+    Blocks::loadEntity(j);
+    bounce_dir = static_cast<BOUNCE_DIRECTION>(j["bounce_dir"].get<int>());
+    bounceOffset = j["bounceOffset"];
+}
+
+void NoteBlock::saveEntity(json& j) const
+{
+    Blocks::saveEntity(j);
+    j["bounce_dir"] = static_cast<int>(bounce_dir);
+    j["bounceOffset"] = bounceOffset;
+}

@@ -13,6 +13,7 @@ BuzzyBeetle::BuzzyBeetle(Vector2 pos, Texture2D texture):
     reviveShakeTimer = 0.0f;
     isReviving = false;
     reviveTimer = 0.0f;
+    scores = SCORE_STOMP_BUZZY;
 }
 
 void BuzzyBeetle::UpdateTexture() {
@@ -146,11 +147,11 @@ ENEMY_TYPE BuzzyBeetle::getEnemyType() const
 void BuzzyBeetle::loadEntity(const json& j)
 {
     Koopa::loadEntity(j);
-    BuzzyState = j["BuzzyState"];
+    BuzzyState = static_cast<BuzzyBeetleState>(j["BuzzyState"].get<int>());
 }
 
 void BuzzyBeetle::saveEntity(json& j) const
 {
     Koopa::saveEntity(j);
-    j["BuzzyState"] = BuzzyState;
+    j["BuzzyState"] = static_cast<int>(BuzzyState);
 }

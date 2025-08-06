@@ -12,10 +12,6 @@ FireBall::FireBall(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, float ti
 		RESOURCE_MANAGER.getTexture("FlowerMarioFireball_LEFT_0");
 	this->frameAcum = 0;
 	this->currFrame = 0;
-	this->CollNorth.setSize(Vector2{ size.x - 8, 1 });
-	this->CollSouth.setSize(Vector2{ size.x - 8, 1 });
-	this->CollEast.setSize(Vector2{ 1, size.y - 8 });
-	this->CollWest.setSize(Vector2{ 1, size.y - 8 });
 	this->updateCollision();
 }
 
@@ -50,6 +46,7 @@ void FireBall::Update()
 
 void FireBall::draw()
 {	
+	updateCollision();
 	if (ismaxTime() || isDead()) return;
 	DrawTexture(texture, position.x, position.y, WHITE);
 	if (SETTING.getDebugMode()) {
@@ -62,11 +59,20 @@ void FireBall::draw()
 
 void FireBall::updateCollision()
 {
-	Entity::updateCollision();
+	//Entity::updateCollision();
+	CollNorth.setPos({position.x + 4, position.y});
+	CollSouth.setPos({ position.x + 4, position.y + size.y - 5 });
+	CollEast.setPos({ position.x + size.x - 5, position.y + 4 });
+	CollWest.setPos({ position.x, position.y + 4 });
+	this->CollNorth.setSize(Vector2{ size.x - 8, 5 });
+	this->CollSouth.setSize(Vector2{ size.x - 8, 5 });
+	this->CollEast.setSize(Vector2{ 5, size.y - 8 });
+	this->CollWest.setSize(Vector2{ 5, size.y - 8 });
 }
 
 void FireBall::UpdateTexture()
 {
+	updateCollision();
 	const std::string dir = direction == LEFT ? "_LEFT_" : "_RIGHT_";
 	std::string textureName = "FlowerMarioFireball" + dir + std::to_string(currFrame);
 	texture = RESOURCE_MANAGER.getTexture(textureName);
@@ -82,4 +88,20 @@ float FireBall::getCurrTime() const
 EntityType FireBall::getEntityType() const
 {
 	return FIREBALL;
+}
+
+void FireBall::loadEntity(const json& j)
+{
+	Entity::loadEntity(j);
+	timeSpan = j["timeSpan"];
+	timeSpanAcum = j["timeSpanAcum"];
+	currTime = j["currTime"];
+}
+
+void FireBall::saveEntity(json& j) const
+{
+	Entity::saveEntity(j);
+	j["timeSpan"] = timeSpan;
+	j["timeSpanAcum"] = timeSpanAcum;
+	j["currTime"] = currTime;
 }

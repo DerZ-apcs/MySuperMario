@@ -16,7 +16,8 @@ public:
 	//Get type of mush room
 	const MushroomType& getMushroomType() const;
 	ITEM_TYPE getItemType() const override;
-	
+	void loadEntity(const json& j) override;
+	void saveEntity(json& j) const override;
 };
 
 #endif // !MUSHROOM_H

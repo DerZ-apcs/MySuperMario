@@ -8,7 +8,10 @@ Bullet::Bullet(Vector2 pos, Texture2D tex):
 
 // Bullet Class Implementation
 Bullet::Bullet(Vector2 pos, Texture2D texture, Direction direction)
-    : Enemy(pos, { 32, 28 }, { direction == LEFT ? -BULLET_SPEED : BULLET_SPEED, 0 }, direction, FLYING, texture, 0.2f, 1, GRAY) {
+    : Enemy(pos, { 32, 28 }, { direction == LEFT ? -BULLET_SPEED : BULLET_SPEED, 0 }, direction, FLYING, texture, 0.2f, 1, GRAY),
+    bulletType(NORMAL_BULLET)
+{
+    scores = SCORE_STOMP_BULLET;
 }
 
 Bullet::~Bullet() {
@@ -71,6 +74,18 @@ void Bullet::stomped() {
     globalGameEngine->addEffect(score);
 }
 
+void Bullet::loadEntity(const json& j)
+{
+    Enemy::loadEntity(j);
+    bulletType = static_cast<BULLET_TYPE>(j["bulletType"].get<int>());
+}
+
+void Bullet::saveEntity(json& j) const
+{
+    Enemy::saveEntity(j);
+    j["bulletType"] = static_cast<int>(bulletType);
+}
+
 
 void Bullet::ShootFireBall() {
     // Không làm gì vì Bullet cơ bản không bắn fireball
@@ -80,8 +95,14 @@ void Bullet::ShootFireBall() {
 const float FireBullet::FIREBALL_INTERVAL = 0.75f; // Bắn mỗi 0.75s
 const float FireBullet::DETECTION_RANGE = 300.0f; // Phát hiện Mario trong 300 pixel
 
+FireBullet::FireBullet(Vector2 pos, Texture2D tex):
+    FireBullet(pos, tex, RIGHT)
+{
+}
+
 FireBullet::FireBullet(Vector2 pos, Texture2D texture, Direction direction)
     : Bullet(pos, texture, direction), fireBallTimer(0.0f) {
+    bulletType = FIREBALL_BULLET;
 }
 
 void FireBullet::Update() {

@@ -1,14 +1,17 @@
 #include "../include/Menu.h"
 #include "../include/Game.h"
+#include "../include/SaveManager.h"
 
 MainMenuState::MainMenuState(Game* game)
 {
 	this->game = game;
 	startButton = { Vector2{400, 300}, Vector2{160, 80}, "Start" };
 	continueButton = { {400, 360}, {160, 80}, "Continue" };
-	settingButton = { {400, 420}, {160, 80}, "Setting" };
-	modePlayerButton = { {400, 480}, {200, 80}, "Mode" }; // for mode
-	mapSelectionButton = { {400, 540}, {160, 80}, "Map" };
+	saveButton = { {400, 420}, {160, 80}, "Save Game" };
+	loadButton = { {400, 480}, {160, 80}, "Load Game" };
+	settingButton = { {400, 540}, {160, 80}, "Setting" };
+	modePlayerButton = { {400, 600}, {200, 80}, "Mode" }; // for mode
+	mapSelectionButton = { {400, 660}, {160, 80}, "Map" };
 	guiArrow = RESOURCE_MANAGER.getTexture("choosingArrow");
 }
 
@@ -16,6 +19,8 @@ void MainMenuState::draw()
 {
 	startButton.draw();
 	continueButton.draw();
+	saveButton.draw();
+	loadButton.draw();
 	settingButton.draw();
 	modePlayerButton.draw();
 	mapSelectionButton.draw();
@@ -53,7 +58,7 @@ void MainMenuState::handleInput()
 			globalGameEngine = nullptr;
 		}
 		globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
-
+		globalGameEngine->loadGameMap(*game->level);
 		while (globalGameEngine != nullptr) {
 			if (globalGameEngine->run()) {
 				auto& players = globalGameEngine->getMultiplayers();
@@ -76,6 +81,8 @@ void MainMenuState::handleInput()
 					game->selectMap(game->getSelectedMap() + 1);
 					// Create a new GameEngine with the updated map and players
 					globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
+					globalGameEngine->loadGameMap(*game->level);
+
 				}
 				else break;
 			}
@@ -96,6 +103,7 @@ void MainMenuState::handleInput()
 			game->multiplayers[0]->setVel({ 0, 0 });
 			game->multiplayers[0]->setState(FALLING);
 			globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
+			globalGameEngine->loadGameMap(*game->level);
 		}
 		while (globalGameEngine != nullptr) {
 			if (globalGameEngine->run()) {
@@ -112,6 +120,7 @@ void MainMenuState::handleInput()
 					}
 					game->selectMap(game->getSelectedMap() + 1);
 					globalGameEngine = new GameEngine(1600.0f, 800.0f, *game->level, &game->multiplayers);
+					globalGameEngine->loadGameMap(*game->level);
 				}
 				else break;
 			}
@@ -123,11 +132,58 @@ void MainMenuState::handleInput()
 			}
 		}
 	}
-	else if (settingButton.isPressed() || (currentPosition == 2 && IsKeyPressed(KEY_ENTER)))
+	else if (saveButton.isPressed() || (currentPosition == 2 && IsKeyPressed(KEY_ENTER))) {
+		if (globalGameEngine != nullptr) {
+			globalGameEngine->saveGame(1); // use slot 1
+			std::cout << "Game saved in slot 1\n";
+		}
+		else {
+			std::cout << "No game is running to save\n";
+		}
+	}
+	else if (loadButton.isPressed() || (currentPosition == 3 && IsKeyPressed(KEY_ENTER))) {
+		if (globalGameEngine != nullptr) {
+			delete globalGameEngine;
+			globalGameEngine = nullptr;
+		}
+		if (SaveManager::slotExists(1)) {
+			globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
+			globalGameEngine->loadGame(1);
+			std::cout << "Game loaded from slot 1\n";
+			while (globalGameEngine != nullptr) {
+				if (globalGameEngine->run()) {
+					delete globalGameEngine;
+					globalGameEngine = nullptr;
+					if (game->getSelectedMap() + 1 <= 3) {
+						for (auto& p : game->multiplayers) {
+							p->setPosition({ 32, 400 });
+							p->setVel({ 0, 0 });
+							p->setState(FALLING);
+						}
+						game->selectMap(game->getSelectedMap() + 1);
+						globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
+						globalGameEngine->loadGameMap(*game->level);
+					}
+					else break;
+				}
+				else {
+					if (globalGameEngine->isOver()) {
+						for (auto& p : game->multiplayers) {
+							p->reset();
+						}
+					}
+					break;
+				}
+			}
+		}
+		else std::cout << "No save found in slot 1\n";
+
+	}
+	else if (settingButton.isPressed() || (currentPosition == 4 && IsKeyPressed(KEY_ENTER)))
 		game->setState(std::make_unique<SettingState>(game));
-	else if (modePlayerButton.isPressed() || (currentPosition == 3 && IsKeyPressed(KEY_ENTER)))
+	else if (modePlayerButton.isPressed() || (currentPosition == 5 && IsKeyPressed(KEY_ENTER)))
 		game->setState(std::make_unique<ModePlayer>(game));
-	else if (mapSelectionButton.isPressed()|| (currentPosition == 4 && IsKeyPressed(KEY_ENTER)))
+	else if (mapSelectionButton.isPressed()|| (currentPosition == 6 && IsKeyPressed(KEY_ENTER)))
 		game->setState(std::make_unique<MapSelection>(game));
 }
 
@@ -135,6 +191,8 @@ void MainMenuState::update()
 {
 	startButton.update();
 	continueButton.update();
+	saveButton.update();
+	loadButton.update();
 	settingButton.update();
 	modePlayerButton.update();
 	mapSelectionButton.update();
@@ -142,11 +200,15 @@ void MainMenuState::update()
 	else startButton.setHovered(false);
 	if (currentPosition == 1) continueButton.setHovered(true);
 	else continueButton.setHovered(false);
-	if (currentPosition == 2) settingButton.setHovered(true);
+	if (currentPosition == 2) saveButton.setHovered(true);
+	else saveButton.setHovered(false);
+	if (currentPosition == 3) loadButton.setHovered(true);
+	else loadButton.setHovered(false);
+	if (currentPosition == 4) settingButton.setHovered(true);
 	else settingButton.setHovered(false);
-	if (currentPosition == 3) modePlayerButton.setHovered(true);
+	if (currentPosition == 5) modePlayerButton.setHovered(true);
 	else modePlayerButton.setHovered(false);
-	if (currentPosition == 4) mapSelectionButton.setHovered(true);
+	if (currentPosition == 6) mapSelectionButton.setHovered(true);
 	else mapSelectionButton.setHovered(false);
 }
 

@@ -11,8 +11,9 @@ JumpingPiranhaPlant::JumpingPiranhaPlant(Vector2 pos, Texture2D texture)
 {
     baseY = pos.y;
     size = { 32, 42 };
-
+    scores = 200.f;
     UpdateTexture(true);
+    piranhaType = JUMPING_PIRANHA;
 }
 
 void JumpingPiranhaPlant::Update() {

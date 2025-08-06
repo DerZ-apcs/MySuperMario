@@ -61,6 +61,7 @@ private:
 public:
     //GameEngine(float screenWidth, float screenHeight, Level& level, Character*& player);
     GameEngine(float screenWidth, float screenHeight, Level& level, std::vector<std::unique_ptr<Character>>* multiplayers);
+    void loadGameMap(Level& level);
     ~GameEngine();
     void addScore(int amount);
     void addEnemyFireBall(EnemyFireBall* fireball);
@@ -80,7 +81,11 @@ public:
     Vector2 getBound();
     std::vector<std::unique_ptr<Character>>& getMultiplayers(); 
     std::vector<Blocks*> getNearbyBlocks(Vector2 pos, int range);
-    bool isInCameraView(Rectangle entityRect) const;;
+    bool isInCameraView(Rectangle entityRect) const;
+    void saveGame(int slot);
+    void loadGame(int slot);
+    void saveGameEngineState(GameEngine* engine, json& j);
+    void loadGameEngineState(GameEngine* engine, const json& j);
 
     /*void saveGame(const std::string& path);
     bool loadGame(const std::string& path);*/

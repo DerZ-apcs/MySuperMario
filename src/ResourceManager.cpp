@@ -8,12 +8,11 @@ void ResourceManager::loadTextures() {
 	// small mario
 		// for choosing character
 	textures["SmallMario_Straight"] = LoadTexture("resources/images/sprites/mario/SmallMario_Straight_0.png");
-
 	textures["SmallMario_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SmallMario_0.png");
 	textures["SmallMario_RIGHT_1"] = LoadTexture("resources/images/sprites/mario/SmallMario_1.png");
 	textures["SmallMario_LEFT_0"] = flipTexture(textures["SmallMario_RIGHT_0"]);
 	textures["SmallMario_LEFT_1"] = flipTexture(textures["SmallMario_RIGHT_1"]);
-
+	
 	// super mario
 	textures["SuperMario_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SuperMario_0.png");
 	textures["SuperMario_RIGHT_1"] = LoadTexture("resources/images/sprites/mario/SuperMario_1.png");
@@ -586,6 +585,19 @@ void ResourceManager::loadTextures() {
 	textures["BuzzyBeetle_Shell_1"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_Shell_1.png");
 	textures["BuzzyBeetle_Shell_0"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_Shell_0.png");
 
+	// boss
+	//BoomBoom
+	textures["boomboom_walk_right_0"] = LoadTexture("resources/images/sprites/baddies/boomboom_walk_0.png");
+	textures["boomboom_walk_right_1"] = LoadTexture("resources/images/sprites/baddies/boomboom_walk_1.png");
+	textures["boomboom_walk_right_2"] = LoadTexture("resources/images/sprites/baddies/boomboom_walk_2.png");
+	textures["boomboom_walk_left_0"] = flipTexture(textures["boomboom_walk_right_0"]);
+	textures["boomboom_walk_left_1"] = flipTexture(textures["boomboom_walk_right_1"]);
+	textures["boomboom_walk_left_2"] = flipTexture(textures["boomboom_walk_right_2"]);
+	textures["boomboom_spin"] = LoadTexture("resources/images/sprites/baddies/boomboom_spin.png");
+	textures["boomboom_jump"] = LoadTexture("resources/images/sprites/baddies/boomboom_jump.png");
+	textures["boomboom_charge"] = LoadTexture("resources/images/sprites/baddies/boomboom_charge.png");
+	textures["boomboom_stunned"] = LoadTexture("resources/images/sprites/baddies/boomboom_stunned.png");
+	textures["boomboom_hidden"] = LoadTexture("resources/images/sprites/baddies/boomboom_hidden.png");
 	// gui scores
 	textures["10"] = LoadTexture("resources/images/gui/gui10.png");
 	textures["20"] = LoadTexture("resources/images/gui/gui20.png");

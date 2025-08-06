@@ -24,4 +24,16 @@ ITEM_TYPE Star::getItemType() const {
 	return STAR;
 }
 
+void Star::loadEntity(const json& j)
+{
+	PowerItem::loadEntity(j);
+	type = static_cast<StarType>(j["type"].get<int>());
+}
+
+void Star::saveEntity(json& j) const
+{
+	PowerItem::saveEntity(j);
+	j["type"] = static_cast<int>(type);
+}
+
 //-----------------

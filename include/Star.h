@@ -14,6 +14,8 @@ public:
     const StarType& getStarType() const;
     //void Update() override;
     ITEM_TYPE getItemType() const override;
+    void loadEntity(const json& j) override;
+    void saveEntity(json& j) const override;
 };
 
 #endif // STAR_H

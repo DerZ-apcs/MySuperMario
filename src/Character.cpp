@@ -46,11 +46,13 @@ Character::Character(Vector2 pos, Vector2 sz, CharacterState characterstate, Cha
 	transitionCurrentFrame(0),
 	transitionCurrentFramePos(0),
 	Character_state(characterstate),
-	PrevCharacter_state(characterstate),
 	characterType(characterType),
-	Character_sprite_State(NORMAL),
 	victory(false),
-	exitlevel(false)
+	exitlevel(false),
+	countImmortalTime(0.f),
+	countThrowTime(0.f),
+	invicibleStarTime(0.f),
+	sinkingTime(0.f)
 {
 	std::cout << "Character created with size: " << size.x << ", " << size.y << std::endl;
 
@@ -207,7 +209,6 @@ void Character::resetInGame()
 	invicibleStarTime = 0.f;
 	countThrowTime = 0.f;
 	countImmortalTime = 0.f;
-	specificVelocity = { 0, 0 };
 	isThrowing = isducking = false;
 	state = FALLING;
 	CollNorth.setSize({ size.x / 2, 5 });
@@ -260,7 +261,6 @@ void Character::reset()
 	invicibleStarTime = 0.f;
 	countThrowTime = 0.f;
 	countImmortalTime = 0.f;
-	specificVelocity = { 0, 0 };
 	isThrowing = isducking = false;
 	state = FALLING;
 	CollNorth.setSize({ size.x / 2, 5 });
@@ -296,11 +296,6 @@ const Phase& Character::getPhase() const
 const CharacterState& Character::getCharacterState() const
 {
 	return Character_state;
-}
-
-const CharacterState& Character::getPrevCharacterState() const
-{
-	return PrevCharacter_state;
 }
 
 bool Character::isInvicible() const
@@ -911,9 +906,9 @@ void Character::ThrowingFireBalls()
 	isThrowing = true;
 	if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("fireball.wav");
 	if (direction == RIGHT) 
-		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, Vector2{400, -300}, RIGHT, 2));
+		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2 - 5, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, Vector2{250, -250}, RIGHT, 2));
 	else if (direction == LEFT) 
-		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, Vector2{-400, -300}, LEFT, 2));
+		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2 - 5, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, Vector2{-250, -250}, LEFT, 2));
 }
 
 void Character::collisionWithItem(const Item* item)
@@ -1049,6 +1044,73 @@ std::list<FireBall*>* Character::getFireBalls()
 {
 	return &fireballs;
 }
+
+void Character::loadEntity(const json& j)
+{
+	Entity::loadEntity(j); // Load base class data
+
+	phase = static_cast<Phase>(j["phase"].get<int>());
+	characterType = static_cast<CharacterType>(j["characterType"].get<int>());
+	lostLife = j["lostLife"];
+	isducking = j["isducking"];
+	scores = j["scores"];
+	coins = j["coins"];
+	lives = j["lives"];
+	invicibleStarTime = j["invicibleStarTime"];
+	sinkingTime = j["sinkingTime"];
+
+	holding = j["holding"];
+	isThrowing = j["isThrowing"];
+
+	countThrowTime = j["countThrowTime"];
+	countImmortalTime = j["countImmortalTime"];
+	standingUp = j["standingUp"];
+
+	transitioningFrameTime = j["transitioningFrameTime"];
+	transitioningFrameAcum = j["transitioningFrameAcum"];
+	transitionSteps = j["transitionSteps"];
+	transitionCurrentFrame = j["transitionCurrentFrame"];
+	transitionCurrentFramePos = j["transitionCurrentFramePos"];
+	throwFrameCounter = j["throwFrameCounter"];
+	victoryFrameCounter = j["victoryFrameCounter"];
+	victory = j["victory"];
+	exitlevel = j["exitlevel"];
+	lostSuitTrigger = j["lostSuitTrigger"];
+}
+
+
+void Character::saveEntity(json& j) const
+{
+	Entity::saveEntity(j); // Save base class data
+
+	j["phase"] = static_cast<int>(phase);
+	j["characterType"] = static_cast<int>(characterType);
+	j["lostLife"] = lostLife;
+	j["isducking"] = isducking;
+	j["scores"] = scores;
+	j["coins"] = coins;
+	j["lives"] = lives;
+	j["invicibleStarTime"] = invicibleStarTime;
+	j["sinkingTime"] = sinkingTime;
+
+	j["holding"] = holding;
+	j["isThrowing"] = isThrowing;
+	j["countThrowTime"] = countThrowTime;
+	j["countImmortalTime"] = countImmortalTime;
+	j["standingUp"] = standingUp;
+
+	j["transitioningFrameTime"] = transitioningFrameTime;
+	j["transitioningFrameAcum"] = transitioningFrameAcum;
+	j["transitionSteps"] = transitionSteps;
+	j["transitionCurrentFrame"] = transitionCurrentFrame;
+	j["transitionCurrentFramePos"] = transitionCurrentFramePos;
+	j["throwFrameCounter"] = throwFrameCounter;
+	j["victoryFrameCounter"] = victoryFrameCounter;
+	j["victory"] = victory;
+	j["exitlevel"] = exitlevel;
+	j["lostSuitTrigger"] = lostSuitTrigger;
+}
+
 
 void Character::setVictory(bool victory)
 {

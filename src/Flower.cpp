@@ -46,3 +46,15 @@ void Flower::UpdateTexture()
 	if (powerUpState != ACTIVE) return;
 	texture = RESOURCE_MANAGER.getTexture("FireFlower_" + std::to_string(currFrame));
 }
+
+void Flower::loadEntity(const json& j)
+{
+	PowerItem::loadEntity(j);
+	type = static_cast<FlowerType>(j["type"].get<int>());
+}
+
+void Flower::saveEntity(json& j) const
+{
+	PowerItem::saveEntity(j);
+	j["type"] = static_cast<int>(type);
+}

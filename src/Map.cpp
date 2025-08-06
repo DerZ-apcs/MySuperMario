@@ -61,7 +61,19 @@ void Map::drawBackGround(Vector2 cameraSize, float scale)
 		cout << "Background not found" << endl;
 	}
 }
-
+Vector2 Map::LoadMapSize(const std::string& filepath) {
+	std::ifstream file(filepath);
+	if (!file) {
+		std::cerr << "Could not open json file" << filepath << std::endl;
+		return { 0, 0 };
+	}
+	nlohmann::json mapJson;
+	file >> mapJson;
+	int width = mapJson["width"];
+	int height = mapJson["height"];
+	int blockwidth = mapJson["tilewidth"];
+	return (Vector2{ (float)width * blockwidth, (float)height * blockwidth });
+}
 
 void Map::LoadFromJsonFile(const std::string& filepath)
 {
@@ -174,37 +186,30 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			if (type == "Mushroom") {
 				Blocks* block = dynamic_cast<ItemBlock*>(BlockFactory::getInstance().createBlock(ITEMBLOCK, {(float)x * blockwidth, (float)y * blockwidth}, {32, 32}));
 				dynamic_cast<ItemBlock*>(block)->setItem(MUSHROOM, 0);
-				//blockArray.push_back(block);
 				if (!block) {
 					throw std::runtime_error("Failed to create item block: ");
 				}
 				tileGrid[y][x] = block;
-				//blockArray.push_back(new ItemBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, MUSHROOM));
 			}
 			else if (type == "Flower") {
 				Blocks* block = dynamic_cast<ItemBlock*>(BlockFactory::getInstance().createBlock(ITEMBLOCK, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
 				dynamic_cast<ItemBlock*>(block)->setItem(FLOWER, 0);
-				//blockArray.push_back(block);
 				if (!block) {
 					throw std::runtime_error("Failed to create item block: ");
 				}
 				tileGrid[y][x] = block;
-				//blockArray.push_back(new ItemBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, FLOWER));
 			}
 			else if (type == "Star") {
 				Blocks* block = dynamic_cast<ItemBlock*>(BlockFactory::getInstance().createBlock(ITEMBLOCK, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
 				dynamic_cast<ItemBlock*>(block)->setItem(STAR, 0);
-				//blockArray.push_back(block);
 				if (!block) {
 					throw std::runtime_error("Failed to create item block: ");
 				}
 				tileGrid[y][x] = block;
-				//blockArray.push_back(new ItemBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, STAR));
 			}
 			else if (type == "Moon") {
 				Blocks* block = dynamic_cast<ItemBlock*>(BlockFactory::getInstance().createBlock(ITEMBLOCK, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
 				dynamic_cast<ItemBlock*>(block)->setItem(MOON, 0);
-				//blockArray.push_back(block);
 				if (!block) {
 					throw std::runtime_error("Failed to create item block: ");
 				}

@@ -8,6 +8,7 @@ Rex::Rex(Vector2 pos, Texture2D texture)
     velocity.x = -REX_SPEED; // REX_SPEED được định nghĩa trong Enemy.h
     updateCollision();
     collisionTimer = 0.f;
+    scores = SCORE_STOMP_REX;
 }
 
 ENEMY_TYPE Rex::getEnemyType() const
@@ -125,14 +126,14 @@ void Rex::stomped()
 void Rex::loadEntity(const json& j)
 {
     Enemy::loadEntity(j);
-    rexState = j["rexState"];
+    rexState = static_cast<RexState>(j["rexState"].get<int>());
     detectMarioRange = j["detectMarioRange"];
 }
 
 void Rex::saveEntity(json& j) const
 {
     Enemy::saveEntity(j);
-    j["rexState"] = rexState;
+    j["rexState"] = static_cast<int>(rexState);
     j["detectMarioRange"] = detectMarioRange;
 }
 

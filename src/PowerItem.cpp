@@ -106,3 +106,21 @@ ITEM_TYPE PowerItem::getItemType() const
 {
 	return POWERITEM;
 }
+
+void PowerItem::loadEntity(const json& j)
+{
+	Item::loadEntity(j);
+	powerUpState = static_cast<PowerUpState>(j["powerUpState"].get<int>());
+	INTERVAL_JUMPING = j["INTERVAL_JUMPING"]; // interval between jumpings
+	currtimeJumping = j["currtimeJumping"];
+	emergenceDis = j["emergenceDis"];
+}
+
+void PowerItem::saveEntity(json& j) const
+{
+	Item::saveEntity(j);
+	j["powerUpState"] = static_cast<int>(powerUpState);
+	j["INTERVAL_JUMPING"] = INTERVAL_JUMPING;
+	j["currtimeJumping"] = currtimeJumping;
+	j["emergenceDis"] = emergenceDis;
+}

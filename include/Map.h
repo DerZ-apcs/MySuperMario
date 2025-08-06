@@ -62,6 +62,7 @@ public:
 	void drawMap();
 	void drawBackGround();
 	void drawBackGround(Vector2 cameraPos, float scale);
+	Vector2 LoadMapSize(const std::string& filepath);
 	void loadBackgroundTexture(const std::string& backgroundName);
 	Vector2 getMapSize() const;
 	void setMapSize(Vector2 size);

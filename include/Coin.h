@@ -9,7 +9,7 @@ class Coin : public Item {
 private:
 	static constexpr int POINT = 100;
 	CoinType coinType;
-
+	int subType;
 public:
 	Coin(CoinType type, Vector2 pos);
 	~Coin() = default;
@@ -22,6 +22,8 @@ public:
 	void Update() override;
 	void draw() override;
 	void UpdateTexture() override;
+	void loadEntity(const json& j) override;
+	void saveEntity(json& j) const override;
 
 };
 

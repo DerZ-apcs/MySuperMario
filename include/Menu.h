@@ -36,10 +36,12 @@ public:
 private:
 	TextButton startButton;
 	TextButton continueButton;
+	TextButton saveButton;
+	TextButton loadButton;
 	TextButton settingButton;
 	TextButton mapSelectionButton;
 	TextButton modePlayerButton;
-	std::vector<int> choosingPosition = { 0, 1, 2, 3, 4 };
+	std::vector<int> choosingPosition = { 0, 1, 2, 3, 4, 5, 6 };
 	Texture2D guiArrow;
 	int currentPosition = 0;
 };

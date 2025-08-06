@@ -8,8 +8,11 @@ const float PiranhaPlant::DURATION_BETWEEN_POPUP = 1.f; // rest between two pops
 
 PiranhaPlant::PiranhaPlant(Vector2 pos, Texture2D texture)
     : Enemy(pos, { 32, 66 }, { 0, 0 }, RIGHT, ON_GROUND, texture, 0.2f, 1, RED),
-    popUpTimer(0.0f), isPoppingUp(true), popUpHeight(66.0f), baseY(pos.y), delayTimer(0.2f), invincibilityTimer(0.0f) { 
+    popUpTimer(0.0f), isPoppingUp(true), popUpHeight(66.0f), baseY(pos.y), delayTimer(0.2f), invincibilityTimer(0.0f),
+    piranhaType(NORMAL_PIRANHA)
+{ 
     gravityAvailable = true;
+    scores = 200.f;
 }
 
 PIRANHA_TYPE PiranhaPlant::getPiranhaType() const
@@ -150,6 +153,7 @@ float delayTimer;
 void PiranhaPlant::loadEntity(const json& j)
 {
     Enemy::loadEntity(j);
+    piranhaType = static_cast<PIRANHA_TYPE>(j["piranhaType"].get<int>());
     popUpTimer = j["popUpTimer"];
     isPoppingUp = j["isPoppingUp"];
     popUpHeight = j["popUpHeight"];
@@ -161,6 +165,7 @@ void PiranhaPlant::loadEntity(const json& j)
 void PiranhaPlant::saveEntity(json& j) const
 {
     Enemy::saveEntity(j);
+    j["piranhaType"] = static_cast<int>(piranhaType);
     j["popUpTimer"] = popUpTimer;
     j["isPoppingUp"] = isPoppingUp;
     j["popUpHeight"] = popUpHeight;

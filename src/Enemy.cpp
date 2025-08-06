@@ -84,9 +84,6 @@ void Enemy::CollisionWithFireball(FireBall* fireball) {
     if (!isDead() && state != STATE_IS_DYING && !fireball->isDead()) {
         fireball->setEntityDead();
         state = STATE_IS_DYING;
-        //if (getEnemyType() == BOBOMB) {
-
-        //}
         deathTimer = ENEMY_DEATH_TIMER_DEFAULT;
         velocity.y = -250; // Nhảy lên nhẹ
         velocity.x = (rand() % 100) - 50; // Văng ngang ngẫu nhiên

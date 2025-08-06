@@ -30,3 +30,11 @@ void HiddenBlock::draw()
 void HiddenBlock::reveal()
 {
 }
+
+void HiddenBlock::loadEntity(const json& j)
+{
+}
+
+void HiddenBlock::saveEntity(json& j) const
+{
+}

@@ -5,8 +5,9 @@
 Koopa::Koopa(Vector2 pos, Texture2D texture)
     : Enemy(pos, { 32, 54 }, { 0, 0 }, LEFT, FALLING, texture, 0.2f, 1, GREEN),
     reviveTimer(0.0f), isReviving(false), reviveShakeTimer(0.0f),
-    koopaState(NORMAL_KOOPA)
+    koopaState(NORMAL_KOOPA), koopaType(GREEN_KOOPA)
 {
+    scores = SCORE_STOMP_KOOPA;
 }
 
 void Koopa::setKoopaType(KOOPA_TYPE type)
@@ -214,8 +215,8 @@ void Koopa::setKoopaState(KoopaState state)
 void Koopa::loadEntity(const json& j)
 {
     Enemy::loadEntity(j);
-    koopaState = j["koopaState"];
-    koopaType = j["koopaType"];
+    koopaState = static_cast<KoopaState>(j["koopaState"].get<int>());
+    koopaType = static_cast<KOOPA_TYPE>(j["koopaType"].get<int>());
     reviveTimer = j["reviveTimer"];
     isReviving = j["isReviving"];
     reviveShakeTimer = j["reviveShakeTimer"];
@@ -224,8 +225,8 @@ void Koopa::loadEntity(const json& j)
 void Koopa::saveEntity(json& j) const
 {
     Enemy::saveEntity(j);
-    j["koopaState"] = koopaState;
-    j["koopaType"] = koopaType;
+    j["koopaState"] = static_cast<int>(koopaState);
+    j["koopaType"] = static_cast<int>(koopaType);
     j["reviveTimer"] = reviveTimer;
     j["isReviving"] = isReviving;
     j["reviveShakeTimer"] = reviveShakeTimer;
@@ -240,9 +241,9 @@ GreenKoopa::GreenKoopa(Vector2 pos, Texture2D texture)
 	updateCollision();
 	// Set the initial texture for Green Koopa
 	texture = RESOURCE_MANAGER.getTexture("GreenKoopa_LEFT_0");
-	if (texture.id == 0) {
-		throw std::runtime_error("Failed to load Green Koopa texture");
-	}
+    if (texture.id == 0) {
+        throw std::runtime_error("Failed to load Green Koopa texture");
+    }
 }
 
 KOOPA_TYPE GreenKoopa::getKoopaType() const

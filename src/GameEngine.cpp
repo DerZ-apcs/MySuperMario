@@ -23,6 +23,8 @@
 #include "../include/PiranhaPlant.h"
 #include "../include/DryBones.h"
 #include "../include/Spiny.h"
+#include "../include/BoomBoom.h"
+#include "../include/SaveManager.h"
 #include <iostream>
 
 GameEngine* globalGameEngine = nullptr;
@@ -30,20 +32,7 @@ GameEngine* globalGameEngine = nullptr;
 GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std::vector<std::unique_ptr<Character>>* multiplayers):
     camera(screenWidth, screenHeight, 1.25f), level(&level), multiplayers(multiplayers)
 {
-	globalGameEngine = this;
-    map.LoadFromJsonFile(level.getMapPath());
-    map.loadBackgroundTexture(level.getBackGroundName());
-    Vector2 Msize = map.getMapSize();
-    camera.loadRenderTexture(Msize);
-
-    //blocks = map.getBlocks();
-	tileGrid = map.getTileGrid();
-    enemies = map.getEnemies();
-	items = map.getItems();  
-    decor = map.getDecor();
-	covers = map.getCovers();
-	secretAreas = map.getSecretAreas();
-
+    globalGameEngine = this;
     isPaused = false;
     this->time = 300;
     resetTimer();
@@ -56,19 +45,32 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std:
 
  //   Koopa* koopa = new YellowKoopa({ 100, 500 }, RESOURCE_MANAGER.getTexture("YellowKoopa_LEFT_0"));
  //   enemies.push_back(koopa);
-	//enemies.push_back(new GreenKoopa({ 150, 500 }, RESOURCE_MANAGER.getTexture("GreenKoopa_LEFT_0")));
+	//enemies.push_back(new GreenKoopa({ 200, 500 }, RESOURCE_MANAGER.getTexture("GreenKoopa_LEFT_0")));
 	//enemies.push_back(new RedKoopa({ 300, 500 }, RESOURCE_MANAGER.getTexture("RedKoopa_LEFT_0")));
     //enemies.push_back(new FlyingGoomba({ 350, 500 }, RESOURCE_MANAGER.getTexture("FlyingGoomba_LEFT_0")));
     //enemies.push_back(new Goomba({ 200, 500 }, RESOURCE_MANAGER.getTexture("Goomba_LEFT_0")));
 
     //enemies.push_back(new BobOmb({ 200, 600 }, RESOURCE_MANAGER.getTexture("BobOmb_LEFT_0")));
     //enemies.push_back(new BuzzyBeetle({ 200, 600 }, RESOURCE_MANAGER.getTexture("BuzzyBeetle_LEFT_0")));
-    enemies.push_back(new Spiny({ 300, 500 }, RESOURCE_MANAGER.getTexture("Spiny_DEAD")));
+    //enemies.push_back(new Spiny({ 300, 500 }, RESOURCE_MANAGER.getTexture("Spiny_DEAD")));
 	//enemies.push_back(new JumpingPiranhaPlant({ 400, 500 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_JUMP_UP_0")));
-	enemies.push_back(new DryBones({ 500, 500 }, RESOURCE_MANAGER.getTexture("DryBones_LEFT_0")));
+	//enemies.push_back(new DryBones({ 500, 500 }, RESOURCE_MANAGER.getTexture("DryBones_LEFT_0")));
+    //enemies.push_back(new BoomBoom({500, 400}));
 }
 
+void GameEngine::loadGameMap(Level& level) {
+    map.LoadFromJsonFile(level.getMapPath());
+    map.loadBackgroundTexture(level.getBackGroundName());
+    Vector2 Msize = map.getMapSize();
+    camera.loadRenderTexture(Msize);
 
+    tileGrid = map.getTileGrid();
+    enemies = map.getEnemies();
+    items = map.getItems();
+    decor = map.getDecor();
+    covers = map.getCovers();
+    secretAreas = map.getSecretAreas();
+}
 GameEngine::~GameEngine() {
     for (size_t i = 0; i < enemyFireball.size(); i++)
         delete enemyFireball[i];
@@ -141,6 +143,26 @@ void GameEngine::update()
     if (IsKeyPressed(KEY_O)) {
 		SETTING.setDebugMode(!SETTING.getDebugMode());
     }
+    if (IsKeyPressed(KEY_F5)) {
+        saveGame(1);
+        const char* text = "Game has been saved";
+
+        Font* font = RESOURCE_MANAGER.getFont("SMW");
+        if (font) {
+            Vector2 position = { 400, 300 }; // Example position (adjust as needed)
+            float fontSize = 30.0f;
+            float spacing = 1.0f;
+
+            // Get size of the text to center it
+            Vector2 textSize = MeasureTextEx(*font, text, fontSize, spacing);
+            Vector2 origin = { textSize.x / 2, textSize.y / 2 };
+
+            DrawTextPro(*font, text, position, origin, 0.0f, fontSize, spacing, WHITE);
+        }
+
+    }
+    if (IsKeyPressed(KEY_F9))
+        loadGame(1);
 
 	Rectangle cameraView = camera.getViewRect();
     float margin = 120.0f; // Margin for camera view
@@ -317,7 +339,7 @@ void GameEngine::handleCollision() {
 		for (auto& fireball : *p->getFireBalls()) {
 			auto nearby = getNearbyBlocks(fireball->getPosition(), 2);
 			for (Blocks* b : nearby) {
-				if (b == nullptr) continue;
+				if (b == nullptr || b->getBlockType() == DECOR) continue;
 				CollI.HandleCollision(fireball, b);
 			}
 		}
@@ -339,6 +361,7 @@ void GameEngine::handleCollision() {
 	for (size_t i = 0; i < enemyFireball.size(); i++) {
 		auto nearby = getNearbyBlocks(enemyFireball[i]->getPosition(), 2);
 		for (Blocks* b : nearby) {
+            if (!b || b->getBlockType() == DECOR) continue;
 			CollI.HandleCollision(enemyFireball[i], b);
 		}
 	}
@@ -685,30 +708,96 @@ bool GameEngine::isInCameraView(Rectangle entityRect) const {
     return CheckCollisionRecs(view, entityRect);
 }
 
-//void GameEngine::saveGame(const std::string& path)
-//{
-//    json j;
-//
-//    saveMultiCharacters(*multiplayers, j);
-//
-//    // Add enemies, blocks, level index, etc.
-//    //j["mapIndex"] = currentMapIndex;
-//
-//    std::ofstream out(path);
-//    out << j.dump(4);
-//}
+void GameEngine::saveGame(int slot) {
+    json j;
+    //map.LoadMapSize(level->getMapPath());
+    map.LoadFromJsonFile(level->getMapPath());
+    map.loadBackgroundTexture(level->getBackGroundName());
+    Vector2 Msize = map.getMapSize();
+    camera.loadRenderTexture(Msize); 
+    items = map.getItems();
+    tileGrid = map.getTileGrid();
+    //enemies = map.getEnemies();
 
-//bool GameEngine::loadGame(const std::string& path)
-//{
-//    std::ifstream in(path);
-//    if (!in.is_open()) return false;
-//
-//    json j;
-//    in >> j;
-//
-//    loadMultiCharacters(*multiplayers, j);
-//
-//    // Load enemies, blocks, level index
-//    //currentMapIndex = j.value("mapIndex", 0);
-//    return true;
-//}
+    saveMultiCharacters(*multiplayers, j);        // Characters
+    //saveEnemies(enemies, j["enemies"]);          // Enemies
+    saveItems(items, j["items"]);                // Items
+    saveTileGrids(tileGrid, j["tileGrid"]);      // Blocks
+    saveGameEngineState(this, j);
+
+    std::string path = SaveManager::getSlotPath(slot);
+    SaveManager::ensureSaveDirectoryExists();
+    std::ofstream file(path);
+    if (file.is_open()) {
+        file << j.dump(4); // Pretty print
+        file.close();
+    }
+}
+
+
+void GameEngine::loadGame(int slot)
+{
+    std::string path = SaveManager::getSlotPath(slot);
+    std::ifstream file(path);
+    if (!file.is_open()) return;
+
+    json j;
+    file >> j;
+
+    loadMultiCharacters(*multiplayers, j);
+    //loadEnemies(enemies, j.at("enemies"));
+    loadItems(items, j.at("items"));
+    loadTileGrids(tileGrid, j.at("tileGrid"));
+    loadGameEngineState(this, j);
+    std::cout << "Tiles loaded: " << tileGrid.size() << "\n";
+    //std::cout << "Enemies loaded: " << enemies.size() << "\n";
+    std::cout << "Items loaded: " << items.size() << "\n";
+
+}
+
+void GameEngine::saveGameEngineState(GameEngine* engine, json& j) {
+    j["gameState"] = {
+        {"isVictory", engine->isvictory},
+        {"died", engine->died},
+        {"gameOver", engine->gameover},
+        {"isPaused", engine->isPaused},
+        {"cleared", engine->cleared},
+        {"time", engine->time},
+        {"sharedLives", engine->sharedLives},
+    };
+
+    json secretArray = json::array();
+    for (const auto& rect : engine->secretAreas) {
+        secretArray.push_back({
+            {"x", rect.x},
+            {"y", rect.y},
+            {"width", rect.width},
+            {"height", rect.height}
+            });
+    }
+    j["secretAreas"] = secretArray;
+}
+
+void GameEngine::loadGameEngineState(GameEngine* engine, const json& j) {
+    if (j.contains("gameState")) {
+        const auto& state = j["gameState"];
+        engine->isvictory = state["isVictory"];
+        engine->died = state["died"];
+        engine->gameover = state["gameOver"];
+        engine->isPaused = state["isPaused"];
+        engine->cleared = state["cleared"];
+        engine->time = state["time"];
+        engine->sharedLives = state["sharedLives"];
+    }
+
+    std::vector<Rectangle> secretAreas;
+    for (const auto& rect : j["secretAreas"]) {
+        secretAreas.push_back({
+            rect["x"],
+            rect["y"],
+            rect["width"],
+            rect["height"]
+            });
+    }
+    engine->secretAreas = secretAreas;
+}
