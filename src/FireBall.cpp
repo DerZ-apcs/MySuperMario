@@ -1,7 +1,7 @@
 #include "../include/FireBall.h"
 #include "../include/ResourceManager.h"
 #include "../include/Mario.h"
-const float FireBall::FB_SpeedX = 500.0f;
+const float FireBall::FB_SpeedX = 300.0f;
 const float FireBall::maxTime = 2.5f;
 
 FireBall::FireBall(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, float timeSpan) :
@@ -12,10 +12,10 @@ FireBall::FireBall(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, float ti
 		RESOURCE_MANAGER.getTexture("FlowerMarioFireball_LEFT_0");
 	this->frameAcum = 0;
 	this->currFrame = 0;
-	this->CollNorth.setSize(Vector2{ size.x - 8, 1 });
-	this->CollSouth.setSize(Vector2{ size.x - 8, 1 });
-	this->CollEast.setSize(Vector2{ 1, size.y - 8 });
-	this->CollWest.setSize(Vector2{ 1, size.y - 8 });
+	this->CollNorth.setSize(Vector2{ size.x - 8, 4 });
+	this->CollSouth.setSize(Vector2{ size.x - 8, 4 });
+	this->CollEast.setSize(Vector2{ 4, size.y - 8 });
+	this->CollWest.setSize(Vector2{ 4, size.y - 8 });
 	this->updateCollision();
 }
 
@@ -58,11 +58,20 @@ void FireBall::draw()
 		CollEast.draw();
 		CollWest.draw();
 	}
+	updateCollision();
 }
 
 void FireBall::updateCollision()
 {
 	Entity::updateCollision();
+	CollNorth.setPos({position.x + 4, position.y});
+	CollSouth.setPos({position.x + 4, position.y + size.y - 4});
+	CollWest.setPos({position.x, position.y + 4});
+	CollEast.setPos({position.x + size.x - 4, position.y + 4});
+	this->CollNorth.setSize(Vector2{ size.x - 8, 4 });
+	this->CollSouth.setSize(Vector2{ size.x - 8, 4 });
+	this->CollEast.setSize(Vector2{ 4, size.y - 8 });
+	this->CollWest.setSize(Vector2{ 4, size.y - 8 });
 }
 
 void FireBall::UpdateTexture()
@@ -70,6 +79,7 @@ void FireBall::UpdateTexture()
 	const std::string dir = direction == LEFT ? "_LEFT_" : "_RIGHT_";
 	std::string textureName = "FlowerMarioFireball" + dir + std::to_string(currFrame);
 	texture = RESOURCE_MANAGER.getTexture(textureName);
+	updateCollision();
 }
 
 bool FireBall::ismaxTime() const {

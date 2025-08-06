@@ -575,19 +575,19 @@ bool FireBallItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	{
 	case COLLISION_TYPE_NORTH:
 		fireball->setPosition(Vector2{ fireball->getX(), block->getY() + block->getHeight() });
-		fireball->setVelY(0);
+		fireball->setVelY(fireball->getVelY() * -0.7f);
 		break;
 	case COLLISION_TYPE_SOUTH:
 		fireball->setPosition(Vector2{ fireball->getX(), block->getY() - fireball->getHeight() });
-		fireball->setVelY(fireball->getVelY() * -0.8f);
+		fireball->setVelY(fireball->getVelY() * -0.7f);
 		break;
 	case COLLISION_TYPE_EAST:
 		fireball->setPosition(Vector2{ block->getX() - fireball->getWidth(), fireball->getY() });
-		fireball->setVelX(fireball->getVelX() * -0.8f);
+		fireball->setVelX(fireball->getVelX() * -0.7f);
 		break;
 	case COLLISION_TYPE_WEST:
 		fireball->setPosition(Vector2{ block->getX() + block->getWidth(), fireball->getY() });
-		fireball->setVelX(fireball->getVelX() * -0.8f);
+		fireball->setVelX(fireball->getVelX() * -0.7f);
 		break;
 	default:
 		break;
@@ -906,7 +906,6 @@ std::unique_ptr<CollisionInfo> CollisionInfoSelector::getInfor(EntityType typeA,
 			return std::make_unique<FireBallItemBlockInfo>();
 		if (block && block->getBlockType() == BRICK)
 			return std::make_unique<FireBallBrickInfo>();
-
 		return std::make_unique<FireBallBlockInfo>();
 	}
 	if (typeA == ENEMY_FIREBALL && typeB == BLOCK) {

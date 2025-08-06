@@ -83,7 +83,7 @@ public:
     std::vector<Blocks*> getNearbyBlocks(Vector2 pos, int range);
     bool isInCameraView(Rectangle entityRect) const;;
 
-    void saveGame(int slot);
+    void saveGame(int slot) const;
     void loadGame(int slot);
 };
 extern GameEngine* globalGameEngine;

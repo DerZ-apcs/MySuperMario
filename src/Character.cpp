@@ -902,12 +902,11 @@ void Character::ThrowingFireBalls()
 {
 	isThrowing = true;
 	if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("fireball.wav");
-	if (direction == RIGHT) 
-		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, Vector2{400, -300}, RIGHT, 2));
-	else if (direction == LEFT) 
-		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, Vector2{-400, -300}, LEFT, 2));
+	if (direction == RIGHT)
+		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2 - 5, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, Vector2{ 250 , -250 }, RIGHT, 2));
+	else if (direction == LEFT)
+		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2 - 5, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, Vector2{ -250, -250}, LEFT, 2));
 }
-
 void Character::collisionWithItem(const Item* item)
 {
 	Effect* score = nullptr;

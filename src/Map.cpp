@@ -174,37 +174,30 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			if (type == "Mushroom") {
 				Blocks* block = dynamic_cast<ItemBlock*>(BlockFactory::getInstance().createBlock(ITEMBLOCK, {(float)x * blockwidth, (float)y * blockwidth}, {32, 32}));
 				dynamic_cast<ItemBlock*>(block)->setItem(MUSHROOM, 0);
-				//blockArray.push_back(block);
 				if (!block) {
 					throw std::runtime_error("Failed to create item block: ");
 				}
 				tileGrid[y][x] = block;
-				//blockArray.push_back(new ItemBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, MUSHROOM));
 			}
 			else if (type == "Flower") {
 				Blocks* block = dynamic_cast<ItemBlock*>(BlockFactory::getInstance().createBlock(ITEMBLOCK, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
 				dynamic_cast<ItemBlock*>(block)->setItem(FLOWER, 0);
-				//blockArray.push_back(block);
 				if (!block) {
 					throw std::runtime_error("Failed to create item block: ");
 				}
 				tileGrid[y][x] = block;
-				//blockArray.push_back(new ItemBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, FLOWER));
 			}
 			else if (type == "Star") {
 				Blocks* block = dynamic_cast<ItemBlock*>(BlockFactory::getInstance().createBlock(ITEMBLOCK, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
 				dynamic_cast<ItemBlock*>(block)->setItem(STAR, 0);
-				//blockArray.push_back(block);
 				if (!block) {
 					throw std::runtime_error("Failed to create item block: ");
 				}
 				tileGrid[y][x] = block;
-				//blockArray.push_back(new ItemBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, STAR));
 			}
 			else if (type == "Moon") {
 				Blocks* block = dynamic_cast<ItemBlock*>(BlockFactory::getInstance().createBlock(ITEMBLOCK, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
 				dynamic_cast<ItemBlock*>(block)->setItem(MOON, 0);
-				//blockArray.push_back(block);
 				if (!block) {
 					throw std::runtime_error("Failed to create item block: ");
 				}
@@ -243,7 +236,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 				enemies.push_back(new GreenKoopa(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Koopa_RIGHT_0")));
 			}
 			else if (type == "ParaKoopa") {
-				//enemies.push_back(new ParaKoopa(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("ParaKoopa_RIGHT_0")));
+				enemies.push_back(new ParaKoopaRed(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("ParaKoopaRed_RIGHT_0")));
 			}
 			else if (type == "Bullet") {
 				enemies.push_back(new Bullet(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Bullet"), LEFT));
@@ -258,7 +251,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 				enemies.push_back(new Rex(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Rex_RIGHT_0")));
 			}
 			else if (type == "BuzzyBeetle") {
-				//enemies.push_back(new BuzzyBeetle(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("BuzzyBeetle_RIGHT_0")));
+				enemies.push_back(new BuzzyBeetle(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("BuzzyBeetle_RIGHT_0")));
 			}
 			else if (type == "Spiny") {
 				enemies.push_back(new Spiny(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Spiny_RIGHT_0")));
@@ -309,9 +302,6 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 					throw std::runtime_error("Failed to create cover block: ");
 				}
 				tileGrid[y][x] = coverBlock;
-				//blockArray.push_back(coverBlock);
-				//Blocks* coverBlock = new SolidBlock({ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }, "TILE_" + std::to_string(texId));
-				//covers.push_back(coverBlock);
 			}
 		}
 	}

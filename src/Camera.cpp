@@ -116,9 +116,9 @@ void GameCamera::render() const {
 void GameCamera::beginDrawing() {
     BeginTextureMode(renderTexture);
     Rectangle view = getViewRect();
-    DrawRectangleLines(view.x, view.y, view.width, view.height, RED);  // ✅ draw it here
-    DrawRectangle(view.x, view.y, view.width, view.height, ColorAlpha(RED, 0.2f));
-    ClearBackground(RAYWHITE);
+    //DrawRectangleLines(view.x, view.y, view.width, view.height, RED);  // ✅ draw it here
+    //DrawRectangle(view.x, view.y, view.width, view.height, ColorAlpha(RED, 0.2f));
+    //ClearBackground(RAYWHITE);
 }
 
 void GameCamera::endDrawing() {
@@ -147,10 +147,10 @@ Rectangle GameCamera::getViewRect() const
 	float margin; // Margin for camera view
 
     if (globalGameEngine->getMultiplayers().size() == 1) {
-		margin = 300; // Margin for single player
+		margin = 400; // Margin for single player
 	}
 	else 
-		margin = 400; // Margin for multiplayer
+		margin = 500; // Margin for multiplayer
 
     return Rectangle{
         cameraX - margin, // top-left x in world space

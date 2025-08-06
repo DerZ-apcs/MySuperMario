@@ -338,7 +338,7 @@ void GameEngine::handleCollision() {
 		for (auto& fireball : *p->getFireBalls()) {
 			auto nearby = getNearbyBlocks(fireball->getPosition(), 2);
 			for (Blocks* b : nearby) {
-				if (b == nullptr) continue;
+				if (b == nullptr || b->getBlockType() == DECOR) continue;
 				CollI.HandleCollision(fireball, b);
 			}
 		}
@@ -347,8 +347,9 @@ void GameEngine::handleCollision() {
     // enemies
     for (auto& enemy : enemies) {
         auto nearby = getNearbyBlocks(enemy->getPosition(), 2);
-        for (Blocks* b : nearby)
+        for (Blocks* b : nearby) {
             CollI.HandleCollision(enemy, b);
+        }
     }
     // items    
     for (auto& item : items) {
@@ -446,7 +447,7 @@ void GameEngine::draw()
             }
         }
     }
-    // cover
+    // draw
     if (drawCover == true) {
 		for (auto* cover : covers) {
 			if (!cover || !isInCameraView(cover->getRect()))
@@ -646,7 +647,6 @@ void GameEngine::resetGame()
     }
 
     enemyFireball.clear();
-    //blocks.clear();
     tileGrid.clear();
     enemies.clear();
     items.clear();
@@ -662,7 +662,6 @@ void GameEngine::resetGame()
     RESOURCE_MANAGER.playMusic(level->getMusic());
     map.LoadFromJsonFile(level->getMapPath());
     map.loadBackgroundTexture(level->getBackGroundName());
-    //blocks = map.getBlocks();
 	tileGrid = map.getTileGrid();
     enemies = map.getEnemies();
     items = map.getItems();
@@ -706,7 +705,7 @@ bool GameEngine::isInCameraView(Rectangle entityRect) const {
     return CheckCollisionRecs(view, entityRect);
 }
 
-void GameEngine::saveGame(int slot)
+void GameEngine::saveGame(int slot) const
 {
     json j;
     saveMultiCharacters(*multiplayers, j);
