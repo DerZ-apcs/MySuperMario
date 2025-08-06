@@ -3,9 +3,7 @@
 
 // Goomba Class Implementation
 Goomba::Goomba(Vector2 pos, Texture2D texture)
-    : Enemy(pos, { (float)texture.width, (float)texture.height }, { 0, 0 }, LEFT, ON_GROUND, texture, 0.2f, 1, BROWN),
-    pauseTimer(0.0f), isPaused(false), detectMarioRange(200.0f), beattacked(false),
-    isChasing(false), isChaseOnCooldown(false), chaseTimer(0.0f) { 
+    : Enemy(pos, { (float)texture.width, (float)texture.height }, { 0, 0 }, LEFT, ON_GROUND, texture, 0.2f, 1, BROWN), detectMarioRange(200.0f), beattacked(false) { 
     velocity.x = -GOOMBA_SPEED;
     collisionTimer = 0.f;
 }
@@ -29,90 +27,24 @@ void Goomba::Update() {
     }
     const float deltaTime = GetFrameTime();
 
-    const float MAX_CHASE_TIME = 5.0f;
-    const float CHASE_COOLDOWN = 3.0f;
-    const float HORIZONTAL_DEAD_ZONE = 2.0f; 
-
     if (collisionTimer > 0) {
         collisionTimer -= deltaTime;
     }
 
-    // 1. Xử lý trạng thái hồi chiêu (cooldown)
-    if (isChaseOnCooldown) {
-        chaseTimer += deltaTime;
-        if (chaseTimer >= CHASE_COOLDOWN) {
-            isChaseOnCooldown = false;
-            chaseTimer = 0.0f;
-        }
-    }
-
-    // 2. Logic phát hiện và quyết định truy đuổi
+    // 1. Logic phát hiện Mario
     bool marioDetected = false;
-    if (!isChasing && !isChaseOnCooldown && collisionTimer <= 0) {
+    if (collisionTimer <= 0) { 
         for (auto& p : globalGameEngine->getMultiplayers()) {
-            if (p != nullptr && p->getPhase() != DEAD_PHASE && p->getPhase() != CLEARLEVEL_PHASE) {
-                if (Vector2Distance(position, p->getPosition()) <= detectMarioRange) {
-                    isChasing = true;
-                    chaseTimer = 0.0f;
-                    marioDetected = true;
-                    break;
-                }
+            if (p != nullptr && p->getPhase() != DEAD_PHASE && p->getPhase() != CLEARLEVEL_PHASE &&
+                Vector2Distance(position, p->getPosition()) <= detectMarioRange) {
+                marioDetected = true;
+                break; 
             }
         }
     }
 
-    // 3. Cập nhật trạng thái và vận tốc
-    if (isChasing) {
-        chaseTimer += deltaTime;
-        bool marioStillInRange = false;
-
-        for (auto& p : globalGameEngine->getMultiplayers()) {
-            if (p != nullptr && p->getPhase() != DEAD_PHASE && Vector2Distance(position, p->getPosition()) <= detectMarioRange) {
-                marioStillInRange = true;
-
-                // --- SỬA ĐỔI: Logic kiểm tra hướng với "vùng chết" ---
-                float horizontalDistance = p->getX() - position.x;
-
-                if (horizontalDistance < -HORIZONTAL_DEAD_ZONE) { // Mario ở rõ ràng bên trái
-                    direction = LEFT;
-                    velocity.x = -GOOMBA_SPEED * 1.5f;
-                }
-                else if (horizontalDistance > HORIZONTAL_DEAD_ZONE) { // Mario ở rõ ràng bên phải
-                    direction = RIGHT;
-                    velocity.x = GOOMBA_SPEED * 1.5f;
-                }
-                else {
-                    // Mario đang ở trong "vùng chết" (ngay trên đầu), dừng di chuyển ngang
-                    velocity.x = 0;
-                }
-                break;
-            }
-        }
-
-        if (!marioStillInRange || chaseTimer >= MAX_CHASE_TIME) {
-            isChasing = false;
-            isChaseOnCooldown = true;
-            chaseTimer = 0.0f;
-        }
-    }
-
-    if (!isChasing) {
-        if (isPaused) {
-            pauseTimer -= deltaTime;
-            if (pauseTimer <= 0) {
-                isPaused = false;
-                direction = (direction == LEFT) ? RIGHT : LEFT;
-            }
-            velocity.x = 0;
-        }
-        else {
-            velocity.x = (direction == LEFT) ? -GOOMBA_SPEED : GOOMBA_SPEED;
-            if (GetRandomValue(0, 1000) < 3) {
-                isPaused = true;
-                pauseTimer = GetRandomValue(5, 15) / 10.0f;
-            }
-        }
-    }
+    float current_speed = marioDetected ? (GOOMBA_SPEED * 1.5f) : GOOMBA_SPEED;
+    velocity.x = (direction == LEFT) ? -current_speed : current_speed;
 
     if (velocity.y > 50)
         state = FALLING;

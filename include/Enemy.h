@@ -31,7 +31,7 @@ const float KOOPA_SPEED = 80.0f;
 const float KOOPA_SHELL_SPEED = 300.0f;
 const float BULLET_SPEED = 300.0f;
 const float REX_SPEED = 120.0f;
-const float REX_COMPRESSED_SPEED = 180.0f;
+const float REX_COMPRESSED_SPEED = 240.0f;
 
 // Base class for enemies, inheriting from Entity
 class Enemy : public Entity {

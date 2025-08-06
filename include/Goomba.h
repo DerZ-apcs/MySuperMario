@@ -4,14 +4,9 @@
 
 class Goomba : public Enemy {
 protected:
-    float pauseTimer;
-    bool isPaused;
     bool beattacked;
     float collisionTimer;
     float detectMarioRange;
-    bool isChasing;
-    bool isChaseOnCooldown;
-    float chaseTimer;
 public:
     bool isAttacked() const;
     ENEMY_TYPE getEnemyType() const;

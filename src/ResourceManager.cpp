@@ -499,6 +499,7 @@ void ResourceManager::loadTextures() {
 	textures["boomboom_walk_left_2"] = flipTexture(textures["boomboom_walk_right_2"]);
 	textures["boomboom_spin"] = LoadTexture("resources/images/sprites/baddies/boomboom_spin.png");
 	textures["boomboom_jump"] = LoadTexture("resources/images/sprites/baddies/boomboom_jump.png");
+	textures["boomboom_fall"] = LoadTexture("resources/images/sprites/baddies/boomboom_jump.png");
 	textures["boomboom_charge"] = LoadTexture("resources/images/sprites/baddies/boomboom_charge.png");
 	textures["boomboom_stunned"] = LoadTexture("resources/images/sprites/baddies/boomboom_stunned.png");
 	textures["boomboom_hidden"] = LoadTexture("resources/images/sprites/baddies/boomboom_hidden.png");

@@ -6,7 +6,9 @@
 
 enum class BoomBoomState {
     WALKING,    // Đi bộ qua lại
-    JUMPING,    // Nhảy lên cao và tấn công
+    JUMP_ASCEND,  // Cải tiến: Pha bay lên
+    JUMP_APEX,    // Cải tiến: Pha dừng trên không
+    JUMP_DESCEND, // Cải tiến: Pha lao xuống
     SPINNING,   // Quay tròn, chuẩn bị lao tới
     CHARGING,   // Lao về phía người chơi
     STUNNED,    // Bị choáng sau khi lao hoặc bị tấn công
@@ -16,20 +18,19 @@ enum class BoomBoomState {
 class BoomBoom : public Boss {
 private:
     BoomBoomState currentState;
-    Character* target; // Tham chiếu đến người chơi để xác định vị trí
+    Character* target; 
 
-    // Thuộc tính di chuyển và tấn công
     float walkSpeed;
     float chargeSpeed;
     float jumpPower;
+    bool isEnraged;
+    float actionTimer;     
+    float statePhaseTimer;  
 
-    // Timer để điều khiển các trạng thái và hành động
-    float actionTimer;      // Timer để quyết định hành động tiếp theo
-    float statePhaseTimer;  // Timer cho các giai đoạn trong một trạng thái (ví dụ: thời gian choáng)
-
-    // Hàm riêng để xử lý logic cho từng trạng thái
     void updateWalking();
-    void updateJumping();
+    void updateJumpAscend();
+    void updateJumpApex();
+    void updateJumpDescend();
     void updateSpinning();
     void updateCharging();
     void updateStunned();

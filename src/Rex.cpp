@@ -5,7 +5,7 @@
 Rex::Rex(Vector2 pos, Texture2D texture)
     : Enemy(pos, { 40, 64 }, { 0, 0 }, LEFT, ON_GROUND, texture, 0.2f, 1, BLUE),
     rexState(REX_NORMAL), detectMarioRange(250.0f) {
-    velocity.x = -REX_SPEED; // REX_SPEED được định nghĩa trong Enemy.h
+    velocity.x = -REX_SPEED; 
     updateCollision();
     collisionTimer = 0.f;
 }
@@ -33,34 +33,21 @@ void Rex::Update() {
         collisionTimer -= deltaTime;
     }
 
-    //Character* character = globalGameEngine->getCharacter() ? globalGameEngine->getCharacter() : nullptr;
-    for (auto& p : globalGameEngine->getMultiplayers()) {
-        if (p && p->getState() != STATE_IS_DYING && collisionTimer <= 0) {
-            float distance = Vector2Distance(position, p->getPosition());
-            if (distance <= detectMarioRange) {
-                // Mario trong phạm vi phát hiện, thay đổi hướng và tốc độ
-                if (p->getX() < position.x) {
-                    direction = LEFT;
-                    velocity.x = (rexState == REX_NORMAL) ? -REX_SPEED : -REX_COMPRESSED_SPEED;
-                }
-                else {
-                    direction = RIGHT;
-                    velocity.x = (rexState == REX_NORMAL) ? REX_SPEED : REX_COMPRESSED_SPEED;
-                }
+    bool marioDetected = false;
+    if (collisionTimer <= 0) {
+        for (auto& p : globalGameEngine->getMultiplayers()) {
+            if (p != nullptr && p->getPhase() != DEAD_PHASE && p->getPhase() != CLEARLEVEL_PHASE &&
+                Vector2Distance(position, p->getPosition()) <= detectMarioRange) {
+                marioDetected = true;
+                break;
             }
-            else {
-                // Mario ngoài phạm vi, di chuyển bình thường
-                velocity.x = (direction == LEFT) ? ((rexState == REX_NORMAL) ? -REX_SPEED : -REX_COMPRESSED_SPEED) :
-                    ((rexState == REX_NORMAL) ? REX_SPEED : REX_COMPRESSED_SPEED);
-            }
-        }
-        else {
-            // Di chuyển bình thường
-            velocity.x = (direction == LEFT) ? ((rexState == REX_NORMAL) ? -REX_SPEED : -REX_COMPRESSED_SPEED) :
-                ((rexState == REX_NORMAL) ? REX_SPEED : REX_COMPRESSED_SPEED);
         }
     }
-   
+    
+
+    float current_speed = marioDetected ? (REX_SPEED * 1.5f) : REX_SPEED;
+    velocity.x = (direction == LEFT) ? -current_speed : current_speed;
+
     if (velocity.y > 50)
         state = FALLING;
     if (getGravityAvailable()) {
@@ -103,7 +90,6 @@ void Rex::stomped()
     if (isReadyForRemoval() || state == STATE_IS_DYING) return;
 
     if (rexState == REX_NORMAL) {
-        // Lần giẫm đầu: Chuyển sang trạng thái nén
         rexState = REX_COMPRESSED;
         setSize({ 32, 32 });
         setY(getY() + 32); // Điều chỉnh vị trí cho kích thước nhỏ hơn
@@ -111,7 +97,6 @@ void Rex::stomped()
         updateCollision();
     }
     else {
-        // Lần giẫm thứ hai: Chuyển sang trạng thái chết
         state = STATE_IS_DYING;
         velocity.x = 0.0f;
         velocity.y = 0.0f;
