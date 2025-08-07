@@ -88,9 +88,7 @@ GameEngine::~GameEngine() {
     for (size_t i = 0; i < effects.size(); ++i) {
         delete effects[i];
     }
-    //for (size_t i = 0; i < blocks.size(); ++i) {
-    //    delete blocks[i];
-    //}
+
     for (size_t i = 0; i < tileGrid.size(); i++) {
         for (size_t j = 0; j < tileGrid[i].size(); j++) {
             delete tileGrid[i][j];
@@ -99,9 +97,7 @@ GameEngine::~GameEngine() {
     for (size_t i = 0; i < covers.size(); i++) {
         delete covers[i];
     }
-    //multiplayers.clear();
     enemyFireball.clear();
-    //blocks.clear();
     tileGrid.clear();
     enemies.clear();
     items.clear();
@@ -157,7 +153,7 @@ void GameEngine::update()
             Vector2 textSize = MeasureTextEx(*font, text, fontSize, spacing);
             Vector2 origin = { textSize.x / 2, textSize.y / 2 };
 
-            DrawTextPro(*font, text, position, origin, 0.0f, fontSize, spacing, WHITE);
+            DrawTextPro(*font, text, position, origin, 0.0f, fontSize, spacing, BLACK);
         }
 
     }
@@ -400,7 +396,14 @@ void GameEngine::draw()
         lostLife = (lostLife == true || p->isLostLife());
     }
     bool drawCover = true;
-    
+    // cover
+    if (drawCover == true) {
+        for (auto* cover : covers) {
+            if (!cover || !isInCameraView(cover->getRect()))
+                continue; // skip drawing this cover
+            cover->draw();
+        }
+    }
     for (Entity* dec : decor) {
 		if (!dec || !isInCameraView(dec->getRect())) continue;
 		dec->draw();
@@ -448,14 +451,7 @@ void GameEngine::draw()
             }
         }
     }
-    // cover
-    if (drawCover == true) {
-		for (auto* cover : covers) {
-			if (!cover || !isInCameraView(cover->getRect()))
-				continue; // skip drawing this cover
-			cover->draw();
-		}
-    }
+
     // item draw
     for (auto* item : items) {
 		if (!item || !isInCameraView(item->getRect())) 
@@ -565,6 +561,10 @@ bool GameEngine::run() {
                     isPaused = true;
                 }
                 else {
+                    if (p->isLostLife())
+                        cout << "Lostlife" << endl;
+                    if (p->getTop() > getBound().y)
+                        cout << "Out of bound" << endl;
                     died = true;
                     isPaused = true;
                 }
@@ -711,14 +711,15 @@ bool GameEngine::isInCameraView(Rectangle entityRect) const {
 void GameEngine::saveGame(int slot) {
     json j;
     //map.LoadMapSize(level->getMapPath());
-    map.LoadFromJsonFile(level->getMapPath());
+    //map.LoadFromJsonFile(level->getMapPath());
     map.loadBackgroundTexture(level->getBackGroundName());
     Vector2 Msize = map.getMapSize();
-    camera.loadRenderTexture(Msize); 
-    items = map.getItems();
-    tileGrid = map.getTileGrid();
+    //camera.loadRenderTexture(Msize); 
+    //items = map.getItems();
+    //tileGrid = map.getTileGrid();
     //enemies = map.getEnemies();
-
+    j["background"] = level->getBackGroundName();
+    j["mapSize"] = { map.getMapSize().x, map.getMapSize().y };
     saveMultiCharacters(*multiplayers, j);        // Characters
     //saveEnemies(enemies, j["enemies"]);          // Enemies
     saveItems(items, j["items"]);                // Items
@@ -743,6 +744,12 @@ void GameEngine::loadGame(int slot)
 
     json j;
     file >> j;
+    //map.loadBackgroundTexture(level->getBackGroundName());
+    //map.LoadFromJsonFile(level->getMapPath());
+    Vector2 Msize = { j["mapSize"][0], j["mapSize"][1] };
+    camera.loadRenderTexture(Msize);
+    std::string backgroundName = j["background"];
+    map.loadBackgroundTexture(backgroundName);
 
     loadMultiCharacters(*multiplayers, j);
     //loadEnemies(enemies, j.at("enemies"));
@@ -752,7 +759,6 @@ void GameEngine::loadGame(int slot)
     std::cout << "Tiles loaded: " << tileGrid.size() << "\n";
     //std::cout << "Enemies loaded: " << enemies.size() << "\n";
     std::cout << "Items loaded: " << items.size() << "\n";
-
 }
 
 void GameEngine::saveGameEngineState(GameEngine* engine, json& j) {

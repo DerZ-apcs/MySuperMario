@@ -163,6 +163,7 @@ void saveTileGrids(const std::vector<std::vector<Blocks*>>& tileGrid, json& j)
             j.push_back(blockJson);
         }
     }
+    cout << "Saved blocks: " << j.size() << '\n';
 }
 
 
@@ -180,7 +181,7 @@ void loadTileGrids(std::vector<std::vector<Blocks*>>& tileGrid, const json& j)
         maxX = std::max(maxX, static_cast<size_t>(blockJson["x"]));
         maxY = std::max(maxY, static_cast<size_t>(blockJson["y"]));
     }
-
+    
     // Resize grid
     tileGrid.resize(maxY + 1);
     for (auto& row : tileGrid)
