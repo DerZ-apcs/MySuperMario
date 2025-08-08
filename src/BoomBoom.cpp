@@ -1,6 +1,6 @@
 ﻿#include "../include/BoomBoom.h"
-#include "../include/GameEngine.h" // Để lấy FrameTime và thêm hiệu ứng
-#include "../include/ResourceManager.h" // Để quản lý texture (giả định)
+#include "../include/GameEngine.h"
+#include "../include/ResourceManager.h" 
 #include "../include/Shockwave.h"
 
 const float BOOMBOOM_WALK_SPEED = 100.0f;
@@ -10,14 +10,15 @@ const float BOOMBOOM_ACTION_INTERVAL = 3.0f; // Thời gian giữa các hành đ
 const float BOOMBOOM_SPIN_DURATION = 1.0f;   // Thời gian quay trước khi lao
 const float BOOMBOOM_STUN_DURATION = 1.5f;   // Thời gian bị choáng
 const float BOOMBOOM_CHARGE_DURATION = 1.5f;
-const float JUMP_APEX_DURATION = 0.4f;      // Cải tiến: Thời gian dừng trên không (0.4 giây)
-const float GROUND_POUND_SPEED = 400.0f;   // Cải tiến: Tốc độ lao xuống
+const float JUMP_APEX_DURATION = 0.4f;      
+const float GROUND_POUND_SPEED = 400.0f;   
 const float GROUND_POUND_RADIUS_X = 80.0f;  
 const float GROUND_POUND_RADIUS_Y = 32.0f;  
 const int   BOOMBOOM_INITIAL_HP = 3;         // Máu khởi điểm
+const int SCORE_STOMP_BOOMBOOM_STUNNED = 1000.0f;
 
 BoomBoom::BoomBoom(Vector2 pos, Character* player)
-    : Boss(pos, { 64, 64 }, RESOURCE_MANAGER.getTexture("boomboom_walk"), BOOMBOOM_INITIAL_HP),
+    : Boss(pos, { 64,64 }, RESOURCE_MANAGER.getTexture("boomboom_walk"), BOOMBOOM_INITIAL_HP),
     target(player),
     walkSpeed(BOOMBOOM_WALK_SPEED),
     chargeSpeed(BOOMBOOM_CHARGE_SPEED),
@@ -43,7 +44,7 @@ void BoomBoom::loadAnimations() {
 }
 
 float BoomBoom::getScores() const { 
-    return 1000.0f; 
+    return 0.0f; 
 }
 
 void BoomBoom::enterState(BoomBoomState newState) {
@@ -52,7 +53,7 @@ void BoomBoom::enterState(BoomBoomState newState) {
 
     switch (currentState) {
     case BoomBoomState::WALKING: {
-        vulnerable = true;
+        vulnerable = false;
         float currentWalkSpeed = isEnraged ? walkSpeed * 1.5f : walkSpeed;
         velocity.x = currentWalkSpeed * (direction == RIGHT ? 1 : -1);
         velocity.y = 0;
@@ -80,18 +81,40 @@ void BoomBoom::enterState(BoomBoomState newState) {
         velocity = { 0, 0 }; 
         setGravityAvailable(false); 
         statePhaseTimer = JUMP_APEX_DURATION; 
-        // Có thể đổi texture khác nếu muốn
         break;
 
-    case BoomBoomState::JUMP_DESCEND:
+    case BoomBoomState::JUMP_DESCEND: {
         vulnerable = false;
-        velocity.y = GROUND_POUND_SPEED; 
-        setGravityAvailable(true); 
-        setTexture(RESOURCE_MANAGER.getTexture("boomboom_fall")); 
+        setGravityAvailable(true);
+        setTexture(RESOURCE_MANAGER.getTexture("boomboom_fall"));
+
+        // Tốc độ di chuyển ngang khi đang lao xuống
+        float horizontalFallSpeed = walkSpeed * 3.0f;
+
+        // Kiểm tra xem có mục tiêu (người chơi) hay không
+        if (target) {
+            // Nếu người chơi ở bên phải BoomBoom
+            if (target->getCenter().x > getCenter().x) {
+                velocity.x = horizontalFallSpeed;
+                direction = RIGHT;
+            }
+            // Nếu người chơi ở bên trái BoomBoom
+            else {
+                velocity.x = -horizontalFallSpeed;
+                direction = LEFT;
+            }
+        }
+        else {
+            velocity.x = walkSpeed * 2.0f;
+        }
+
+        // Thiết lập vận tốc lao xuống theo chiều dọc
+        velocity.y = GROUND_POUND_SPEED;
         break;
+    }
 
     case BoomBoomState::SPINNING:
-        vulnerable = false; // Bất tử khi đang quay
+        vulnerable = false; 
         velocity.x = 0;
         statePhaseTimer = isEnraged ? BOOMBOOM_SPIN_DURATION * 0.7f : BOOMBOOM_SPIN_DURATION;
         setTexture(RESOURCE_MANAGER.getTexture("boomboom_spin"));
@@ -181,28 +204,8 @@ void BoomBoom::updateJumpApex() {
 }
 
 void BoomBoom::updateJumpDescend() {
-    // Khi chạm đất
     if (state == ON_GROUND) {
-        //Rectangle damageArea = {
-        //    getCenter().x - GROUND_POUND_RADIUS_X, // Vị trí x bắt đầu
-        //    getBottom() - GROUND_POUND_RADIUS_Y,   // Vị trí y bắt đầu (từ mặt đất lên)
-        //    GROUND_POUND_RADIUS_X * 2,             // Chiều rộng của vùng sát thương
-        //    GROUND_POUND_RADIUS_Y                  // Chiều cao của vùng sát thương
-        //};
-        //if (CheckCollisionRecs(damageArea, target->getRect())) {
-        //   // target->takeDamage(1);
-        //}
-        actionTimer -= GetFrameTime();
-        if (actionTimer <= 0) {
-            int choice = GetRandomValue(0, 1);
-            if (choice == 0) {
-                enterState(BoomBoomState::WALKING);
-            }
-            else {
-                enterState(BoomBoomState::SPINNING);
-            }
-        }
-        //enterState(BoomBoomState::WALKING);
+        enterState(BoomBoomState::STUNNED);
     }
 }
 
@@ -252,9 +255,12 @@ void BoomBoom::onDeath() {
 void BoomBoom::stomped() {
     if (isDying()) return;
 
-    // Chỉ có thể bị dẫm khi không ở trong mai hoặc không choáng
-    if (currentState == BoomBoomState::WALKING || currentState == BoomBoomState::STUNNED) {
+    if (currentState == BoomBoomState::STUNNED) {
         takeDamage(1);
+        globalGameEngine->addScore(SCORE_STOMP_BOOMBOOM_STUNNED);
+        if (target) {
+            target->setVelY(MARIO_BOUNCE_VELOCITY);
+        }
     }
 }
 

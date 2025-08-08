@@ -499,10 +499,21 @@ void ResourceManager::loadTextures() {
 	textures["boomboom_walk_left_2"] = flipTexture(textures["boomboom_walk_right_2"]);
 	textures["boomboom_spin"] = LoadTexture("resources/images/sprites/baddies/boomboom_spin.png");
 	textures["boomboom_jump"] = LoadTexture("resources/images/sprites/baddies/boomboom_jump.png");
-	textures["boomboom_fall"] = LoadTexture("resources/images/sprites/baddies/boomboom_jump.png");
+	textures["boomboom_fall"] = LoadTexture("resources/images/sprites/baddies/boomboom_walk_1.png");
 	textures["boomboom_charge"] = LoadTexture("resources/images/sprites/baddies/boomboom_charge.png");
 	textures["boomboom_stunned"] = LoadTexture("resources/images/sprites/baddies/boomboom_stunned.png");
 	textures["boomboom_hidden"] = LoadTexture("resources/images/sprites/baddies/boomboom_hidden.png");
+
+	//Petey Piranha
+	textures["petey_walk_right_0"] = LoadTexture("resources/images/sprites/baddies/boomboom_walk_0.png");
+	textures["petey_walk_right_1"] = LoadTexture("resources/images/sprites/baddies/boomboom_walk_1.png");
+	textures["petey_walk_left_0"] = flipTexture(textures["petey_walk_right_0"]);
+	textures["petey_walk_left_1"] = flipTexture(textures["petey_walk_right_1"]);
+	textures["petey_shoot"] = LoadTexture("resources/images/sprites/baddies/boomboom_charge.png");
+	textures["petey_burrow_down"] = LoadTexture("resources/images/sprites/baddies/boomboom_spin.png");
+	textures["petey_emerge"] = LoadTexture("resources/images/sprites/baddies/boomboom_jump.png");
+	textures["petey_hurt"] = LoadTexture("resources/images/sprites/baddies/boomboom_stunned.png");
+	textures["petey_vulnerable"] = LoadTexture("resources/images/sprites/baddies/boomboom_hidden.png");
 }
 
 void ResourceManager::loadFonts()
