@@ -514,6 +514,7 @@ void ResourceManager::loadTextures() {
 	textures["petey_emerge"] = LoadTexture("resources/images/sprites/baddies/boomboom_jump.png");
 	textures["petey_hurt"] = LoadTexture("resources/images/sprites/baddies/boomboom_stunned.png");
 	textures["petey_vulnerable"] = LoadTexture("resources/images/sprites/baddies/boomboom_hidden.png");
+	textures["spore_cloud"] = LoadTexture("resources/images/sprites/baddies/boomboom_charge.png");
 }
 
 void ResourceManager::loadFonts()

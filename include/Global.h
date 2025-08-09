@@ -16,7 +16,8 @@ enum EntityType {
 	FIREBALL,
 	ENEMY_FIREBALL,
 	EFFECT,
-	BLOCK
+	BLOCK,
+	SPORE_CLOUD
 };
 
 enum EntityState {

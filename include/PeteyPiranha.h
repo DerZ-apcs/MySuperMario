@@ -14,7 +14,8 @@ enum class PeteyPiranhaState {
     HURT,           // Bị dính sát thương
     BURROW_DOWN,    // Giai đoạn đang đào xuống đất
     HIDDEN,         // Giai đoạn ẩn và di chuyển dưới lòng đất
-    EMERGE          // Giai đoạn trồi lên khỏi mặt đất
+    EMERGE,          // Giai đoạn trồi lên khỏi mặt đất
+    SPORE_CLOUD
 };
 
 class PeteyPiranha : public Boss {
@@ -38,9 +39,10 @@ private:
 	void updateBurrowDown();
 	void updateHidden();
 	void updateEmerge();
+	void updateSporeCloud(); 
 
     void enterState(PeteyPiranhaState newState);
-
+    void releaseSporeCloud();
     std::vector<Texture2D> walkLeftTextures;
     std::vector<Texture2D> walkRightTextures;
     Texture2D hurtTexture;

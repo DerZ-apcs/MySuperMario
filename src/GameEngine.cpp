@@ -20,6 +20,7 @@
 #include "../include/PiranhaPlant.h"
 #include "../include/BoomBoom.h"
 #include "../include/PeteyPiranha.h"
+#include "../include/SporeCloud.h"
 #include <iostream>
 
 GameEngine* globalGameEngine = nullptr;

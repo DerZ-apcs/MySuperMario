@@ -2,6 +2,7 @@
 #include "../include/GameEngine.h"
 #include "../include/ResourceManager.h"
 #include "../include/EnemyFireBall.h" 
+#include "../include/SporeCloud.h"
 
 const float PETEY_WALK_SPEED = 80.0f;
 const float PETEY_JUMP_POWER = -1000.0f;
@@ -102,7 +103,17 @@ void PeteyPiranha::enterState(PeteyPiranhaState newState) {
         statePhaseTimer = PETEY_HURT_DURATION;
         setTexture(hurtTexture);
         break;
+
+    case PeteyPiranhaState::SPORE_CLOUD:
+        vulnerable = false;
+        velocity = { 0, 0 }; // Đứng yên khi thực hiện
+        statePhaseTimer = 2.0f; // Thời gian thực hiện hành động
+        setTexture(RESOURCE_MANAGER.getTexture("petey_spore_release")); // Cần có texture này
+        releaseSporeCloud(); // Gọi hàm tạo ra đám mây
+        break;
     }
+
+
 }
 
 void PeteyPiranha::updateBehavior() {
@@ -115,6 +126,7 @@ void PeteyPiranha::updateBehavior() {
     case PeteyPiranhaState::EMERGE:         updateEmerge(); break;
     case PeteyPiranhaState::VULNERABLE:     updateVulnerable(); break;
     case PeteyPiranhaState::HURT:           updateHurt(); break;
+    case PeteyPiranhaState::SPORE_CLOUD:    updateSporeCloud(); break;
     }
 
 }
@@ -130,11 +142,11 @@ void PeteyPiranha::updateWalking() {
     velocity.x = (direction == RIGHT) ? walkSpeed : -walkSpeed;
 
    actionTimer -= GetFrameTime();
-    if (actionTimer <= 0) {
+   if (actionTimer <= 0) {
        /* int choice = GetRandomValue(0, 1);*/
        /* enterState(choice == 0 ? PeteyPiranhaState::JUMP_ASCEND : PeteyPiranhaState::SHOOTING);*/
-        enterState(PeteyPiranhaState::SHOOTING);
-    }
+       enterState(PeteyPiranhaState::SPORE_CLOUD);
+   }
 }
 
 void PeteyPiranha::updateShooting() {
@@ -181,6 +193,20 @@ void PeteyPiranha::updateHurt() {
             walkSpeed *= 1.5f;
         }
         enterState(PeteyPiranhaState::WALKING);
+    }
+}
+
+void PeteyPiranha::updateSporeCloud() {
+    statePhaseTimer -= GetFrameTime();
+    if (statePhaseTimer <= 0) {
+        enterState(PeteyPiranhaState::WALKING);
+    }
+}
+
+void PeteyPiranha::releaseSporeCloud() {
+    SporeCloud* cloud = new SporeCloud(position);
+    if (globalGameEngine) {
+        globalGameEngine->addEffect(cloud);
     }
 }
 
