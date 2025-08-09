@@ -7,22 +7,12 @@
 
 class SporeCloud : public Effect {
 private:
-    float damageCooldown;      // Hẹn giờ giữa các lần gây sát thương
-
+    float dropTimer;      // Hẹn giờ giữa các lần thả vật nguy hiểm
 public:
-    // Constructor: Khởi tạo đám mây tại một vị trí
     SporeCloud(Vector2 pos);
-
-    // Destructor
     virtual ~SporeCloud() = default;
-
-    // Cập nhật logic của đám mây (đếm ngược thời gian, kiểm tra va chạm)
     void Update() override;
-
-    // Vẽ đám mây lên màn hình
     void draw() override;
-
-    // Trả về loại thực thể
     EntityType getEntityType() const override;
 };
 

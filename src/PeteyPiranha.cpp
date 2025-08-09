@@ -106,10 +106,20 @@ void PeteyPiranha::enterState(PeteyPiranhaState newState) {
 
     case PeteyPiranhaState::SPORE_CLOUD:
         vulnerable = false;
-        velocity = { 0, 0 }; // Đứng yên khi thực hiện
-        statePhaseTimer = 2.0f; // Thời gian thực hiện hành động
-        setTexture(RESOURCE_MANAGER.getTexture("petey_spore_release")); // Cần có texture này
-        releaseSporeCloud(); // Gọi hàm tạo ra đám mây
+        statePhaseTimer = 2.0f; // Thời gian Petey di chuyển ra xa
+        setTexture(RESOURCE_MANAGER.getTexture("petey_spore_release"));
+
+        // Xác định hướng "ra xa" người chơi
+        if (target) {
+            // Nếu người chơi ở bên phải Petey, Petey sẽ đi sang trái và ngược lại
+            direction = (target->getPosition().x > position.x) ? LEFT : RIGHT;
+        }
+
+        // Đặt vận tốc để di chuyển ra xa, có thể tăng tốc độ một chút
+        velocity.x = (direction == RIGHT) ? walkSpeed * 1.2f : -walkSpeed * 1.2f;
+        velocity.y = 0;
+
+        releaseSporeCloud(); // Gọi hàm tạo đám mây ngay khi bắt đầu hành động
         break;
     }
 
@@ -197,10 +207,18 @@ void PeteyPiranha::updateHurt() {
 }
 
 void PeteyPiranha::updateSporeCloud() {
-    statePhaseTimer -= GetFrameTime();
-    if (statePhaseTimer <= 0) {
-        enterState(PeteyPiranhaState::WALKING);
-    }
+   frameTimer += GetFrameTime();
+   if (frameTimer >= frameDuration) {
+       frameTimer = 0.0f;
+       currentFrame = (currentFrame + 1) % walkLeftTextures.size();
+   }
+   setTexture((direction == LEFT) ? walkLeftTextures[currentFrame] : walkRightTextures[currentFrame]);
+
+   // Hết thời gian di chuyển, chuyển về trạng thái đi bộ bình thường
+   statePhaseTimer -= GetFrameTime();
+   if (statePhaseTimer <= 0) {
+       enterState(PeteyPiranhaState::WALKING);
+   }
 }
 
 void PeteyPiranha::releaseSporeCloud() {

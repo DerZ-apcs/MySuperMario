@@ -1,55 +1,45 @@
 ﻿#include "../include/SporeCloud.h"
 #include "../include/ResourceManager.h"
+#include "../include/SporeDroplet.h"
+#include "../include/GameEngine.h"
 
-// Các hằng số để dễ dàng điều chỉnh hành vi
-const float SPORE_CLOUD_LIFESPAN = 5.0f;
-const float SPORE_CLOUD_DAMAGE_INTERVAL = 1.0f;
+const float SPORE_CLOUD_LIFESPAN = 8.0f; // Tăng thời gian tồn tại của đám mây
+const float SPORE_DROP_INTERVAL = 0.8f; // Thả một vật sau mỗi 0.8 giây
 const Vector2 SPORE_CLOUD_SIZE = { 64.0f, 64.0f };
 
-// SỬA ĐỔI HÀM KHỞI TẠO
 SporeCloud::SporeCloud(Vector2 pos)
     : Effect(pos, 0.0f, SPORE_CLOUD_LIFESPAN),
-    damageCooldown(0.0f)
+    dropTimer(SPORE_DROP_INTERVAL) // Khởi tạo bộ đếm giờ
 {
-    
     setSize(SPORE_CLOUD_SIZE);
-    gravityAvailable = false;
+    gravityAvailable = false; 
     collisionAvailable = false;
-
     texture = RESOURCE_MANAGER.getTexture("spore_cloud");
 }
 
 void SporeCloud::Update() {
     float dt = GetFrameTime();
+    dropTimer -= dt;
 
-    if (damageCooldown > 0.0f) {
-        damageCooldown -= dt;
-    }
-
-    if (damageCooldown <= 0.0f) {
-        auto& players = globalGameEngine->getMultiplayers();
-        for (auto& player : players) {
-            if (player && !player->isImmortal() && player->getPhase() != DEAD_PHASE && player->getPhase() != CLEARLEVEL_PHASE) {
-                if (CheckCollisionRecs(getRect(), player->getRect())) {
-                    // Gây sát thương cho người chơi
-                    player->lostSuit();
-                    // Đặt lại thời gian hồi
-                    damageCooldown = SPORE_CLOUD_DAMAGE_INTERVAL;
-                    // Chỉ gây sát thương cho một người chơi mỗi lần kiểm tra để tránh lỗi
-                    break;
-                }
-            }
+    // Khi bộ đếm giờ kết thúc, hãy thả một vật mới
+    if (dropTimer <= 0.0f) {
+        if (globalGameEngine) {
+            // Vị trí thả là ở dưới trung tâm của đám mây
+            Vector2 dropletPos = { position.x + (size.x / 2.0f), position.y + size.y };
+            SporeDroplet* droplet = new SporeDroplet(dropletPos);
+            globalGameEngine->addEffect(droplet);
         }
+
+        // Đặt lại bộ đếm giờ cho lần thả tiếp theo
+        dropTimer = SPORE_DROP_INTERVAL;
     }
 
     Effect::Update();
 }
 
 void SporeCloud::draw() {
-    // Vẽ texture với hiệu ứng mờ dần để trông giống đám mây/khí độc
-    DrawTexture(texture, position.x, position.y, Fade(WHITE, 0.7f));
-
-    // Bật dòng này để debug, xem hitbox của đám mây
+    // Giữ nguyên logic vẽ
+    DrawTexture(texture, position.x, position.y, Fade(WHITE, 0.8f));
     if (SETTING.getDebugMode()) {
         DrawRectangleLinesEx(getRect(), 2, VIOLET);
     }
