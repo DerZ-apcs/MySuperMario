@@ -170,12 +170,12 @@ void EditorCamera::endDrawing() {
 }
 
 void EditorCamera::handleInput() {
-    if (IsMouseButtonPressed(MOUSE_BUTTON_MIDDLE)) {
+    if (IsMouseButtonPressed(MOUSE_BUTTON_MIDDLE) || IsKeyPressed(KEY_LEFT_CONTROL)) {
         isDragging = true;
         dragStart = GetMousePosition();
     }
 
-    if (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE) && isDragging) {
+    if ((IsMouseButtonDown(MOUSE_BUTTON_MIDDLE) || IsKeyDown(KEY_LEFT_CONTROL)) && isDragging) {
         Vector2 mouseNow = GetMousePosition();
         Vector2 delta = Vector2Subtract(dragStart, mouseNow);
         position = Vector2Add(position, Vector2Scale(delta, 1.0f / zoom));

@@ -286,7 +286,7 @@ void GUI::drawGameOverScreen()
 }
 
 void GUI::drawEditorUI() {
-    DrawRectangle(0, 0, 300, GetScreenHeight(), Fade(LIGHTGRAY, 0.8f)); // sidebar
+    DrawRectangle(0, 0, 468, GetScreenHeight(), Fade(LIGHTGRAY, 0.8f)); // sidebar
     DrawText("Editor Menu", 20, 20, 30, BLACK);
 
     DrawText(TextFormat("Grid: %d x %d", 150, 30), 20, 60, 20, DARKGRAY);
@@ -299,10 +299,20 @@ void GUI::drawEditorUI() {
 		printf("Map saved successfully!\n");
 	}
 
-	Rectangle loadButton = { 20, 140, 100, 30 };
+	Rectangle loadButton = { 140, 100, 100, 30 };
 	DrawRectangleRec(loadButton, DARKGRAY);
-	DrawText("Load", 30, 148, 16, WHITE);
+    DrawText("Load", 150, 108, 16, WHITE);
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), loadButton)) {
+        globalEditorEngine->loadFromJson();
+        printf("Map loaded successfully!\n");
+	}
+
+	Rectangle playButton = { 20, 140, 100, 30 };
+	DrawRectangleRec(playButton, DARKGRAY);
+	DrawText("Play", 30, 148, 16, WHITE);
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), playButton)) {
+        globalEditorEngine->loadFromJson();
+
         if (globalGameEngine != nullptr) {
             delete globalGameEngine;
             globalGameEngine = nullptr;
@@ -323,13 +333,28 @@ void GUI::drawEditorUI() {
         globalGameEngine = nullptr;
     }
 
-    std::vector<TileSelector> tiles = globalEditorEngine->getTiles();
-	int selectedBlockId = globalEditorEngine->getSelectedBlockId();
+	int displayMode = globalEditorEngine->getDisplayMode();
+	Rectangle modeButton = { 20, 700, 100, 30 };
+    if (displayMode == 0) {
+        DrawRectangleRec(modeButton, DARKGRAY);
+        DrawText("Enemies", 30, 708, 16, WHITE);
+    } else {
+        DrawRectangleRec(modeButton, DARKGRAY);
+        DrawText("Blocks", 30, 708, 16, WHITE);
+	}
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), modeButton)) {
+        globalEditorEngine->setDisplayMode(1 - displayMode); // Toggle between 0 and 1
+	}
 
-    for (const auto& tile : tiles) {
-		DrawTexture(RESOURCE_MANAGER.getTexture("TILE_" + std::to_string(tile.id)), tile.rect.x, tile.rect.y, WHITE);
-        if (tile.id == selectedBlockId) {
-            DrawRectangleLinesEx(tile.rect, 2, RED); // Highlight selected tile
-		}
+    if (displayMode == 0) {
+        std::vector<TileSelector> tiles = globalEditorEngine->getTiles();
+        int selectedBlockId = globalEditorEngine->getSelectedBlockId();
+
+        for (const auto& tile : tiles) {
+            DrawTexture(RESOURCE_MANAGER.getTexture("TILE_" + std::to_string(tile.id)), tile.rect.x, tile.rect.y, WHITE);
+            if (tile.id == selectedBlockId) {
+                DrawRectangleLinesEx(tile.rect, 2, RED); // Highlight selected tile
+            }
+        }
     }
 }

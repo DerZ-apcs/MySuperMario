@@ -5,27 +5,72 @@ EditorEngine* globalEditorEngine = nullptr;
 EditorEngine::EditorEngine(float width, float height)
 	: camera() {
 	globalEditorEngine = this;
-	tileGrid.resize(30, std::vector<Blocks*>(150, nullptr)); // Initialize a 30x150 grid
+	tileGrid.resize(30, std::vector<Blocks*>(100, nullptr)); // Initialize a 30x100 grid
 	decor.clear();
 	enemies.clear();
 
 	float startX = 20;
 	float startY = 200;
-	for (int i = 0; i < 12; i++) {
-		tiles.push_back({ i, { startX + (i % 7) * 36, startY + (i / 7) * 36, 32, 32 } });
-	}
-	startY += 36 * 2;
-	for (int i = 26; i < 38; i++) {
-		tiles.push_back({ i, { startX + ((i - 26) % 7) * 36, startY + ((i - 26) / 7) * 36, 32, 32 } });
-	}
-	startY += 36 * 2;
-	for (int i = 52; i < 64; i++) {
-		tiles.push_back({ i, { startX + ((i - 52) % 7) * 36, startY + ((i - 52) / 7) * 36, 32, 32 } });
-	}
-	startY += 36 * 2;
-	for (int i = 78; i < 90; i++) {
-		tiles.push_back({ i, { startX + ((i - 78) % 7) * 36, startY + ((i - 78) / 7) * 36, 32, 32 } });
-	}
+	for (int i =  0; i < 12; i++) { tiles.push_back({ i, { startX + i * 36, startY, 32, 32 } }); }
+	startY += 36;
+	for (int i = 26; i < 38; i++) { tiles.push_back({ i, { startX + (i - 26) * 36, startY, 32, 32 } }); }
+	startY += 36;
+	for (int i = 52; i < 64; i++) { tiles.push_back({ i, { startX + (i - 52) * 36, startY, 32, 32 } }); }
+	startY += 36;
+	for (int i = 78; i < 90; i++) { tiles.push_back({ i, { startX + (i - 78) * 36, startY, 32, 32 } }); }
+
+	startY += 36 + 8;
+	for (int i = 12; i < 16; i++) { tiles.push_back({ i, { startX + ((i - 12) % 2) * 34, startY + ((i - 12) / 2) * 34, 32, 32 } }); }
+	startX += 36 * 2;
+	for (int i = 38; i < 42; i++) { tiles.push_back({ i, { startX + ((i - 38) % 2) * 34, startY + ((i - 38) / 2) * 34, 32, 32 } }); }
+	startX += 36 * 2;
+	for (int i = 90; i < 94; i++) { tiles.push_back({ i, { startX + ((i - 90) % 2) * 34, startY + ((i - 90) / 2) * 34, 32, 32 } }); }
+	startX += 36 * 2;
+	tiles.push_back({ 16, { startX, startY, 32, 32 } });
+	tiles.push_back({ 17, { startX, startY + 34, 32, 32 } });
+	tiles.push_back({ 18, { startX + 34, startY, 32, 32 } });
+	tiles.push_back({ 19, { startX + 34, startY + 34, 32, 32 } });
+	tiles.push_back({ 42, { startX + 68, startY, 32, 32 } });
+	tiles.push_back({ 43, { startX + 68, startY + 34, 32, 32 } });
+	tiles.push_back({ 94, { startX + 102, startY, 32, 32 } });
+	tiles.push_back({ 95, { startX + 102, startY + 34, 32, 32 } });
+	tiles.push_back({ 96, { startX + 136, startY, 32, 32 } });
+	tiles.push_back({ 97, { startX + 136, startY + 34, 32, 32 } });
+	tiles.push_back({ 68, { startX + 170, startY, 32, 32 } });
+	tiles.push_back({ 69, { startX + 170, startY + 34, 32, 32 } });
+
+	startX = 20; startY += 36 * 2 + 8;
+	for (int i = 20; i < 23; i++) { tiles.push_back({ i, { startX + (i - 20) * 34, startY, 32, 32 } }); }
+	startX += 36 * 3;
+	for (int i = 46; i < 49; i++) { tiles.push_back({ i, { startX + (i - 46) * 34, startY, 32, 32 } }); }
+	startX = 20; startY += 36;
+	for (int i = 72; i < 75; i++) { tiles.push_back({ i, { startX + (i - 72) * 34, startY, 32, 32 } }); }
+	startX += 36 * 3;
+	for (int i = 98; i < 101; i++) { tiles.push_back({ i, { startX + (i - 98) * 34, startY, 32, 32 } }); }
+
+	// decor
+	startX = 20 + 36 * 6 + 16; startY -= 36;
+	for (int i = 23; i < 26; i++) { tiles.push_back({ i, { startX + (i - 23) * 34, startY, 32, 32 } }); }
+	startY += 36;
+	tiles.push_back({ 111, { startX, startY, 32, 32 } });
+	tiles.push_back({ 112, { startX + 34, startY, 32, 32 } });
+	startX += 36 * 3 + 8; startY -= 36;
+	tiles.push_back({ 107, { startX, startY, 32, 32 } });
+	tiles.push_back({ 106, { startX, startY + 34, 32, 32 } });
+	tiles.push_back({ 109, { startX + 36, startY, 32, 32 } });
+	tiles.push_back({ 108, { startX + 36, startY + 34, 32, 32 } });
+
+	// special
+	startX = 20; startY += 36 * 2 + 8;
+	tiles.push_back({ 104, { startX, startY, 32, 32 } }); 
+	tiles.push_back({ 110, { startX, startY + 34, 32, 32 } });
+	tiles.push_back({ 105, { startX + 36, startY, 32, 32 } });
+	tiles.push_back({ 113, { startX + 40, startY + 36, 32, 32 } });
+	tiles.push_back({ 114, { startX + 72, startY, 32, 32 } });
+	tiles.push_back({ 115, { startX + 108, startY, 32, 32 } });
+	tiles.push_back({ 117, { startX + 144, startY, 32, 32 } });
+
+
 }
 
 EditorEngine::~EditorEngine() {
@@ -81,7 +126,7 @@ void EditorEngine::handleInput() {
 		}
 	}
 
-	if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) || IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
+	if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) || IsMouseButtonDown(MOUSE_BUTTON_RIGHT) || IsKeyDown(KEY_LEFT_ALT)) {
 		selectedBlockId = -1; // Deselect block
 
 		Vector2 co = PosToCoordinate(GetMousePosition());
@@ -104,6 +149,19 @@ bool EditorEngine::run() {
 		EndDrawing();
 	}
 	return true; // Return true to indicate the loop should continue
+}
+
+void EditorEngine::clear()	 {
+	for (size_t i = 0; i < tileGrid.size(); i++) {
+		for (size_t j = 0; j < tileGrid[i].size(); j++) {
+			delete tileGrid[i][j];
+			tileGrid[i][j] = nullptr;
+		}
+	}
+	tileGrid.clear();
+	decor.clear();
+	enemies.clear();
+	selectedBlockId = -1;
 }
 
 void EditorEngine::drawGrid() {
@@ -129,13 +187,13 @@ void EditorEngine::drawGrid() {
 	}
 
 	// Debug
-	
+	/*
 	for (int y = startY; y < endY; ++y) {
 		for (int x = startX; x < endX; ++x) {
 			std::string coord = "(" + std::to_string(x) + "," + std::to_string(y) + ")";
 			DrawText(coord.c_str(), x * tileSize + 2, y * tileSize + 2, 10, DARKGRAY);
 		}
-	}
+	}*/
 }
 
 void EditorEngine::draw() {
@@ -175,6 +233,10 @@ void EditorEngine::draw() {
 		Rectangle dst = { screenPos.x, screenPos.y, 32 * scale, 32 * scale };
 
 		DrawTexturePro(tex, src, dst, { 0, 0 }, 0.0f, Fade(WHITE, 0.5f));
+
+		// Draw the seleced block ID
+		std::string blockIdText = "Selected Block ID: " + std::to_string(selectedBlockId);
+		DrawText(blockIdText.c_str(), 10, 650, 20, BLACK);
 	}
 
 }
@@ -217,5 +279,37 @@ void EditorEngine::saveToJson() {
 		return;
 	}
 	file << mapJson.dump(); 
+	file.close();
+}
+
+void EditorEngine::loadFromJson() {
+	clear();
+	std::ifstream file("resources/maps/emap_1.json");
+	if (!file.is_open()) {
+		std::cerr << "Failed to open map file." << std::endl;
+		return;
+	}
+	
+	nlohmann::json mapJson;
+	file >> mapJson;
+
+	width = mapJson["width"];
+	height = mapJson["height"];
+	tileGrid.resize(height, std::vector<Blocks*>(width, nullptr));
+
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			int blockId = mapJson["layers"][0]["data"][y * width + x];
+			if (blockId > 0) {
+				blockId--; // Adjust for zero-based index
+				SolidBlock* solidBlock = dynamic_cast<SolidBlock*>(BlockFactory::getInstance().createBlock(SOLIDBLOCK,
+					{ (float)x * 32, (float)y * 32 }, { 32, 32 }));
+				solidBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_" + std::to_string(blockId)));
+				solidBlock->setId(blockId);
+				tileGrid[y][x] = solidBlock;
+			}
+		}
+	}
+
 	file.close();
 }

@@ -134,7 +134,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 					continue;
 				}
 
-				if (blockId == 117) {
+				if (blockId == 118) {
 					RotatingBlock* block = dynamic_cast<RotatingBlock*>(BlockFactory::getInstance().createBlock(ROTATINGBLOCK,
 						{ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
 					if (!block) {
