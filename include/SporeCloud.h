@@ -5,6 +5,8 @@
 #include "Character.h"
 #include "GameEngine.h"
 
+constexpr float SPORE_CLOUD_LIFESPAN = 8.0f; // Tăng thời gian tồn tại của đám mây
+
 class SporeCloud : public Effect {
 private:
     float dropTimer;      // Hẹn giờ giữa các lần thả vật nguy hiểm

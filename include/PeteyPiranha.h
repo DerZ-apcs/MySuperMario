@@ -6,6 +6,7 @@
 #include <vector>
 #include "raylib.h"
 
+class SporeCloud;
 // Các trạng thái hành vi của Petey Piranha
 enum class PeteyPiranhaState {
     WALKING,        // Đi bộ qua lại
@@ -22,6 +23,7 @@ class PeteyPiranha : public Boss {
 private:
     PeteyPiranhaState currentState;
     Character* target; // Mục tiêu (người chơi)
+    SporeCloud* activeCloud;
 
     float walkSpeed;
     float jumpPower;

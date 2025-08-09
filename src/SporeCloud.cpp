@@ -3,7 +3,6 @@
 #include "../include/SporeDroplet.h"
 #include "../include/GameEngine.h"
 
-const float SPORE_CLOUD_LIFESPAN = 8.0f; // Tăng thời gian tồn tại của đám mây
 const float SPORE_DROP_INTERVAL = 0.8f; // Thả một vật sau mỗi 0.8 giây
 const Vector2 SPORE_CLOUD_SIZE = { 64.0f, 64.0f };
 
