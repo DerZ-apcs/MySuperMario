@@ -23,11 +23,12 @@ public:
 	void Update() override;
 	void stomped() override;
 	void kicked(Direction direction) override;
-	void setBuzzyBeetleState(BuzzyBeetleState newState);
-	BuzzyBeetleState getBuzzyBeetleState() const;
+	void setBuzzyBeetleState(BuzzyBeetleState newState) { BuzzyState = newState; }
+	BuzzyBeetleState getBuzzyBeetleState() const { return BuzzyState; }
 	float getScores() const override { return SCORE_STOMP_BUZZY; }
 	ENEMY_TYPE getEnemyType() const override;
-
+	void loadEntity(const json& j) override;
+	void saveEntity(json& j) const override;
 };
 
 #endif // BUZZYBEETLE_H

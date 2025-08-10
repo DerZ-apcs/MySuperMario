@@ -14,5 +14,7 @@ public:
     void UpdateTexture() override;
     void draw() override;
     void reveal();
+    void loadEntity(const json& j) override;
+    void saveEntity(json& j) const override;
 };
 #endif // !HIDDENBLOCK_H

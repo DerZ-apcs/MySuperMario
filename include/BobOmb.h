@@ -6,7 +6,7 @@
 const float BOBOMB_WALK_SPEED = 80.0f;
 const float BOBOMB_FUSE_TIME = 3.0f;      // Thời gian đếm ngược trước khi nổ (giây)
 const float BOBOMB_EXPLOSION_DURATION = 0.5f; // Thời gian hiệu ứng nổ tồn tại
-const float BOBOMB_EXPLOSION_RADIUS = 80.0f;  // Bán kính ảnh hưởng của vụ nổ
+const float BOBOMB_EXPLOSION_RADIUS = 100.0f;  // Bán kính ảnh hưởng của vụ nổ
 
 class BobOmb : public Enemy {
 private:
@@ -21,6 +21,8 @@ public:
     void UpdateTexture() override;
     void stomped() override;
     void Explode(); // Hàm xử lý logic vụ nổ
+    void loadEntity(const json& j) override;
+    void saveEntity(json& j) const override;
 };
 
 #endif // BOBOMB_H

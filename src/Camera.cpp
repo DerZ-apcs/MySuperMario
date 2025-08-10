@@ -1,9 +1,10 @@
 ﻿#include "../include/Camera.h"
-
+#include "../include/GameEngine.h"
 template <typename T>
-T clamp(T value, T minVal, T maxVal) {
+T Myclamp(T value, T minVal, T maxVal) {
     return std::max(minVal, std::min(value, maxVal));
 }
+
 
 GameCamera::GameCamera(float width, float height, float initialScale)
     : cameraWidth(width), cameraHeight(height), cameraX(0), cameraY(0), scale(initialScale) {
@@ -61,7 +62,7 @@ void GameCamera::update(float p1x, float p1y, float p2x, float p2y) {
     // clamp target scale;
     const float minZoom = 0.85f;
     const float maxZoom = 1.6f;
-    desiredScale = clamp(desiredScale, minZoom, maxZoom);
+    desiredScale = Myclamp(desiredScale, minZoom, maxZoom);
 
     // smooth transition to new scale (lerp)
     const float zoomSmooth = 0.02f;
@@ -76,8 +77,8 @@ void GameCamera::update(float p1x, float p1y, float p2x, float p2y) {
     cameraY = renderTexture.texture.height - (centerY + scaledHeight / 2.0f) /*+ verticalOffset + 100*/;
 
     // 9. Clamp target position to within texture bounds
-    targetX = clamp(targetX, 0.0f, renderTexture.texture.width - scaledWidth);
-    targetY = clamp(targetY, 0.0f, renderTexture.texture.height - scaledHeight);
+    targetX = Myclamp(targetX, 0.0f, renderTexture.texture.width - scaledWidth);
+    targetY = Myclamp(targetY, 0.0f, renderTexture.texture.height - scaledHeight);
 
     // 10. Smooth camera movement transition (main fix for jump jitter)
     const float moveSmooth = 0.05f;  // Try 0.05f for even smoother
@@ -143,7 +144,14 @@ Rectangle GameCamera::getViewRect() const
 {
 	float scaledWidth = cameraWidth / scale;
 	float scaledHeight = cameraHeight / scale;
-	float margin = 100.f; // Margin for camera view
+	float margin; // Margin for camera view
+
+    if (globalGameEngine->getMultiplayers().size() == 1) {
+		margin = 300; // Margin for single player
+	}
+	else 
+		margin = 400; // Margin for multiplayer
+
     return Rectangle{
         cameraX - margin, // top-left x in world space
         cameraY - margin, // top-left y in world space
@@ -151,6 +159,39 @@ Rectangle GameCamera::getViewRect() const
         scaledHeight + margin * 5 
 	};
 }
+
+void GameCamera::loadCamera(const json& j) {
+    if (!j.contains("camera")) return;
+
+    const auto& cam = j["camera"];
+    cameraX = cam.value("cameraX", 0.0f);
+    cameraY = cam.value("cameraY", 0.0f);
+    targetX = cam.value("targetX", 0.0f);
+    targetY = cam.value("targetY", 0.0f);
+    cameraWidth = cam.value("cameraWidth", 0.0f);
+    cameraHeight = cam.value("cameraHeight", 0.0f);
+    verticalOffset = cam.value("verticalOffset", 200.0f);
+    scale = cam.value("scale", 1.0f);
+
+    // Recreate renderTexture based on size
+    UnloadRenderTexture(renderTexture); // In case it's already allocated
+    //renderTexture = LoadRenderTexture((int)cameraWidth, (int)cameraHeight);
+}
+
+
+void GameCamera::saveCamera(json& j) const {
+    j["camera"] = {
+        {"cameraX", cameraX},
+        {"cameraY", cameraY},
+        {"targetX", targetX},
+        {"targetY", targetY},
+        {"cameraWidth", cameraWidth},
+        {"cameraHeight", cameraHeight},
+        {"verticalOffset", verticalOffset},
+        {"scale", scale}
+    };
+}
+
 
 Vector2& GameCamera::getPos() const
 {

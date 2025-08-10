@@ -1,73 +1,51 @@
 #include "../include/Menu.h"
 #include "../include/Game.h"
+#include "../include/SaveManager.h"
 
 MainMenuState::MainMenuState(Game* game)
 {
 	this->game = game;
-	startButton = { Vector2{80, 720}, Vector2{160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Start" };
-	continueButton = { {340, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Continue" };
-	settingButton = { {700, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Setting" };
-	modePlayerButton = { {1000, 720}, {200, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "PlayerMode" }; // for mode
-	mapSelectionButton = { {1450, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Map" };
+	startButton = { Vector2{400, 300}, Vector2{160, 80}, "Start" };
+	continueButton = { {400, 360}, {160, 80}, "Continue" };
+	saveButton = { {400, 420}, {160, 80}, "Save Game" };
+	loadButton = { {400, 480}, {160, 80}, "Load Game" };
+	settingButton = { {400, 540}, {160, 80}, "Setting" };
+	modePlayerButton = { {400, 600}, {200, 80}, "Mode" }; // for mode
+	mapSelectionButton = { {400, 660}, {160, 80}, "Map" };
+	guiArrow = RESOURCE_MANAGER.getTexture("choosingArrow");
 }
 
 void MainMenuState::draw()
 {
-	startButton.setTexture(RESOURCE_MANAGER.getTexture("BOARD1"));
-	continueButton.setTexture(RESOURCE_MANAGER.getTexture("BOARD1"));
-	mapSelectionButton.setTexture(RESOURCE_MANAGER.getTexture("BOARD1"));
-	modePlayerButton.setTexture(RESOURCE_MANAGER.getTexture("BOARD1"));
-	settingButton.setTexture(RESOURCE_MANAGER.getTexture("BOARD1"));
 	startButton.draw();
 	continueButton.draw();
+	saveButton.draw();
+	loadButton.draw();
 	settingButton.draw();
 	modePlayerButton.draw();
 	mapSelectionButton.draw();
+	if (guiArrow.id == 0)
+		guiArrow = RESOURCE_MANAGER.getTexture("choosingArrow");
+	DrawTexturePro(guiArrow, { 0, 0, (float)guiArrow.width, (float)guiArrow.height },
+		{ 330, (float)305 + currentPosition * 60, (float)guiArrow.width, (float)guiArrow.height }, { 0, 0 }, 0.f, WHITE);
 }
 
 void MainMenuState::handleInput()
 {
-	if (continueButton.isPressed()) {
-		if (globalGameEngine == nullptr) {
-			if (game->multiplayers.empty())
-				game->multiplayers.push_back(std::make_unique<Mario>());
-			game->multiplayers[0]->setPosition({32, 400});
-			game->multiplayers[0]->setVel({ 0, 0 });
-			game->multiplayers[0]->setState(FALLING);
-			globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
-		}
-		while (globalGameEngine != nullptr) {
-			if (globalGameEngine->run()) {
-				delete globalGameEngine;
-				globalGameEngine = nullptr;
-				if ((game->getSelectedMap() + 1) <= 4)
-				{
-		/*			if (game->multiplayers.empty())
-						game->multiplayers.push_back(std::make_unique<Mario>());*/
-					for (auto& p : game->multiplayers) {
-						p->setPosition({ 32, 400 });
-						p->setVel({ 0, 0 });
-						p->setState(FALLING);
-					}
-					game->selectMap(game->getSelectedMap() + 1);
-					globalGameEngine = new GameEngine(1600.0f, 800.0f, *game->level, &game->multiplayers);
-				}
-				else break;
-			}
-			else {
-				if (globalGameEngine->isOver())
-					for (auto& p : game->multiplayers)
-						p->reset();
-				break;
-			}
-		}
+	if (IsKeyPressed(KEY_UP)) {
+		currentPosition--;
+		if (currentPosition < 0) currentPosition = choosingPosition.size() - 1; // wrap around to last position
 	}
-	else if (startButton.isPressed()) {
-		std::cout << "multiplayers size before Start pressed: " << game->multiplayers.size() << "\n";
+	else if (IsKeyPressed(KEY_DOWN)) {
+		currentPosition++;
+		if (currentPosition >= choosingPosition.size()) currentPosition = 0; // wrap around to first position
+	}
+
+	if (startButton.isPressed() || (currentPosition == 0 && IsKeyPressed(KEY_ENTER))) {
 		if (game->multiplayers.empty()) {
 			game->multiplayers.push_back(std::make_unique<Mario>());
-			game->multiplayers[0]->setPosition({32, 400});
-			game->multiplayers[0]->setVel({0, 0});
+			game->multiplayers[0]->setPosition({ 32, 400 });
+			game->multiplayers[0]->setVel({ 0, 0 });
 			game->multiplayers[0]->setState(FALLING);
 		}
 		else {
@@ -79,9 +57,8 @@ void MainMenuState::handleInput()
 			delete globalGameEngine;
 			globalGameEngine = nullptr;
 		}
-		std::cout << "multiplayers size after Start pressed: " << game->multiplayers.size() << "\n";
 		globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
-
+		globalGameEngine->loadGameMap(*game->level);
 		while (globalGameEngine != nullptr) {
 			if (globalGameEngine->run()) {
 				auto& players = globalGameEngine->getMultiplayers();
@@ -89,8 +66,8 @@ void MainMenuState::handleInput()
 					std::cout << "No players found in GameEngine!\n";
 					break;
 				}
-				
-				if ((game->getSelectedMap() + 1) <= 4) {
+
+				if ((game->getSelectedMap() + 1) <= 3) {
 					for (auto& p : players) {
 						if (p) {
 							p->setPosition({ 16, 400 });
@@ -98,19 +75,19 @@ void MainMenuState::handleInput()
 							p->setState(FALLING);
 						}
 					}
-					//auto movedPlayers = std::move(players);
 					delete globalGameEngine;
 					globalGameEngine = nullptr;
 
 					game->selectMap(game->getSelectedMap() + 1);
 					// Create a new GameEngine with the updated map and players
 					globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
+					globalGameEngine->loadGameMap(*game->level);
+
 				}
 				else break;
 			}
 			else {
 				if (globalGameEngine->isOver()) {
-					//auto& players = globalGameEngine->getMultiplayers();
 					for (auto& p : game->multiplayers)
 						p->reset();
 				}
@@ -118,11 +95,95 @@ void MainMenuState::handleInput()
 			}
 		}
 	}
-	else if (settingButton.isPressed())
+	else if (continueButton.isPressed() || (currentPosition == 1 && IsKeyPressed(KEY_ENTER))) {
+		if (globalGameEngine == nullptr) {
+			if (game->multiplayers.empty())
+				game->multiplayers.push_back(std::make_unique<Mario>());
+			game->multiplayers[0]->setPosition({32, 400});
+			game->multiplayers[0]->setVel({ 0, 0 });
+			game->multiplayers[0]->setState(FALLING);
+			globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
+			globalGameEngine->loadGameMap(*game->level);
+		}
+		while (globalGameEngine != nullptr) {
+			if (globalGameEngine->run()) {
+				delete globalGameEngine;
+				globalGameEngine = nullptr;
+				if ((game->getSelectedMap() + 1) <= 3)
+				{
+		/*			if (game->multiplayers.empty())
+						game->multiplayers.push_back(std::make_unique<Mario>());*/
+					for (auto& p : game->multiplayers) {
+						p->setPosition({ 32, 400 });
+						p->setVel({ 0, 0 });
+						p->setState(FALLING);
+					}
+					game->selectMap(game->getSelectedMap() + 1);
+					globalGameEngine = new GameEngine(1600.0f, 800.0f, *game->level, &game->multiplayers);
+					globalGameEngine->loadGameMap(*game->level);
+				}
+				else break;
+			}
+			else {
+				if (globalGameEngine->isOver())
+					for (auto& p : game->multiplayers)
+						p->reset();
+				break;
+			}
+		}
+	}
+	else if (saveButton.isPressed() || (currentPosition == 2 && IsKeyPressed(KEY_ENTER))) {
+		if (globalGameEngine != nullptr) {
+			globalGameEngine->saveGame(1); // use slot 1
+			std::cout << "Game saved in slot 1\n";
+		}
+		else {
+			std::cout << "No game is running to save\n";
+		}
+	}
+	else if (loadButton.isPressed() || (currentPosition == 3 && IsKeyPressed(KEY_ENTER))) {
+		if (globalGameEngine != nullptr) {
+			delete globalGameEngine;
+			globalGameEngine = nullptr;
+		}
+		if (SaveManager::slotExists(1)) {
+			globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
+			globalGameEngine->loadGame(1);
+			std::cout << "Game loaded from slot 1\n";
+			while (globalGameEngine != nullptr) {
+				if (globalGameEngine->run()) {
+					delete globalGameEngine;
+					globalGameEngine = nullptr;
+					if (game->getSelectedMap() + 1 <= 3) {
+						for (auto& p : game->multiplayers) {
+							p->setPosition({ 32, 400 });
+							p->setVel({ 0, 0 });
+							p->setState(FALLING);
+						}
+						game->selectMap(game->getSelectedMap() + 1);
+						globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
+						globalGameEngine->loadGameMap(*game->level);
+					}
+					else break;
+				}
+				else {
+					if (globalGameEngine->isOver()) {
+						for (auto& p : game->multiplayers) {
+							p->reset();
+						}
+					}
+					break;
+				}
+			}
+		}
+		else std::cout << "No save found in slot 1\n";
+
+	}
+	else if (settingButton.isPressed() || (currentPosition == 4 && IsKeyPressed(KEY_ENTER)))
 		game->setState(std::make_unique<SettingState>(game));
-	else if (modePlayerButton.isPressed())
+	else if (modePlayerButton.isPressed() || (currentPosition == 5 && IsKeyPressed(KEY_ENTER)))
 		game->setState(std::make_unique<ModePlayer>(game));
-	else if (mapSelectionButton.isPressed())
+	else if (mapSelectionButton.isPressed()|| (currentPosition == 6 && IsKeyPressed(KEY_ENTER)))
 		game->setState(std::make_unique<MapSelection>(game));
 	else if (IsKeyPressed(KEY_E)) {
 		if (globalEditorEngine != nullptr) {
@@ -145,9 +206,25 @@ void MainMenuState::update()
 {
 	startButton.update();
 	continueButton.update();
+	saveButton.update();
+	loadButton.update();
 	settingButton.update();
 	modePlayerButton.update();
 	mapSelectionButton.update();
+	if (currentPosition == 0) startButton.setHovered(true);
+	else startButton.setHovered(false);
+	if (currentPosition == 1) continueButton.setHovered(true);
+	else continueButton.setHovered(false);
+	if (currentPosition == 2) saveButton.setHovered(true);
+	else saveButton.setHovered(false);
+	if (currentPosition == 3) loadButton.setHovered(true);
+	else loadButton.setHovered(false);
+	if (currentPosition == 4) settingButton.setHovered(true);
+	else settingButton.setHovered(false);
+	if (currentPosition == 5) modePlayerButton.setHovered(true);
+	else modePlayerButton.setHovered(false);
+	if (currentPosition == 6) mapSelectionButton.setHovered(true);
+	else mapSelectionButton.setHovered(false);
 }
 
 MainMenuState::~MainMenuState()
@@ -158,9 +235,10 @@ MainMenuState::~MainMenuState()
 // SettingState implementation
 SettingState::SettingState(Game* game) { 
 	this->game = game; 
-	audioButton = { {100, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Sound: ON" };
-	musicButton = { {500, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Music: ON" };
-	backButton = { {900, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Return to Main Menu" };
+	audioButton = { {400, 300}, {160, 80}, "Sound: ON" };
+	musicButton = { {400, 360}, {160, 80}, "Music: ON" };
+	backButton = { {400, 420}, {160, 80}, "Return" };
+	guiArrow = RESOURCE_MANAGER.getTexture("choosingArrow");
 }
 
 
@@ -169,26 +247,38 @@ void SettingState::draw()
 	audioButton.draw();
 	musicButton.draw();
 	backButton.draw();
+	if (guiArrow.id == 0)
+		guiArrow = RESOURCE_MANAGER.getTexture("choosingArrow");
+	DrawTexturePro(guiArrow, { 0, 0, (float)guiArrow.width, (float)guiArrow.height },
+		{ 330, (float)305 + currentPosition * 60, (float)guiArrow.width, (float)guiArrow.height }, { 0, 0 }, 0.f, WHITE);
 }
 
 void SettingState::handleInput()
 {
-	if (audioButton.isPressed()) {
+	if (audioButton.isPressed() || (currentPosition == 0 && IsKeyPressed(KEY_ENTER))) {
 		if (SETTING.isSoundEnabled())
 			audioButton.setText("Sound: OFF");
 		else audioButton.setText("Sound: ON");
 		SETTING.setSound(!game->isAudioEnabled());
 		game->configureSettings(!game->isAudioEnabled(), game->isMusicEnabled());
 	} 
-	else if (musicButton.isPressed()) {
+	else if (musicButton.isPressed() || (currentPosition == 1 && IsKeyPressed(KEY_ENTER))) {
 		if (SETTING.isMusicEnabled())
 			musicButton.setText("Music: OFF");
 		else musicButton.setText("Music: ON");
 		SETTING.setMusic(!game->isMusicEnabled());
 		game->configureSettings(game->isAudioEnabled(), !game->isMusicEnabled());
 	}
-	else if (backButton.isPressed()) {
+	else if (backButton.isPressed()|| (currentPosition == 2 && IsKeyPressed(KEY_ENTER))) {
 		game->returnToMainMenu();
+	}
+	if (IsKeyPressed(KEY_UP)) {
+		currentPosition--;
+		if (currentPosition < 0) currentPosition = 2; // wrap around to last position
+	}
+	else if (IsKeyPressed(KEY_DOWN)) {
+		currentPosition++;
+		if (currentPosition >= 3) currentPosition = 0; // wrap around to first position
 	}
 }
 
@@ -207,7 +297,12 @@ void SettingState::update()
 		audioButton.setText("Sound: ON");
 	else if (!SETTING.isSoundEnabled() && audioButton.getText() == "Sound: ON")
 		audioButton.setText("Sound: OFF");
-
+	if (currentPosition == 0) audioButton.setHovered(true);
+	else audioButton.setHovered(false);
+	if (currentPosition == 1) musicButton.setHovered(true);
+	else musicButton.setHovered(false);
+	if (currentPosition == 2) backButton.setHovered(true);
+	else backButton.setHovered(false);
 }
 
 // Mode player implementation
@@ -215,10 +310,11 @@ void SettingState::update()
 ModePlayer::ModePlayer(Game* game)
 {
 	this->game = game;
-	singleButton = { {100, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Single" };
-	dualButton = { {400, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Dual" };
-	difficultyButton = { {700, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Difficulty" };
-	returnButton = { {1000, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Return to Main Menu" };
+	singleButton = { {400, 300}, {160, 80}, "Single" };
+	dualButton = { {400, 360}, {160, 80}, "Dual" };
+	difficultyButton = { {400, 420}, {160, 80}, "Difficulty" };
+	returnButton = { {400, 480}, {160, 80}, "Return" };
+	guiArrow = RESOURCE_MANAGER.getTexture("choosingArrow");
 }
 
 void ModePlayer::draw()
@@ -227,19 +323,31 @@ void ModePlayer::draw()
 	dualButton.draw();
 	difficultyButton.draw();
 	returnButton.draw();
+	if (guiArrow.id == 0)
+		guiArrow = RESOURCE_MANAGER.getTexture("choosingArrow");
+	DrawTexturePro(guiArrow, { 0, 0, (float)guiArrow.width, (float)guiArrow.height },
+		{ 330, (float)305 + currentPosition * 60, (float)guiArrow.width, (float)guiArrow.height }, { 0, 0 }, 0.f, WHITE);
 }
 
 void ModePlayer::handleInput()
 {
-	if (singleButton.isPressed())
+	if (singleButton.isPressed() || (currentPosition == 0 && IsKeyPressed(KEY_ENTER)))
 		game->setState(make_unique<SingleCharSelection>(game));
-	else if (dualButton.isPressed())
+	else if (dualButton.isPressed() || (currentPosition == 1 && IsKeyPressed(KEY_ENTER)))
 		game->setState(make_unique<DualCharSelection>(game));
-	else if (difficultyButton.isPressed()) {
+	else if (difficultyButton.isPressed() || (currentPosition == 2 && IsKeyPressed(KEY_ENTER))) {
 		
 	}
-	else if (returnButton.isPressed()) {
+	else if (returnButton.isPressed() || (currentPosition == 3 && IsKeyPressed(KEY_ENTER))) {
 		game->returnToMainMenu();
+	}
+	if (IsKeyPressed(KEY_UP)) {
+		currentPosition--;
+		if (currentPosition < 0) currentPosition = 3; // wrap around to last position
+	}
+	else if (IsKeyPressed(KEY_DOWN)) {
+		currentPosition++;
+		if (currentPosition >= 4) currentPosition = 0; // wrap around to first position
 	}
 }
 
@@ -249,6 +357,14 @@ void ModePlayer::update()
 	dualButton.update();
 	difficultyButton.update();
 	returnButton.update();
+	if (currentPosition == 0) singleButton.setHovered(true);
+	else singleButton.setHovered(false);
+	if (currentPosition == 1) dualButton.setHovered(true);
+	else dualButton.setHovered(false);
+	if (currentPosition == 2) difficultyButton.setHovered(true);
+	else difficultyButton.setHovered(false);
+	if (currentPosition == 3) returnButton.setHovered(true);
+	else returnButton.setHovered(false);
 }
 
 //MapSelection Implementation
@@ -256,10 +372,11 @@ void ModePlayer::update()
 MapSelection::MapSelection(Game* game)
 {
 	this->game = game;
-	map1Button = { {100, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "MAP 1" };
-	map2Button = { {400, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "MAP 2" };
-	map3Button = { {700, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "MAP 3" };
-	backButton = { {1000, 720}, {160, 80}, RESOURCE_MANAGER.getTexture("BOARD1"), "Return to Main Menu" };
+	map1Button = { {400, 300}, {160, 80}, "MAP 1" };
+	map2Button = { {400, 360}, {160, 80}, "MAP 2" };
+	map3Button = { {400, 420}, {160, 80}, "MAP 3" };
+	backButton = { {400, 480}, {160, 80}, "Return" };
+	guiArrow = RESOURCE_MANAGER.getTexture("choosingArrow");
 }
 
 void MapSelection::draw()
@@ -268,30 +385,43 @@ void MapSelection::draw()
 	map2Button.draw();
 	map3Button.draw();
 	backButton.draw();
+	if (guiArrow.id == 0)
+		guiArrow = RESOURCE_MANAGER.getTexture("choosingArrow");
+	DrawTexturePro(guiArrow, { 0, 0, (float)guiArrow.width, (float)guiArrow.height },
+		{ 330, (float)305 + currentPosition * 60, (float)guiArrow.width, (float)guiArrow.height }, { 0, 0 }, 0.f, WHITE);
 }
 
 void MapSelection::handleInput()
 {
-	if (map1Button.isPressed()) {
+	if (map1Button.isPressed() || (currentPosition == 0 && IsKeyPressed(KEY_ENTER))) {
 		game->selectMap(1);
 		for (auto& p : game->multiplayers)
 			p->reset();
 		game->returnToMainMenu();
 	}
-	else if (map2Button.isPressed()) {
+	else if (map2Button.isPressed() || (currentPosition == 1 && IsKeyPressed(KEY_ENTER))) {
 		game->selectMap(2);
 		for (auto& p : game->multiplayers)
 			p->reset();
 		game->returnToMainMenu();
 	}
-	else if (map3Button.isPressed()) {
+	else if (map3Button.isPressed() || (currentPosition == 2 && IsKeyPressed(KEY_ENTER))) {
 		game->selectMap(3);
 		for (auto& p : game->multiplayers)
 			p->reset();
 		game->returnToMainMenu();
 	}
-	else if (backButton.isPressed())
+	else if (backButton.isPressed() || (currentPosition == 1 && IsKeyPressed(KEY_ENTER)))
 		game->returnToMainMenu();
+
+	if (IsKeyPressed(KEY_UP)) {
+		currentPosition--;
+		if (currentPosition < 0) currentPosition = 3; // wrap around to last position
+	}
+	else if (IsKeyPressed(KEY_DOWN)) {
+		currentPosition++;
+		if (currentPosition >= 4) currentPosition = 0; // wrap around to first position
+	}
 }
 
 void MapSelection::update()
@@ -300,6 +430,14 @@ void MapSelection::update()
 	map2Button.update();
 	map3Button.update();
 	backButton.update();
+	if (currentPosition == 0) map1Button.setHovered(true);
+	else map1Button.setHovered(false);
+	if (currentPosition == 1) map2Button.setHovered(true);
+	else map2Button.setHovered(false);
+	if (currentPosition == 2) map3Button.setHovered(true);
+	else map3Button.setHovered(false);
+	if (currentPosition == 3) backButton.setHovered(true);
+	else backButton.setHovered(false);
 }
 
 SingleCharSelection::SingleCharSelection(Game* game)
@@ -326,13 +464,14 @@ void SingleCharSelection::draw()
 	// gui1
 	// draw 4 texture of character
 
-	for (int i = 0; i <= 2; i++) {
-		DrawTexturePro(Textures[i], { 0, 0, (float)Textures[i].width, (float)Textures[i].height },
-			{ 270 + (float)i * 225, 500, 32 * 4, 40 * 4 }, { 0, 0 }, 0.f, WHITE);
-	}
+	DrawTexturePro(Textures[0], { 0, 0, (float)Textures[0].width, (float)Textures[0].height },
+		{ 270, 500 - 24, 32 * 4, 46 * 4 }, { 0, 0 }, 0.f, WHITE);
+	DrawTexturePro(Textures[1], { 0, 0, (float)Textures[1].width, (float)Textures[1].height },
+		{ 270 + (float)1 * 225, 500 - 40, 32 * 4, 50 * 4 }, { 0, 0 }, 0.f, WHITE);
+	DrawTexturePro(Textures[2], { 0, 0, (float)Textures[2].width, (float)Textures[2].height },
+		{ 270 + (float)2 * 225, 500, 32 * 4, 40 * 4 }, { 0, 0 }, 0.f, WHITE);
 	DrawTexturePro(Textures[3], { 0, 0, (float)Textures[3].width, (float)Textures[3].height },
 		{ 270 + (float)3 * 225, 500 - 32, 32 * 4, 48 * 4 }, { 0, 0 }, 0.f, WHITE);
-
 	DrawTexturePro(Textures[4], { 0, 0, (float)Textures[4].width, (float)Textures[4].height },
 		{ 270 + (float)4 * 225, 500, 32 * 4, 40 * 4 }, { 0, 0 }, 0.f, WHITE);
 
@@ -402,20 +541,20 @@ void DualCharSelection::draw()
 	// gui1
 	// draw 4 texture of character
 
-	for (int i = 0; i <= 2; i++) {
-		DrawTexturePro(Textures[i], { 0, 0, (float)Textures[i].width, (float)Textures[i].height },
-			{ 270 + (float)i * 225, 500, 32 * 4, 40 * 4 }, { 0, 0 }, 0.f, WHITE);
-	}
+	DrawTexturePro(Textures[0], { 0, 0, (float)Textures[0].width, (float)Textures[0].height },
+		{ 270, 500 - 24, 32 * 4, 46 * 4 }, { 0, 0 }, 0.f, WHITE);
+	DrawTexturePro(Textures[1], { 0, 0, (float)Textures[1].width, (float)Textures[1].height },
+		{ 270 + (float)1 * 225, 500 - 40, 32 * 4, 50 * 4 }, { 0, 0 }, 0.f, WHITE);
+	DrawTexturePro(Textures[2], { 0, 0, (float)Textures[2].width, (float)Textures[2].height },
+		{ 270 + (float)2 * 225, 500, 32 * 4, 40 * 4 }, { 0, 0 }, 0.f, WHITE);
 	DrawTexturePro(Textures[3], { 0, 0, (float)Textures[3].width, (float)Textures[3].height },
 		{ 270 + (float)3 * 225, 500 - 32, 32 * 4, 48 * 4 }, { 0, 0 }, 0.f, WHITE);
-
 	DrawTexturePro(Textures[4], { 0, 0, (float)Textures[4].width, (float)Textures[4].height },
 		{ 270 + (float)4 * 225, 500, 32 * 4, 40 * 4 }, { 0, 0 }, 0.f, WHITE);
 
 	if (currentPlayer1 == currentPlayer2) {
 		DrawTexturePro(GuiP1, { 0, 0, (float)GuiP1.width, (float)GuiP1.height }, { 280 + (float)currentPlayer1 * 225 - 30, 350, 75, 105}, { 0, 0 }, 0.f, WHITE);
 		DrawTexturePro(GuiP2, { 0, 0, (float)GuiP2.width, (float)GuiP2.height }, { 280 + (float)currentPlayer2 * 225 + 55, 350, 75, 105}, { 0, 0 }, 0.f, WHITE);
-
 	}
 	else {
 		DrawTexturePro(GuiP1, { 0, 0, (float)GuiP1.width, (float)GuiP1.height }, { 280 + (float)currentPlayer1 * 225 + 10, 350, 75, 105 }, { 0, 0 }, 0.f, WHITE);

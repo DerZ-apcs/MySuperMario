@@ -2,17 +2,22 @@
 #include "../include/Spiny.h"
 #include "../include/GameEngine.h"
 
+const int Spiny::SCORE_STOMP_SPINY = 100.f;
+
 Spiny::Spiny(Vector2 pos, Texture2D texture)
     : Enemy(pos, { 32, 32 }, { 0,0 }, LEFT, ON_GROUND, texture, 0.2f, 1, WHITE)
 {
 	texture = RESOURCE_MANAGER.getTexture("Spiny_LEFT_0");
     updateCollision();
+    frameTime = 0.1f;
+    scores = SCORE_STOMP_SPINY;
 }
 
 void Spiny::Update() {
     // Nếu đang die animation, dùng logic base để đếm timer và squash
+    const float deltaTime = GetFrameTime();
     Entity::Update();
-    if (isDying()) {
+    if (isDying() || state == STATE_IS_DYING) {
         Enemy::Update();
         return;
     }
@@ -20,7 +25,16 @@ void Spiny::Update() {
     if (state == ON_GROUND) {
         velocity.x = (direction == LEFT ? -SPINY_SPEED : SPINY_SPEED);
 	}
-    Enemy::Update();
+    //Enemy::Update();
+
+    if (getGravityAvailable())
+        velocity.y += GRAVITY * deltaTime;
+    if (velocity.y > 20) state = FALLING;
+    position.x += velocity.x * deltaTime;
+    position.y += velocity.y * deltaTime;
+
+    Entity::updateCollision();
+    UpdateTexture();
 }
 
 void Spiny::draw() {
@@ -38,75 +52,41 @@ void Spiny::UpdateTexture() {
         frameAcum = 0;
     }
     std::string dir = (direction == LEFT ? "LEFT" : "RIGHT");
-    texture = RESOURCE_MANAGER.getTexture("Spiny_" + dir + "_" + std::to_string(currFrame));
+    if (state == ON_GROUND) {
+        texture = RESOURCE_MANAGER.getTexture("Spiny_" + dir + "_" + std::to_string(currFrame));
+	}
+	else if (state == FALLING || state == JUMPING) {
+		texture = RESOURCE_MANAGER.getTexture("Spiny_DEAD");
+	}
 }
 
-ENEMY_TYPE Spiny::getEnemyType() const {
+void Spiny::stomped() {
+    // only be attacked by state star or fireball
+    if (isReadyForRemoval() || state == STATE_IS_DYING) return;
+    state = STATE_IS_DYING;
+    velocity.y = -300; // Slight upward bounce
+    velocity.x = (rand() % 100) - 50; // Random horizontal velocity
+    deathTimer = ENEMY_DEATH_TIMER_LONG; // Disappear after 0.5s
+    Effect* score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string(SCORE_STOMP_SPINY).c_str()), getCenter());
+    globalGameEngine->addEffect(score);
+}
+
+ENEMY_TYPE Spiny::getEnemyType() const
+{
     return SPINY;
 }
 
-float Spiny::getScores() const {
-	return SCORE_STOMP_SPINY;
+float Spiny::getScores() const
+{
+    return SCORE_STOMP_SPINY;
 }
 
+void Spiny::loadEntity(const json& j)
+{
+    Enemy::loadEntity(j);
+}
 
-//void Spiny::CollisionWithCharacter(Mario& m, CollisionType ct) {
-//    if (isDying()) return;
-//    if (m.getInvincibilityTimer() <= 0) {
-//        if (m.getMarioState() == STATE_SUPER || m.getMarioState() == STATE_FIRE_BALL) {
-//            m.TransitionToSmall();
-//            m.setInvincibilityTimer(2.0f);
-//        }
-//        else {
-//            m.setState(STATE_IS_DYING);
-//            RESOURCE_MANAGER.playSound("MARIO_DIE");
-//        }
-//    }
-//}
-
-//void Spiny::CollisionWithEnemy(Enemy& enemy, CollisionType ct) {
-//    Koopa* k = dynamic_cast<Koopa*>(&enemy);
-//    if (k && k->getState() == STATE_SHELL && k->getVelocity().x != 0
-//        && (ct == COLLISION_TYPE_EAST || ct == COLLISION_TYPE_WEST)) {
-//        state = STATE_IS_DYING;
-//        deathTimer = ENEMY_DEATH_TIMER_DEFAULT;
-//        velocity.y = -200;
-//        velocity.x = (rand() % 100) - 50;
-//        updateCollision();
-//    }
-//}
-
-//void Spiny::CollisionWithFireball(FireBall& fb) {
-//    if (isDying()) return;
-//    state = STATE_IS_DYING;
-//    deathTimer = ENEMY_DEATH_TIMER_DEFAULT;
-//    velocity.y = -250;
-//    velocity.x = (rand() % 100) - 50;
-//    updateCollision();
-//}
-
-//void Spiny::HandleTileCollision(const Tile& tile, CollisionType ct) {
-//    if (isDying()) return;
-//
-//    if (ct == COLLISION_TYPE_EAST || ct == COLLISION_TYPE_WEST) {
-//        // Đổi chiều đi khi chạm tường
-//        direction = (direction == LEFT ? RIGHT : LEFT);
-//        if (ct == COLLISION_TYPE_EAST)
-//            setX(tile.getX() - getWidth());
-//        else
-//            setX(tile.getX() + tile.getWidth());
-//        velocity.x = -velocity.x;
-//        UpdateTexture();
-//    }
-//    else if (ct == COLLISION_TYPE_SOUTH) {
-//        // Đứng trên đất
-//        setY(tile.getY() - getHeight());
-//        velocity.y = 0;
-//        state = ON_GROUND;
-//    }
-//    else if (ct == COLLISION_TYPE_NORTH) {
-//        // Bị chặn từ dưới
-//        setY(tile.getY() + tile.getHeight());
-//        velocity.y = 0;
-//    }
-//}
+void Spiny::saveEntity(json& j) const
+{
+    Enemy::saveEntity(j);
+}

@@ -5,8 +5,11 @@
 #include "../include/Direction.h"
 #include "../include/Collision.h"
 #include "../include/Global.h"
+#include "../include/json.hpp"
 #include <string>
 #include <raylib.h>
+#include <external/cgltf.h>
+using nlohmann::json;
 
 class Entity {
 protected:
@@ -113,5 +116,9 @@ public:
 	void setGravityAvailable(bool gravityAvailable);
 	bool getCollisionAvailable();
 	bool getGravityAvailable();
+
+	// for load/save game
+	virtual void saveEntity(json& j) const;
+	virtual void loadEntity(const json& j);
 };	
 #endif

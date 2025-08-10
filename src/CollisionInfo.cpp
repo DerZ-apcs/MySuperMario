@@ -21,6 +21,7 @@
 #include "../include/CoinBlock.h"
 #include "../include/Coin.h"
 #include "../include/PowerItem.h"
+#include "../include/PiranhaPlant.h"
 #include <iostream>
 #include <GameEngine.h>
 #include <BobOmb.h>
@@ -229,7 +230,8 @@ bool PlayerBrickInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	case COLLISION_TYPE_NORTH:
 		character->setPosition(Vector2{ character->getX(), block->getY() + block->getHeight() });
 		character->setVelY(0);
-		block->setBroken(true);
+		//block->setBroken(true);
+		block->breakBrick();
 		//state = FALLING;
 		break;
 	case COLLISION_TYPE_SOUTH:
@@ -355,8 +357,10 @@ bool EnemyFloorInfo::HandleCollision(Entity* entityA, Entity* entityB)
 
 	if (!enemy || !floor || !enemy->getCollisionAvailable())
 		return false;
-	if (enemy->getEnemyType() == PIRANHA) return false;
-
+	if (enemy->getEnemyType() == PIRANHA) {
+		if (dynamic_cast<PiranhaPlant*>(enemy)->getPiranhaType() != JUMPING_PIRANHA)
+			return false; // only jumping piranha can collide with blocks
+	}
 	CollisionType Colltype = enemy->CheckCollision(*floor);
 
 	if (Colltype != COLLISION_TYPE_SOUTH)
@@ -375,8 +379,10 @@ bool EnemyBrickInfo::HandleCollision(Entity* entityA, Entity* entityB)
 
 	if (!enemy || !block || !enemy->getCollisionAvailable())
 		return false;
-	if (enemy->getEnemyType() == PIRANHA) return false;
-
+	if (enemy->getEnemyType() == PIRANHA) {
+		if (dynamic_cast<PiranhaPlant*>(enemy)->getPiranhaType() != JUMPING_PIRANHA)
+			return false; // only jumping piranha can collide with blocks
+	}
 	CollisionType Colltype = enemy->CheckCollision(*block);
 	if (Colltype == COLLISION_TYPE_NONE) 
 		return false;
@@ -428,11 +434,14 @@ bool EnemyItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 
 	if (!enemy || !block || !enemy->getCollisionAvailable())
 		return false;
-	if (enemy->getEnemyType() == PIRANHA) return false;
-
+	if (enemy->getEnemyType() == PIRANHA) {
+		if (dynamic_cast<PiranhaPlant*>(enemy)->getPiranhaType() != JUMPING_PIRANHA)
+			return false; // only jumping piranha can collide with blocks
+	}
 	CollisionType Colltype = enemy->CheckCollision(*block);
 	if (Colltype == COLLISION_TYPE_NONE) 
 		return false;
+
 	if (enemy->getEnemyType() == BULLET) {
 		enemy->setVel({ 0, 0 });
 		if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomp.wav");
@@ -488,6 +497,10 @@ bool EnemyBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	if (enemy->getEnemyType() == BULLET) {
 		return false;
 	}
+	if (enemy->getEnemyType() == PIRANHA) {
+		if (dynamic_cast<PiranhaPlant*>(enemy)->getPiranhaType() != JUMPING_PIRANHA)
+			return false; // only jumping piranha can collide with blocks
+	}
 	switch (Colltype) {
 	case COLLISION_TYPE_NORTH:
 		enemy->setPosition(Vector2{ enemy->getX(), block->getY() + block->getHeight() });
@@ -535,7 +548,7 @@ bool FireBallFloorInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	if (Colltype != COLLISION_TYPE_SOUTH)
 		return false;
 	fireball->setPosition(Vector2{ fireball->getX(), fireball->getY() - fireball->getHeight() });
-	fireball->setVelY(fireball->getVelY() * -0.9f);
+	fireball->setVelY(fireball->getVelY() * -0.8f);
 	return true;
 }
 
@@ -566,15 +579,15 @@ bool FireBallItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 		break;
 	case COLLISION_TYPE_SOUTH:
 		fireball->setPosition(Vector2{ fireball->getX(), block->getY() - fireball->getHeight() });
-		fireball->setVelY(fireball->getVelY() * -0.9f);
+		fireball->setVelY(fireball->getVelY() * -0.8f);
 		break;
 	case COLLISION_TYPE_EAST:
 		fireball->setPosition(Vector2{ block->getX() - fireball->getWidth(), fireball->getY() });
-		fireball->setVelX(fireball->getVelX() * -0.9f);
+		fireball->setVelX(fireball->getVelX() * -0.8f);
 		break;
 	case COLLISION_TYPE_WEST:
 		fireball->setPosition(Vector2{ block->getX() + block->getWidth(), fireball->getY() });
-		fireball->setVelX(fireball->getVelX() * -0.9f);
+		fireball->setVelX(fireball->getVelX() * -0.8f);
 		break;
 	default:
 		break;
@@ -597,6 +610,7 @@ bool FireBallBrickInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	block->breakBrick();
 	fireball->setEntityDead();
 	fireball->setCollisionAvailable(false);
+
 	if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("bump.wav");
 	SmokeEffect* smoke = new SmokeEffect(Vector2{ block->getCenter().x, block->getTop() }, Vector2{ 0, -200 });
 	globalGameEngine->addEffect(smoke);
@@ -622,15 +636,15 @@ bool FireBallBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 		break;
 	case COLLISION_TYPE_SOUTH:
 		fireball->setPosition(Vector2{ fireball->getX(), block->getY() - fireball->getHeight() });
-		fireball->setVelY(fireball->getVelY() * -0.9f);
+		fireball->setVelY(fireball->getVelY() * -0.8f);
 		break;
 	case COLLISION_TYPE_EAST:
 		fireball->setPosition(Vector2{ block->getX() - fireball->getWidth(), fireball->getY() });
-		fireball->setVelX(fireball->getVelX() * -0.9f);
+		fireball->setVelX(fireball->getVelX() * -0.8f);
 		break;
 	case COLLISION_TYPE_WEST:
 		fireball->setPosition(Vector2{ block->getX() + block->getWidth(), fireball->getY() });
-		fireball->setVelX(fireball->getVelX() * -0.9f);
+		fireball->setVelX(fireball->getVelX() * -0.8f);
 		break;
 	default:
 		break;
@@ -759,19 +773,19 @@ bool EnemyFireBallBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	{
 	case COLLISION_TYPE_NORTH:
 		fireball->setPosition(Vector2{ fireball->getX(), block->getY() + block->getHeight() });
-		fireball->setVelY(fireball->getVelY() * -0.9f);
+		fireball->setVelY(fireball->getVelY() * -0.6f);
 		break;
 	case COLLISION_TYPE_SOUTH:
 		fireball->setPosition(Vector2{ fireball->getX(), block->getY() - fireball->getHeight() });
-		fireball->setVelY(fireball->getVelY() * -0.9f);
+		fireball->setVelY(fireball->getVelY() * -0.6f);
 		break;
 	case COLLISION_TYPE_EAST:
 		fireball->setPosition(Vector2{ block->getX() - fireball->getWidth(), fireball->getY() });
-		fireball->setVelX(fireball->getVelX() * -0.9f);
+		fireball->setVelX(fireball->getVelX() * -0.6f);
 		break;
 	case COLLISION_TYPE_WEST:
 		fireball->setPosition(Vector2{ block->getX() + block->getWidth(), fireball->getY() });
-		fireball->setVelX(fireball->getVelX() * -0.9f);
+		fireball->setVelX(fireball->getVelX() * -0.6f);
 		break;
 	default:
 		break;

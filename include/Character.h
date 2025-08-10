@@ -30,7 +30,11 @@ public:
 	Character();
 	Character(Vector2 pos = { 0, 0 }, Vector2 size = { 0, 0 });
 	Character(Vector2 pos, Vector2 sz, CharacterState characterstate);
-	Character(Vector2 pos, Vector2 sz, CharacterState characterstate, CharacterType characterType);
+	Character
+	
+	
+	
+	(Vector2 pos, Vector2 sz, CharacterState characterstate, CharacterType characterType);
 	virtual ~Character();
 	EntityType getEntityType() const override;
 	virtual CharacterType getCharacterType() const = 0;
@@ -38,8 +42,7 @@ public:
 	virtual void reset();
 	virtual void setPhase(Phase phase);
 	virtual const Phase& getPhase() const;
-	virtual CharacterState& getCharacterState();
-	virtual CharacterState& getPrevCharacterState();
+	virtual const CharacterState& getCharacterState() const;
 
 	bool isInvicible() const;
 	bool isImmortal() const;
@@ -63,6 +66,7 @@ public:
 	void setCoins(int coins);
 	void setScores(int scores);
 	void setDucking(bool ducking);
+	void setCharacterState(CharacterState characterState);
 	void setHolding(bool holding);
 	void lostSuit();
 	void setVictory(bool victory);
@@ -105,6 +109,8 @@ public:
 				std::tie(other.character_state, other.entity_state, other.direction, other.frame);
 		}
 	};
+	void loadEntity(const json& j) override;
+	void saveEntity(json& j) const override;
 protected:
 	struct TransitionFrame {
 		std::string textureKey;
@@ -113,6 +119,7 @@ protected:
 		int Max_frame;
 	};
 	std::vector<TransitionFrame> transitionFrames;
+	std::vector<TransitionFrame> transitionFramesLuigi;
 	std::vector<TransitionFrame> transitionFramesToad;
 	std::vector<TransitionFrame> transitionFramesPeach;
 	std::vector<TransitionFrame> transitionFramesMarisa;
@@ -128,12 +135,9 @@ protected:
 
 	bool holding;
 	bool isThrowing;
-	Vector2 specificVelocity;
 
 	float countThrowTime;
 	float countImmortalTime;
-	unsigned indexRender;
-	vector<bool> renderImmortal;
 	bool standingUp;
 
 	float transitioningFrameTime;
@@ -146,8 +150,6 @@ protected:
 	std::vector<int> transitionFrameOrder;
 
 	CharacterState Character_state;
-	CharacterState PrevCharacter_state;
-	SPRITE_STATE Character_sprite_State;
 	std::list<FireBall*> fireballs;
 
 	const float DEAD_PLAYER_INITIAL_VELOCITY = 500.f;
@@ -165,7 +167,7 @@ protected:
 	const float LUIGI_MAXSPEEDX = 500;
 
 	bool victory = false;
-	bool exitlevel;
+	bool exitlevel = false;
 	bool lostSuitTrigger = false;
 };
 #endif

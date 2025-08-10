@@ -1,9 +1,12 @@
 #ifndef CAMERA_H
 #define CAMERA_H
-
-#include <iostream>
 #include <raylib.h>
+#include <iostream>
 #include <raymath.h>
+#include "../include/json.hpp"
+using nlohmann::json;
+
+class GameEngine;
 
 class GameCamera {
 private:
@@ -30,6 +33,9 @@ public:
 	Vector2& getPos() const;
 	float getScale() const;
 	Rectangle getViewRect() const;
+	void loadCamera(const json& j);
+	void saveCamera(json& j) const;
+
 };
 
 //------------

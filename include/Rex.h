@@ -20,6 +20,8 @@ public:
     void UpdateTexture() override;
     void updateCollision() override;
     void stomped() override;
+    void loadEntity(const json& j) override;
+    void saveEntity(json& j) const override;
 };
 
 #endif

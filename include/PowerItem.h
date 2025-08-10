@@ -34,6 +34,8 @@ public:
 	void Update() override;
 	void draw() override;
 	ITEM_TYPE getItemType() const override;
+	void loadEntity(const json& j) override;
+	void saveEntity(json& j) const override;
 };
 
 #endif // !POWER_ITEM_H

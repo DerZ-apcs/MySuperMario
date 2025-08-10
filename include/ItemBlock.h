@@ -25,7 +25,8 @@ public:
     bool getActive() const;
     void setActive(bool active);
     void Activate();
-
+    void loadEntity(const json& j) override;
+    void saveEntity(json& j) const override;
 };
 
 #endif // !ITEMBLOCK_H

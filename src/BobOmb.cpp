@@ -3,12 +3,14 @@
 #include "../include/GameEngine.h"
 #include <raymath.h>
 
+
 BobOmb::BobOmb(Vector2 pos, Texture2D texture)
     : Enemy(pos, { 24, 30 }, { 0, 0 }, LEFT, ON_GROUND, texture, 0.2f, 1, DARKGRAY),
     isActivated(false),
     fuseTimer(BOBOMB_FUSE_TIME) 
 {
     velocity.x = -BOBOMB_WALK_SPEED;
+    scores = 100.f;
 }
 
 BobOmb::~BobOmb() {}
@@ -65,7 +67,7 @@ void BobOmb::UpdateTexture() {
         }
         texture = (currFrame == 0)
             ? RESOURCE_MANAGER.getTexture("BobOmb_Activated_0")
-            : RESOURCE_MANAGER.getTexture("BobOmb_Activated_1");
+			: RESOURCE_MANAGER.getTexture(""); // sử dụng texture giả để tạo hiệu ứng nhấp nháy
     }
     else {
         // Trạng thái đi bộ
@@ -74,13 +76,18 @@ void BobOmb::UpdateTexture() {
             currFrame = (currFrame + 1) % (maxFrame + 1);
             frameAcum = 0;
         }
-        if (direction == LEFT) {
-            texture = RESOURCE_MANAGER.getTexture(
-                currFrame == 0 ? "BobOmb_LEFT_0" : "BobOmb_LEFT_1");
+        if (state == ON_GROUND) {
+            if (direction == LEFT) {
+                texture = RESOURCE_MANAGER.getTexture(
+                    currFrame == 0 ? "BobOmb_LEFT_0" : "BobOmb_LEFT_1");
+            }
+            else {
+                texture = RESOURCE_MANAGER.getTexture(
+                    currFrame == 0 ? "BobOmb_RIGHT_0" : "BobOmb_RIGHT_1");
+            }
         }
-        else {
-            texture = RESOURCE_MANAGER.getTexture(
-                currFrame == 0 ? "BobOmb_RIGHT_0" : "BobOmb_RIGHT_1");
+        else if (state == FALLING || state == JUMPING) {
+            texture = direction == LEFT ? RESOURCE_MANAGER.getTexture("BobOmb_LEFT_0") : RESOURCE_MANAGER.getTexture("BobOmb_RIGHT_0");
         }
     }
 }
@@ -112,4 +119,18 @@ void BobOmb::Explode() {
             }
         }
     }
+}
+
+void BobOmb::loadEntity(const json& j)
+{
+    Enemy::loadEntity(j);
+    isActivated = j["isActivated"];        
+    fuseTimer = j["fuseTimer"];
+}
+
+void BobOmb::saveEntity(json& j) const
+{
+    Enemy::saveEntity(j);
+    j["isActivated"] = isActivated;          
+    j["fuseTimer"] = fuseTimer;
 }

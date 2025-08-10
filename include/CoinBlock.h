@@ -24,6 +24,8 @@ public:
 	BLOCK_TYPE getBlockType() const override;
 
 	void draw() override;
+	void loadEntity(const json& j) override;
+	void saveEntity(json& j) const override;
 };
 
 #endif // !COIN_BLOCK_H

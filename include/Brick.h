@@ -19,6 +19,8 @@ public:
 	void breakBrick();
 
 	void draw() override;
+	void loadEntity(const json& j) override;
+	void saveEntity(json& j) const override;
 };
 
 #endif // !BRICK_H

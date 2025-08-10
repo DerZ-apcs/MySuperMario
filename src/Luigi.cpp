@@ -1,6 +1,6 @@
 #include "../include/Luigi.h"
 
-Luigi::Luigi(): Luigi(Vector2{32, 400}, Vector2{32, 40}, STATE_SMALL)
+Luigi::Luigi(): Luigi(Vector2{32, 400}, Vector2{32, 44}, STATE_SMALL)
 {
 	cout << "Luigi is created" << endl;
 }

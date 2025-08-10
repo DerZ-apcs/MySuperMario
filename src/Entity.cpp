@@ -296,3 +296,46 @@ bool Entity::getGravityAvailable()
 {
 	return gravityAvailable;
 }
+
+void Entity::saveEntity(json& j) const {
+	j["pos"] = { position.x, position.y };
+	j["size"] = { size.x, size.y };
+	j["vel"] = { 0.f, 0.f };
+	j["direction"] = static_cast<int>(direction);
+	j["state"] = static_cast<int>(state);
+
+	j["maxFrame"] = maxFrame;
+	j["currFrame"] = currFrame;
+	j["frameTime"] = 0;
+	j["frameAcum"] = 0;
+
+	// Note: Texture2D is not serializable directly. Save the path instead.
+
+	j["isJumping"] = isjumping;
+	j["gravityAvailable"] = gravityAvailable;
+	j["collisionAvailable"] = collisionAvailable;
+	j["dead"] = dead;
+
+	j["type"] = static_cast<int>(getEntityType()); // used for reconstruction
+}
+
+
+void Entity::loadEntity(const json& j) 
+{
+	position = { j["pos"][0], j["pos"][1] };
+	size = { j["size"][0], j["size"][1] };
+	velocity = { j["vel"][0], j["vel"][1] };
+	direction = static_cast<Direction>(j["direction"].get<int>());
+	state = static_cast<EntityState>(j["state"].get<int>());
+
+	maxFrame = j["maxFrame"];
+	currFrame = j["currFrame"];
+	frameTime = j["frameTime"];
+	frameAcum = j["frameAcum"];
+
+	isjumping = j["isJumping"];
+	gravityAvailable = j["gravityAvailable"];
+	collisionAvailable = j["collisionAvailable"];
+	dead = j["dead"];
+}
+

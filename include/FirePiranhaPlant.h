@@ -14,10 +14,13 @@ protected:
 public:
     FirePiranhaPlant(Vector2 pos, Texture2D texture);
     ~FirePiranhaPlant();
+	PIRANHA_TYPE getPiranhaType() const override; // Ghi đè để trả về loại PiranhaPlant
     void Update() override;
     void draw() override;
     void UpdateTexture() override;
     virtual void ShootFireBall(); // Bắn fireball
+    void loadEntity(const json& j) override;
+    void saveEntity(json& j) const override;
 };
 
 class RapidFirePiranha : public FirePiranhaPlant {
@@ -26,6 +29,9 @@ private:
 public:
     RapidFirePiranha(Vector2 pos, Texture2D texture);
     void ShootFireBall() override; // Ghi đè để bắn một fireball
+	PIRANHA_TYPE getPiranhaType() const override {
+		return RAPIDFIRE_PIRANHA; // Trả về loại Rapid Fire Piranha
+	}
 };
 
 class HomingFirePiranha : public FirePiranhaPlant {
@@ -35,6 +41,9 @@ private:
 public:
     HomingFirePiranha(Vector2 pos, Texture2D texture);
     void ShootFireBall() override; // Ghi đè để bắn fireball nhắm mục tiêu
+    PIRANHA_TYPE getPiranhaType() const override {
+        return HOMING_PIRANHA;
+    } 
 };
 
 #endif

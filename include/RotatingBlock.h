@@ -24,6 +24,8 @@ public:
 	void Update() override;
 	void UpdateTexture() override;
 	void draw() override;
+	void loadEntity(const json& j) override;
+	void saveEntity(json& j) const override;
 };
 
 #endif // !ROTATING_BLOCK_H

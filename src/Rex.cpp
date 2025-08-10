@@ -8,6 +8,7 @@ Rex::Rex(Vector2 pos, Texture2D texture)
     velocity.x = -REX_SPEED; // REX_SPEED được định nghĩa trong Enemy.h
     updateCollision();
     collisionTimer = 0.f;
+    scores = SCORE_STOMP_REX;
 }
 
 ENEMY_TYPE Rex::getEnemyType() const
@@ -117,9 +118,23 @@ void Rex::stomped()
         velocity.y = 0.0f;
         deathTimer = ENEMY_DEATH_TIMER_DEFAULT;
         updateSquashEffect();
-        Effect* text = new TextEffect(to_string(SCORE_STOMP_REX).c_str(), getCenter());
-        globalGameEngine->addEffect(text);
+        Effect* score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string(SCORE_STOMP_REX).c_str()), getCenter());
+        globalGameEngine->addEffect(score);
     }
+}
+
+void Rex::loadEntity(const json& j)
+{
+    Enemy::loadEntity(j);
+    rexState = static_cast<RexState>(j["rexState"].get<int>());
+    detectMarioRange = j["detectMarioRange"];
+}
+
+void Rex::saveEntity(json& j) const
+{
+    Enemy::saveEntity(j);
+    j["rexState"] = static_cast<int>(rexState);
+    j["detectMarioRange"] = detectMarioRange;
 }
 
 

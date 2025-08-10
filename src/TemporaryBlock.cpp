@@ -18,8 +18,17 @@ void TemporaryBlock::draw()
 {
 }
 
+void TemporaryBlock::loadEntity(const json& j)
+{
+
+}
+
+void TemporaryBlock::saveEntity(json& j) const
+{
+}
+
 BLOCK_TYPE TemporaryBlock::getBlockType() const
 {
-	return BLOCK_TYPE();
+	return TEMPBLOCK;
 }
 

@@ -18,5 +18,7 @@ public:
     Vector2 getVelocity() const;
     void setVelocity(Vector2 newVelocity);
     void Update() override;
+    void loadEntity(const json& j) override;
+    void saveEntity(json& j) const override;
 };
 #endif // !MOVINGBLOCK_H

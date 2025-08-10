@@ -16,5 +16,7 @@ public:
     BLOCK_TYPE getBlockType() const override;
     void Update() override;
     void draw() override;
+    void loadEntity(const json& j) override;
+    void saveEntity(json& j) const override;
 };
 #endif // !TEMPORARYBLOCK_H

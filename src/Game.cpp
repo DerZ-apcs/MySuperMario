@@ -4,7 +4,6 @@
 #include "../include/BlockFactory.h"
 
 class MenuState;
-
 Game::Game(): backgroundTexture({0})
 {
 	currentState = std::make_unique<MainMenuState>(this);
@@ -33,6 +32,7 @@ void Game::init()
 	SetWindowIcon(gameIconImage);
 
 	RESOURCE_MANAGER.LoadAllResources();
+	TextButton::SMW = RESOURCE_MANAGER.getFont("SMW");
 	if (backgroundTexture.id == 0) {
 		backgroundTexture = RESOURCE_MANAGER.getTexture("MENU_SCREEN");
 	}
@@ -45,7 +45,7 @@ void Game::init()
 	// load map&level
 
 	loadedLevel.push_back(std::make_unique<Level>(
-		Map::basePath + "kmap_1.json", "BACKGROUND_1", "MUSIC_1", "1 - 1"));
+		Map::basePath + "kmap_1.json", "BACKGROUND_1", "MUSIC_1", "1-1"));
 	loadedLevel.push_back(std::make_unique<Level>(
 		Map::basePath + "kmap_2.json", "BACKGROUND_2", "MUSIC_2", "1-2"));
 	loadedLevel.push_back(std::make_unique<Level>(
@@ -172,9 +172,6 @@ void Game::setBackground(const std::string& imageName)
 
 void Game::loadGUI()
 {
-	GUI::heartTexture = RESOURCE_MANAGER.getTexture("HEART");
-	GUI::coinTexture = RESOURCE_MANAGER.getTexture("COIN");
-	GUI::multiplicationSign = RESOURCE_MANAGER.getTexture("MSIGN");
 	GUI::board = RESOURCE_MANAGER.getTexture("BOARD");
 	GUI::board1 = RESOURCE_MANAGER.getTexture("BOARD1");
 	GUI::board2 = RESOURCE_MANAGER.getTexture("BOARD2");
@@ -185,4 +182,20 @@ void Game::loadGUI()
 	GUI::setting = RESOURCE_MANAGER.getTexture("SETTING");
 	GUI::sound_off = RESOURCE_MANAGER.getTexture("SOUND_OFF");
 	GUI::sound_on = RESOURCE_MANAGER.getTexture("SOUND_ON");
+	GUI::choosingArrow = RESOURCE_MANAGER.getTexture("choosingArrow");
+
+	GUI::guiTime = RESOURCE_MANAGER.getTexture("guiTime");
+	GUI::guiNextitem = RESOURCE_MANAGER.getTexture("guiNextItem");
+	GUI::guiCoin = RESOURCE_MANAGER.getTexture("guiCoin");
+	GUI::guiClock = RESOURCE_MANAGER.getTexture("guiClock");
+	GUI::guiCourseClear = RESOURCE_MANAGER.getTexture("guiCourseClear");
+	GUI::gui1Up = RESOURCE_MANAGER.getTexture("gui1Up");
+	GUI::gui3Up = RESOURCE_MANAGER.getTexture("gui3Up");
+	GUI::guiTimeUp = RESOURCE_MANAGER.getTexture("guiTimeUp");
+	GUI::guiLuigiStart = RESOURCE_MANAGER.getTexture("guiLuigiStart");
+	GUI::guiMarioStart = RESOURCE_MANAGER.getTexture("guiMarioStart");
+	GUI::guiX = RESOURCE_MANAGER.getTexture("guiX");
+	GUI::guiLuigi = RESOURCE_MANAGER.getTexture("LuigiGUI");
+	GUI::guiMario = RESOURCE_MANAGER.getTexture("MarioGUI");
+
 }

@@ -78,7 +78,29 @@ bool EnemyFireBall::isMaxTime() const
     return currTime > maxTime;
 }
 
+void EnemyFireBall::loadEntity(const json& j)
+{
+    Entity::loadEntity(j);
+    timeSpan = j["timeSpan"];
+    timeSpanAcum = j["timeSpanAcum"];
+    currTime = j["currTime"];
+    isHoming = j["isHoming"];
+}
+
+void EnemyFireBall::saveEntity(json& j) const
+{
+    Entity::saveEntity(j);
+    j["timeSpan"] = timeSpan;
+    j["timeSpanAcum"] = timeSpanAcum;
+    j["currTime"] = currTime;
+    j["isHoming"] = isHoming;
+}
+
 EntityType EnemyFireBall::getEntityType() const
 {
     return ENEMY_FIREBALL;
+}
+
+float EnemyFireBall::getCurrTime() const {
+    return currTime;
 }

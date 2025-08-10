@@ -10,6 +10,7 @@ Map::Map()
 	height = BgHeight;
 	background = RESOURCE_MANAGER.getTexture("BACKGROUND_1");
 	BackGroundPos = { {0, 0}, {BgWidth, 0}, {BgWidth * 2, 0}};
+	backGroundName = "BACKGROUND_1";
 }
 
 Map::~Map()
@@ -61,7 +62,19 @@ void Map::drawBackGround(Vector2 cameraSize, float scale)
 		cout << "Background not found" << endl;
 	}
 }
-
+Vector2 Map::LoadMapSize(const std::string& filepath) {
+	std::ifstream file(filepath);
+	if (!file) {
+		std::cerr << "Could not open json file" << filepath << std::endl;
+		return { 0, 0 };
+	}
+	nlohmann::json mapJson;
+	file >> mapJson;
+	int width = mapJson["width"];
+	int height = mapJson["height"];
+	int blockwidth = mapJson["tilewidth"];
+	return (Vector2{ (float)width * blockwidth, (float)height * blockwidth });
+}
 
 void Map::LoadFromJsonFile(const std::string& filepath)
 {
@@ -98,7 +111,8 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 					if (!brick) {
 						throw std::runtime_error("Failed to create brick block: ");
 					}
-					brick->setTexture(RESOURCE_MANAGER.getTexture("TILE_" + std::to_string(texId)));
+					brick->setTextureName("TILE_" + std::to_string(texId));
+					brick->setTexture(RESOURCE_MANAGER.getTexture(brick->getTextureName().c_str()));
 					tileGrid[y][x] = brick;
 					continue;
 				}
@@ -118,7 +132,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 					if (!block) {
 						throw std::runtime_error("Failed to create note block: ");
 					}
-					//blockArray.push_back(block);
+					block->setTextureName("NOTE_0");
 					tileGrid[y][x] = block;
 					continue;
 				}
@@ -129,7 +143,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 					if (!cloudBlock) {
 						throw std::runtime_error("Failed to create cloud block: ");
 					}
-					//blockArray.push_back(cloudBlock);
+					cloudBlock->setTextureName("TILE_115");
 					tileGrid[y][x] = cloudBlock;
 					continue;
 				}
@@ -140,7 +154,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 					if (!block) {
 						throw std::runtime_error("Failed to create rotating block: ");
 					}
-					//blockArray.push_back(block);
+					block->setTextureName("ROTATING_0");
 					tileGrid[y][x] = block;
 					continue;
 				}
@@ -148,8 +162,8 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 				// else create solid block
 				SolidBlock* solidBlock = dynamic_cast<SolidBlock*>(BlockFactory::getInstance().createBlock(SOLIDBLOCK,
 					{ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));	
-				solidBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_" + std::to_string(texId)));
-				//blockArray.push_back(solidBlock);
+				solidBlock->setTextureName("TILE_" + std::to_string(texId));
+				solidBlock->setTexture(RESOURCE_MANAGER.getTexture(solidBlock->getTextureName()));
 				if (!solidBlock) {
 					throw std::runtime_error("Failed to create solid block: ");
 				}
@@ -157,7 +171,6 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			}
 		}
 	}
-	
 	if (mapJson["layers"].size() < 2) { return; }
 	nlohmann::json objectLayer = mapJson["layers"][1];
 	nlohmann::json objects = objectLayer["objects"];
@@ -179,40 +192,37 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			if (type == "Mushroom") {
 				Blocks* block = dynamic_cast<ItemBlock*>(BlockFactory::getInstance().createBlock(ITEMBLOCK, {(float)x * blockwidth, (float)y * blockwidth}, {32, 32}));
 				dynamic_cast<ItemBlock*>(block)->setItem(MUSHROOM, 0);
-				//blockArray.push_back(block);
 				if (!block) {
 					throw std::runtime_error("Failed to create item block: ");
 				}
+				block->setTextureName("QUESTION_0");
 				tileGrid[y][x] = block;
-				//blockArray.push_back(new ItemBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, MUSHROOM));
 			}
 			else if (type == "Flower") {
 				Blocks* block = dynamic_cast<ItemBlock*>(BlockFactory::getInstance().createBlock(ITEMBLOCK, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
 				dynamic_cast<ItemBlock*>(block)->setItem(FLOWER, 0);
-				//blockArray.push_back(block);
 				if (!block) {
 					throw std::runtime_error("Failed to create item block: ");
 				}
+				block->setTextureName("QUESTION_0");
 				tileGrid[y][x] = block;
-				//blockArray.push_back(new ItemBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, FLOWER));
 			}
 			else if (type == "Star") {
 				Blocks* block = dynamic_cast<ItemBlock*>(BlockFactory::getInstance().createBlock(ITEMBLOCK, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
 				dynamic_cast<ItemBlock*>(block)->setItem(STAR, 0);
-				//blockArray.push_back(block);
 				if (!block) {
 					throw std::runtime_error("Failed to create item block: ");
 				}
+				block->setTextureName("QUESTION_0");
 				tileGrid[y][x] = block;
-				//blockArray.push_back(new ItemBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, STAR));
 			}
 			else if (type == "Moon") {
 				Blocks* block = dynamic_cast<ItemBlock*>(BlockFactory::getInstance().createBlock(ITEMBLOCK, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
 				dynamic_cast<ItemBlock*>(block)->setItem(MOON, 0);
-				//blockArray.push_back(block);
 				if (!block) {
 					throw std::runtime_error("Failed to create item block: ");
 				}
+				block->setTextureName("QUESTION_0");
 				tileGrid[y][x] = block;
 			}
 		}
@@ -225,9 +235,8 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			if (!coinBlock) {
 				throw std::runtime_error("Failed to create coin block: ");
 			}
+			coinBlock->setTextureName("TILE_110");
 			tileGrid[y][x] = coinBlock;
-			//blockArray.push_back(coinBlock);
-			//blockArray.push_back(new CoinBlock({ (float)x * blockwidth, (float)y * blockwidth }, "TILE_" + std::to_string(texId), 5));
 		}
 
 		if (name == "Cannon") {
@@ -242,9 +251,9 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			if (!cannon) {
 				throw std::runtime_error("Failed to create cannon block: ");
 			}
+			cannon->setTextureName("TILE_116");
 			tileGrid[y][x] = cannon;
 		}
-
 		if (name == "Enemy") {
 			if (type == "Goomba") {
 				enemies.push_back(new Goomba(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0")));
@@ -280,7 +289,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 				enemies.push_back(new Rex(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Rex_RIGHT_0")));
 			}
 			else if (type == "BuzzyBeetle") {
-				//enemies.push_back(new BuzzyBeetle(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("BuzzyBeetle_RIGHT_0")));
+				enemies.push_back(new BuzzyBeetle(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("BuzzyBeetle_RIGHT_0")));
 			}
 			else if (type == "Spiny") {
 				enemies.push_back(new Spiny(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Spiny_RIGHT_0")));
@@ -343,7 +352,8 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 
 void Map::loadBackgroundTexture(const std::string& backgroundName)
 {
-	background = RESOURCE_MANAGER.getTexture(backgroundName);
+	this->backGroundName = backgroundName;
+	background = RESOURCE_MANAGER.getTexture(backgroundName.c_str());
 	if (background.id == 0) {
 		throw std::runtime_error("Failed to load background texture: " + backgroundName);
 	}
@@ -398,4 +408,18 @@ std::vector<Blocks*> Map::getCovers() const
 std::vector<Rectangle> Map::getSecretAreas() const
 {
 	return secretAreas;
+}
+
+void Map::loadMap(const json& j)
+{
+	width = j["width"];
+	height = j["height"];
+	backGroundName = j["backgroundName"];
+}
+
+void Map::saveMap(json& j) const
+{
+	j["width"] = width;
+	j["height"] = height;
+	j["backgroundName"] = backGroundName;
 }

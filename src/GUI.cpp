@@ -2,11 +2,9 @@
 #include "../include/Level.h"
 #include "../include/Character.h"
 #include "../include/GameEngine.h"
+#include <TextButton.h>
 #include "../include/EditorEngine.h"
 
-Texture2D GUI::coinTexture;
-Texture2D GUI::heartTexture;
-Texture2D GUI::multiplicationSign;
 Texture2D GUI::board;
 Texture2D GUI::largeBoard;
 Texture2D GUI::board1;
@@ -17,160 +15,165 @@ Texture2D GUI::home;
 Texture2D GUI::setting;
 Texture2D GUI::sound_on;
 Texture2D GUI::sound_off;
+Texture2D GUI::choosingArrow;
+// for hud
+Texture2D GUI::guiTime;
+Texture2D GUI::guiNextitem;
+Texture2D GUI::guiCoin;
+Texture2D GUI::guiClock;
+Texture2D GUI::guiCourseClear;
+Texture2D GUI::gui1Up;
+Texture2D GUI::gui3Up;
+Texture2D GUI::guiTimeUp;
+Texture2D GUI::guiLuigiStart;
+Texture2D GUI::guiMarioStart;
+Texture2D GUI::guiX;
+Texture2D GUI::guiMario;
+Texture2D GUI::guiLuigi;
 
 bool GUI::home_is_pressed = false;
 bool GUI::restart_is_pressed = false;
 bool GUI::sound_is_pressed = false;
 bool GUI::setting_is_pressed = false;
 
+void GUI::drawPlayerStatus(const Character* player, Vector2 origin) {
+    float scale = 0.75f;
+
+    if (player->getCharacterType() == CharacterType::MARIO) {
+        DrawTexturePro(guiMario, { 0, 0, (float)guiMario.width, (float)guiMario.height },
+            { origin.x, origin.y, 160 * scale, 32 * scale }, { 0, 0 }, 0.f, WHITE);
+    }
+    else if (player->getCharacterType() == CharacterType::LUIGI) {
+        DrawTexturePro(guiLuigi, { 0, 0, (float)guiLuigi.width, (float)guiLuigi.height },
+            { origin.x, origin.y, 160 * scale, 32 * scale }, { 0, 0 }, 0.f, WHITE);
+    }
+    else if (player->getCharacterType() == TOAD) {
+		Font* font = RESOURCE_MANAGER.getFont("SMW");
+		TextButton::DrawTextWithOutline(font, "TOAD", { origin.x, origin.y }, 32 * scale, 5, BLUE, BLACK);
+    }
+    else if (player->getCharacterType() == PEACH) {
+        Font* font = RESOURCE_MANAGER.getFont("SMW");
+        TextButton::DrawTextWithOutline(font, "PEACH", { origin.x, origin.y }, 32 * scale, 5, PINK, BLACK);
+    }
+	else if (player->getCharacterType() == MARISA) {
+        Font* font = RESOURCE_MANAGER.getFont("SMW");
+        TextButton::DrawTextWithOutline(font, "MARISA", { origin.x, origin.y }, 32 * scale, 5, BROWN, BLACK);
+
+	}
+
+    if (!guiX.id) guiX = RESOURCE_MANAGER.getTexture("guiX");
+
+    // Lives
+    DrawTexturePro(guiX, { 0, 0, (float)guiX.width, (float)guiX.height },
+        { origin.x + 20, origin.y + 40, 28 * scale, 28 * scale }, { 0, 0 }, 0.f, WHITE);
+    drawSmallNumber(player->getLives(), { origin.x + 50, origin.y + 40 }, 20.f);
+
+    // Next item
+    if (!guiNextitem.id) guiNextitem = RESOURCE_MANAGER.getTexture("guiNextItem");
+    DrawTexturePro(guiNextitem, { 0, 0, (float)guiNextitem.width, (float)guiNextitem.height },
+        { origin.x + 150, origin.y, 112 * scale, 112 * scale }, { 0, 0 }, 0.f, WHITE);
+
+    // Coins
+    if (!guiCoin.id) guiCoin = RESOURCE_MANAGER.getTexture("guiCoin");
+    DrawTexturePro(guiCoin, { 0, 0, (float)guiCoin.width, (float)guiCoin.height },
+        { origin.x + 280, origin.y, 32 * scale, 32 * scale }, { 0, 0 }, 0.f, WHITE);
+    DrawTexturePro(guiX, { 0, 0, (float)guiX.width, (float)guiX.height },
+        { origin.x + 315, origin.y, 28 * scale, 28 * scale }, { 0, 0 }, 0.f, WHITE);
+    drawSmallNumber(player->getCoins(), { origin.x + 360.f, origin.y }, 20.f);
+
+    // Score
+    drawSmallNumber(player->getScores(), { origin.x + 280.f, origin.y + 40.f }, 20.f);
+}
+
 void GUI::drawStatusBar(const Character* player) {
-    Rectangle dest, source;
+    //Rectangle dest, source;
 
-    //Draw board
-    dest = { 20.f, 20.f, 1138.f / 4.f, 397.f / 4.f };
-    source = { 0, 0, (float)board1.width, (float)board1.height };
-    DrawTexturePro(board1, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+    // draw lives
+	if (player->getCharacterType() == CharacterType::MARIO) {
+        DrawTexturePro(guiMario, { 0, 0, (float)guiMario.width, (float)guiMario.height }, {400, 40, 160 * 0.75, 32 * 0.75 }, {0, 0}, 0.f, WHITE);
+	}
+	else if (player->getCharacterType() == CharacterType::LUIGI) {
+        DrawTexturePro(guiLuigi, { 0, 0, (float)guiLuigi.width, (float)guiLuigi.height }, { 400, 40, 160 * 0.75, 32 * 0.75 }, { 0, 0 }, 0.f, WHITE);
+	}
+    else if (player->getCharacterType() == TOAD) {
+        Font* font = RESOURCE_MANAGER.getFont("SMW");
+        TextButton::DrawTextWithOutline(font, "TOAD", { 400, 40 }, 160 * 0.75, 5, BLUE, BLACK);
+    }
+    else if (player->getCharacterType() == PEACH) {
+        Font* font = RESOURCE_MANAGER.getFont("SMW");
+        TextButton::DrawTextWithOutline(font, "PEACH", { 400, 40 }, 160 * 0.75, 5, PINK, BLACK);
+    }
+    else if (player->getCharacterType() == MARISA) {
+        Font* font = RESOURCE_MANAGER.getFont("SMW");
+        TextButton::DrawTextWithOutline(font, "MARISA", { 400, 40 }, 160 * 0.75, 5, BROWN, BLACK);
+    }
 
-    dest = { 20.f, 120.f, 1138.f / 4.f, 397.f / 4.f };
-    DrawTexturePro(board1, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+	if (!guiX.id) {
+		guiX = RESOURCE_MANAGER.getTexture("guiX");
+	}
+    DrawTexturePro(guiX, { 0, 0, (float)guiX.width, (float)guiX.height }, { 420, 80, 28 * 0.75, 28 * 0.75 }, { 0, 0 }, 0.f, WHITE);
+	drawSmallNumber(player->getLives(), { 450.f, 80.f }, 20.f);
 
-    dest = { 490.f, 120.f, 1138.f / 4.f, 397.f / 4.f };
-    DrawTexturePro(board1, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+    // draw next item
+	//drawNumber(player->getNextItem(), { 300.f, 30.f }, 20.f);
+	if (!guiNextitem.id) {
+		guiNextitem = RESOURCE_MANAGER.getTexture("guiNextItem");
+	}
+    DrawTexturePro(guiNextitem, { 0, 0, (float)guiNextitem.width, (float)guiNextitem.height }, { 744, 20, 112 * 0.75, 112 * 0.75 }, { 0, 0 }, 0.f, WHITE);
 
-    source = { 0, 0, (float)board2.width, (float)board2.height };
-    dest = { 440.f, 20.f, 1571.f / 4.f, 421.f / 4.f };
-    DrawTexturePro(board2, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-
-    //Draw heart
-    source = { 0, 0, (float)heartTexture.width, (float)heartTexture.height };
-    dest = { 55.f, 45.f, 40.f, 40.f };
-    DrawTexturePro(heartTexture, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-    DrawText(to_string(player->getLives()).c_str(), 130, 45, 40, BLACK);
-    //
+    // draw time
+	if (!guiTime.id) {
+		guiTime = RESOURCE_MANAGER.getTexture("guiTime");
+	}
+    DrawTexturePro(guiTime, { 0, 0, (float)guiTime.width, (float)guiTime.height }, { 1000, 40, 48 * 2 * 0.75, 28 * 0.75 }, { 0, 0 }, 0.f, WHITE);
+	int timer = floor(globalGameEngine->getRemainingTime());
+	drawYellowNumber(timer, { 1005.f, 80.f }, 20.f);
 
     //Draw Coin
-    source = { 0, 0, (float)coinTexture.width, (float)coinTexture.height };
-    dest = { 55.f, 145.f, 40.f, 40.f };
-    DrawTexturePro(coinTexture, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-    DrawText(to_string(player->getCoins()).c_str(), 130, 145, 40, BLACK);
-    //
+	if (!guiCoin.id) {
+		guiCoin = RESOURCE_MANAGER.getTexture("guiCoin");
+	}
+    DrawTexturePro(guiCoin, { 0, 0, (float)guiCoin.width, (float)guiCoin.height }, { 1200, 40, 32 * 0.75, 32 * 0.75 }, { 0, 0 }, 0.f, WHITE);
+    DrawTexturePro(guiX, { 0, 0, (float)guiX.width, (float)guiX.height }, { 1235, 40, 28 * 0.75, 28 * 0.75 }, { 0, 0 }, 0.f, WHITE);
+	drawSmallNumber(player->getCoins(), { 1300.f, 40.f }, 20.f);
+	// draw score
+	drawSmallNumber(player->getScores(), { 1200.f, 80.f }, 20.f);
 
-    //Draw X sign
-    source = { 0, 0, (float)multiplicationSign.width, (float)multiplicationSign.height };
-    dest = { 100.f, 55.f, 20.f, 20.f };
-    DrawTexturePro(multiplicationSign, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-
-    dest = { 100.f, 155.f, 20.f, 20.f };
-    DrawTexturePro(multiplicationSign, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-    // Scores
-    DrawText(to_string(player->getScores()).c_str(), 440.f + 1571.f / 8.f - MeasureTextEx(GetFontDefault(), to_string(player->getScores()).c_str(), 45.f, 0.f).x / 2.f, 45, 45, BLACK);
-
-    DrawText(globalGameEngine->getCurrentMapName().c_str(), 530, 145, 45, BLACK);
-    int timer = floor((globalGameEngine->getRemainingTime()));
-    DrawText(to_string(timer).c_str(), 480.f + 1571.f / 8.f - MeasureTextEx(GetFontDefault(), to_string(timer).c_str(), 45.f, 0.f).x / 2.f, 145, 45, BLACK);
-
-    // draw setting button
-    source = { 0, 0, (float)setting.width, (float)restart.height };
-    dest = { (float)GetScreenWidth() - 100, 30.f, 80.f, 80.f };
-    DrawTexturePro(setting, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-    setting_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+    //// draw setting button
+    //source = { 0, 0, (float)setting.width, (float)restart.height };
+    //dest = { (float)GetScreenWidth() - 100, 30.f, 80.f, 80.f };
+    //DrawTexturePro(setting, source, dest, { 0.f,
+    // 0.f }, 0.f, WHITE);
+    //setting_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
 }
 
 void GUI::drawStatusBar(std::vector<std::unique_ptr<Character>>& multiplayers)
 {
-    Rectangle dest, source;
-	if (multiplayers.empty()) return;
-    //Draw board
-    dest = { 20.f, 20.f, 1138.f / 4.f, 397.f / 4.f };
-    source = { 0, 0, (float)board1.width, (float)board1.height };
-    DrawTexturePro(board1, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+    const float spacing = 500.f;       // Distance between player GUIs
+    const float startX = 50.f;         // Starting X position
+    const float y = 40.f;              // Y position (same for all)
 
-    dest = { 20.f, 120.f, 1138.f / 4.f, 397.f / 4.f };
-    DrawTexturePro(board1, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+    for (size_t i = 0; i < multiplayers.size(); ++i)
+    {
+        Vector2 origin = { startX + i * spacing, y };
+        drawPlayerStatus(multiplayers[i].get(), origin);
+    }
 
-    source = { 0, 0, (float)board2.width, (float)board2.height };
-    dest = { 320.f, 20.f, 1571.f / 4.f, 421.f / 4.f };
-    DrawTexturePro(board2, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+    // Draw timer (center screen)
+    if (!guiTime.id) guiTime = RESOURCE_MANAGER.getTexture("guiTime");
 
-    //Draw heart
-    source = { 0, 0, (float)heartTexture.width, (float)heartTexture.height };
-    dest = { 55.f, 45.f, 40.f, 40.f };
-    DrawTexturePro(heartTexture, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-    DrawText(to_string(multiplayers[0]->getLives()).c_str(), 130, 45, 40, BLACK);
-     // player1
-    std::string p1 = "P1";
-    DrawText(p1.c_str(), 200, 45, 40, BLACK);
+    DrawTexturePro(guiTime, { 0, 0, (float)guiTime.width, (float)guiTime.height },
+        { GetScreenWidth() / 2.f + 400.f, y, 48 * 2 * 0.75f, 28 * 0.75f }, { 0, 0 }, 0.f, WHITE);
 
-    //Draw Coin
-    source = { 0, 0, (float)coinTexture.width, (float)coinTexture.height };
-    dest = { 55.f, 145.f, 40.f, 40.f };
-    DrawTexturePro(coinTexture, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-    DrawText(to_string(multiplayers[0]->getCoins()).c_str(), 130, 145, 40, BLACK);
-    //
+    int timer = floor(globalGameEngine->getRemainingTime());
+    drawYellowNumber(timer, { GetScreenWidth() / 2.f + 405.f, y + 40.f }, 20.f);
 
-    //Draw X sign
-    source = { 0, 0, (float)multiplicationSign.width, (float)multiplicationSign.height };
-    dest = { 100.f, 55.f, 20.f, 20.f };
-    DrawTexturePro(multiplicationSign, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-
-    dest = { 100.f, 155.f, 20.f, 20.f };
-    DrawTexturePro(multiplicationSign, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-    // Scores
-    DrawText(to_string(multiplayers[0]->getScores()).c_str(), 320.f + 1571.f / 8.f - MeasureTextEx(GetFontDefault(), to_string(multiplayers[0]->getScores()).c_str(), 45.f, 0.f).x / 2.f, 45, 45, BLACK);
-
-    // for player 2
-    
-        //Draw board
-        dest = { 750.f, 20.f, 1138.f / 4.f, 397.f / 4.f };
-        source = { 0, 0, (float)board1.width, (float)board1.height };
-        DrawTexturePro(board1, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-
-        dest = { 750.f, 120.f, 1138.f / 4.f, 397.f / 4.f };
-        DrawTexturePro(board1, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-
-        source = { 0, 0, (float)board2.width, (float)board2.height };
-        dest = { 1040.f, 20.f, 1571.f / 4.f, 421.f / 4.f };
-        DrawTexturePro(board2, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-
-        //Draw heart
-        source = { 0, 0, (float)heartTexture.width, (float)heartTexture.height };
-        dest = { 785.f, 45.f, 40.f, 40.f };
-        DrawTexturePro(heartTexture, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-        DrawText(to_string(multiplayers[1]->getLives()).c_str(), 860, 45, 40, BLACK);
-        //
-        std::string p2 = "P2";
-        DrawText(p2.c_str(), 930, 45, 40, BLACK);
-        //Draw Coin
-        source = { 0, 0, (float)coinTexture.width, (float)coinTexture.height };
-        dest = { 785.f, 145.f, 40.f, 40.f };
-        DrawTexturePro(coinTexture, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-        DrawText(to_string(multiplayers[1]->getCoins()).c_str(), 860, 145, 40, BLACK);
-        //
-
-        //Draw X sign
-        source = { 0, 0, (float)multiplicationSign.width, (float)multiplicationSign.height };
-        dest = { 830.f, 55.f, 20.f, 20.f };
-        DrawTexturePro(multiplicationSign, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-
-        dest = { 830.f, 155.f, 20.f, 20.f };
-        DrawTexturePro(multiplicationSign, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-        // Scores
-        DrawText(to_string(multiplayers[1]->getScores()).c_str(), 1040.f + 1571.f / 8.f - MeasureTextEx(GetFontDefault(), to_string(multiplayers[1]->getScores()).c_str(), 45.f, 0.f).x / 2.f, 45, 45, BLACK);
-    
-
-    // Map & Time
-    DrawText(globalGameEngine->getCurrentMapName().c_str(), 1440, 145, 40, BLACK);
-    int timer = floor((globalGameEngine->getRemainingTime()));
-    DrawText(to_string(timer).c_str(), 1400.f + 1571.f / 8.f - MeasureTextEx(GetFontDefault(), to_string(timer).c_str(), 45.f, 0.f).x / 2.f, 145, 40, BLACK);
-
-    // draw setting button
-    source = { 0, 0, (float)setting.width, (float)restart.height };
-    dest = { (float)GetScreenWidth() - 100, 30.f, 80.f, 80.f };
-    DrawTexturePro(setting, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-    setting_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+    //// Draw setting button (top right)
+    //Rectangle source = { 0, 0, (float)setting.width, (float)restart.height };
+    //Rectangle dest = { (float)GetScreenWidth() - 100.f, 30.f, 80.f, 80.f };
+    //DrawTexturePro(setting, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+    //setting_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
 }
-
-
 
 void GUI::drawPauseMenu()
 {
@@ -180,109 +183,130 @@ void GUI::drawPauseMenu()
 
     const char* text = "PAUSED";
     int fontSize = 90;
-    int textWidth = MeasureText(text, fontSize);
+	Font* font = RESOURCE_MANAGER.getFont("SMW");
+    int textWidth = MeasureTextEx(*font ,text, fontSize, 0).x;
 
     // Center the text inside the destination rectangle
     float textX = dest.x + (dest.width - textWidth) / 2;
     float textY = dest.y + 100;
 
-    DrawText(text, textX, textY, fontSize, BLACK);
+    DrawTextPro(*font, text, { textX, textY }, { 0, 0 }, 0.f, fontSize, 0.f, BLACK);
 
-    text = "Press Enter to continue";
+    text = "Press Space to continue";
     fontSize = 45;
-    textWidth = MeasureText(text, fontSize);
+    textWidth = MeasureTextEx(*font, text, fontSize, 0).x;
     textX = dest.x + (dest.width - textWidth) / 2;
     textY = dest.y + 400;
-    DrawText(text, textX, textY, fontSize, BLACK);
+    DrawTextPro(*font, text, { textX, textY }, { 0, 0 }, 0.f, fontSize, 0.f, BLACK);
 
     // restart
     source = { 0, 0, (float)restart.width, (float)restart.height };
-    dest = { textX + 100, textY - 170, 90, 90 };
+    dest = { textX + 105, textY - 170, 90, 90 };
     DrawTexturePro(restart, source, dest, { 0.f, 0.f }, 0.f, WHITE);
     restart_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsKeyPressed(KEY_R);
 
     // sound_on
     Texture2D sound = (SETTING.isMusicEnabled()) ? sound_on : sound_off;
     source = { 0, 0, (float)sound.width, (float)sound.height };
-    dest = { textX + 350, textY - 170, 90, 90 };
+    dest = { textX + 355, textY - 170, 90, 90 };
     DrawTexturePro(sound, source, dest, { 0.f, 0.f }, 0.f, WHITE);
     sound_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsKeyPressed(KEY_V);
 
     // home
     source = { 0, 0, (float)home.width, (float)home.height };
-    dest = { textX + 225, textY - 170, 90, 90 };
+    dest = { textX + 230, textY - 170, 90, 90 };
     DrawTexturePro(home, source, dest, { 0.f, 0.f }, 0.f, WHITE);
     home_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsKeyPressed(KEY_H);
-
 }
 
 void GUI::drawLevelClear()
 {
-    Rectangle source = { 0, 0, (float)largeBoard.width, (float)largeBoard.height };
-    Rectangle dest = { (float)GetScreenWidth() / 4.f , (float)GetScreenHeight() * 0.125f, (float)GetScreenWidth() / 2.f, (float)GetScreenHeight() * 0.75f };
-    DrawTexturePro(largeBoard, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+	//DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.3f));
+	Texture2D courseClear = RESOURCE_MANAGER.getTexture("guiCourseClear");
+    DrawTexturePro(courseClear, {0, 0, (float)courseClear.width, (float)courseClear.height}, {800 - 204, 400 - 26 - 150,204 * 2, 26 * 2}, {0, 0}, 0.f, WHITE);
 
-    const char* text = "CLEARED";
-    int fontSize = 90;
-    int textWidth = MeasureText(text, fontSize);
-
-    // Center the text inside the destination rectangle
-    float textX = dest.x + (dest.width - textWidth) / 2;
-    float textY = dest.y + 100;
-
-    DrawText(text, textX, textY, fontSize, BLACK);
-
-    text = "Press Enter to continue";
-    fontSize = 45;
-    textWidth = MeasureText(text, fontSize);
-    textX = dest.x + (dest.width - textWidth) / 2;
-    textY = dest.y + 400;
-    DrawText(text, textX, textY, fontSize, BLACK);
+    Font* customFont = RESOURCE_MANAGER.getFont("SMW");
+    const char* text = "Press Space to continue";
+    int fontSize = 45;
+    int textWidth = MeasureTextEx(*customFont, text, fontSize, 0).x;
+    float textX = 800 - textWidth / 2.f; // Center the text horizontally
+    float textY = 400;
+    DrawTextPro(*customFont, text, { textX, textY }, { 0, 0 }, 0.f, fontSize, 0.f, BLACK);
 }
 
+void GUI::drawVictory() {
+
+}
+void GUI::drawTransitioningBetweenMap() {
+
+}
 void GUI::drawDeathScreen()
 {
+	//DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.3f));
+
     const char* text = "YOU DIED";
     int fontSize = 90;
-
-    int textWidth = MeasureText(text, fontSize);
-    int textHeight = fontSize;
-
+    Font* customFont = RESOURCE_MANAGER.getFont("SMW");
+    Vector2 textSize = MeasureTextEx(*customFont, text, fontSize, 0);
+    int textWidth = textSize.x;
+    int textHeight = textSize.y;
     int posX = ((float)GetScreenWidth() - textWidth) / 2;
-    int posY = ((float)GetScreenHeight() - textHeight) / 2 - 200;
+    int posY = ((float)GetScreenHeight() - textHeight) / 2 - 150;
+    DrawTextPro(*customFont, text, { (float)posX, (float)posY }, { 0, 0 }, 0.f, fontSize, 0.f, RED);
 
-    DrawText(text, posX, posY, fontSize, RED);
-
-    text = "Press Enter to continue";
+    text = "Press Space to continue";
     fontSize = 45;
-    textWidth = MeasureText(text, fontSize);
+    textSize = MeasureTextEx(*customFont, text, fontSize, 0);
+    textWidth = textSize.x;
     float textX = ((float)GetScreenWidth() - textWidth) / 2;
-    float textY = posY + 200;
-    DrawText(text, textX, textY, fontSize, BLACK);
+    float textY = 400;
+    DrawTextPro(*customFont, text, { textX, textY }, { 0, 0 }, 0.f, fontSize, 0.f, BLACK);
 }
 
 void GUI::drawGameOverScreen()
 {
-    Rectangle source = { 0, 0, (float)largeBoard.width, (float)largeBoard.height };
-    Rectangle dest = { (float)GetScreenWidth() / 4.f , (float)GetScreenHeight() * 0.125f, (float)GetScreenWidth() / 2.f, (float)GetScreenHeight() * 0.75f };
-    DrawTexturePro(largeBoard, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+	//DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.5f));
+	Texture2D gameover = RESOURCE_MANAGER.getTexture("guiGameOver");
+    DrawTexturePro(gameover, { 0, 0, (float)gameover.width, (float)gameover.height }, { 800 - 160, 400 - 32 - 150,160 * 2, 32 * 2 }, { 0, 0 }, 0.f, WHITE);
 
-    const char* text = "GAME OVER";
-    int fontSize = 90;
-    int textWidth = MeasureText(text, fontSize);
+	Font* font = RESOURCE_MANAGER.getFont("SMW");
+    const char* text = "Press Space to continue";
+    int fontSize = 45;
+    int textWidth = MeasureTextEx(*font, text, fontSize, 0).x;
+    float textX = ((float)GetScreenWidth() - textWidth) / 2;
+    float textY = 400;
+    DrawTextPro(*font, text, { textX, textY }, { 0, 0 }, 0.f, fontSize, 0.f, BLACK);
+}
 
-    // Center the text inside the destination rectangle
-    float textX = dest.x + (dest.width - textWidth) / 2;
-    float textY = dest.y + 100;
+void GUI::drawNumber(int number, Vector2 position, float spacing)
+{
+    std::string numStr = std::to_string(number);
+    for (size_t i = 0; i < numStr.length(); ++i) {
+        int digit = numStr[i] - '0';
+        Texture2D tex = RESOURCE_MANAGER.digitTextures[digit];
+        DrawTextureEx(tex, {position.x + i * spacing, position.y }, 0.f, 1.5f, WHITE);
+    }
+}
 
-    DrawText(text, textX, textY, fontSize, BLACK);
 
-    text = "Press Enter to continue";
-    fontSize = 45;
-    textWidth = MeasureText(text, fontSize);
-    textX = dest.x + (dest.width - textWidth) / 2;
-    textY = dest.y + 400;
-    DrawText(text, textX, textY, fontSize, BLACK);
+void GUI::drawSmallNumber(int number, Vector2 position, float spacing)
+{
+    std::string numStr = std::to_string(number);
+    for (size_t i = 0; i < numStr.length(); ++i) {
+        int digit = numStr[i] - '0';
+        Texture2D tex = RESOURCE_MANAGER.smallDigitTextures[digit];
+        DrawTextureEx(tex, { position.x + i * spacing, position.y }, 0.f, 1.5f, WHITE);
+    }
+}
+
+void GUI::drawYellowNumber(int number, Vector2 position, float spacing)
+{
+    std::string numStr = std::to_string(number);
+    for (size_t i = 0; i < numStr.length(); ++i) {
+        int digit = numStr[i] - '0';
+        Texture2D tex = RESOURCE_MANAGER.yellowDigitTextures[digit];
+        DrawTextureEx(tex, { position.x + i * spacing, position.y }, 0.f, 1.5f, WHITE);
+    }
 }
 
 void GUI::drawEditorUI() {

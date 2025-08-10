@@ -20,6 +20,9 @@ public:
 	void updateCollision() override;
 	void UpdateTexture() override;
 	bool ismaxTime() const;
+	float getCurrTime() const;
 	EntityType getEntityType() const override;
+	void loadEntity(const json& j) override;
+	void saveEntity(json& j) const override;
 };
 #endif

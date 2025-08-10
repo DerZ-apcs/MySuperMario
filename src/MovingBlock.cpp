@@ -35,3 +35,11 @@ void MovingBlock::setVelocity(Vector2 newVelocity)
 void MovingBlock::Update()
 {
 }
+
+void MovingBlock::loadEntity(const json& j)
+{
+}
+
+void MovingBlock::saveEntity(json& j) const
+{
+}

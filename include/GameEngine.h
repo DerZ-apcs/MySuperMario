@@ -13,6 +13,8 @@
 #include "../include/Item.h"
 #include "../include/Blocks.h"
 #include "../include/CollisionInfo.h"
+#include "../include/ScoreEffect.h"
+#include "../include/GameSerialization.h"
 #include <vector>
 #include <string>
 #include <map>
@@ -53,12 +55,14 @@ private:
     float deltaTime;
     int sharedLives = 5;
     Texture2D BackGroundTex;
+    Vector2 bounce;
 
     std::map<std::string, Texture2D> backgroundTextures;
     std::vector<Vector2> BackGroundPos;
 public:
     //GameEngine(float screenWidth, float screenHeight, Level& level, Character*& player);
     GameEngine(float screenWidth, float screenHeight, Level& level, std::vector<std::unique_ptr<Character>>* multiplayers);
+    void loadGameMap(Level& level);
     ~GameEngine();
     void addScore(int amount);
     void addEnemyFireBall(EnemyFireBall* fireball);
@@ -75,10 +79,17 @@ public:
     float resetTimer();
     bool isOver() const;
     void resetGame();
-    Vector2 getBound();
+    Vector2 getBound() const;
     std::vector<std::unique_ptr<Character>>& getMultiplayers(); 
     std::vector<Blocks*> getNearbyBlocks(Vector2 pos, int range);
-    bool isInCameraView(Rectangle entityRect) const;;
+    bool isInCameraView(Rectangle entityRect) const;
+    void saveGame(int slot);
+    void loadGame(int slot);
+    void saveGameEngineState(GameEngine* engine, json& j);
+    void loadGameEngineState(GameEngine* engine, const json& j);
+
+    /*void saveGame(const std::string& path);
+    bool loadGame(const std::string& path);*/
 };
 extern GameEngine* globalGameEngine;
 

@@ -8,8 +8,16 @@ const float PiranhaPlant::DURATION_BETWEEN_POPUP = 1.f; // rest between two pops
 
 PiranhaPlant::PiranhaPlant(Vector2 pos, Texture2D texture)
     : Enemy(pos, { 32, 66 }, { 0, 0 }, RIGHT, ON_GROUND, texture, 0.2f, 1, RED),
-    popUpTimer(0.0f), isPoppingUp(true), popUpHeight(66.0f), baseY(pos.y), delayTimer(0.2f), invincibilityTimer(0.0f) { 
+    popUpTimer(0.0f), isPoppingUp(true), popUpHeight(66.0f), baseY(pos.y), delayTimer(0.2f), invincibilityTimer(0.0f),
+    piranhaType(NORMAL_PIRANHA)
+{ 
     gravityAvailable = true;
+    scores = 200.f;
+}
+
+PIRANHA_TYPE PiranhaPlant::getPiranhaType() const
+{
+    return NORMAL_PIRANHA;
 }
 
 void PiranhaPlant::Update() {
@@ -127,11 +135,41 @@ void PiranhaPlant::stomped()
     invincibilityTimer = 0.5f;
     updateSquashEffect();
     UpdateTexture();
-    Effect* text = new TextEffect(to_string(SCORE_STOMP_REX).c_str(), getCenter());
-    globalGameEngine->addEffect(text);
+    Effect* score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string(SCORE_STOMP_REX).c_str()), getCenter());
+    globalGameEngine->addEffect(score);
 }
 
 float PiranhaPlant::getScores() const
 {
     return SCORE_STOMP_REX;
+}
+
+float popUpTimer; // Timer để kiểm soát chu kỳ trồi/rút
+bool isPoppingUp; // Trạng thái trồi lên hay rút xuống
+float popUpHeight; // Độ cao tối đa khi trồi lên
+float baseY; // Vị trí Y ban đầu (đáy ống)
+float invincibilityTimer;
+float delayTimer;
+void PiranhaPlant::loadEntity(const json& j)
+{
+    Enemy::loadEntity(j);
+    piranhaType = static_cast<PIRANHA_TYPE>(j["piranhaType"].get<int>());
+    popUpTimer = j["popUpTimer"];
+    isPoppingUp = j["isPoppingUp"];
+    popUpHeight = j["popUpHeight"];
+    baseY = j["baseY"];
+    invincibilityTimer = j["invincibilityTimer"];
+    delayTimer = j["delayTimer"];
+}
+
+void PiranhaPlant::saveEntity(json& j) const
+{
+    Enemy::saveEntity(j);
+    j["piranhaType"] = static_cast<int>(piranhaType);
+    j["popUpTimer"] = popUpTimer;
+    j["isPoppingUp"] = isPoppingUp;
+    j["popUpHeight"] = popUpHeight;
+    j["baseY"] = baseY;
+    j["invincibilityTimer"] = invincibilityTimer;
+    j["delayTimer"] = delayTimer;
 }

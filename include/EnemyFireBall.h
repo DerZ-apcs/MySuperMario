@@ -17,10 +17,13 @@ public:
     EnemyFireBall(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, float timeSpan, bool homing = false);
     ~EnemyFireBall();
     EntityType getEntityType() const override;
+    float getCurrTime() const;
     void Update() override;
     void draw() override;
     void updateCollision() override;
     void UpdateTexture() override;
     bool isMaxTime() const;
+    void loadEntity(const json& j) override;
+    void saveEntity(json& j) const override;
 };
 #endif

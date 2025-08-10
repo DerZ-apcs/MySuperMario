@@ -45,6 +45,7 @@ void Enemy::Update() {
     position.y += velocity.y * deltaTime;
     if (getGravityAvailable())
         velocity.y += GRAVITY * deltaTime;
+    if (velocity.y > 20) state = FALLING;
     if (state != ON_GROUND) {
         if (velocity.y > 0 && state == JUMPING) {
             state = FALLING;
@@ -83,19 +84,14 @@ void Enemy::CollisionWithFireball(FireBall* fireball) {
     if (!isDead() && state != STATE_IS_DYING && !fireball->isDead()) {
         fireball->setEntityDead();
         state = STATE_IS_DYING;
-        //if (getEnemyType() == BOBOMB) {
-
-        //}
         deathTimer = ENEMY_DEATH_TIMER_DEFAULT;
         velocity.y = -250; // Nhảy lên nhẹ
         velocity.x = (rand() % 100) - 50; // Văng ngang ngẫu nhiên
         updateCollision();
         if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomped.wav");
         // text effect
-        TextEffect* text = new TextEffect(to_string(SCORE_STOMP_GOOMBA).c_str(), Vector2{this->getCenterX(), this->getTop()});
-        text->setTextColor(WHITE);
-        text->setOutlineColor(BLACK);
-        globalGameEngine->addEffect(text);
+        Effect* score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string(SCORE_STOMP_GOOMBA).c_str()), Vector2{this->getCenterX(), this->getTop()});
+        globalGameEngine->addEffect(score);
         SmokeEffect* smokeright = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ 60, 120 });
         globalGameEngine->addEffect(smokeright);
         SmokeEffect* smokeleft = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ -60, 120 });
@@ -150,6 +146,11 @@ void Enemy::attacked(Direction direction) {
     setCollisionAvailable(false);
 }
 
+float Enemy::getScores() const
+{
+    return scores;
+}
+
 void Enemy::setCollisionTimer(float time)
 {
     collisionTimer = time;
@@ -158,4 +159,27 @@ void Enemy::setCollisionTimer(float time)
 void Enemy::setDeathTimer(float time)
 {
     deathTimer = time;
+}
+
+void Enemy::loadEntity(const json& j)
+{
+    Entity::loadEntity(j);
+    deathTimer = j["deathTimer"];
+    squashScale = j["squashScale"];
+    isFlipped = j["isFlipped"];
+    isKicked = j["isKicked"];
+    collisionTimer = j["collisionTimer"];
+    scores = j["scores"];
+}
+
+void Enemy::saveEntity(json& j) const
+{
+    Entity::saveEntity(j); // Save base class data
+
+    j["deathTimer"] = deathTimer;
+    j["squashScale"] = squashScale;
+    j["isFlipped"] = isFlipped;
+    j["isKicked"] = isKicked;
+    j["collisionTimer"] = collisionTimer;
+    j["scores"] = scores;
 }

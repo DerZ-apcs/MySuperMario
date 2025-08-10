@@ -19,8 +19,9 @@ void CoinBlock::setCount(int count) {
 }
 
 void CoinBlock::Activate() {
-	if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("coin.wav");
-	globalGameEngine->addEffect(new TextEffect(to_string(Coin::getPoint()).c_str(), Vector2{ getCenterX() - size.x / 2, getTop() }));
+	if (SETTING.isSoundEnabled()) 
+		RESOURCE_MANAGER.playSound("coin.wav");
+	globalGameEngine->addEffect(new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string(100).c_str()), Vector2{ getCenterX() - size.x / 2, getTop() }));
 	globalGameEngine->addEffect(new CoinEffect(Vector2{ getCenterX() - size.x / 2, getTop() - size.y }, 0.5f, 0.f));
 
 	coinCount--;
@@ -38,4 +39,18 @@ BLOCK_TYPE CoinBlock::getBlockType() const {
 
 void CoinBlock::draw() {
 	DrawTexture(texture, position.x, position.y, WHITE);
+}
+
+void CoinBlock::loadEntity(const json& j)
+{
+	Blocks::loadEntity(j);
+	isActive = j["isActive"];
+	coinCount = j["coinCount"];
+}
+
+void CoinBlock::saveEntity(json& j) const
+{
+	Blocks::saveEntity(j);
+	j["isActive"] = isActive;
+	j["coinCount"] = coinCount;
 }

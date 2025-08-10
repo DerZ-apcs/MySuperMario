@@ -10,8 +10,10 @@ JumpingPiranhaPlant::JumpingPiranhaPlant(Vector2 pos, Texture2D texture)
     , animTimer(0.0f)
 {
     baseY = pos.y;
-
+    size = { 32, 42 };
+    scores = 200.f;
     UpdateTexture(true);
+    piranhaType = JUMPING_PIRANHA;
 }
 
 void JumpingPiranhaPlant::Update() {
@@ -33,10 +35,12 @@ void JumpingPiranhaPlant::Update() {
         offsetRatio = 1.0f - (phase - 0.5f) / 0.5f;
         isGoingUp = false;
     }
+	position.y = velocity.y * dt; 
+	velocity.y += GRAVITY * dt; 
 
     // Dịch chuyển y: baseY – (offsetRatio * JUMP_HEIGHT)
     position.y = baseY - offsetRatio * JUMP_HEIGHT;
-
+    Enemy::updateCollision();
     // Cập nhật texture dựa vào phase
     UpdateTexture(isGoingUp);
 }
@@ -50,8 +54,20 @@ void JumpingPiranhaPlant::stomped()
     deathTimer = ENEMY_DEATH_TIMER_DEFAULT;
     invincibilityTimer = 0.5f;
     updateSquashEffect();
-    Effect* text = new TextEffect(to_string(SCORE_STOMP_REX).c_str(), getCenter());
-    globalGameEngine->addEffect(text);
+    Effect* score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string(SCORE_STOMP_REX).c_str()), getCenter());
+    globalGameEngine->addEffect(score);
+}
+
+void JumpingPiranhaPlant::loadEntity(const json& j)
+{
+    PiranhaPlant::loadEntity(j);
+    animTimer = j["animTimer"];
+}
+
+void JumpingPiranhaPlant::saveEntity(json& j) const
+{
+    PiranhaPlant::saveEntity(j);
+    j["animTimer"] = animTimer;
 }
 
 void JumpingPiranhaPlant::UpdateTexture(bool isGoingUp) {

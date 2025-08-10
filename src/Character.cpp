@@ -46,19 +46,23 @@ Character::Character(Vector2 pos, Vector2 sz, CharacterState characterstate, Cha
 	transitionCurrentFrame(0),
 	transitionCurrentFramePos(0),
 	Character_state(characterstate),
-	PrevCharacter_state(characterstate),
 	characterType(characterType),
-	Character_sprite_State(NORMAL),
 	victory(false),
-	exitlevel(false)
+	exitlevel(false),
+	countImmortalTime(0.f),
+	countThrowTime(0.f),
+	invicibleStarTime(0.f),
+	sinkingTime(0.f)
 {
 	std::cout << "Character created with size: " << size.x << ", " << size.y << std::endl;
 
 	if (characterType == MARIO) {
 		texture = RESOURCE_MANAGER.getTexture("SmallMario_RIGHT_0");
+		size = { 32, 40 };
 	}
 	else if (characterType == LUIGI) {
 		texture = RESOURCE_MANAGER.getTexture("SmallLuigi_RIGHT_0");
+		size = { 32, 44 };
 	}
 	else if (characterType == PEACH) {
 		texture = RESOURCE_MANAGER.getTexture("SmallPeach_RIGHT_0");
@@ -89,24 +93,31 @@ Character::Character(Vector2 pos, Vector2 sz, CharacterState characterstate, Cha
 	
 
 	// set the transitioning
-	// for mario and luigi
-	std::string type;
-	if (characterType == MARIO) {
-		type = "Mario";
-	}
-	else if (characterType == LUIGI)
-		type = "Luigi";
+	// for mario
 	transitionFrames = {
-		{"Small" + type, {32, 40}, STATE_SMALL, 1}, // 0. small
-		{"Transitioning" + type, {32, 56}, STATE_SUPER, 2}, // 1. pre super
-		{"Super" + type, {32, 56}, STATE_SUPER, 2}, // 2. super
-		{"TransitioningFire" + type, {32, 56}, STATE_FIRE, 2}, // 3. prefire
-		{"Fire" + type, {32, 56}, STATE_FIRE, 2}, // 4. fire
-		{"StarSmall" + type, {32, 40}, STATE_STAR, 1}, // 5. star
-		{"StarTransitioning" + type, {32, 56}, STATE_SUPERSTAR, 2}, // 6. pre super star
-		{"StarSuper" + type, {32, 56}, STATE_SUPERSTAR, 2}, // 7. superstar
-		{"StarTranisitioningFire" + type, {32, 56}, STATE_FIRESTAR, 2}, // 8. pre firestar
-		{"StarFire" + type, {32, 56}, STATE_FIRESTAR, 2} // 9. firestar
+		{"SmallMario", {32, 40}, STATE_SMALL, 1}, // 0. small
+		{"TransitioningMario", {32, 56}, STATE_SUPER, 2}, // 1. pre super
+		{"SuperMario", {32, 56}, STATE_SUPER, 2}, // 2. super
+		{"TransitioningFireMario", {32, 56}, STATE_FIRE, 2}, // 3. prefire
+		{"FireMario", {32, 56}, STATE_FIRE, 2}, // 4. fire
+		{"StarSmallMario", {32, 40}, STATE_STAR, 1}, // 5. star
+		{"StarTransitioningMario", {32, 56}, STATE_SUPERSTAR, 2}, // 6. pre super star
+		{"StarSuperMario", {32, 56}, STATE_SUPERSTAR, 2}, // 7. superstar
+		{"StarTranisitioningFireMario", {32, 56}, STATE_FIRESTAR, 2}, // 8. pre firestar
+		{"StarFireMario", {32, 56}, STATE_FIRESTAR, 2} // 9. firestar
+	};
+	// for luigi
+	transitionFramesLuigi = {
+		{"SmallLuigi" , {32, 44}, STATE_SMALL, 1}, // 0. small
+		{"TransitioningLuigi", {32, 60}, STATE_SUPER, 2}, // 1. pre super
+		{"SuperLuigi", {32, 60}, STATE_SUPER, 2}, // 2. super
+		{"TransitioningFireLuigi", {32, 60}, STATE_FIRE, 2}, // 3. prefire
+		{"FireLuigi", {32, 60}, STATE_FIRE, 2}, // 4. fire
+		{"SmallLuigi", {32, 44}, STATE_STAR, 1}, // 5. star
+		{"TransitioningLuigi", {32, 60}, STATE_SUPERSTAR, 2}, // 6. pre super star
+		{"SuperLuigi" , {32, 60}, STATE_SUPERSTAR, 2}, // 7. superstar
+		{"TranisitioningFireLuigi", {32, 60}, STATE_FIRESTAR, 2}, // 8. pre firestar
+		{"FireLuigi", {32, 60}, STATE_FIRESTAR, 2} // 9. firestar
 	};
 	// for peach
 	transitionFramesPeach = {
@@ -137,15 +148,15 @@ Character::Character(Vector2 pos, Vector2 sz, CharacterState characterstate, Cha
 	// for Toad
 	transitionFramesToad = {
 		{"SmallToad", {32, 40}, STATE_SMALL, 1}, // 0. small
-		{"TransitioningToad" + type, {32, 56}, STATE_SUPER, 2}, // 1. pre super
-		{"SuperToad" + type, {32, 56}, STATE_SUPER, 2}, // 2. super
-		{"TransitioningFireToad" + type, {32, 56}, STATE_FIRE, 2}, // 3. prefire
-		{"FireToad" + type, {32, 56}, STATE_FIRE, 2}, // 4. fire
-		{"SmallToad" + type, {32, 40}, STATE_STAR, 1}, // 5. star
-		{"TransitioningToad" + type, {32, 56}, STATE_SUPERSTAR, 2}, // 6. pre super star
-		{"SuperToad" + type, {32, 56}, STATE_SUPERSTAR, 2}, // 7. superstar
-		{"TranisitioningFireToad" + type, {32, 56}, STATE_FIRESTAR, 2}, // 8. pre firestar
-		{"FireToad" + type, {32, 56}, STATE_FIRESTAR, 2} // 9. firestar
+		{"TransitioningToad", {32, 56}, STATE_SUPER, 2}, // 1. pre super
+		{"SuperToad", {32, 56}, STATE_SUPER, 2}, // 2. super
+		{"TransitioningFireToad", {32, 56}, STATE_FIRE, 2}, // 3. prefire
+		{"FireToad", {32, 56}, STATE_FIRE, 2}, // 4. fire
+		{"SmallToad", {32, 40}, STATE_STAR, 1}, // 5. star
+		{"TransitioningToad", {32, 56}, STATE_SUPERSTAR, 2}, // 6. pre super star
+		{"SuperToad", {32, 56}, STATE_SUPERSTAR, 2}, // 7. superstar
+		{"TranisitioningFireToad", {32, 56}, STATE_FIRESTAR, 2}, // 8. pre firestar
+		{"FireToad", {32, 56}, STATE_FIRESTAR, 2} // 9. firestar
 	};
 }
 
@@ -169,7 +180,7 @@ void Character::resetInGame()
 	}
 	else if (characterType == LUIGI) {
 		texture = RESOURCE_MANAGER.getTexture("SmallLuigi_RIGHT_0");
-		size = { 32, 40 };
+		size = { 32, 44 };
 	}
 	else if (characterType == PEACH) {
 		texture = RESOURCE_MANAGER.getTexture("SmallPeach_RIGHT_0");
@@ -198,7 +209,6 @@ void Character::resetInGame()
 	invicibleStarTime = 0.f;
 	countThrowTime = 0.f;
 	countImmortalTime = 0.f;
-	specificVelocity = { 0, 0 };
 	isThrowing = isducking = false;
 	state = FALLING;
 	CollNorth.setSize({ size.x / 2, 5 });
@@ -220,7 +230,7 @@ void Character::reset()
 	}
 	else if (characterType == LUIGI) {
 		texture = RESOURCE_MANAGER.getTexture("SmallLuigi_RIGHT_0");
-		size = { 32, 40 };
+		size = { 32, 44 };
 	}
 	else if (characterType == PEACH) {
 		texture = RESOURCE_MANAGER.getTexture("SmallPeach_RIGHT_0");
@@ -251,7 +261,6 @@ void Character::reset()
 	invicibleStarTime = 0.f;
 	countThrowTime = 0.f;
 	countImmortalTime = 0.f;
-	specificVelocity = { 0, 0 };
 	isThrowing = isducking = false;
 	state = FALLING;
 	CollNorth.setSize({ size.x / 2, 5 });
@@ -284,14 +293,9 @@ const Phase& Character::getPhase() const
 	return phase;
 }
 
-CharacterState& Character::getCharacterState() 
+const CharacterState& Character::getCharacterState() const
 {
 	return Character_state;
-}
-
-CharacterState& Character::getPrevCharacterState()
-{
-	return PrevCharacter_state;
 }
 
 bool Character::isInvicible() const
@@ -373,6 +377,11 @@ void Character::setScores(int scores)
 void Character::setDucking(bool ducking)
 {
 	this->isducking = ducking;
+}
+
+void Character::setCharacterState(CharacterState characterState)
+{
+	this->Character_state = characterState;
 }
 
 void Character::setHolding(bool holding)
@@ -490,9 +499,11 @@ void Character::Update()
 			if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("lost_suit.wav");
 		}
 	}
-	if (characterType == MARIO || characterType == LUIGI || characterType == TOAD) {
+	if (characterType == MARIO || characterType == TOAD) {
 		size = (Character_state == STATE_SMALL || Character_state == STATE_STAR) ? Vector2{ 32, 40 } : Vector2{ 32, 56 };
 	}
+	else if (characterType == LUIGI)
+		size = (Character_state == STATE_SMALL || Character_state == STATE_STAR) ? Vector2{ 32, 44 } : Vector2{ 32, 60 };
 	else if (characterType == PEACH) {
 		size = (Character_state == STATE_SMALL || Character_state == STATE_STAR) ? Vector2{ 26, 46 } : Vector2{ 36, 64 };
 	}
@@ -602,6 +613,9 @@ void Character::HandleInput(int leftKey, int rightKey, int upKey, int downKey, i
 	if (IsKeyPressed(fireKey) && (Character_state == STATE_FIRE || Character_state == STATE_FIRESTAR) && !isducking) {
 		ThrowingFireBalls();
 	}
+	if (IsKeyPressed(KEY_T)) {
+		cout << position.x << " " << position.y << endl;
+	}
 }
 
 void Character::updateCollision() // update the hitbox (4 rectangle in 4 side of character)
@@ -676,7 +690,7 @@ void Character::UpdateTexture()
 			characterState = "Fire";
 		maxFrame = 2;
 	}
-	else if (characterType == TOAD) {
+	else if (characterType == TOAD || characterType == LUIGI) {
 		if (Character_state == STATE_SMALL || Character_state == STATE_STAR){
 			characterState = "Small";
 			maxFrame = 1;
@@ -691,6 +705,7 @@ void Character::UpdateTexture()
 		}
 	}
 	else {
+		// for mario
 		if (Character_state == STATE_SMALL) {
 			characterState = "Small";
 			maxFrame = 1;
@@ -797,8 +812,14 @@ void Character::RunLeft()
 {
 	float deltaTime = GetFrameTime();
 	if (direction == RIGHT) {
-		if (velocity.x > 70 && state == ON_GROUND)
-			if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("skid.wav");
+		if (velocity.x > 70 && state == ON_GROUND) {
+			if (SETTING.isSoundEnabled()) {
+				RESOURCE_MANAGER.stopSound("skid.wav");
+				RESOURCE_MANAGER.playSound("skid.wav");
+			}
+			SmokeEffect* smoke = new SmokeEffect(Vector2{ position.x + size.x / 2, position.y + size.y / 2 }, { 50, -50 });
+			globalGameEngine->addEffect(smoke);
+		}
 		direction = LEFT;
 		velocity.x = 0;
 	}
@@ -816,8 +837,14 @@ void Character::RunRight()
 {
 	float deltaTime = GetFrameTime();
 	if (direction == LEFT) {
-		if (velocity.x < -70 && state == ON_GROUND)
-			if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("skid.wav");
+		if (velocity.x < -70 && state == ON_GROUND) {
+			if (SETTING.isSoundEnabled()) {
+				RESOURCE_MANAGER.stopSound("skid.wav");
+				RESOURCE_MANAGER.playSound("skid.wav");
+			}
+			SmokeEffect* smoke = new SmokeEffect(Vector2{ position.x + size.x / 2, position.y + size.y / 2}, { -50, -50 });
+			globalGameEngine->addEffect(smoke);
+		}
 		direction = RIGHT;
 		velocity.x = 0;
 	}
@@ -855,8 +882,10 @@ void Character::UpdateTransitioningTexture()
 	}
 
 	TransitionFrame frame;
-	if (characterType == MARIO || characterType == LUIGI)
+	if (characterType == MARIO)
 		frame = transitionFrames[transitionCurrentFrame];
+	else if (characterType == LUIGI)
+		frame = transitionFramesLuigi[transitionCurrentFrame];
 	else if (characterType == TOAD)
 		frame = transitionFramesToad[transitionCurrentFrame];
 	else if (characterType == PEACH)
@@ -866,7 +895,6 @@ void Character::UpdateTransitioningTexture()
 
 	std::string dir = this->direction == RIGHT ? "_RIGHT_" : "_LEFT_";
 	texture = RESOURCE_MANAGER.getTexture(frame.textureKey + dir + "0");
-	//this->size = { (float)texture.width, (float)texture.height};
 	this->size = frame.size;
 	this->maxFrame = frame.Max_frame;
 	updateCollision();
@@ -881,29 +909,25 @@ void Character::ThrowingFireBalls()
 	isThrowing = true;
 	if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("fireball.wav");
 	if (direction == RIGHT) 
-		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, Vector2{400, -300}, RIGHT, 2));
+		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2 - 5, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, Vector2{250, -250}, RIGHT, 2));
 	else if (direction == LEFT) 
-		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, Vector2{-400, -300}, LEFT, 2));
+		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2 - 5, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, Vector2{-250, -250}, LEFT, 2));
 }
 
 void Character::collisionWithItem(const Item* item)
 {
-	TextEffect* text = nullptr;
+	Effect* score = nullptr;
 	DustEffect* dust = nullptr;
 	if (item->getItemType() == MUSHROOM) {
 		const Mushroom* mushroom = dynamic_cast<const Mushroom*>(item);
 		if (mushroom->getMushroomType() == REDMUSHROOM) {
 			scores += mushroom->getPoint();
 			eatRedMushrooms();
-			text = new TextEffect(to_string((int)mushroom->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
-			text->setTextColor(WHITE);
-			text->setOutlineColor(BLACK);
+			score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string((int)mushroom->getPoint()).c_str()), Vector2{ mushroom->getX(), mushroom->getTop() });
 		}
 		else if (mushroom->getMushroomType() == GREENMUSHROOM) {
 			eatGreenMushrooms();
-			text = new TextEffect("1 UP", Vector2{ getCenterX(), getTop() });
-			text->setTextColor(WHITE);
-			text->setOutlineColor(BLACK);
+			score = new ScoreEffect(RESOURCE_MANAGER.getTexture("gui1Up"), Vector2{ mushroom->getX(), mushroom->getTop() });
 		}	
 		dust = new DustEffect(Vector2{ mushroom->getX(), mushroom->getY() });
 	}
@@ -911,9 +935,7 @@ void Character::collisionWithItem(const Item* item)
 		const Moon* moon = dynamic_cast<const Moon*>(item);
 		lives += 3;
 		if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("1-up.wav");
-		text = new TextEffect("3 UPs", Vector2{ getCenterX(), getTop() });
-		text->setTextColor(WHITE);
-		text->setOutlineColor(BLACK);
+		score = new ScoreEffect(RESOURCE_MANAGER.getTexture("gui3Up"), Vector2{ moon->getX(), moon->getTop() });
 		dust = new DustEffect(Vector2{ moon->getX(), moon->getY() });
 	}
 	else if (item->getItemType() == STAR) {
@@ -924,7 +946,7 @@ void Character::collisionWithItem(const Item* item)
 		else if (star->getStarType() == BLUE_STAR)
 			invicibleStarTime = 18.f;
 		scores += star->getPoint();
-		text = new TextEffect(to_string((int)star->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
+		score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string((int)star->getPoint()).c_str()), Vector2{ star->getX(), star->getTop() });
 		dust = new DustEffect(Vector2{ star->getX(), star->getY() });
 	}
 	else if (item->getItemType() == FLOWER) {
@@ -932,7 +954,7 @@ void Character::collisionWithItem(const Item* item)
 		if (flower->getFlowerType() == FIRE_FLOWER) {
 			scores += flower->getPoint();
 			eatFireFlower();
-			text = new TextEffect(to_string((int)flower->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
+			score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string((int)flower->getPoint()).c_str()), Vector2{ flower->getX(), flower->getTop() });
 		}
 		dust = new DustEffect(Vector2{ flower->getX(), flower->getY() });
 
@@ -942,14 +964,14 @@ void Character::collisionWithItem(const Item* item)
 		if (coin->getCoinType() == STATIC_COIN) {
 			coins++;
 			scores += coin->getPoint();
-			text = new TextEffect(to_string((int)coin->getPoint()).c_str(), Vector2{ getCenterX(), getTop() });
+			score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string((int)coin->getPoint()).c_str()), Vector2{ coin->getX(), coin->getTop() });
 			if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("coin.wav");
 		}
 		dust = new DustEffect(Vector2{ coin->getX(), coin->getY() });
 
 	}
-	if (text != nullptr) {
-		globalGameEngine->addEffect(text);
+	if (score != nullptr) {
+		globalGameEngine->addEffect(score);
 	}
 	if (dust != nullptr)
 		globalGameEngine->addEffect(dust);
@@ -971,7 +993,7 @@ void Character::collisionWithEnemy(Enemy* enemy, CollisionType CollType)
 	else if (enemy->getEnemyType() != SHELL) {
 		if (countImmortalTime > 0.f)
 			return;
-		else if (CollType != COLLISION_TYPE_SOUTH || enemy->getEnemyType() == PIRANHA || enemy->getEnemyType() == MUNCHER) {
+		else if (CollType != COLLISION_TYPE_SOUTH || enemy->getEnemyType() == PIRANHA || enemy->getEnemyType() == MUNCHER || enemy->getEnemyType() == SPINY) {
 			lostSuit();
 		}
 		else  {
@@ -1025,6 +1047,77 @@ std::list<FireBall*>* Character::getFireBalls()
 {
 	return &fireballs;
 }
+
+void Character::loadEntity(const json& j)
+{
+	Entity::loadEntity(j); // Load base class data
+
+	phase = static_cast<Phase>(j["phase"].get<int>());
+	characterType = static_cast<CharacterType>(j["characterType"].get<int>());
+	lostLife = j["lostLife"];
+	isducking = j["isducking"];
+	scores = j["scores"];
+	coins = j["coins"];
+	lives = j["lives"];
+	invicibleStarTime = j["invicibleStarTime"];
+	sinkingTime = j["sinkingTime"];
+	// for safe
+	frameTime = 0.f;
+	frameAcum = 0.f;
+	velocity = { 0, 0 };
+	//
+	holding = j["holding"];
+	isThrowing = j["isThrowing"];
+
+	countThrowTime = j["countThrowTime"];
+	countImmortalTime = j["countImmortalTime"];
+	standingUp = j["standingUp"];
+
+	transitioningFrameTime = 0.f;
+	transitioningFrameAcum = 0.f;
+	transitionSteps = j["transitionSteps"];
+	transitionCurrentFrame = j["transitionCurrentFrame"];
+	transitionCurrentFramePos = j["transitionCurrentFramePos"];
+	throwFrameCounter = j["throwFrameCounter"];
+	victoryFrameCounter = j["victoryFrameCounter"];
+	victory = j["victory"];
+	exitlevel = j["exitlevel"];
+	lostSuitTrigger = j["lostSuitTrigger"];
+}
+
+
+void Character::saveEntity(json& j) const
+{
+	Entity::saveEntity(j); // Save base class data
+
+	j["phase"] = static_cast<int>(phase);
+	j["characterType"] = static_cast<int>(characterType);
+	j["lostLife"] = lostLife;
+	j["isducking"] = isducking;
+	j["scores"] = scores;
+	j["coins"] = coins;
+	j["lives"] = lives;
+	j["invicibleStarTime"] = invicibleStarTime;
+	j["sinkingTime"] = sinkingTime;
+
+	j["holding"] = holding;
+	j["isThrowing"] = isThrowing;
+	j["countThrowTime"] = countThrowTime;
+	j["countImmortalTime"] = countImmortalTime;
+	j["standingUp"] = standingUp;
+
+	j["transitioningFrameTime"] = transitioningFrameTime;
+	j["transitioningFrameAcum"] = transitioningFrameAcum;
+	j["transitionSteps"] = transitionSteps;
+	j["transitionCurrentFrame"] = transitionCurrentFrame;
+	j["transitionCurrentFramePos"] = transitionCurrentFramePos;
+	j["throwFrameCounter"] = throwFrameCounter;
+	j["victoryFrameCounter"] = victoryFrameCounter;
+	j["victory"] = victory;
+	j["exitlevel"] = exitlevel;
+	j["lostSuitTrigger"] = lostSuitTrigger;
+}
+
 
 void Character::setVictory(bool victory)
 {

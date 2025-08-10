@@ -11,7 +11,7 @@
 class Blocks : public Entity {
 private:
     int id = 0;
-
+    std::string nameTexture;
 public:
     Blocks(Vector2 pos = { 0, 0 }, Vector2 size = { 32, 32 });
     Blocks(Vector2 pos, Vector2 size, std::string textureName);
@@ -24,5 +24,9 @@ public:
     virtual void Update() override;
     virtual void draw() override;
     virtual void UpdateTexture() override;
+    void loadEntity(const json& j) override;
+    void saveEntity(json& j) const override;
+    void setTextureName(std::string name);
+    std::string getTextureName() const;
 };
 #endif

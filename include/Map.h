@@ -46,7 +46,7 @@ private:
 	std::vector<Vector2> BackGroundPos;
 	float width;
 	float height;
-
+	std::string backGroundName;
 	std::vector<Blocks*> blockArray; // replace tile
 	std::vector<std::vector<Blocks*>> tileGrid; // for tile grid
 	std::vector<Enemy*> enemies;
@@ -54,7 +54,6 @@ private:
 	std::vector<Blocks*> decors;
 	std::vector<Blocks*> covers; //
 	std::vector<Rectangle> secretAreas; // for secret areas
-
 public:
 	static const std::string basePath;
 	Map();
@@ -63,6 +62,7 @@ public:
 	void drawMap();
 	void drawBackGround();
 	void drawBackGround(Vector2 cameraPos, float scale);
+	Vector2 LoadMapSize(const std::string& filepath);
 	void loadBackgroundTexture(const std::string& backgroundName);
 	Vector2 getMapSize() const;
 	void setMapSize(Vector2 size);
@@ -82,5 +82,7 @@ public:
 
 	float BgWidth;
 	float BgHeight;
+	void loadMap(const json& j);
+	void saveMap(json& j) const;
 };
 #endif

@@ -5,8 +5,9 @@
 Koopa::Koopa(Vector2 pos, Texture2D texture)
     : Enemy(pos, { 32, 54 }, { 0, 0 }, LEFT, FALLING, texture, 0.2f, 1, GREEN),
     reviveTimer(0.0f), isReviving(false), reviveShakeTimer(0.0f),
-    koopaState(NORMAL_KOOPA)
+    koopaState(NORMAL_KOOPA), koopaType(GREEN_KOOPA)
 {
+    scores = SCORE_STOMP_KOOPA;
 }
 
 void Koopa::setKoopaType(KOOPA_TYPE type)
@@ -172,8 +173,8 @@ void Koopa::stomped()
         velocity.y = -300; // Slight upward bounce
         velocity.x = (rand() % 100) - 50; // Random horizontal velocity
         deathTimer = ENEMY_DEATH_TIMER_LONG; // Disappear after 0.5s
-        Effect* text = new TextEffect(to_string(SCORE_STOMP_KOOPA).c_str(), getCenter());
-        globalGameEngine->addEffect(text);
+        Effect* score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string(SCORE_STOMP_KOOPA).c_str()), getCenter());
+        globalGameEngine->addEffect(score);
     }
 }
 
@@ -206,8 +207,29 @@ void Koopa::updateCollision()
     }
 }
 
-ENEMY_TYPE FlyingKoopa::getEnemyType() const {
-    return KOOPA;
+void Koopa::setKoopaState(KoopaState state)
+{
+    this->koopaState = state;
+}
+
+void Koopa::loadEntity(const json& j)
+{
+    Enemy::loadEntity(j);
+    koopaState = static_cast<KoopaState>(j["koopaState"].get<int>());
+    koopaType = static_cast<KOOPA_TYPE>(j["koopaType"].get<int>());
+    reviveTimer = j["reviveTimer"];
+    isReviving = j["isReviving"];
+    reviveShakeTimer = j["reviveShakeTimer"];
+}
+
+void Koopa::saveEntity(json& j) const
+{
+    Enemy::saveEntity(j);
+    j["koopaState"] = static_cast<int>(koopaState);
+    j["koopaType"] = static_cast<int>(koopaType);
+    j["reviveTimer"] = reviveTimer;
+    j["isReviving"] = isReviving;
+    j["reviveShakeTimer"] = reviveShakeTimer;
 }
 
 
@@ -219,9 +241,9 @@ GreenKoopa::GreenKoopa(Vector2 pos, Texture2D texture)
 	updateCollision();
 	// Set the initial texture for Green Koopa
 	texture = RESOURCE_MANAGER.getTexture("GreenKoopa_LEFT_0");
-	if (texture.id == 0) {
-		throw std::runtime_error("Failed to load Green Koopa texture");
-	}
+    if (texture.id == 0) {
+        throw std::runtime_error("Failed to load Green Koopa texture");
+    }
 }
 
 KOOPA_TYPE GreenKoopa::getKoopaType() const
@@ -283,21 +305,3 @@ KOOPA_TYPE BlueKoopa::getKoopaType() const
     return BLUE_KOOPA;
 }
 
-
-//FlyingKoopa::FlyingKoopa(Vector2 pos, Texture2D texture):
-//    Enemy(pos, { 32, 54 }, { 0, 0 }, LEFT, ON_GROUND, texture, 0.2f, 1, GREEN),
-//    reviveTimer(0.0f), isReviving(false), reviveShakeTimer(0.0f),
-//    koopaState(NORMAL_KOOPA), koopaType(YELLOW_KOOPA)
-//{
-//
-//}
-
-void FlyingKoopa::Update() {
-
-}
-void FlyingKoopa::UpdateTexture() {
-
-}
-float FlyingKoopa::getScores() const {
-    return SCORE_STOMP_KOOPA;
-}

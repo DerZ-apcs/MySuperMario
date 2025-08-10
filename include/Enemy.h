@@ -43,6 +43,7 @@ protected:
     bool isFlipped;
     bool isKicked;
     float collisionTimer;
+    float scores;
 public:
     Enemy(Vector2 pos, Vector2 size, Vector2 vel, Direction direction, EntityState state, Texture2D texture, float frameTime, int maxFrame, Color color);
     virtual ~Enemy();
@@ -62,9 +63,11 @@ public:
     void setIsKicked(bool isKicked);
     virtual void UpdateTexture(); // Update enemy texture based on state
     virtual void attacked(Direction direction = RIGHT);
-    virtual float getScores() const = 0;
+    virtual float getScores() const;
     void setCollisionTimer(float time);
     void setDeathTimer(float time);
+    void loadEntity(const json& j) override;
+    void saveEntity(json& j) const override;
 };
 
 #endif
