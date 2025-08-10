@@ -63,6 +63,7 @@ void GameEngine::loadGameMap(Level& level) {
     map.loadBackgroundTexture(level.getBackGroundName());
     Vector2 Msize = map.getMapSize();
     camera.loadRenderTexture(Msize);
+    bounce = map.getMapSize();
 
     tileGrid = map.getTileGrid();
     enemies = map.getEnemies();
@@ -70,6 +71,11 @@ void GameEngine::loadGameMap(Level& level) {
     decor = map.getDecor();
     covers = map.getCovers();
     secretAreas = map.getSecretAreas();
+
+    Cannon* cannon = new Cannon({ 600, 600 });
+    cannon->setBulletType(0);
+    tileGrid[20].push_back(cannon);
+
 }
 GameEngine::~GameEngine() {
     for (size_t i = 0; i < enemyFireball.size(); i++)
@@ -155,7 +161,6 @@ void GameEngine::update()
 
             DrawTextPro(*font, text, position, origin, 0.0f, fontSize, spacing, BLACK);
         }
-
     }
     if (IsKeyPressed(KEY_F9))
         loadGame(1);
@@ -231,7 +236,7 @@ void GameEngine::update()
 	// enemy fireball update
 	for (auto* ef : enemyFireball) {
 		if (!isInCameraView(ef->getRect()))
-			continue; // skip drawing this fireball
+			continue; 
         if (ef->isDead() || ef->isMaxTime()) {
             delete ef;
             enemyFireball.erase(std::remove(enemyFireball.begin(), enemyFireball.end(), ef), enemyFireball.end());
@@ -247,7 +252,7 @@ void GameEngine::update()
             Blocks* block = tileGrid[i][j];
             if (block == nullptr) continue;
 			if (!isInCameraView(block->getRect()))
-				continue; // skip drawing this block
+				continue; 
             if (block->isDead()) {
                 delete block;
                 tileGrid[i][j] = nullptr;
@@ -260,7 +265,7 @@ void GameEngine::update()
     // item
     for (auto* item : items) {
         if (!isInCameraView(item->getRect())) 
-            continue; // skip drawing this item
+            continue; 
         if (item->isDead()) {
             delete item;
             items.erase(std::remove(items.begin(), items.end(), item), items.end());
@@ -408,7 +413,6 @@ void GameEngine::draw()
 		if (!dec || !isInCameraView(dec->getRect())) continue;
 		dec->draw();
     }
-
     // enemy fireball draw
     for (auto* ef : enemyFireball) {
 		if (!ef || !isInCameraView(ef->getRect())) 
@@ -464,9 +468,7 @@ void GameEngine::draw()
 			continue; // skip drawing this effect
         ef->draw();
     }
-    //Rectangle r = camera.getViewRect();
-    //DrawRectangleLines(r.x, r.y, r.width, r.height, RED);
-
+   
     camera.endDrawing();
 
     BeginDrawing();
@@ -521,7 +523,9 @@ bool GameEngine::run() {
         update();
         ClearBackground(RAYWHITE);
         draw();
-        
+        if (IsKeyPressed(KEY_T)) {
+            cout << "Bound" << getBound().x << " " << getBound().y << endl;
+        }
         if (cleared == true && isPaused == false) {
             RESOURCE_MANAGER.stopCurrentMusic();
             RESOURCE_MANAGER.playMusic("MUSIC_1");
@@ -648,7 +652,6 @@ void GameEngine::resetGame()
     }
 
     enemyFireball.clear();
-    //blocks.clear();
     tileGrid.clear();
     enemies.clear();
     items.clear();
@@ -664,7 +667,6 @@ void GameEngine::resetGame()
     RESOURCE_MANAGER.playMusic(level->getMusic());
     map.LoadFromJsonFile(level->getMapPath());
     map.loadBackgroundTexture(level->getBackGroundName());
-    //blocks = map.getBlocks();
 	tileGrid = map.getTileGrid();
     enemies = map.getEnemies();
     items = map.getItems();
@@ -677,9 +679,9 @@ void GameEngine::resetGame()
     resetTimer();
 }
 
-Vector2 GameEngine::getBound()
+Vector2 GameEngine::getBound() const
 {
-    return map.getMapSize();
+    return bounce;
 }
 
 std::vector<std::unique_ptr<Character>>& GameEngine::getMultiplayers()
@@ -710,19 +712,15 @@ bool GameEngine::isInCameraView(Rectangle entityRect) const {
 
 void GameEngine::saveGame(int slot) {
     json j;
-    //map.LoadMapSize(level->getMapPath());
-    //map.LoadFromJsonFile(level->getMapPath());
-    map.loadBackgroundTexture(level->getBackGroundName());
-    Vector2 Msize = map.getMapSize();
-    //camera.loadRenderTexture(Msize); 
-    //items = map.getItems();
-    //tileGrid = map.getTileGrid();
-    //enemies = map.getEnemies();
-    j["background"] = level->getBackGroundName();
+    level->saveLevel(j);
+    map.saveMap(j);
     j["mapSize"] = { map.getMapSize().x, map.getMapSize().y };
+    j["background"] = level->getBackGroundName();
+    camera.saveCamera(j);
+    
     saveMultiCharacters(*multiplayers, j);        // Characters
     //saveEnemies(enemies, j["enemies"]);          // Enemies
-    saveItems(items, j["items"]);                // Items
+    //saveItems(items, j["items"]);                // Items
     saveTileGrids(tileGrid, j["tileGrid"]);      // Blocks
     saveGameEngineState(this, j);
 
@@ -733,6 +731,8 @@ void GameEngine::saveGame(int slot) {
         file << j.dump(4); // Pretty print
         file.close();
     }
+    std::cout << "[Map Load] tileGrid size: " << tileGrid.size() << " x " << tileGrid[0].size() << std::endl;
+
 }
 
 
@@ -744,21 +744,25 @@ void GameEngine::loadGame(int slot)
 
     json j;
     file >> j;
-    //map.loadBackgroundTexture(level->getBackGroundName());
-    //map.LoadFromJsonFile(level->getMapPath());
+
+    level->loadLevel(j);
+    map.loadMap(j);
     Vector2 Msize = { j["mapSize"][0], j["mapSize"][1] };
+    camera.loadCamera(j);
     camera.loadRenderTexture(Msize);
+    map.setMapSize(Msize);
     std::string backgroundName = j["background"];
     map.loadBackgroundTexture(backgroundName);
-
     loadMultiCharacters(*multiplayers, j);
     //loadEnemies(enemies, j.at("enemies"));
-    loadItems(items, j.at("items"));
+    //loadItems(items, j.at("items"));
     loadTileGrids(tileGrid, j.at("tileGrid"));
     loadGameEngineState(this, j);
-    std::cout << "Tiles loaded: " << tileGrid.size() << "\n";
     //std::cout << "Enemies loaded: " << enemies.size() << "\n";
-    std::cout << "Items loaded: " << items.size() << "\n";
+    //std::cout << "Items loaded: " << items.size() << "\n";
+    cout << "Map: " << map.getMapSize().x << " " << map.getMapSize().y << endl;
+    std::cout << "[Map Load] tileGrid size: " << tileGrid.size() << " x " << tileGrid[0].size() << std::endl;
+
 }
 
 void GameEngine::saveGameEngineState(GameEngine* engine, json& j) {
@@ -770,6 +774,7 @@ void GameEngine::saveGameEngineState(GameEngine* engine, json& j) {
         {"cleared", engine->cleared},
         {"time", engine->time},
         {"sharedLives", engine->sharedLives},
+        {"bounce", {engine->bounce.x, engine->bounce.y}}
     };
 
     json secretArray = json::array();
@@ -794,6 +799,8 @@ void GameEngine::loadGameEngineState(GameEngine* engine, const json& j) {
         engine->cleared = state["cleared"];
         engine->time = state["time"];
         engine->sharedLives = state["sharedLives"];
+        engine->bounce = { state["bounce"][0], state["bounce"][1] };
+        
     }
 
     std::vector<Rectangle> secretAreas;

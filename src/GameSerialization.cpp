@@ -43,6 +43,7 @@ void loadMultiCharacters(std::vector<std::unique_ptr<Character>>& multiplayers, 
             c = new Marisa();
         c->loadEntity(entry);
         multiplayers.emplace_back(c); // Wrap raw pointer into unique_ptr
+        std::cout << "Loaded player position: " << c->getPosition().x << ", " << c->getPosition().y << "\n";
     }
 }
 
@@ -194,10 +195,12 @@ void loadTileGrids(std::vector<std::vector<Blocks*>>& tileGrid, const json& j)
         BLOCK_TYPE type = static_cast<BLOCK_TYPE>(blockJson["blockType"]);
         Vector2 pos = { (float)x * 32, (float)y * 32 };
         Blocks* block = BlockFactory::getInstance().createBlock(type, pos);
-        if (block)
+        if (block) {
             block->loadEntity(blockJson["data"]);
-        tileGrid[y][x] = block;
+            tileGrid[y][x] = block;
+        }       
     }
+    cout << "Loaded JSON block count: " << j.size() << endl;
 }
 
 void loadItems(std::vector<Item*>& items, const json& j) {

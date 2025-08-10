@@ -64,6 +64,7 @@ enum BLOCK_TYPE {
 	SOLIDBLOCK, // unmovable, unbreakable
 	MOVINGBLOCK,
 	ITEMBLOCK, // carry items
+	CANNON, // cannon block
 	HIDDEN, 
 	TEMPBLOCK,
 	DECOR, // for decor, not collision

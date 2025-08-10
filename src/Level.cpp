@@ -24,3 +24,19 @@ std::string Level::getMusic() const
 {
 	return musicName;
 }
+
+void Level::loadLevel(const json& j)
+{
+	mapPath = j["mapPath"]; // json file
+	backgroundName = j["backgroundName"];
+	musicName = j["musicName"];
+	MapName = j["MapName"];
+}
+
+void Level::saveLevel(json& j) const
+{
+	j["mapPath"] = mapPath;
+	j["backgroundName"] = backgroundName;
+	j["musicName"] = musicName;
+	j["MapName"] = MapName;
+}

@@ -2,8 +2,11 @@
 #define CAMERA_H
 #include <raylib.h>
 #include <iostream>
-class GameEngine;
+#include <raymath.h>
+#include "../include/json.hpp"
+using nlohmann::json;
 
+class GameEngine;
 
 class GameCamera {
 private:
@@ -30,6 +33,33 @@ public:
 	Vector2& getPos() const;
 	float getScale() const;
 	Rectangle getViewRect() const;
+	void loadCamera(const json& j);
+	void saveCamera(json& j) const;
+
+};
+
+//------------
+
+class EditorCamera {
+private:
+	Vector2 position; // world offset
+	float zoom;
+	bool isDragging;
+	Vector2 dragStart;
+
+public:
+	EditorCamera();
+
+	void beginDrawing();
+	void endDrawing();
+	Camera2D GetCamera2D() const;
+	Vector2 getWorldPos(Vector2 screenPos) const; // Converts screen coordinates to world coordinates
+
+	Vector2 getPosition() const;
+	float getZoom() const;
+	Rectangle getViewRect() const;
+
+	void handleInput();
 };
 
 #endif

@@ -7,6 +7,7 @@
 #include "../include/Floor.h"
 #include "../include/SolidBlock.h"
 #include "../include/Brick.h"
+#include "../include/Cannon.h"
 #include "../include/CoinBlock.h"
 #include "../include/ItemBlock.h"
 #include "../include/DecorBlock.h"
@@ -45,7 +46,7 @@ private:
 	std::vector<Vector2> BackGroundPos;
 	float width;
 	float height;
-
+	std::string backGroundName;
 	std::vector<Blocks*> blockArray; // replace tile
 	std::vector<std::vector<Blocks*>> tileGrid; // for tile grid
 	std::vector<Enemy*> enemies;
@@ -53,7 +54,6 @@ private:
 	std::vector<Blocks*> decors;
 	std::vector<Blocks*> covers; //
 	std::vector<Rectangle> secretAreas; // for secret areas
-
 public:
 	static const std::string basePath;
 	Map();
@@ -82,5 +82,7 @@ public:
 
 	float BgWidth;
 	float BgHeight;
+	void loadMap(const json& j);
+	void saveMap(json& j) const;
 };
 #endif

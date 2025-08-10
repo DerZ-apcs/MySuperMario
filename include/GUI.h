@@ -50,6 +50,8 @@ public:
 	static void drawNumber(int number, Vector2 position, float spacing = 10.f);
 	static void drawSmallNumber(int number, Vector2 position, float spacing = 5.f);
 	static void drawYellowNumber(int number, Vector2 position, float spacing = 5.f);
+	static void drawEditorUI();
+
 	static bool home_is_pressed;
 	static bool restart_is_pressed;
 	static bool sound_is_pressed;

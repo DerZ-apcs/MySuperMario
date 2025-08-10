@@ -16,6 +16,7 @@
 #include "../include/NoteBlock.h"
 #include "../include/CoinBlock.h"
 #include "../include/RotatingBlock.h"
+#include "../include/Cannon.h"
 
 // Use the factory design pattern
 
@@ -84,6 +85,10 @@ inline void registerBlocks() {
 
 	factory.registerBlock(ITEMBLOCK, [](Vector2 pos, Vector2 size) {
 		return new ItemBlock(pos, size);
+		});
+
+	factory.registerBlock(CANNON, [](Vector2 pos, Vector2 size) {
+		return new Cannon(pos);
 		});
 
 	factory.registerBlock(DECOR, [](Vector2 pos, Vector2 size) {

@@ -1,7 +1,9 @@
 #include "../include/NoteBlock.h"
 #include "../include/CloudBlock.h"
 
-CloudBlock::CloudBlock(Vector2 pos) : Blocks(pos, { 32, 32 }, "TILE_115") {}
+CloudBlock::CloudBlock(Vector2 pos) : Blocks(pos, { 32, 32 }, "TILE_115") {
+
+}
 
 //-----------------
 

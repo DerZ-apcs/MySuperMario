@@ -55,6 +55,7 @@ private:
     float deltaTime;
     int sharedLives = 5;
     Texture2D BackGroundTex;
+    Vector2 bounce;
 
     std::map<std::string, Texture2D> backgroundTextures;
     std::vector<Vector2> BackGroundPos;
@@ -78,7 +79,7 @@ public:
     float resetTimer();
     bool isOver() const;
     void resetGame();
-    Vector2 getBound();
+    Vector2 getBound() const;
     std::vector<std::unique_ptr<Character>>& getMultiplayers(); 
     std::vector<Blocks*> getNearbyBlocks(Vector2 pos, int range);
     bool isInCameraView(Rectangle entityRect) const;

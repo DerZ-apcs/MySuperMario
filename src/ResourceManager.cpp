@@ -361,7 +361,7 @@ void ResourceManager::loadTextures() {
 	textures["TransitioningFireToad_LEFT_0"] = textures["FireToad_LEFT_0"];
 
 	//tile
-	for (int i = 0; i <= 115; i++) {
+	for (int i = 0; i <= 116; i++) {
 		std::string path = "resources/images/tiles/AllTiles/tile_" + std::to_string(i) + ".png";
 		textures["TILE_" + std::to_string(i)] = LoadTexture(path.c_str());
 	}

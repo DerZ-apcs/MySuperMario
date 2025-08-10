@@ -185,6 +185,21 @@ void MainMenuState::handleInput()
 		game->setState(std::make_unique<ModePlayer>(game));
 	else if (mapSelectionButton.isPressed()|| (currentPosition == 6 && IsKeyPressed(KEY_ENTER)))
 		game->setState(std::make_unique<MapSelection>(game));
+	else if (IsKeyPressed(KEY_E)) {
+		if (globalEditorEngine != nullptr) {
+			delete globalEditorEngine;
+			globalEditorEngine = nullptr;
+		}
+		globalEditorEngine = new EditorEngine(1600, 800);
+
+		while (globalEditorEngine != nullptr) {
+			if (globalEditorEngine->run()) {
+				delete globalEditorEngine;
+				globalEditorEngine = nullptr;
+			}
+			else break;
+		}
+	}
 }
 
 void MainMenuState::update()

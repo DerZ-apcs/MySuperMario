@@ -613,6 +613,9 @@ void Character::HandleInput(int leftKey, int rightKey, int upKey, int downKey, i
 	if (IsKeyPressed(fireKey) && (Character_state == STATE_FIRE || Character_state == STATE_FIRESTAR) && !isducking) {
 		ThrowingFireBalls();
 	}
+	if (IsKeyPressed(KEY_T)) {
+		cout << position.x << " " << position.y << endl;
+	}
 }
 
 void Character::updateCollision() // update the hitbox (4 rectangle in 4 side of character)
@@ -1058,7 +1061,11 @@ void Character::loadEntity(const json& j)
 	lives = j["lives"];
 	invicibleStarTime = j["invicibleStarTime"];
 	sinkingTime = j["sinkingTime"];
-
+	// for safe
+	frameTime = 0.f;
+	frameAcum = 0.f;
+	velocity = { 0, 0 };
+	//
 	holding = j["holding"];
 	isThrowing = j["isThrowing"];
 
@@ -1066,8 +1073,8 @@ void Character::loadEntity(const json& j)
 	countImmortalTime = j["countImmortalTime"];
 	standingUp = j["standingUp"];
 
-	transitioningFrameTime = j["transitioningFrameTime"];
-	transitioningFrameAcum = j["transitioningFrameAcum"];
+	transitioningFrameTime = 0.f;
+	transitioningFrameAcum = 0.f;
 	transitionSteps = j["transitionSteps"];
 	transitionCurrentFrame = j["transitionCurrentFrame"];
 	transitionCurrentFramePos = j["transitionCurrentFramePos"];

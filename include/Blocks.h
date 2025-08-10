@@ -9,11 +9,16 @@
 #include <functional>
 
 class Blocks : public Entity {
+private:
+    int id = 0;
+    std::string nameTexture;
 public:
     Blocks(Vector2 pos = { 0, 0 }, Vector2 size = { 32, 32 });
     Blocks(Vector2 pos, Vector2 size, std::string textureName);
     virtual ~Blocks() = default;
 
+    void setId(int id);
+	int getId() const;
     EntityType getEntityType() const override;
     virtual BLOCK_TYPE getBlockType() const = 0;
     virtual void Update() override;
@@ -21,5 +26,7 @@ public:
     virtual void UpdateTexture() override;
     void loadEntity(const json& j) override;
     void saveEntity(json& j) const override;
+    void setTextureName(std::string name);
+    std::string getTextureName() const;
 };
 #endif

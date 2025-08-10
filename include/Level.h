@@ -16,5 +16,7 @@ public:
 	std::string getBackGroundName() const;
 	std::string getName() const;
 	std::string getMusic() const;
+	void loadLevel(const json& j);
+	void saveLevel(json& j) const;
 };
 #endif
