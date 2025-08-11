@@ -217,6 +217,9 @@ void PeteyPiranha::updateHurt() {
 }
 
 void PeteyPiranha::updateSporeCloud() {
+    if (target) {
+		direction = (target->getPosition().x > position.x) ? RIGHT : LEFT;
+    }
     statePhaseTimer -= GetFrameTime();
     if (statePhaseTimer <= 0) {
         activeCloud = nullptr;
@@ -226,18 +229,17 @@ void PeteyPiranha::updateSporeCloud() {
 }
 
 void PeteyPiranha::releaseSporeCloud() {
-    if (globalGameEngine) {
+    if (globalGameEngine && target) {
         // Lấy kích thước của Petey và đám mây để tính toán vị trí chính xác
         Vector2 peteySize = getSize();
         Vector2 cloudSize = { 64.0f, 64.0f }; // Lấy từ hằng số của SporeCloud
 
-        float offsetX = (peteySize.x / 2.0f) - (cloudSize.x / 2.0f);
-        float offsetY = cloudSize.y + 200.0f;
-
+        float offsetX = position.x + (peteySize.x / 2.0f) - (cloudSize.x / 2.0f);
+        float offsetY = position.y - cloudSize.y - 20.0f;
        
-        Vector2 cloudSpawnPos = { position.x + 50.0f, position.y - offsetY };
+        Vector2 cloudSpawnPos = { offsetX, offsetY };
 
-        SporeCloud* cloud = new SporeCloud(cloudSpawnPos);
+        SporeCloud* cloud = new SporeCloud(cloudSpawnPos, this->target);
 		this->activeCloud = cloud; // Lưu đám mây để có thể quản lý sau này
         globalGameEngine->addEffect(cloud);
     }
@@ -248,23 +250,23 @@ void PeteyPiranha::shootFireball() {
         return;
     }
 
-    //Direction dir = (target->getX() > position.x) ? RIGHT : LEFT;
-    //Vector2 fireBallPos = { position.x, position.y + 10 };
-    //const int numFireballs = 3;
-    //const float angleSpread = 15.0f; // Góc tỏa ra của các viên đạn
-    //const float baseSpeed = 300.0f;
+    Direction dir = (target->getX() > position.x) ? RIGHT : LEFT;
+    Vector2 fireBallPos = { position.x, position.y + 10 };
+    const int numFireballs = 3;
+    const float angleSpread = 15.0f; // Góc tỏa ra của các viên đạn
+    const float baseSpeed = 300.0f;
 
-    //for (int i = 0; i < numFireballs; ++i) {
-    //    float angle = (i - (numFireballs - 1) / 2.0f) * angleSpread;
-    //    float rad = angle * DEG2RAD;
+    for (int i = 0; i < numFireballs; ++i) {
+       float angle = (i - (numFireballs - 1) / 2.0f) * angleSpread;
+       float rad = angle * DEG2RAD;
 
-    //    float velX = baseSpeed * cosf(rad) * (dir == RIGHT ? 1.0f : -1.0f);
-    //    float velY = -200.0f + baseSpeed * sinf(rad); 
+        float velX = baseSpeed * cosf(rad) * (dir == RIGHT ? 1.0f : -1.0f);
+        float velY = -200.0f + baseSpeed * sinf(rad); 
 
-    //    Vector2 fireBallVel = { velX, velY };
-    //    EnemyFireBall* fireball = new EnemyFireBall(fireBallPos, { 16, 16 }, fireBallVel, dir, 2.0f);
-    //    globalGameEngine->addEnemyFireBall(fireball);
-    //}
+        Vector2 fireBallVel = { velX, velY };
+        EnemyFireBall* fireball = new EnemyFireBall(fireBallPos, { 16, 16 }, fireBallVel, dir, 2.0f);
+        globalGameEngine->addEnemyFireBall(fireball);
+    }
 }
 
 void PeteyPiranha::onHit() {
