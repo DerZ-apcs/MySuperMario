@@ -51,6 +51,7 @@ public:
 	static void drawSmallNumber(int number, Vector2 position, float spacing = 5.f);
 	static void drawYellowNumber(int number, Vector2 position, float spacing = 5.f);
 	static void drawEditorUI();
+	static void drawItemChoice(Vector2 position, ITEM_TYPE& itemChoice);
 
 	static bool home_is_pressed;
 	static bool restart_is_pressed;

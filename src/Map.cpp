@@ -22,7 +22,6 @@ void Map::clear() {
 	blockArray.clear();
 	items.clear();
 	decors.clear();
-	covers.clear();
 	enemies.clear();
 	covers.clear();
 	secretAreas.clear();
@@ -171,16 +170,14 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			}
 		}
 	}
+
 	if (mapJson["layers"].size() < 2) { return; }
 	nlohmann::json objectLayer = mapJson["layers"][1];
 	nlohmann::json objects = objectLayer["objects"];
-
 	for (auto& obj : objects) {
 		int gid = obj["gid"];
 		int x = obj["x"] / 32;
 		int y = obj["y"] / 32 - 1;
-		int width = obj["width"];
-		int height = obj["height"];
 
 		std::string name;
 		std::string type;
@@ -188,6 +185,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			if (prop["name"] == "Name") name = prop["value"];
 			else if (prop["name"] == "Type") type = prop["value"];
 		}
+
 		if (name == "QuestionBlock") {
 			if (type == "Mushroom") {
 				Blocks* block = dynamic_cast<ItemBlock*>(BlockFactory::getInstance().createBlock(ITEMBLOCK, {(float)x * blockwidth, (float)y * blockwidth}, {32, 32}));

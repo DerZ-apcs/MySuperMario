@@ -30,6 +30,9 @@ private:
 	int selectedBlockId = -1; 
 
 	int displayMode = 0; // 0: block | 1: enemy
+	bool isEditingItemBlock = false;
+	ItemBlock* currentItemBlock = nullptr;
+	Vector2  popupPos;
 
 public:
 	EditorEngine(float width, float height);

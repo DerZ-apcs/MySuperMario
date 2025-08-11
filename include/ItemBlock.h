@@ -12,6 +12,9 @@ private:
     bool isActive;
     ITEM_TYPE heldPowerUp;
     int subType;// for sub type of mushroom, star 
+
+    std::string powerUpTypeToString(ITEM_TYPE type) const;
+
 public:
     ItemBlock(Vector2 pos = { 0, 0 }, Vector2 size = { 32, 32 });
     ItemBlock(Vector2 pos = { 0, 0 }, ITEM_TYPE type = MUSHROOM, int subType = 0);

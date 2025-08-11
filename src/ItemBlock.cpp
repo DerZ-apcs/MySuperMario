@@ -91,6 +91,7 @@ void ItemBlock::Activate()
 void ItemBlock::loadEntity(const json& j)
 {
 	Blocks::loadEntity(j);
+	position.y -= 32; // Adjust position to match Tiled coordinates
 	isActive = j["isActive"];
 	heldPowerUp = static_cast<ITEM_TYPE>(j["heldPowerUp"].get<int>());
 	subType = j["subType"];
@@ -99,7 +100,34 @@ void ItemBlock::loadEntity(const json& j)
 void ItemBlock::saveEntity(json& j) const
 {
 	Blocks::saveEntity(j);
+
 	j["isActive"] = isActive;
 	j["heldPowerUp"] = static_cast<int>(heldPowerUp);
 	j["subType"] = subType;
+
+	// Add Tiled-compatible properties array
+	j["properties"] = json::array({
+		{
+			{ "name", "Name" },
+			{ "type", "string" },
+			{ "value", "QuestionBlock" }
+		},
+		{
+			{ "name", "Type" },
+			{ "type", "string" },
+			{ "value", powerUpTypeToString(heldPowerUp) }
+		}
+	});
+	j["gid"] = 106;
+}
+
+std::string ItemBlock::powerUpTypeToString(ITEM_TYPE type) const
+{
+	switch (type) {
+	case MUSHROOM: return "Mushroom";
+	case FLOWER: return "Flower";
+	case STAR: return "Star";
+	case MOON: return "Moon";
+	default: return "Mushroom";
+	}
 }

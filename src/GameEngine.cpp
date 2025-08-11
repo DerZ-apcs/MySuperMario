@@ -72,10 +72,6 @@ void GameEngine::loadGameMap(Level& level) {
     covers = map.getCovers();
     secretAreas = map.getSecretAreas();
 
-    Cannon* cannon = new Cannon({ 600, 600 });
-    cannon->setBulletType(0);
-    tileGrid[20].push_back(cannon);
-
 }
 GameEngine::~GameEngine() {
     for (size_t i = 0; i < enemyFireball.size(); i++)

@@ -99,7 +99,7 @@ void EditorEngine::update() {
 void EditorEngine::handleInput() {
 	Vector2 mousePos = GetMousePosition();
 
-	// Check if tile selector (GUI sidebar) is clicked
+	// Check if tile selector is clicked
 	for (const auto& tile : tiles) {
 		if (CheckCollisionPointRec(mousePos, tile.rect) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
 			selectedBlockId = tile.id;
@@ -107,6 +107,7 @@ void EditorEngine::handleInput() {
 		}
 	}
 
+	// Draw
 	if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
 		Vector2 co = PosToCoordinate(GetMousePosition());
 		int x = (int)co.x / 32;
@@ -117,6 +118,16 @@ void EditorEngine::handleInput() {
 				if (tileGrid[y][x] != nullptr) {
 					delete tileGrid[y][x]; // Delete existing block
 				}
+
+				if (selectedBlockId == 105) {
+					ItemBlock* itemBlock = dynamic_cast<ItemBlock*>(BlockFactory::getInstance().createBlock(ITEMBLOCK,
+						{ (float)x * 32, (float)y * 32 }, { 32, 32 }));
+					itemBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_105"));
+					itemBlock->setId(selectedBlockId);
+					tileGrid[y][x] = itemBlock; 
+					return;
+				}
+
 				SolidBlock* solidBlock = dynamic_cast<SolidBlock*>(BlockFactory::getInstance().createBlock(SOLIDBLOCK,
 					{ (float)x * 32, (float)y * 32 }, { 32, 32 }));
 				solidBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_" + std::to_string(selectedBlockId)));
@@ -126,6 +137,7 @@ void EditorEngine::handleInput() {
 		}
 	}
 
+	// Delete
 	if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) || IsMouseButtonDown(MOUSE_BUTTON_RIGHT) || IsKeyDown(KEY_LEFT_ALT)) {
 		selectedBlockId = -1; // Deselect block
 
@@ -136,6 +148,21 @@ void EditorEngine::handleInput() {
 			if (tileGrid[y][x] != nullptr) {
 				delete tileGrid[y][x]; 
 				tileGrid[y][x] = nullptr; 
+			}
+		}
+	}
+
+	// Edit item block 
+	if (IsKeyPressed(KEY_E)) {
+		Vector2 co = PosToCoordinate(GetMousePosition());
+		int x = (int)co.x / 32;
+		int y = (int)co.y / 32;
+		if (x >= 0 && x < tileGrid[0].size() && y + 1 >= 0 && y + 1 < tileGrid.size()) {
+			if (tileGrid[y + 1][x] != nullptr && dynamic_cast<ItemBlock*>(tileGrid[y + 1][x]) != nullptr) {
+				ItemBlock* itemBlock = dynamic_cast<ItemBlock*>(tileGrid[y + 1][x]);
+				currentItemBlock = itemBlock;
+				popupPos = GetMousePosition();   // capture position here
+				isEditingItemBlock = true;
 			}
 		}
 	}
@@ -187,13 +214,13 @@ void EditorEngine::drawGrid() {
 	}
 
 	// Debug
-	/*
+	
 	for (int y = startY; y < endY; ++y) {
 		for (int x = startX; x < endX; ++x) {
 			std::string coord = "(" + std::to_string(x) + "," + std::to_string(y) + ")";
 			DrawText(coord.c_str(), x * tileSize + 2, y * tileSize + 2, 10, DARKGRAY);
 		}
-	}*/
+	}
 }
 
 void EditorEngine::draw() {
@@ -238,7 +265,24 @@ void EditorEngine::draw() {
 		std::string blockIdText = "Selected Block ID: " + std::to_string(selectedBlockId);
 		DrawText(blockIdText.c_str(), 10, 650, 20, BLACK);
 	}
+	else {
+		Vector2 co = PosToCoordinate(GetMousePosition());
+		Vector2 screenPos = GetWorldToScreen2D(co, camera.GetCamera2D());
+		// Draw a rectangle at the mouse position
+		float scale = camera.GetCamera2D().zoom;
+		Rectangle rect = { screenPos.x, screenPos.y, 32 * scale, 32 * scale };
+		DrawRectangleLinesEx(rect, 2, GREEN); // Draw a green rectangle outline
+	}
 
+	// Draw item block editing popup
+	if (isEditingItemBlock && currentItemBlock) {
+		ITEM_TYPE choice = POWERITEM;
+		GUI::drawItemChoice(popupPos, choice); // always draw at fixed pos
+		if (choice != POWERITEM) {
+			currentItemBlock->setItem(choice, 0);
+			isEditingItemBlock = false;
+		}
+	}
 }
 
 Vector2 EditorEngine::PosToCoordinate(Vector2 pos) {
@@ -262,17 +306,38 @@ void EditorEngine::saveToJson() {
 	mapJson["height"] = tileGrid.size();
 	mapJson["tilewidth"] = 32;
 	mapJson["tileheight"] = 32;
+
 	// Create layers
 	nlohmann::json layers;
-	nlohmann::json layerData;
-	for (const auto& row : tileGrid) {
-		for (const auto& block : row) {
-			layerData.push_back(block ? block->getId() + 1 : 0);
+
+	nlohmann::json tileData;
+	nlohmann::json objectData = nlohmann::json::array();
+	for (int y = 0; y < tileGrid.size(); ++y) {
+		for (int x = 0; x < tileGrid[y].size(); ++x) {
+			auto* block = tileGrid[y][x];
+			if (block) {
+				if (block->getId() == 105) {
+					// Save as object instead of tile
+					nlohmann::json obj;
+					block->saveEntity(obj); 
+					obj["x"] = x * 32;
+					obj["y"] = y * 32 + 32;
+					obj["type"] = "ItemBlock";
+					objectData.push_back(obj);
+
+					tileData.push_back(0); // Empty tile 
+				}
+				else { tileData.push_back(block->getId() + 1); }
+			}
+			else { tileData.push_back(0); }
 		}
 	}
-	layers.push_back({ {"data", layerData}, {"name", "TileLayer"}, {"type", "tilelayer"} });
-	mapJson["layers"] = layers;
 	
+	mapJson["layers"] = nlohmann::json::array({
+		{ {"name", "TileLayer"}, {"type", "tilelayer"}, {"data", tileData} },
+		{ {"name", "ObjectLayer"}, {"type", "objectgroup"}, {"objects", objectData} }
+	});
+
 	std::ofstream file("resources/maps/emap_1.json");
 	if (!file.is_open()) {
 		std::cerr << "Failed to open file for writing." << std::endl;
@@ -308,6 +373,21 @@ void EditorEngine::loadFromJson() {
 				solidBlock->setId(blockId);
 				tileGrid[y][x] = solidBlock;
 			}
+		}
+	}
+
+	if (mapJson["layers"].size() < 2) { return; } // No object layer found
+	for (auto& obj : mapJson["layers"][1]["objects"]) {
+		if (obj["type"] == "ItemBlock") {
+			int x = obj["x"];
+			int y = obj["y"];
+
+			ItemBlock* itemBlock = dynamic_cast<ItemBlock*>(BlockFactory::getInstance().createBlock(ITEMBLOCK,
+				{ (float)x, (float)y }, { 32, 32 }));
+			itemBlock->loadEntity(obj); 
+			itemBlock->setId(105);
+			itemBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_105")); 
+			tileGrid[y / 32][x / 32] = itemBlock;
 		}
 	}
 

@@ -341,14 +341,16 @@ void GUI::drawEditorUI() {
             delete globalGameEngine;
             globalGameEngine = nullptr;
         }
-		printf("Loading level...\n");
+
 		Level* level = make_unique<Level>(Map::basePath + "emap_1.json", "BACKGROUND_1", "MUSIC_1", "2 - 1").release();
+		printf("Level loaded successfully!\n");
         std::vector<std::unique_ptr<Character>> character;
         character.push_back(std::make_unique<Mario>());
         character[0]->setPosition({ 20, 200 });
         character[0]->setVel({ 0, 0 });
         character[0]->setState(FALLING);
         globalGameEngine = new GameEngine(1600, 800, *level, &character);
+		globalGameEngine->loadGameMap(*level);
 
         while (globalGameEngine != nullptr) {
             if (globalGameEngine->run()) { break; }
@@ -379,6 +381,30 @@ void GUI::drawEditorUI() {
             if (tile.id == selectedBlockId) {
                 DrawRectangleLinesEx(tile.rect, 2, RED); // Highlight selected tile
             }
+        }
+    }
+}
+
+void GUI::drawItemChoice(Vector2 position, ITEM_TYPE& itemChoice) {
+    // Draw item choice menu
+    DrawRectangle(position.x, position.y, 200, 150, Fade(LIGHTGRAY, 0.8f));
+    DrawText("Select Item:", position.x + 10, position.y + 10, 20, BLACK);
+
+    const char* items[] = { "Mushroom", "Flower", "Star", "Moon" };
+    for (int i = 0; i < 4; i++) {
+        DrawText(items[i], position.x + 10, position.y + 40 + i * 30, 20, BLACK);
+		// Draw selection rectangle
+        if (CheckCollisionPointRec(GetMousePosition(), { position.x + 10, position.y + 40 + i * 30, 180, 30 })) {
+            DrawRectangleLines(position.x + 10, position.y + 40 + i * 30, 180, 30, BLUE);
+		}   
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), { position.x + 10, position.y + 40 + i * 30, 180, 30 })) {
+           switch (i) {
+                case 0: itemChoice = MUSHROOM; break;
+                case 1: itemChoice = FLOWER; break;
+                case 2: itemChoice = STAR; break;
+                case 3: itemChoice = MOON; break;
+            }
+		   printf("Item selected: %s\n", items[i]);
         }
     }
 }
