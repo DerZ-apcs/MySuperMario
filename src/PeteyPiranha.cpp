@@ -231,17 +231,17 @@ void PeteyPiranha::updateSporeCloud() {
 void PeteyPiranha::releaseSporeCloud() {
     if (globalGameEngine && target) {
         // Lấy kích thước của Petey và đám mây để tính toán vị trí chính xác
-        Vector2 peteySize = getSize();
-        Vector2 cloudSize = { 64.0f, 64.0f }; // Lấy từ hằng số của SporeCloud
+  //      Vector2 peteySize = getSize();
+  //      Vector2 cloudSize = { 64.0f, 64.0f }; // Lấy từ hằng số của SporeCloud
 
-        float offsetX = position.x + (peteySize.x / 2.0f) - (cloudSize.x / 2.0f);
-        float offsetY = position.y - cloudSize.y - 20.0f;
-       
-        Vector2 cloudSpawnPos = { offsetX, offsetY };
+  //      float offsetX = position.x + (peteySize.x / 2.0f) - (cloudSize.x / 2.0f);
+  //      float offsetY = position.y - cloudSize.y - 20.0f;
+  //     
+  //      Vector2 cloudSpawnPos = { offsetX, offsetY };
 
-        SporeCloud* cloud = new SporeCloud(cloudSpawnPos, this->target);
-		this->activeCloud = cloud; // Lưu đám mây để có thể quản lý sau này
-        globalGameEngine->addEffect(cloud);
+  //      SporeCloud* cloud = new SporeCloud(cloudSpawnPos, this->target);
+		//this->activeCloud = cloud; // Lưu đám mây để có thể quản lý sau này
+  //      globalGameEngine->addEffect(cloud);
     }
 }
 

@@ -48,3 +48,11 @@ void Boss::applyPhysics() {
     position.y += velocity.y * dt;
     if (getGravityAvailable()) velocity.y += GRAVITY * dt;
 }
+
+int Boss::getCurrentHp() const {
+    return currentHp;
+}
+
+int Boss::getMaxHp() const {
+    return maxHp;
+}

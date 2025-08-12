@@ -18,6 +18,7 @@
 #include "../include/Moon.h"
 #include "../include/FirePiranhaPlant.h"
 #include "../include/PiranhaPlant.h"
+#include "../include/Boss.h"
 #include "../include/BoomBoom.h"
 #include "../include/PeteyPiranha.h"
 #include "../include/SporeCloud.h"
@@ -147,9 +148,9 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std:
 	//enemies.push_back(new RedKoopa({ 300, 500 }, RESOURCE_MANAGER.getTexture("RedKoopa_LEFT_0")));
    //enemies.push_back(new FlyingGoomba({ 250, 600 }, RESOURCE_MANAGER.getTexture("FlyingGoomba_LEFT_0")));
    //enemies.push_back(new Goomba({ 200, 500 }, RESOURCE_MANAGER.getTexture("Goomba_LEFT_0")));
-    //enemies.push_back(new BoomBoom({300,200}, nullptr));
+    enemies.push_back(new BoomBoom({300,200}, nullptr));
    //enemies.push_back(new Rex({ 300, 500 }, RESOURCE_MANAGER.getTexture("Rex_LEFT_0")));
-	enemies.push_back(new PeteyPiranha({ 300, 500 }, (*multiplayers)[0].get()));
+	//enemies.push_back(new PeteyPiranha({ 300, 500 }, (*multiplayers)[0].get()));
 }
 
 
@@ -476,6 +477,19 @@ void GameEngine::draw()
             continue; // skip drawing this enemy
 		e->draw();
     }
+    Boss* currentBoss = nullptr;
+    // Lặp qua danh sách kẻ thù để tìm boss
+    for (auto* enemy : enemies) {
+        if (enemy && !enemy->isDying() && enemy->getEnemyType() == ENEMY_TYPE::BOSS) {
+            // Nếu đúng, ép kiểu (cast) về con trỏ Boss*
+            currentBoss = dynamic_cast<Boss*>(enemy);
+            if (currentBoss) {
+                break; // Tìm thấy boss, thoát khỏi vòng lặp
+            }
+        }
+    }
+	GUI::drawBossHealthBar(currentBoss);
+
     // tile draw
 	for (size_t i = 0; i < tileGrid.size(); i++) {
 		for (size_t j = 0; j < tileGrid[i].size(); j++) {

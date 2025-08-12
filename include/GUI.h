@@ -2,10 +2,12 @@
 #define GUI_H
 #include <raylib.h>
 #include "../include/Global.h"
+#include "../include/Boss.h"
 
 using namespace std;
 
 class Character;
+class Boss;
 
 //Static class to draw GUI using raylib
 class GUI {
@@ -26,6 +28,7 @@ public:
 
 	static void drawStatusBar(const Character* player);
 	static void drawStatusBar(std::vector<std::unique_ptr<Character>>& multiplayers);
+	static void drawBossHealthBar(const Boss* boss);
 	static void drawPauseMenu();
 	static void drawLevelClear();
 	static void drawDeathScreen();

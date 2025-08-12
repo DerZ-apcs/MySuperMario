@@ -31,6 +31,9 @@ public:
     ENEMY_TYPE getEnemyType() const override {
 		return ENEMY_TYPE::BOSS;
     }
+
+    int getCurrentHp() const;
+    int getMaxHp() const;
 };
 
 #endif
