@@ -72,10 +72,40 @@ void GameEngine::loadGameMap(Level& level) {
     covers = map.getCovers();
     secretAreas = map.getSecretAreas();
 
-    Cannon* cannon = new Cannon({ 600, 600 });
+    /*Cannon* cannon = new Cannon({ 600, 600 });
     cannon->setBulletType(0);
-    tileGrid[20].push_back(cannon);
+    tileGrid[20].push_back(cannon);*/
 
+    float tileSize = 32;
+
+    // MovingBlock
+    {
+        int gridX = static_cast<int>(400) / tileSize;
+        int gridY = static_cast<int>(800) / tileSize;
+        for (int i = 0; i < 3; i++) {
+            MovingBlock* movingBlock = new MovingBlock({ (float)gridX * tileSize + 32 * i, (float)gridY * tileSize }, { tileSize, tileSize });
+            movingBlock->setBounds(200 + i * 32, 500 - 32 * (3 - i), 500, 800);
+			movingBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_1"));
+            tileGrid[gridY][static_cast<std::vector<Blocks*, std::allocator<Blocks*>>::size_type>(gridX) + i] = movingBlock;
+			gridX++;
+        }
+    }
+    // HiddenBlock
+    {
+        int gridX = static_cast<int>(600) / tileSize;
+        int gridY = static_cast<int>(800) / tileSize;
+        HiddenBlock* hiddenBlock = new HiddenBlock({ gridX * tileSize, gridY * tileSize }, { tileSize, tileSize });
+        hiddenBlock->setRevealType(ITEMBLOCK);
+        tileGrid[gridY][gridX] = hiddenBlock;
+    }
+    // TemporaryBlock 
+    {
+        int gridX = 26; // already tile index
+        int gridY = static_cast<int>(800) / tileSize;
+        TemporaryBlock* tempBlock = new TemporaryBlock({ gridX * tileSize, gridY * tileSize }, { tileSize, tileSize });
+        tempBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_1"));
+        tileGrid[gridY][gridX] = tempBlock;
+    }
 }
 GameEngine::~GameEngine() {
     for (size_t i = 0; i < enemyFireball.size(); i++)
@@ -813,4 +843,9 @@ void GameEngine::loadGameEngineState(GameEngine* engine, const json& j) {
             });
     }
     engine->secretAreas = secretAreas;
+}
+
+std::vector<std::vector<Blocks*>>& GameEngine::getTileGrid()
+{
+    return tileGrid;
 }

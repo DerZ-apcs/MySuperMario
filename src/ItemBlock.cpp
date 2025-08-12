@@ -18,17 +18,18 @@ ItemBlock::ItemBlock(Vector2 pos, Vector2 size):
 	this->currFrame = 0;
 	this->frameTime = 0.2f;
 	this->maxFrame = 4;
+	texture = RESOURCE_MANAGER.getTexture("QUESTION_0");
 }
 
 ItemBlock::ItemBlock(Vector2 pos, ITEM_TYPE type, int subType):
 	Blocks(pos, {32, 32}, "QUESTION_0"), isActive(true),
 	heldPowerUp(type), subType(subType)
 {
-	
 	this->frameAcum = 0;
 	this->currFrame = 0;
 	this->frameTime = 0.2f;
 	this->maxFrame = 4;
+	texture = RESOURCE_MANAGER.getTexture("QUESTION_0");
 }
 
 

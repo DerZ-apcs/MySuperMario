@@ -226,7 +226,16 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 				tileGrid[y][x] = block;
 			}
 		}
+		if (name == "HiddenBlocks") {
+			int texId = gid - firstgid;
+			blockArray.push_back(new HiddenBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, { 32,32 }));
+		}
 
+		if (name == "MovingBlock")
+		{
+			int texId = gid - firstgid;
+			blockArray.push_back(new MovingBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
+		}
 		if (name == "CoinBlock") {
 			int texId = gid - firstgid;
 			Blocks* coinBlock = dynamic_cast<CoinBlock*>(BlockFactory::getInstance().createBlock(COINBLOCK, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));

@@ -469,6 +469,7 @@ void Character::Update()
 	// physics
 	position.x += velocity.x * deltaTime;
 	position.y += velocity.y * deltaTime;
+	
 	if (velocity.y > 20 && state != SINKING)
 		state = FALLING;
 	velocity.y += GRAVITY * deltaTime + 2;

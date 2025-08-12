@@ -26,6 +26,16 @@
 #include <GameEngine.h>
 #include <BobOmb.h>
 
+static bool checkOverlap(const Rectangle& a, const Rectangle& b)
+{
+	// AABB overlap check
+	return (a.x <= b.x + b.width &&
+		a.x + a.width >= b.x &&
+		a.y <= b.y + b.height &&
+		a.y + a.height >= b.y);
+}
+
+
 inline Rectangle getProximityRect(Entity& entity, float radius)
 {
 	Rectangle rect = entity.getRect();
@@ -68,38 +78,67 @@ bool PlayerFloorInfo::HandleCollision(Entity* entityA, Entity* entityB)
 
 bool PlayerMovingBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 {
-	Character* character = dynamic_cast<Character*>(entityA);
+	Character* player = dynamic_cast<Character*>(entityA);
 	MovingBlock* block = dynamic_cast<MovingBlock*>(entityB);
-	if (!character || !block || !character->getCollisionAvailable())
-		return false;
-	CollisionType Colltype = character->CheckCollision(*block);
 
-	if (Colltype == COLLISION_TYPE_NONE)
+	if (!player || !block || !player->getCollisionAvailable())
 		return false;
-	switch (Colltype) {
-	case COLLISION_TYPE_NORTH:
-		character->setPosition(Vector2{ character->getX(), block->getY() + block->getHeight() });
-		character->setVelY(0);
-		//state = FALLING;
-		break;
-	case COLLISION_TYPE_SOUTH:
-		character->setPosition(Vector2{ character->getX(), block->getY() - character->getHeight() });
-		character->setState(ON_GROUND);
-		character->setVelY(0);
-		break;
-	case COLLISION_TYPE_EAST:
-		character->setPosition(Vector2{ block->getX() - character->getWidth(), character->getY() });
-		character->setVelX(0);
-		break;
-	case COLLISION_TYPE_WEST:
-		character->setPosition(Vector2{ block->getX() + block->getWidth(), character->getY() });
-		character->setVelX(0);
-		break;
-	default:
-		break;
+
+	float dt = GetFrameTime();
+
+	Rectangle pRect = player->getRect();
+	Rectangle bRect = block->getRect();
+
+	// Check collision *this frame*
+	if (!CheckCollisionRecs(pRect, bRect))
+		return false;
+
+	// --- STEP 1: Horizontal resolution ---
+	float prevPX = player->getX() - player->getVelX() * dt;
+	float prevBX = block->getX() - block->getVelX() * dt;
+
+	// Was player to the left last frame?
+	if (prevPX + pRect.width <= prevBX)
+	{
+		// Player collided from left
+		player->setX(block->getX() - pRect.width);
+		player->setVelX(block->getVelX());
 	}
+	// Was player to the right last frame?
+	else if (prevPX >= prevBX + bRect.width)
+	{
+		// Player collided from right
+		player->setX(block->getX() + bRect.width);
+		player->setVelX(block->getVelX());
+	}
+
+	// --- STEP 2: Vertical resolution ---
+	float prevPY = player->getY() - player->getVelY() * dt;
+	float prevBY = block->getY() - block->getVelY() * dt;
+
+	// Was player above last frame? (falling onto block)
+	if (prevPY + pRect.height <= prevBY)
+	{
+		player->setY(block->getY() - pRect.height);
+		player->setVelY(block->getVelY());
+
+		// Carry player horizontally if standing on block
+		if (block->getVelX() != 0)
+			player->setX(player->getX() + block->getVelX() * dt);
+
+		player->setJumping(false);
+	}
+	// Was player below last frame? (hitting head)
+	else if (prevPY >= prevBY + bRect.height)
+	{
+		player->setY(block->getY() + bRect.height);
+		player->setVelY(block->getVelY());
+	}
+
 	return true;
 }
+
+
 
 bool PlayerItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 {
@@ -212,7 +251,6 @@ bool PlayerRotatingBlockInfo::HandleCollision(Entity* entityA, Entity* entityB) 
 	default:
 		break;
 	}
-	return true;
 	return true;
 }
 
@@ -349,6 +387,66 @@ bool PLayerNoteBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	}
 	return true;
 }
+
+bool PlayerHiddenBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
+{
+	Character* character = dynamic_cast<Character*>(entityA);
+	HiddenBlock* block = dynamic_cast<HiddenBlock*>(entityB);
+	if (!character || !block || !character->getCollisionAvailable())
+		return false;
+	CollisionType Colltype = character->CheckCollision(*block);
+	if (Colltype == COLLISION_TYPE_NONE)
+		return false;
+	// only reveal when jumping or falling in it
+	switch (Colltype) {
+	case COLLISION_TYPE_NORTH:	
+		if (character->getState() == JUMPING) {
+			character->setPosition(Vector2{ character->getX(), block->getY() + block->getHeight() });
+			character->setVelY(0);
+			if (!block->isrevealed())
+				block->reveal();
+		}
+		break;
+	default:
+		break;
+	}
+	return true;
+}
+
+bool PlayerTempBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
+{
+	Character* character = dynamic_cast<Character*>(entityA);
+	TemporaryBlock* block = dynamic_cast<TemporaryBlock*>(entityB);
+	if (!character || !block || !character->getCollisionAvailable() || !block->getCollisionAvailable())
+		return false;
+	CollisionType Colltype = character->CheckCollision(*block);
+	if (Colltype == COLLISION_TYPE_NONE)
+		return false;
+	switch (Colltype) {
+	case COLLISION_TYPE_NORTH:
+		character->setPosition(Vector2{ character->getX(), block->getY() + block->getHeight() });
+		character->setVelY(0);
+		break;
+	case COLLISION_TYPE_SOUTH:
+		character->setPosition(Vector2{ character->getX(), block->getY() - character->getHeight() });
+		character->setState(ON_GROUND);
+		character->setVelY(0);
+		block->setDying(true); // set die when hit from above
+		break;
+	case COLLISION_TYPE_EAST:
+		character->setPosition(Vector2{ block->getX() - character->getWidth(), character->getY() });
+		character->setVelX(0);
+		break;
+	case COLLISION_TYPE_WEST:
+		character->setPosition(Vector2{ block->getX() + block->getWidth(), character->getY() });
+		character->setVelX(0);
+		break;
+	default:
+		break;
+	}
+	return true;
+}
+
 // enemy
 bool EnemyFloorInfo::HandleCollision(Entity* entityA, Entity* entityB)
 {
@@ -864,12 +962,16 @@ std::unique_ptr<CollisionInfo> CollisionInfoSelector::getInfor(EntityType typeA,
 			return std::make_unique<PlayerCoinBlockInfo>();
 		if (block && block->getBlockType() == BRICK)
 			return std::make_unique<PlayerBrickInfo>();
+		if (block && block->getBlockType() == HIDDEN)
+			return std::make_unique<PlayerHiddenBlockInfo>();
 		if (block && block->getBlockType() == CLOUDBLOCK)
 			return std::make_unique<PlayerCloudBlockInfo>();
 		if (block && block->getBlockType() == NOTEBLOCK)
 			return std::make_unique<PLayerNoteBlockInfo>();
 		if (block && block->getBlockType() == ROTATINGBLOCK)
 			return std::make_unique<PlayerRotatingBlockInfo>();
+		if (block && block->getBlockType() == TEMPBLOCK)
+			return std::make_unique<PlayerTempBlockInfo>();
 		return std::make_unique<PlayerBlockInfo>();
 	}
 	if (typeA == ENEMY && typeB == BLOCK)

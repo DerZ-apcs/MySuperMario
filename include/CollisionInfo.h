@@ -45,6 +45,14 @@ class PLayerNoteBlockInfo : public CollisionInfo {
 public:
 	bool HandleCollision(Entity* entityA, Entity* entityB) override;
 };
+class PlayerHiddenBlockInfo : public CollisionInfo {
+public:
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
+};
+class PlayerTempBlockInfo : public CollisionInfo {
+public:
+	bool HandleCollision(Entity* entityA, Entity* entityB) override;
+};
 
 class PlayerRotatingBlockInfo : public CollisionInfo {
 public:
