@@ -624,7 +624,28 @@ void Character::HandleInput(int leftKey, int rightKey, int upKey, int downKey, i
 	if (IsKeyPressed(fireKey) && (Character_state == STATE_FIRE || Character_state == STATE_FIRESTAR) && !isducking) {
 		ThrowingFireBalls();
 	}
-	if (IsKeyPressed(KEY_T)) {
+	if (IsKeyPressed(KEY_T)) { // for debug
+		cout << position.x << " " << position.y << endl;
+	}
+}
+
+void Character::HandleInput(InputHandler& inputHandler1, InputHandler& inputHandler2)
+{
+	if (playerId == 0) {
+		// Player 1 controls
+		inputHandler1.handleInput(*this);
+	}
+	else if (playerId == 1) {
+		// Player 2 controls
+		inputHandler2.handleInput(*this);
+	}
+	// Handle character-specific input
+	if (IsKeyPressed(KEY_F1)) eatGreenMushrooms();
+	if (IsKeyPressed(KEY_F2)) eatRedMushrooms();
+	if (IsKeyPressed(KEY_F3)) eatFireFlower();
+	if (IsKeyPressed(KEY_F4)) eatStar();
+	if (IsKeyPressed(KEY_L))  lostSuit();
+	if (IsKeyPressed(KEY_T)) { // for debug
 		cout << position.x << " " << position.y << endl;
 	}
 }

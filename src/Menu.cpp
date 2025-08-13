@@ -44,6 +44,7 @@ void MainMenuState::handleInput()
 	if (startButton.isPressed() || (currentPosition == 0 && IsKeyPressed(KEY_ENTER))) {
 		if (game->multiplayers.empty()) {
 			game->multiplayers.push_back(std::make_unique<Mario>());
+			game->multiplayers[0]->setPlayerid(0);
 			game->multiplayers[0]->setPosition({ 32, 400 });
 			game->multiplayers[0]->setVel({ 0, 0 });
 			game->multiplayers[0]->setState(FALLING);
@@ -99,6 +100,7 @@ void MainMenuState::handleInput()
 		if (globalGameEngine == nullptr) {
 			if (game->multiplayers.empty())
 				game->multiplayers.push_back(std::make_unique<Mario>());
+			game->multiplayers[0]->setPlayerid(0);
 			game->multiplayers[0]->setPosition({32, 400});
 			game->multiplayers[0]->setVel({ 0, 0 });
 			game->multiplayers[0]->setState(FALLING);
@@ -504,7 +506,8 @@ void SingleCharSelection::handleInput()
 			game->multiplayers.push_back(std::make_unique<Peach>());
 		else if (currentPlayer == 4)
 			game->multiplayers.push_back(std::make_unique<Marisa>());
-
+		
+		game->multiplayers[0]->setPlayerid(0);
 		if (globalGameEngine != nullptr) {
 			delete globalGameEngine;
 			globalGameEngine = nullptr;
@@ -611,6 +614,8 @@ void DualCharSelection::handleInput()
 		else if (currentPlayer2 == 4)
 			game->multiplayers.push_back(std::make_unique<Marisa>());
 
+		game->multiplayers[0]->setPlayerid(0);
+		game->multiplayers[1]->setPlayerid(1);
 		if (globalGameEngine != nullptr) {
 			delete globalGameEngine;
 			globalGameEngine = nullptr;

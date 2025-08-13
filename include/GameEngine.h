@@ -16,6 +16,7 @@
 #include "../include/ScoreEffect.h"
 #include "../include/SmokeEffect.h"
 #include "../include/GameSerialization.h"
+#include "../include/InputHandler.h"
 #include <vector>
 #include <string>
 #include <map>
@@ -32,6 +33,18 @@ private:
         {KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_RIGHT_SHIFT},
         {KEY_A, KEY_D, KEY_W, KEY_S, KEY_LEFT_SHIFT}
     };
+    std::vector<InputHandler> inputHandlers;
+	InputHandler inputHandler1;
+	InputHandler inputHandler2;
+    // Commands (shared between handlers)
+    MoveLeftCommand runLeft;
+    MoveRightCommand runRight;
+	StandingCommand stand;
+    JumpCommand jump;
+    DuckCommand duck;
+    ShortHopReleaseCommand shortHop;
+    FireCommand fire;
+    // other
     Level* level;
     Map map;
     std::vector<std::unique_ptr<Character>>* multiplayers; // for multiplayers

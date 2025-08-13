@@ -3,8 +3,6 @@
 #include <iostream>
 
 void ResourceManager::loadTextures() {
-	// move //
-	
 	// small mario
 		// for choosing character
 	textures["SmallMario_Straight"] = LoadTexture("resources/images/sprites/mario/SmallMario_Straight_0.png");

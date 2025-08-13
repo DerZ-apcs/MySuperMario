@@ -39,7 +39,30 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std:
     resetTimer();
     deltaTime = 0.f;
     BackGroundPos = { {0, 0}, {(float)GetScreenWidth(), 0}, {(float)GetScreenWidth() * 2, 0} };
-    //items.push_back();
+    
+	// Initialize input handlers
+    inputHandler1.bindKey(KEY_A, InputType::Down, &runLeft);
+    inputHandler1.bindKey(KEY_D, InputType::Down, &runRight);
+    inputHandler1.bindKey(KEY_A, InputType::Release, &stand);
+    inputHandler1.bindKey(KEY_D, InputType::Release, &stand);
+    inputHandler1.bindKey(KEY_W, InputType::Press, &jump);
+    inputHandler1.bindKey(KEY_S, InputType::Down, &duck);
+	inputHandler1.bindKey(KEY_S, InputType::Release, &stand);
+    inputHandler1.bindKey(KEY_W, InputType::Release, &shortHop);
+    inputHandler1.bindKey(KEY_F, InputType::Press, &fire);
+    inputHandler1.setDefaultCommand(&stand);
+
+    // Player 2 bindings
+    inputHandler2.bindKey(KEY_LEFT, InputType::Down, &runLeft);
+    inputHandler2.bindKey(KEY_RIGHT, InputType::Down, &runRight);
+    inputHandler2.bindKey(KEY_LEFT, InputType::Release, &stand);
+    inputHandler2.bindKey(KEY_RIGHT, InputType::Release, &stand);
+    inputHandler2.bindKey(KEY_UP, InputType::Press, &jump);
+    inputHandler2.bindKey(KEY_DOWN, InputType::Down, &duck);
+    inputHandler2.bindKey(KEY_DOWN, InputType::Release, &stand);
+    inputHandler2.bindKey(KEY_UP, InputType::Release, &shortHop);
+    inputHandler2.bindKey(KEY_KP_0, InputType::Press, &fire);
+    inputHandler2.setDefaultCommand(&stand);
 
     //FirePiranhaPlant* plant = new FirePiranhaPlant({ 432, 710 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_CLOSED"));
     //enemies.push_back(plant);
@@ -301,19 +324,24 @@ void GameEngine::update()
 
     // player udpate
         // handle input
-    for (int i = 0; i < (*multiplayers).size(); ++i) {
-        if ((*multiplayers)[i] != nullptr) {
-            (*multiplayers)[i]->HandleInput(
-                controlBindings[i].left,
-                controlBindings[i].right,
-                controlBindings[i].up,
-                controlBindings[i].down,
-                controlBindings[i].fire
-            );
-            (*multiplayers)[i]->Update();
-        }
-        else std::cout << "multiplayers[" << i << "] is nullptr!\n";
-    }
+    //for (int i = 0; i < (*multiplayers).size(); ++i) {
+    //    if ((*multiplayers)[i] != nullptr) {
+    //        (*multiplayers)[i]->HandleInput(
+    //            controlBindings[i].left,
+    //            controlBindings[i].right,
+    //            controlBindings[i].up,
+    //            controlBindings[i].down,
+    //            controlBindings[i].fire
+    //        );
+    //        (*multiplayers)[i]->Update();
+    //    }
+    //    else std::cout << "multiplayers[" << i << "] is nullptr!\n";
+    //}
+	for (auto& p : *multiplayers) {
+		if (p == nullptr) continue;
+		p->HandleInput(inputHandler1, inputHandler2);
+        p->Update();
+	}
 
     // all collision
     handleCollision();

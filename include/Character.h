@@ -5,6 +5,7 @@
 #include "../include/Global.h"
 #include <../include/TextEffect.h>
 #include <../include/Item.h>
+#include "../include/InputHandler.h"
 #include "raymath.h"
 #include <list>
 
@@ -52,6 +53,8 @@ public:
 	bool isStandingUp() const;
 	bool isJumping() const;
 
+	void setPlayerid(int id) { playerId = id; }
+	int getPlayerid() const { return playerId; }
 	int getLives() const;
 	int getCoins() const;
 	int getScores() const;
@@ -86,6 +89,7 @@ public:
 	virtual void draw() override;
 	virtual void HandleInput() override;
 	void HandleInput(int leftKey, int rightKey, int upKey, int downKey, int fireKey);
+	void HandleInput(InputHandler& inputHandler1, InputHandler& inputHandler2);
 	virtual void updateCollision() override;
 	virtual void UpdateTexture() override;
 	virtual void UpdateTransitioningTexture();
@@ -112,6 +116,7 @@ public:
 	void loadEntity(const json& j) override;
 	void saveEntity(json& j) const override;
 protected:
+	int playerId = 0; // 0 for player1, 1 for player2
 	struct TransitionFrame {
 		std::string textureKey;
 		Vector2 size;
