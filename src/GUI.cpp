@@ -176,27 +176,19 @@ void GUI::drawBossHealthBar(const Boss* boss) {
 
     Rectangle dest, source;
 
-    // --- PHẦN THAY ĐỔI ---
-    // Vị trí Y bắt đầu, đặt bên dưới thanh trạng thái của người chơi
-    float startY = 500.f;
-
-    // 1. Vẽ bảng nền (giống của Mario)
-    dest = { 20.f, startY, 1138.f / 4.f, 397.f / 4.f };
-    source = { 0, 0, (float)board1.width, (float)board1.height };
-    DrawTexturePro(board1, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+    float startY = 365.f;
 
     // 2. Vẽ biểu tượng trái tim
     source = { 0, 0, (float)heartTexture.width, (float)heartTexture.height };
-    dest = { 55.f, startY + 25.f, 40.f, 40.f };
+    dest = { 700.f, startY + 25.f, 40.f, 40.f };
     DrawTexturePro(heartTexture, source, dest, { 0.f, 0.f }, 0.f, WHITE);
 
     // 3. Vẽ dấu nhân 'x'
     source = { 0, 0, (float)multiplicationSign.width, (float)multiplicationSign.height };
-    dest = { 100.f, startY + 35.f, 20.f, 20.f };
+    dest = { 745.f, startY + 35.f, 20.f, 20.f };
     DrawTexturePro(multiplicationSign, source, dest, { 0.f, 0.f }, 0.f, WHITE);
 
-    // 4. Vẽ số máu của Boss dưới dạng văn bản
-    DrawText(to_string(boss->getCurrentHp()).c_str(), 130, startY + 25.f, 40, BLACK);
+    DrawText(to_string(boss->getCurrentHp()).c_str(), 770.0f, startY + 25.f, 40, BLACK);
 }
 
 
