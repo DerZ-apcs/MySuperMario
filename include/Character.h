@@ -133,9 +133,11 @@ protected:
 	float invicibleStarTime;
 	float sinkingTime;
 
+	bool takeDamage = true;
 	bool holding;
 	bool isThrowing;
 
+	float timeNoTakeDamage = 0.f;
 	float countThrowTime;
 	float countImmortalTime;
 	bool standingUp;

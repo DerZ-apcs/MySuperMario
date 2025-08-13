@@ -14,6 +14,7 @@
 #include "../include/BuzzyBeetle.h"
 #include "../include/Rex.h"
 #include "../include/Bullet.h"
+#include "../include/BanzaiBill.h"
 #include "../include/Flower.h"
 #include "../include/Star.h"
 #include "../include/Mushroom.h"
@@ -72,40 +73,11 @@ void GameEngine::loadGameMap(Level& level) {
     covers = map.getCovers();
     secretAreas = map.getSecretAreas();
 
+	enemies.push_back(new BanzaiBill({ 1000, 650 }, RESOURCE_MANAGER.getTexture("BanzaiBill_LEFT_0")));
+	enemies.push_back(new Bullet({ 1000, 500 }, RESOURCE_MANAGER.getTexture("")));
     /*Cannon* cannon = new Cannon({ 600, 600 });
     cannon->setBulletType(0);
     tileGrid[20].push_back(cannon);*/
-
-    float tileSize = 32;
-
-    // MovingBlock
-    {
-        int gridX = static_cast<int>(400) / tileSize;
-        int gridY = static_cast<int>(800) / tileSize;
-        for (int i = 0; i < 3; i++) {
-            MovingBlock* movingBlock = new MovingBlock({ (float)gridX * tileSize + 32 * i, (float)gridY * tileSize }, { tileSize, tileSize });
-            movingBlock->setBounds(200 + i * 32, 500 - 32 * (3 - i), 500, 800);
-			movingBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_1"));
-            tileGrid[gridY][static_cast<std::vector<Blocks*, std::allocator<Blocks*>>::size_type>(gridX) + i] = movingBlock;
-			gridX++;
-        }
-    }
-    // HiddenBlock
-    {
-        int gridX = static_cast<int>(600) / tileSize;
-        int gridY = static_cast<int>(800) / tileSize;
-        HiddenBlock* hiddenBlock = new HiddenBlock({ gridX * tileSize, gridY * tileSize }, { tileSize, tileSize });
-        hiddenBlock->setRevealType(ITEMBLOCK);
-        tileGrid[gridY][gridX] = hiddenBlock;
-    }
-    // TemporaryBlock 
-    {
-        int gridX = 26; // already tile index
-        int gridY = static_cast<int>(800) / tileSize;
-        TemporaryBlock* tempBlock = new TemporaryBlock({ gridX * tileSize, gridY * tileSize }, { tileSize, tileSize });
-        tempBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_1"));
-        tileGrid[gridY][gridX] = tempBlock;
-    }
 }
 GameEngine::~GameEngine() {
     for (size_t i = 0; i < enemyFireball.size(); i++)
@@ -239,30 +211,30 @@ void GameEngine::update()
 
     // update background
 
-    for (int i = 0; i < 3; i++) {
-        // wrap from left to far most right
-        float farX = 0;
-        for (auto& p : *multiplayers)
-            farX = max(p->getX(), farX);
-        if (BackGroundPos[i].x + map.BgWidth <= farX - map.BgWidth / 2.0f) {
-            float maxX = BackGroundPos[0].x;
-            for (int j = 1; j < 3; j++) {
-                if (BackGroundPos[j].x > maxX) maxX = BackGroundPos[j].x;
-            }
-            BackGroundPos[i].x = maxX + map.BgWidth;
-        }
-        // wrap from right to left
-        float nearX = INT_MAX;
-        for (auto& p : *multiplayers)
-            nearX = min(nearX, p->getX());
-        if (BackGroundPos[i].x + map.BgWidth / 2.0f >= nearX + map.BgWidth * 2) {
-            float minX = BackGroundPos[i].x;
-            for (int j = 1; j < 3; j++) {
-                if (BackGroundPos[j].x < minX) minX = BackGroundPos[j].x;
-            }
-            BackGroundPos[i].x = minX - map.BgWidth;
-        }
-    }
+    //for (int i = 0; i < 3; i++) {
+    //    // wrap from left to far most right
+    //    float farX = 0;
+    //    for (auto& p : *multiplayers)
+    //        farX = max(p->getX(), farX);
+    //    if (BackGroundPos[i].x + map.BgWidth <= farX - map.BgWidth / 2.0f) {
+    //        float maxX = BackGroundPos[0].x;
+    //        for (int j = 1; j < 3; j++) {
+    //            if (BackGroundPos[j].x > maxX) maxX = BackGroundPos[j].x;
+    //        }
+    //        BackGroundPos[i].x = maxX + map.BgWidth;
+    //    }
+    //    // wrap from right to left
+    //    float nearX = INT_MAX;
+    //    for (auto& p : *multiplayers)
+    //        nearX = min(nearX, p->getX());
+    //    if (BackGroundPos[i].x + map.BgWidth / 2.0f >= nearX + map.BgWidth * 2) {
+    //        float minX = BackGroundPos[i].x;
+    //        for (int j = 1; j < 3; j++) {
+    //            if (BackGroundPos[j].x < minX) minX = BackGroundPos[j].x;
+    //        }
+    //        BackGroundPos[i].x = minX - map.BgWidth;
+    //    }
+    //}
 	// enemy fireball update
 	for (auto* ef : enemyFireball) {
 		if (!isInCameraView(ef->getRect()))
@@ -378,6 +350,14 @@ void GameEngine::handleCollision() {
 
     // enemies
     for (auto& enemy : enemies) {
+        // check enemies vs enemies
+		for (auto& otherEnemy : enemies) {
+			if (enemy == otherEnemy || 
+                fabs(enemy->getX() - otherEnemy->getX()) >= 100.f || 
+                fabs(enemy->getX() - otherEnemy->getX() >= 100.f)) 
+                continue; // skip self
+			CollI.HandleCollision(enemy, otherEnemy);
+		}
         auto nearby = getNearbyBlocks(enemy->getPosition(), 2);
         for (Blocks* b : nearby)
             CollI.HandleCollision(enemy, b);
@@ -595,10 +575,6 @@ bool GameEngine::run() {
                     isPaused = true;
                 }
                 else {
-                    if (p->isLostLife())
-                        cout << "Lostlife" << endl;
-                    if (p->getTop() > getBound().y)
-                        cout << "Out of bound" << endl;
                     died = true;
                     isPaused = true;
                 }

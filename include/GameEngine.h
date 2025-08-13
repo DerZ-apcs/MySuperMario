@@ -14,6 +14,7 @@
 #include "../include/Blocks.h"
 #include "../include/CollisionInfo.h"
 #include "../include/ScoreEffect.h"
+#include "../include/SmokeEffect.h"
 #include "../include/GameSerialization.h"
 #include <vector>
 #include <string>

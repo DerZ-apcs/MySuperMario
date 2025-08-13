@@ -465,6 +465,16 @@ void Character::Update()
 			lostSuitTrigger = true;
 		}
 	}
+	// time for take damage
+	timeNoTakeDamage -= GetFrameTime();
+	if (timeNoTakeDamage <= 0.f) {
+		timeNoTakeDamage = 0.f;
+		// character will take damaged when true
+		takeDamage = true;
+	}
+	else {
+		takeDamage = false;
+	}
 
 	// physics
 	position.x += velocity.x * deltaTime;
@@ -985,9 +995,6 @@ void Character::collisionWithEnemy(Enemy* enemy, CollisionType CollType)
 		// attacked
 		scores += enemy->getScores();
 		if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomp.wav");
-
-	
-		//enemy->attacked(this->direction); for attacked
 		enemy->stomped();
 		
 	}
@@ -1025,11 +1032,15 @@ void Character::collisionWithEnemy(Enemy* enemy, CollisionType CollType)
 			if (!enemy->getIsKicked()) {
 				Direction dir = CollType == COLLISION_TYPE_EAST ? LEFT : RIGHT;
 				enemy->kicked(dir);
+				timeNoTakeDamage = 0.3f;
 				if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("kick.wav");
 			}
 			else if (countImmortalTime > 0.f)
 				return;
-			else lostSuit();
+			else if (takeDamage) {
+				lostSuit();
+				timeNoTakeDamage = 0.f;
+			}
 		}
 	}
 }

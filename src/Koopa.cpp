@@ -184,7 +184,7 @@ void Koopa::kicked(Direction direction)
         return;
     // kick the shell
     this->isKicked = true;
-    velocity.x = (direction == LEFT) ? KOOPA_SHELL_SPEED * 0.75 : -KOOPA_SHELL_SPEED * 0.75;
+    velocity.x = (direction == LEFT) ? KOOPA_SHELL_SPEED : -KOOPA_SHELL_SPEED;
     this->direction = (direction == LEFT) ? RIGHT : LEFT;
     reviveTimer = 0.0f;
     isReviving = false;

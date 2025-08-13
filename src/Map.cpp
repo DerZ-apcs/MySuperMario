@@ -9,7 +9,9 @@ Map::Map()
 	width = BgWidth;
 	height = BgHeight;
 	background = RESOURCE_MANAGER.getTexture("BACKGROUND_1");
-	BackGroundPos = { {0, 0}, {BgWidth, 0}, {BgWidth * 2, 0}};
+	for (int i = 0; i < 10; i++) {
+		BackGroundPos.push_back({ (float)i * BgWidth, 0 });
+	}
 	backGroundName = "BACKGROUND_1";
 }
 
@@ -37,9 +39,9 @@ void Map::drawMap()
 void Map::drawBackGround() 
 {
 	if (background.id > 0) {
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 10; i++) {
 			DrawTexturePro(background, { 0, 0, (float)background.width, (float)background.height },
-				{ BackGroundPos[i].x, BackGroundPos[i].y + 200, (float)GetScreenWidth(), (float)GetScreenHeight()},
+				{ BackGroundPos[i].x, BackGroundPos[i].y + 230, (float)GetScreenWidth(), (float)GetScreenHeight()},
 				{ 0, 0 }, 0.0f, WHITE);
 		}
 	}
@@ -51,10 +53,10 @@ void Map::drawBackGround()
 void Map::drawBackGround(Vector2 cameraSize, float scale)
 {
 	if (background.id > 0) {
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 10; i++) {
 			DrawTexturePro(background, 
 				{ 0, 0, (float)background.width, (float)background.height },
-				{ BackGroundPos[i].x, BackGroundPos[i].y + 200, (float)cameraSize.x, (float)cameraSize.y},
+				{ BackGroundPos[i].x, BackGroundPos[i].y + 230, (float)cameraSize.x, (float)cameraSize.y},
 				{ 0, 0 }, 0.0f, WHITE);
 		}
 	}

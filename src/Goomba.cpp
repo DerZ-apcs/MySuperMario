@@ -3,19 +3,14 @@
 
 // Goomba Class Implementation
 Goomba::Goomba(Vector2 pos, Texture2D texture)
-    : Enemy(pos, { (float)texture.width, (float)texture.height }, { 0, 0 }, LEFT, ON_GROUND, texture, 0.2f, 1, BROWN),
-    pauseTimer(0.0f), isPaused(false), detectMarioRange(200.0f), beattacked(false),
-    isChasing(false), isChaseOnCooldown(false), chaseTimer(0.0f),
-    goombaType(NORMAL_GOOMBA)
+    : Enemy(pos, { (float)texture.width, (float)texture.height }, { 0, 0 }, LEFT, ON_GROUND, texture, 0.2f, 1, BROWN), detectMarioRange(300.0f),
+	goombaType(NORMAL_GOOMBA), collisionTimer(0.f)
 { 
     velocity.x = -GOOMBA_SPEED;
     collisionTimer = 0.f;
     scores = SCORE_STOMP_GOOMBA;
 }
-bool Goomba::isAttacked() const
-{
-    return beattacked;
-}
+
 ENEMY_TYPE Goomba::getEnemyType() const
 {
     return GOOMBA;
@@ -32,90 +27,52 @@ void Goomba::Update() {
     }
     const float deltaTime = GetFrameTime();
 
-    const float MAX_CHASE_TIME = 5.0f;
-    const float CHASE_COOLDOWN = 3.0f;
-    const float HORIZONTAL_DEAD_ZONE = 2.0f; 
-
     if (collisionTimer > 0) {
         collisionTimer -= deltaTime;
     }
-
-    // 1. Xử lý trạng thái hồi chiêu (cooldown)
-    if (isChaseOnCooldown) {
-        chaseTimer += deltaTime;
-        if (chaseTimer >= CHASE_COOLDOWN) {
-            isChaseOnCooldown = false;
-            chaseTimer = 0.0f;
-        }
-    }
-
-    // 2. Logic phát hiện và quyết định truy đuổi
     bool marioDetected = false;
-    if (!isChasing && !isChaseOnCooldown && collisionTimer <= 0) {
+    bool sameHeight = false;
+    bool sameVertical = false;
+    Vector2 marioPos;
+
+    // 1. Logic phát hiện Mario
+    if (collisionTimer <= 0) {
         for (auto& p : globalGameEngine->getMultiplayers()) {
             if (p != nullptr && p->getPhase() != DEAD_PHASE && p->getPhase() != CLEARLEVEL_PHASE) {
-                if (Vector2Distance(position, p->getPosition()) <= detectMarioRange) {
-                    isChasing = true;
-                    chaseTimer = 0.0f;
+				float dist = Vector2Distance(position, p->getPosition());
+                if (dist <= detectMarioRange) {
                     marioDetected = true;
-                    break;
+                    // ktra chenh lech do cao
+                    float heightDiff = fabs(p->getBottom() - getBottom());
+					if (heightDiff < 16.0f) { // nếu chênh lệch chiều cao nhỏ hơn 16 pixel
+						sameHeight = true;
+					}
+					if (fabs(p->getPosition().x - position.x) <= 60.0f) { // nếu Mario đang ở trên đầu goomba 
+						sameVertical = true;
+					}
+					marioPos = p->getPosition();
+					break; // chỉ cần phát hiện một Mario
                 }
             }
         }
     }
 
-    // 3. Cập nhật trạng thái và vận tốc
-    if (isChasing) {
-        chaseTimer += deltaTime;
-        bool marioStillInRange = false;
-
-        for (auto& p : globalGameEngine->getMultiplayers()) {
-            if (p != nullptr && p->getPhase() != DEAD_PHASE && Vector2Distance(position, p->getPosition()) <= detectMarioRange) {
-                marioStillInRange = true;
-
-                // --- SỬA ĐỔI: Logic kiểm tra hướng với "vùng chết" ---
-                float horizontalDistance = p->getX() - position.x;
-
-                if (horizontalDistance < -HORIZONTAL_DEAD_ZONE) { // Mario ở rõ ràng bên trái
-                    direction = LEFT;
-                    velocity.x = -GOOMBA_SPEED * 1.5f;
-                }
-                else if (horizontalDistance > HORIZONTAL_DEAD_ZONE) { // Mario ở rõ ràng bên phải
-                    direction = RIGHT;
-                    velocity.x = GOOMBA_SPEED * 1.5f;
-                }
-                else {
-                    // Mario đang ở trong "vùng chết" (ngay trên đầu), dừng di chuyển ngang
-                    velocity.x = 0;
-                }
-                break;
-            }
-        }
-
-        if (!marioStillInRange || chaseTimer >= MAX_CHASE_TIME) {
-            isChasing = false;
-            isChaseOnCooldown = true;
-            chaseTimer = 0.0f;
-        }
+    float current_speed = GOOMBA_SPEED;
+    if (marioDetected && sameHeight) {
+        current_speed *= 1.5f;
+		direction = (marioPos.x < position.x) ? LEFT : RIGHT; // Đổi hướng theo Mario
+	}
+    else if (sameVertical) {
+        // Nếu Mario đang ở trên đầu Goomba, Goomba sẽ không đổi hướng
+        if (marioDetected) current_speed *= 1.5f;
+        direction = (velocity.x < 0) ? LEFT : RIGHT;
     }
+	else if (marioDetected) {
+		// Nếu Mario không cùng chiều cao, Goomba sẽ không đổi hướng
+		direction = (velocity.x < 0) ? LEFT : RIGHT;
+	}
 
-    if (!isChasing) {
-        if (isPaused) {
-            pauseTimer -= deltaTime;
-            if (pauseTimer <= 0) {
-                isPaused = false;
-                direction = (direction == LEFT) ? RIGHT : LEFT;
-            }
-            velocity.x = 0;
-        }
-        else {
-            velocity.x = (direction == LEFT) ? -GOOMBA_SPEED : GOOMBA_SPEED;
-            if (GetRandomValue(0, 1000) < 3) {
-                isPaused = true;
-                pauseTimer = GetRandomValue(5, 15) / 10.0f;
-            }
-        }
-    }
+    velocity.x = (direction == LEFT) ? -current_speed : current_speed;
 
     if (velocity.y > 50)
         state = FALLING;
@@ -127,6 +84,7 @@ void Goomba::Update() {
     Entity::updateCollision();
     UpdateTexture();
 }
+
 void Goomba::draw() {
     Enemy::draw();
 }
@@ -184,28 +142,16 @@ void Goomba::stomped() {
 void Goomba::loadEntity(const json& j)
 {
     Enemy::loadEntity(j);
-    pauseTimer = j["pauseTimer"];
-    isPaused = j["isPaused"];
-    beattacked = j["beattacked"];
     collisionTimer = j["collisionTimer"]; // overrides Enemy’s if needed
     detectMarioRange = j["detectMarioRange"];
-    isChasing = j["isChasing"];
-    isChaseOnCooldown = j["isChaseOnCooldown"];
-    chaseTimer = j["chaseTimer"];
     goombaType = static_cast<GOOMBA_TYPE>(j["goombaType"].get<int>());
 }
 
 void Goomba::saveEntity(json& j) const
 {
     Enemy::saveEntity(j); // Save base Enemy and Entity attributes
-    j["pauseTimer"] = pauseTimer;
-    j["isPaused"] = isPaused;
-    j["beattacked"] = beattacked;
     j["collisionTimer"] = collisionTimer; // saves Goomba's value
     j["detectMarioRange"] = detectMarioRange;
-    j["isChasing"] = isChasing;
-    j["isChaseOnCooldown"] = isChaseOnCooldown;
-    j["chaseTimer"] = chaseTimer;
     j["goombaType"] = static_cast<int>(goombaType);
 
 }
@@ -344,6 +290,12 @@ void FlyingGoomba::stomped()
     else {
         Goomba::stomped();
     }
+}
+
+void FlyingGoomba::CollisionWithFireball(FireBall* fireball)
+{
+    // like stomped
+    stomped();
 }
 
 void FlyingGoomba::loadEntity(const json& j)

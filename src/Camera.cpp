@@ -116,8 +116,8 @@ void GameCamera::render() const {
 void GameCamera::beginDrawing() {
     BeginTextureMode(renderTexture);
     Rectangle view = getViewRect();
-    DrawRectangleLines(view.x, view.y, view.width, view.height, RED);  // ✅ draw it here
-    DrawRectangle(view.x, view.y, view.width, view.height, ColorAlpha(RED, 0.2f));
+    //DrawRectangleLines(view.x, view.y, view.width, view.height, RED);  // ✅ draw it here
+    //DrawRectangle(view.x, view.y, view.width, view.height, ColorAlpha(RED, 0.2f));
     ClearBackground(RAYWHITE);
 }
 

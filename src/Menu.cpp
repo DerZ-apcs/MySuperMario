@@ -411,7 +411,7 @@ void MapSelection::handleInput()
 			p->reset();
 		game->returnToMainMenu();
 	}
-	else if (backButton.isPressed() || (currentPosition == 1 && IsKeyPressed(KEY_ENTER)))
+	else if (backButton.isPressed() || (currentPosition == 3 && IsKeyPressed(KEY_ENTER)))
 		game->returnToMainMenu();
 
 	if (IsKeyPressed(KEY_UP)) {

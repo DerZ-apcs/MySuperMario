@@ -898,7 +898,8 @@ bool FireBallEnemyInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	Enemy* enemy = dynamic_cast<Enemy*>(entityB);
 	if (!fireball || !enemy || !fireball->getCollisionAvailable() || !enemy->getCollisionAvailable())
 		return false;
-	if (enemy->getEnemyType() == MUNCHER)
+	if (enemy->getEnemyType() == MUNCHER || enemy->getEnemyType() == BULLET 
+		|| enemy->getEnemyType() == BANZAIBILL)
 		return false;
 	if (enemy->getEnemyType() == BOBOMB) {
 		if (enemy->isDying()) return false;
@@ -932,18 +933,24 @@ bool EnemyEnemyInfo::HandleCollision(Entity* entityA, Entity* entityB)
 		return false;
 	if (enemy1->getEnemyType() != SHELL && enemy2->getEnemyType() != SHELL)
 		return false;
+	if (enemy1->getEnemyType() == BULLET || enemy2->getEnemyType() == BULLET 
+		|| enemy1->getEnemyType() == BANZAIBILL || enemy2->getEnemyType() == BANZAIBILL)
+		return false; // bullet cannot collide with other enemies
 	CollisionType Colltype = enemy1->CheckCollision(*enemy2);
 	if (Colltype == COLLISION_TYPE_NONE)
 		return false;
-	//enemy2->attacked(enemy1->getDir());
-	// enemy1 (shell) attack enemy
-	if (enemy1->getEnemyType() == SHELL) {
-		if (enemy1->getIsKicked())
+
+	if (enemy1->getEnemyType() == SHELL && enemy2->getEnemyType() != SHELL) {
+		if (enemy1->getIsKicked()) {
+			enemy2->setVelY(-400); // kick shell to enemy
 			enemy2->stomped();
+		}
 	}
-	else {
-		if (enemy2->getIsKicked())
+	else if (enemy2->getEnemyType() == SHELL && enemy1->getEnemyType() != SHELL) {
+		if (enemy2->getIsKicked()) {
+			enemy1->setVelY(-400); // kick shell to enemy
 			enemy1->stomped();
+		}
 	}
 	return true;
 }

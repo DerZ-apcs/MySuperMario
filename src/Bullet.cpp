@@ -2,7 +2,7 @@
 #include "../include/GameEngine.h"
 
 Bullet::Bullet(Vector2 pos, Texture2D tex):
-    Bullet(pos, tex, RIGHT)
+    Bullet(pos, tex, LEFT)
 {
 }
 
@@ -72,6 +72,10 @@ void Bullet::stomped() {
     UpdateTexture();
     Effect* score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string(SCORE_STOMP_BULLET).c_str()), getCenter());
     globalGameEngine->addEffect(score);
+    SmokeEffect* smokeright = new SmokeEffect(Vector2{getCenter().x, getTop() }, Vector2{ 60, -120 });
+    globalGameEngine->addEffect(smokeright);
+    SmokeEffect* smokeleft = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ -60, -120 });
+    globalGameEngine->addEffect(smokeleft);
 }
 
 void Bullet::loadEntity(const json& j)
