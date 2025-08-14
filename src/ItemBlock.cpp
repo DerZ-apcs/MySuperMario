@@ -91,7 +91,6 @@ void ItemBlock::Activate()
 void ItemBlock::loadEntity(const json& j)
 {
 	Blocks::loadEntity(j);
-	position.y -= 32; // Adjust position to match Tiled coordinates
 	isActive = j["isActive"];
 	heldPowerUp = static_cast<ITEM_TYPE>(j["heldPowerUp"].get<int>());
 	subType = j["subType"];

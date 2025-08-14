@@ -404,7 +404,6 @@ void GUI::drawItemChoice(Vector2 position, ITEM_TYPE& itemChoice) {
                 case 2: itemChoice = STAR; break;
                 case 3: itemChoice = MOON; break;
             }
-		   printf("Item selected: %s\n", items[i]);
         }
     }
 }

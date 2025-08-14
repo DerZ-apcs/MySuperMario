@@ -125,6 +125,7 @@ void EditorEngine::handleInput() {
 					itemBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_105"));
 					itemBlock->setId(selectedBlockId);
 					tileGrid[y][x] = itemBlock; 
+					printf("Created ItemBlock at (%d, %d)\n", x, y);
 					return;
 				}
 
@@ -158,8 +159,8 @@ void EditorEngine::handleInput() {
 		int x = (int)co.x / 32;
 		int y = (int)co.y / 32;
 		if (x >= 0 && x < tileGrid[0].size() && y + 1 >= 0 && y + 1 < tileGrid.size()) {
-			if (tileGrid[y + 1][x] != nullptr && dynamic_cast<ItemBlock*>(tileGrid[y + 1][x]) != nullptr) {
-				ItemBlock* itemBlock = dynamic_cast<ItemBlock*>(tileGrid[y + 1][x]);
+			if (tileGrid[y][x] != nullptr && dynamic_cast<ItemBlock*>(tileGrid[y][x]) != nullptr) {
+				ItemBlock* itemBlock = dynamic_cast<ItemBlock*>(tileGrid[y][x]);
 				currentItemBlock = itemBlock;
 				popupPos = GetMousePosition();   // capture position here
 				isEditingItemBlock = true;
@@ -379,15 +380,15 @@ void EditorEngine::loadFromJson() {
 	if (mapJson["layers"].size() < 2) { return; } // No object layer found
 	for (auto& obj : mapJson["layers"][1]["objects"]) {
 		if (obj["type"] == "ItemBlock") {
-			int x = obj["x"];
-			int y = obj["y"];
+			int x = obj["x"] / 32;
+			int y = obj["y"] / 32 - 1;
 
 			ItemBlock* itemBlock = dynamic_cast<ItemBlock*>(BlockFactory::getInstance().createBlock(ITEMBLOCK,
-				{ (float)x, (float)y }, { 32, 32 }));
-			itemBlock->loadEntity(obj); 
+				{ (float)x * 32, (float)y * 32 }, { 32, 32 }));
+			itemBlock->loadEntity(obj);
 			itemBlock->setId(105);
-			itemBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_105")); 
-			tileGrid[y / 32][x / 32] = itemBlock;
+			itemBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_105"));
+			tileGrid[y][x] = itemBlock;
 		}
 	}
 
