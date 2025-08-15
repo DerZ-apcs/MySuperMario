@@ -591,6 +591,11 @@ bool GameEngine::run() {
         }
 
         for (auto& p : *multiplayers) {
+            if (IsKeyPressed(KEY_T)) {
+                cout << "died: " << died << endl;
+				cout << p->isLostLife() << endl;
+				cout << "phase" << static_cast<int>(p->getPhase()) << endl;
+            }
             if (this->time <= 0) // outof time
                 p->setLostLife(true);
             // set lost life for falling out of bound
@@ -610,11 +615,12 @@ bool GameEngine::run() {
                 cleared = true;
                 isPaused = true;
                 p->setVel({ 0, 0 });
-            }
-            else if (p->isLostLife() && p->getTop() > getBound().y) { // when finish the animation of dying (flying to the top)
+            } 
+            else if (p->isLostLife() && (p->getTop() > getBound().y || p->getBottom() < -50)) { // when finish the animation of dying (flying to the top)
                 if (p->getLives() < 0) {
                     gameover = true;
                     isPaused = true;
+                    died = false;
                 }
                 else {
                     died = true;
@@ -766,12 +772,9 @@ void GameEngine::saveGame(int slot) {
     map.saveMap(j);
     j["mapSize"] = { map.getMapSize().x, map.getMapSize().y };
     j["background"] = level->getBackGroundName();
-    camera.saveCamera(j);
+    //camera.saveCamera(j);
     
     saveMultiCharacters(*multiplayers, j);        // Characters
-    //saveEnemies(enemies, j["enemies"]);          // Enemies
-    //saveItems(items, j["items"]);                // Items
-    saveTileGrids(tileGrid, j["tileGrid"]);      // Blocks
     saveGameEngineState(this, j);
 
     std::string path = SaveManager::getSlotPath(slot);
@@ -781,8 +784,6 @@ void GameEngine::saveGame(int slot) {
         file << j.dump(4); // Pretty print
         file.close();
     }
-    std::cout << "[Map Load] tileGrid size: " << tileGrid.size() << " x " << tileGrid[0].size() << std::endl;
-
 }
 
 
@@ -796,22 +797,16 @@ void GameEngine::loadGame(int slot)
     file >> j;
 
     level->loadLevel(j);
+	loadGameMap(*level);
     map.loadMap(j);
     Vector2 Msize = { j["mapSize"][0], j["mapSize"][1] };
-    camera.loadCamera(j);
-    camera.loadRenderTexture(Msize);
+    //camera.loadCamera(j);
+    //camera.loadRenderTexture(Msize);
     map.setMapSize(Msize);
     std::string backgroundName = j["background"];
     map.loadBackgroundTexture(backgroundName);
     loadMultiCharacters(*multiplayers, j);
-    //loadEnemies(enemies, j.at("enemies"));
-    //loadItems(items, j.at("items"));
-    loadTileGrids(tileGrid, j.at("tileGrid"));
     loadGameEngineState(this, j);
-    //std::cout << "Enemies loaded: " << enemies.size() << "\n";
-    //std::cout << "Items loaded: " << items.size() << "\n";
-    cout << "Map: " << map.getMapSize().x << " " << map.getMapSize().y << endl;
-    std::cout << "[Map Load] tileGrid size: " << tileGrid.size() << " x " << tileGrid[0].size() << std::endl;
 
 }
 
@@ -823,7 +818,6 @@ void GameEngine::saveGameEngineState(GameEngine* engine, json& j) {
         {"isPaused", engine->isPaused},
         {"cleared", engine->cleared},
         {"time", engine->time},
-        {"sharedLives", engine->sharedLives},
         {"bounce", {engine->bounce.x, engine->bounce.y}}
     };
 
@@ -844,11 +838,10 @@ void GameEngine::loadGameEngineState(GameEngine* engine, const json& j) {
         const auto& state = j["gameState"];
         engine->isvictory = state["isVictory"];
         engine->died = state["died"];
-        engine->gameover = state["gameOver"];
-        engine->isPaused = state["isPaused"];
+        engine->gameover = false;
+        engine->isPaused = false;
         engine->cleared = state["cleared"];
         engine->time = state["time"];
-        engine->sharedLives = state["sharedLives"];
         engine->bounce = { state["bounce"][0], state["bounce"][1] };
         
     }

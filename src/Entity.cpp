@@ -302,7 +302,7 @@ void Entity::saveEntity(json& j) const {
 	j["size"] = { size.x, size.y };
 	j["vel"] = { 0.f, 0.f };
 	j["direction"] = static_cast<int>(direction);
-	j["state"] = static_cast<int>(state);
+	j["EntityState"] = static_cast<int>(state);
 
 	j["maxFrame"] = maxFrame;
 	j["currFrame"] = currFrame;
@@ -326,7 +326,7 @@ void Entity::loadEntity(const json& j)
 	size = { j["size"][0], j["size"][1] };
 	velocity = { j["vel"][0], j["vel"][1] };
 	direction = static_cast<Direction>(j["direction"].get<int>());
-	state = static_cast<EntityState>(j["state"].get<int>());
+	state = static_cast<EntityState>(j["EntityState"].get<int>());
 
 	maxFrame = j["maxFrame"];
 	currFrame = j["currFrame"];

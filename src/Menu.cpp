@@ -44,6 +44,7 @@ void MainMenuState::handleInput()
 	if (startButton.isPressed() || (currentPosition == 0 && IsKeyPressed(KEY_ENTER))) {
 		if (game->multiplayers.empty()) {
 			game->multiplayers.push_back(std::make_unique<Mario>());
+			game->multiplayers[0]->setGravityAvailable(true);
 			game->multiplayers[0]->setPlayerid(0);
 			game->multiplayers[0]->setPosition({ 32, 400 });
 			game->multiplayers[0]->setVel({ 0, 0 });
@@ -97,16 +98,35 @@ void MainMenuState::handleInput()
 		}
 	}
 	else if (continueButton.isPressed() || (currentPosition == 1 && IsKeyPressed(KEY_ENTER))) {
+		// fix when game over and press continue
 		if (globalGameEngine == nullptr) {
-			if (game->multiplayers.empty())
+			if (game->multiplayers.empty()) {
 				game->multiplayers.push_back(std::make_unique<Mario>());
-			game->multiplayers[0]->setPlayerid(0);
-			game->multiplayers[0]->setPosition({32, 400});
-			game->multiplayers[0]->setVel({ 0, 0 });
-			game->multiplayers[0]->setState(FALLING);
+				game->multiplayers[0]->setGravityAvailable(true);
+				game->multiplayers[0]->setPlayerid(0);
+				game->multiplayers[0]->setPosition({ 32, 400 });
+				game->multiplayers[0]->setVel({ 0, 0 });
+				game->multiplayers[0]->setState(FALLING);
+			}
+			else {
+				for (auto& p : game->multiplayers)
+					if (p) p->reset();
+			}
 			globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
 			globalGameEngine->loadGameMap(*game->level);
 		}
+		else if (globalGameEngine->isOver()) {
+			for (auto& p : game->multiplayers)
+				p->reset();
+			// delete the old gameengine
+			if (globalGameEngine != nullptr) {
+				delete globalGameEngine;
+				globalGameEngine = nullptr;
+			}
+			globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
+			globalGameEngine->loadGameMap(*game->level);
+		}
+
 		while (globalGameEngine != nullptr) {
 			if (globalGameEngine->run()) {
 				delete globalGameEngine;
@@ -127,9 +147,15 @@ void MainMenuState::handleInput()
 				else break;
 			}
 			else {
-				if (globalGameEngine->isOver())
+				if (globalGameEngine->isOver()) {
 					for (auto& p : game->multiplayers)
 						p->reset();
+					// delete the old gameengine
+					if (globalGameEngine != nullptr) {
+						delete globalGameEngine;
+						globalGameEngine = nullptr;
+					}
+				}
 				break;
 			}
 		}

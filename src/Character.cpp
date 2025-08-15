@@ -13,6 +13,7 @@
 #include "../include/DustEffect.h"
 #include "../include/Moon.h"
 #include "../include/MovingBlock.h"
+
 Character::Character():
 	Character({ 32, 400 }, { 0, 0 })
 {
@@ -34,7 +35,7 @@ Character::Character(Vector2 pos, Vector2 sz, CharacterState characterstate, Cha
 	isducking(false),
 	scores(0),
 	coins(0),
-	lives(5),
+	lives(3),
 	holding(false),
 	isThrowing(false),
 	standingUp(false),
@@ -200,6 +201,8 @@ void Character::resetInGame(){
 	}
 	//this->size = { (float)texture.width, (float)texture.height };
 	setVel({ 0, 0 });
+	scores = 0;
+	coins = 0;
 	direction = RIGHT;
 	phase = DEFAULT_PHASE;
 	collisionAvailable = true;
@@ -250,12 +253,14 @@ void Character::reset()
 	else {
 		throw std::runtime_error("Unknown character type");
 	}
+	setGravityAvailable(true);
+	setCollisionAvailable(true);
 	setPosition({ 32, 400 });
 	setVel({ 0, 0 });
 	direction = RIGHT;
 	scores = 0;
 	coins = 0;
-	lives = 5;
+	lives = 3;
 	phase = DEFAULT_PHASE;
 	isjumping = false;
 	holding = false;
@@ -1154,6 +1159,7 @@ void Character::loadEntity(const json& j)
 
 	phase = static_cast<Phase>(j["phase"].get<int>());
 	characterType = static_cast<CharacterType>(j["characterType"].get<int>());
+	Character_state = static_cast<CharacterState>(j["characterState"].get<int>());
 	lostLife = j["lostLife"];
 	isducking = j["isducking"];
 	scores = j["scores"];
@@ -1192,6 +1198,7 @@ void Character::saveEntity(json& j) const
 
 	j["phase"] = static_cast<int>(phase);
 	j["characterType"] = static_cast<int>(characterType);
+	j["characterState"] = static_cast<int>(Character_state);
 	j["lostLife"] = lostLife;
 	j["isducking"] = isducking;
 	j["scores"] = scores;
