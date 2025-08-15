@@ -1,7 +1,9 @@
 #pragma once
 #include <unordered_map>
 #include "Command.h"
-#include <raylib.h>
+#include "raylib.h"
+#include <vector>
+#include "Character.h"
 
 struct KeyBinding {
 	int key;

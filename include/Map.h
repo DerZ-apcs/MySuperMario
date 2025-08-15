@@ -25,6 +25,7 @@
 #include "../include/JumpingPiranhaPlant.h"
 #include "../include/FirePiranhaPlant.h"
 #include "../include/Bullet.h"
+#include "../include/BanzaiBill.h"
 #include "../include/Rex.h"
 #include "../include/Muncher.h"
 #include "../include/BuzzyBeetle.h"
@@ -50,7 +51,7 @@ private:
 	float width;
 	float height;
 	std::string backGroundName;
-	std::vector<Blocks*> blockArray; // replace tile
+	std::vector<MovingBlock*> movingBlocks; // for moving blocks
 	std::vector<std::vector<Blocks*>> tileGrid; // for tile grid
 	std::vector<Enemy*> enemies;
 	std::vector<Item*> items;
@@ -75,7 +76,8 @@ public:
 		std::vector<Enemy*>& enemies, std::vector<Item*>& items, std::vector<Blocks*>& decors);
 	//bool stringToEnemyType(std::string& enemyTypeStr, std::string& subtype, ENEMY);
 
-	std::vector<Blocks*> getBlocks() const;
+	//std::vector<Blocks*> getBlocks() const;
+	std::vector<MovingBlock*> getMovingBlocks() const;
 	std::vector<std::vector<Blocks*>> getTileGrid() const;
 	std::vector<Enemy*> getEnemies() const;
 	std::vector<Item*> getItems() const; 

@@ -286,7 +286,6 @@ void FlyingGoomba::stomped()
         state = FALLING;
 		setGravityAvailable(true);
     }
-
     else {
         Goomba::stomped();
     }

@@ -46,3 +46,13 @@ void StandingCommand::execute(Character& character)
 	character.Standing();
 	character.setDucking(false);
 }
+
+void RunFasterCommand::execute(Character& character)
+{
+	character.RunFast();
+}
+
+void ReleaseRunFastCommand::execute(Character& character)
+{
+	character.ReleaseRunFast();
+}

@@ -39,6 +39,8 @@ private:
     // Commands (shared between handlers)
     MoveLeftCommand runLeft;
     MoveRightCommand runRight;
+	RunFasterCommand runFast;
+	ReleaseRunFastCommand releaseRunFast;
 	StandingCommand stand;
     JumpCommand jump;
     DuckCommand duck;
@@ -48,7 +50,8 @@ private:
     Level* level;
     Map map;
     std::vector<std::unique_ptr<Character>>* multiplayers; // for multiplayers
-    std::vector<Blocks*> blocks;
+    //std::vector<Blocks*> blocks;
+	std::vector<MovingBlock*> movingBlocks; // for moving blocks
     std::vector<Enemy*> enemies;
     std::vector<Item*> items;
     std::vector<EnemyFireBall*> enemyFireball;

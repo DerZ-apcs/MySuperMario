@@ -21,7 +21,8 @@ Map::~Map()
 }
 
 void Map::clear() {
-	blockArray.clear();
+	tileGrid.clear();
+	movingBlocks.clear();
 	items.clear();
 	decors.clear();
 	covers.clear();
@@ -32,8 +33,6 @@ void Map::clear() {
 
 void Map::drawMap()
 {
-	for (Entity* entity : blockArray)
-		entity->draw();
 }
 
 void Map::drawBackGround() 
@@ -228,7 +227,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 				tileGrid[y][x] = block;
 			}
 		}
-		if (name == "HiddenBlocks") {
+		/*if (name == "HiddenBlocks") {
 			int texId = gid - firstgid;
 			blockArray.push_back(new HiddenBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, { 32,32 }));
 		}
@@ -237,7 +236,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 		{
 			int texId = gid - firstgid;
 			blockArray.push_back(new MovingBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
-		}
+		}*/
 		if (name == "CoinBlock") {
 			int texId = gid - firstgid;
 			Blocks* coinBlock = dynamic_cast<CoinBlock*>(BlockFactory::getInstance().createBlock(COINBLOCK, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
@@ -285,10 +284,13 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 				enemies.push_back(new GreenKoopa(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Koopa_RIGHT_0")));
 			}
 			else if (type == "ParaKoopa") {
-				//enemies.push_back(new ParaKoopa(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("ParaKoopa_RIGHT_0")));
+				enemies.push_back(new ParaKoopa(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("ParaKoopa_RIGHT_0")));
 			}
 			else if (type == "Bullet") {
 				enemies.push_back(new Bullet(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Bullet"), LEFT));
+			}
+			else if (type == "BanzaiBill") {
+				enemies.push_back(new BanzaiBill(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("BanzaiBill_LEFT_0")));
 			}
 			else if (type == "FireBullet") {
 				enemies.push_back(new FireBullet(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FireBullet"), LEFT));
@@ -386,9 +388,9 @@ bool Map::LoadFromJsonFile(std::ifstream& file, std::vector<Blocks*>& blocks, st
 	return false;
 }
 
-std::vector<Blocks*> Map::getBlocks() const
+std::vector<MovingBlock*> Map::getMovingBlocks() const
 {
-	return blockArray;
+	return movingBlocks;
 }
 
 std::vector<std::vector<Blocks*>> Map::getTileGrid() const

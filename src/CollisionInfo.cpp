@@ -83,58 +83,39 @@ bool PlayerMovingBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 
 	if (!player || !block || !player->getCollisionAvailable())
 		return false;
+	
+	const float deltaTime = GetFrameTime();
 
-	float dt = GetFrameTime();
-
-	Rectangle pRect = player->getRect();
-	Rectangle bRect = block->getRect();
-
-	// Check collision *this frame*
-	if (!CheckCollisionRecs(pRect, bRect))
+	CollisionType Colltype = player->CheckCollision(*block);
+	if (Colltype == COLLISION_TYPE_NONE) {
+		player->setMovingBlockStandOn(nullptr);
 		return false;
-
-	// --- STEP 1: Horizontal resolution ---
-	float prevPX = player->getX() - player->getVelX() * dt;
-	float prevBX = block->getX() - block->getVelX() * dt;
-
-	// Was player to the left last frame?
-	if (prevPX + pRect.width <= prevBX)
-	{
-		// Player collided from left
-		player->setX(block->getX() - pRect.width);
-		player->setVelX(block->getVelX());
 	}
-	// Was player to the right last frame?
-	else if (prevPX >= prevBX + bRect.width)
-	{
-		// Player collided from right
-		player->setX(block->getX() + bRect.width);
-		player->setVelX(block->getVelX());
-	}
-
-	// --- STEP 2: Vertical resolution ---
-	float prevPY = player->getY() - player->getVelY() * dt;
-	float prevBY = block->getY() - block->getVelY() * dt;
-
-	// Was player above last frame? (falling onto block)
-	if (prevPY + pRect.height <= prevBY)
-	{
-		player->setY(block->getY() - pRect.height);
-		player->setVelY(block->getVelY());
-
-		// Carry player horizontally if standing on block
-		if (block->getVelX() != 0)
-			player->setX(player->getX() + block->getVelX() * dt);
-
+	switch (Colltype) {
+	case COLLISION_TYPE_NORTH:
+		player->setPosition(Vector2{ player->getX(), block->getY() + block->getHeight() });
+		player->setVelY(0);
+		break;
+	case COLLISION_TYPE_SOUTH:
+		player->setPosition(Vector2{ player->getX(), block->getY() - player->getHeight() });
+		player->setVelY(0);
+		// If the block is moving, we need to adjust the player's position based on the block's velocity
+		player->setState(ON_GROUND);
 		player->setJumping(false);
+		player->setMovingBlockStandOn(block); // Set the block as the one the player is standing on
+		
+		break;
+	case COLLISION_TYPE_EAST:
+		player->setPosition(Vector2{ block->getX() - player->getWidth(), player->getY() });
+		player->setVelX(0);
+		break;
+	case COLLISION_TYPE_WEST:
+		player->setPosition(Vector2{ block->getX() + block->getWidth(), player->getY() });
+		player->setVelX(0);
+		break;
+	default:
+		break;
 	}
-	// Was player below last frame? (hitting head)
-	else if (prevPY >= prevBY + bRect.height)
-	{
-		player->setY(block->getY() + bRect.height);
-		player->setVelY(block->getVelY());
-	}
-
 	return true;
 }
 

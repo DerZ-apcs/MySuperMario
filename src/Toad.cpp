@@ -9,6 +9,12 @@ Toad::Toad():
 Toad::Toad(Vector2 nposition, Vector2 nsize, CharacterState type):
 	Character(nposition, nsize, type, TOAD)
 {
+	MAX_WALK_SPEED_X = 600;
+	MAX_RUN_SPEED_X = 650;
+	MAXSPEED_Y = 520;
+	ACCEL_X = 450;
+	DECEL_X = 400;
+	CHARACTER_GRAVITY = 820;
 }
 
 Toad::~Toad()

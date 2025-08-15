@@ -24,6 +24,10 @@ public:
 	void execute(Character& character) override;
 };
 
+class RunFasterCommand : public Command {
+public:
+	void execute(Character& character) override;
+};
 class JumpCommand : public Command {
 public:
 	void execute(Character& character) override;
@@ -45,6 +49,11 @@ public:
 };
 
 class ShortHopReleaseCommand : public Command {
+public:
+	void execute(Character& character) override;
+};
+
+class ReleaseRunFastCommand : public Command {
 public:
 	void execute(Character& character) override;
 };

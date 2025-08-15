@@ -1,4 +1,4 @@
-#ifndef CHARACTER_H
+﻿#ifndef CHARACTER_H
 #define CHARACTER_H
 
 #include "../include/Entity.h"
@@ -15,6 +15,7 @@ class Blocks;
 class FireBall;
 class EnemyFireBall;
 class GameEngine;
+class MovingBlock;
 
 enum Phase {
 	DEFAULT_PHASE,
@@ -44,6 +45,8 @@ public:
 	virtual void setPhase(Phase phase);
 	virtual const Phase& getPhase() const;
 	virtual const CharacterState& getCharacterState() const;
+	void setMovingBlockStandOn(MovingBlock* block);
+	MovingBlock* getMovingBlockStandOn() const;
 
 	bool isInvicible() const;
 	bool isImmortal() const;
@@ -80,6 +83,15 @@ public:
 	
 	void StartTransition(const std::vector<int>& frameOrder, int steps);
 
+	float getMAX_WALK_SPEED_X() const { return MAX_WALK_SPEED_X; }
+	float getMAX_RUN_SPEED_X() const { return MAX_RUN_SPEED_X; }
+	float getMAXSPEED_Y() const { return MAXSPEED_Y; }
+	float getACCEL_X() const { return ACCEL_X; }
+	float getDECEL_X() const { return DECEL_X; }
+	float getCHARACTER_GRAVITY() const { return CHARACTER_GRAVITY; }
+	
+	virtual void ReleaseRunFast();
+	virtual void RunFast();
 	virtual void RunLeft();
 	virtual void RunRight();
 	virtual void Jumping();
@@ -130,6 +142,8 @@ protected:
 	std::vector<TransitionFrame> transitionFramesMarisa;
 	Phase phase;
 	CharacterType characterType;
+	MovingBlock* movingBlockStandOn = nullptr; // for standing up on moving block
+	Vector2 specificVelocity; // specific velocity for character
 	bool lostLife;
 	bool isducking;
 	int scores;
@@ -168,11 +182,14 @@ protected:
 	const float star_invicible_time = 12.f;
 	const float transform_time = 1.f;
 
-	const float MARIO_MAXSPEEDY = 550;
-	const float MARIO_MAXSPEEDX = 550;
-	const float LUIGI_MAXSPEEDY = 650;
-	const float LUIGI_MAXSPEEDX = 500;
-
+	// mỗi nhân vật sẽ có các thông số khác nhau
+	float MAX_WALK_SPEED_X; 
+	float MAX_RUN_SPEED_X;
+	float MAXSPEED_Y;
+	float ACCEL_X;
+	float DECEL_X;
+	float CHARACTER_GRAVITY;
+	//
 	bool victory = false;
 	bool exitlevel = false;
 	bool lostSuitTrigger = false;

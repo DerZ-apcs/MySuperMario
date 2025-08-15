@@ -10,6 +10,12 @@ Marisa::Marisa() : Marisa(Vector2{ 32, 400 }, Vector2{ 37, 54 }, STATE_SMALL) {
 Marisa::Marisa(Vector2 nposition, Vector2 nsize, CharacterState type) :
 	Character(nposition, nsize, type, MARISA)
 {
+	MAX_WALK_SPEED_X = 470;
+	MAX_RUN_SPEED_X = 630;
+	MAXSPEED_Y = 530;
+	ACCEL_X = 420;
+	DECEL_X = 360;
+	CHARACTER_GRAVITY = 780;
 }
 
 Marisa::~Marisa()

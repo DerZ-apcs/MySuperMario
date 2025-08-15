@@ -45,6 +45,8 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std:
     inputHandler1.bindKey(KEY_D, InputType::Down, &runRight);
     inputHandler1.bindKey(KEY_A, InputType::Release, &stand);
     inputHandler1.bindKey(KEY_D, InputType::Release, &stand);
+	inputHandler1.bindKey(KEY_LEFT_SHIFT, InputType::Down, &runFast);
+	inputHandler1.bindKey(KEY_LEFT_SHIFT, InputType::Release, &releaseRunFast);
     inputHandler1.bindKey(KEY_W, InputType::Press, &jump);
     inputHandler1.bindKey(KEY_S, InputType::Down, &duck);
 	inputHandler1.bindKey(KEY_S, InputType::Release, &stand);
@@ -57,6 +59,8 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std:
     inputHandler2.bindKey(KEY_RIGHT, InputType::Down, &runRight);
     inputHandler2.bindKey(KEY_LEFT, InputType::Release, &stand);
     inputHandler2.bindKey(KEY_RIGHT, InputType::Release, &stand);
+	inputHandler2.bindKey(KEY_RIGHT_SHIFT, InputType::Down, &runFast);
+	inputHandler2.bindKey(KEY_RIGHT_SHIFT, InputType::Release, &releaseRunFast);
     inputHandler2.bindKey(KEY_UP, InputType::Press, &jump);
     inputHandler2.bindKey(KEY_DOWN, InputType::Down, &duck);
     inputHandler2.bindKey(KEY_DOWN, InputType::Release, &stand);
@@ -77,7 +81,6 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std:
     //enemies.push_back(new BobOmb({ 200, 600 }, RESOURCE_MANAGER.getTexture("BobOmb_LEFT_0")));
     //enemies.push_back(new BuzzyBeetle({ 200, 600 }, RESOURCE_MANAGER.getTexture("BuzzyBeetle_LEFT_0")));
     //enemies.push_back(new Spiny({ 300, 500 }, RESOURCE_MANAGER.getTexture("Spiny_DEAD")));
-	//enemies.push_back(new JumpingPiranhaPlant({ 400, 500 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_JUMP_UP_0")));
 	//enemies.push_back(new DryBones({ 500, 500 }, RESOURCE_MANAGER.getTexture("DryBones_LEFT_0")));
     //enemies.push_back(new BoomBoom({500, 400}));
 }
@@ -89,6 +92,7 @@ void GameEngine::loadGameMap(Level& level) {
     camera.loadRenderTexture(Msize);
     bounce = map.getMapSize();
 
+	movingBlocks = map.getMovingBlocks();
     tileGrid = map.getTileGrid();
     enemies = map.getEnemies();
     items = map.getItems();
@@ -96,11 +100,20 @@ void GameEngine::loadGameMap(Level& level) {
     covers = map.getCovers();
     secretAreas = map.getSecretAreas();
 
-	enemies.push_back(new BanzaiBill({ 1000, 650 }, RESOURCE_MANAGER.getTexture("BanzaiBill_LEFT_0")));
-	enemies.push_back(new Bullet({ 1000, 500 }, RESOURCE_MANAGER.getTexture("")));
-    /*Cannon* cannon = new Cannon({ 600, 600 });
+    // test moving block
+    for (int i = 0; i < 3; i++) {
+        MovingBlock* block = new MovingBlock(Vector2{ (float)400 + i * 32, 850 }, { 32, 32 });
+		block->setBounds(400 + i * 32, 700 + i * 32, 700, 900);
+		block->setVelocity({ 50.0f, 0.0f });
+		movingBlocks.push_back(block);
+    }
+	//enemies.push_back(new BanzaiBill({ 1000, 650 }, RESOURCE_MANAGER.getTexture("BanzaiBill_LEFT_0")));
+	//enemies.push_back(new Bullet({ 1000, 500 }, RESOURCE_MANAGER.getTexture("")));
+    //enemies.push_back(new JumpingPiranhaPlant({ 400, 500 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_JUMP_UP_0")));
+	enemies.push_back(new FlyingGoomba({ 700, 800 }, RESOURCE_MANAGER.getTexture("FlyingGoomba_LEFT_0")));
+    Cannon* cannon = new Cannon({ 600, 600 });
     cannon->setBulletType(0);
-    tileGrid[20].push_back(cannon);*/
+    tileGrid[20].push_back(cannon);
 }
 GameEngine::~GameEngine() {
     for (size_t i = 0; i < enemyFireball.size(); i++)
@@ -125,11 +138,15 @@ GameEngine::~GameEngine() {
             delete tileGrid[i][j];
         }
     }
+	for (size_t i = 0; i < movingBlocks.size(); i++) {
+		delete movingBlocks[i];
+	}
     for (size_t i = 0; i < covers.size(); i++) {
         delete covers[i];
     }
     enemyFireball.clear();
     tileGrid.clear();
+	movingBlocks.clear();
     enemies.clear();
     items.clear();
     effects.clear();
@@ -232,32 +249,6 @@ void GameEngine::update()
     const float deltaTime = GetFrameTime();
     this->time -= deltaTime;
 
-    // update background
-
-    //for (int i = 0; i < 3; i++) {
-    //    // wrap from left to far most right
-    //    float farX = 0;
-    //    for (auto& p : *multiplayers)
-    //        farX = max(p->getX(), farX);
-    //    if (BackGroundPos[i].x + map.BgWidth <= farX - map.BgWidth / 2.0f) {
-    //        float maxX = BackGroundPos[0].x;
-    //        for (int j = 1; j < 3; j++) {
-    //            if (BackGroundPos[j].x > maxX) maxX = BackGroundPos[j].x;
-    //        }
-    //        BackGroundPos[i].x = maxX + map.BgWidth;
-    //    }
-    //    // wrap from right to left
-    //    float nearX = INT_MAX;
-    //    for (auto& p : *multiplayers)
-    //        nearX = min(nearX, p->getX());
-    //    if (BackGroundPos[i].x + map.BgWidth / 2.0f >= nearX + map.BgWidth * 2) {
-    //        float minX = BackGroundPos[i].x;
-    //        for (int j = 1; j < 3; j++) {
-    //            if (BackGroundPos[j].x < minX) minX = BackGroundPos[j].x;
-    //        }
-    //        BackGroundPos[i].x = minX - map.BgWidth;
-    //    }
-    //}
 	// enemy fireball update
 	for (auto* ef : enemyFireball) {
 		if (!isInCameraView(ef->getRect()))
@@ -287,6 +278,17 @@ void GameEngine::update()
             }
         }
     }
+    // for moving block
+	for (auto* block : movingBlocks) {
+		if (!isInCameraView(block->getRect()))
+			continue; // skip drawing this block
+		if (block->isDead()) {
+			delete block;
+			movingBlocks.erase(std::remove(movingBlocks.begin(), movingBlocks.end(), block), movingBlocks.end());
+		}
+		else
+			block->Update();
+	}
     // item
     for (auto* item : items) {
         if (!isInCameraView(item->getRect())) 
@@ -367,6 +369,12 @@ void GameEngine::handleCollision() {
             if (b == nullptr) continue;
             CollI.HandleCollision(p.get(), b);
         }
+        // moving blocks
+		for (auto* block : movingBlocks) {
+			if (!block || !isInCameraView(block->getRect())) continue; 
+			CollI.HandleCollision(p.get(), block);
+		}
+		// player vs enemy fireball
 		for (auto& fireball : *p->getFireBalls()) {
 			auto nearby = getNearbyBlocks(fireball->getPosition(), 2);
 			for (Blocks* b : nearby) {
@@ -473,6 +481,12 @@ void GameEngine::draw()
                 block->draw();
 			}
 		}
+	}
+    // moving block
+	for (auto* block : movingBlocks) {
+		if (!block || !isInCameraView(block->getRect()))
+			continue; // skip drawing this block
+		block->draw();
 	}
     // draw the characters
     for (size_t i = 0; i < (*multiplayers).size(); i++) {
@@ -658,13 +672,13 @@ void GameEngine::resetGame()
     for (size_t i = 0; i < enemyFireball.size(); i++) {
         delete enemyFireball[i];
     }
-    for (size_t i = 0; i < blocks.size(); ++i) {
-        delete blocks[i];
-    }
 	for (size_t i = 0; i < tileGrid.size(); i++) {
 		for (size_t j = 0; j < tileGrid[i].size(); j++) {
 			delete tileGrid[i][j];
 		}
+	}
+	for (size_t i = 0; i < movingBlocks.size(); i++) {
+		delete movingBlocks[i];
 	}
     for (size_t i = 0; i < enemies.size(); ++i) {
         delete enemies[i];
@@ -686,6 +700,7 @@ void GameEngine::resetGame()
     }
 
     enemyFireball.clear();
+	movingBlocks.clear();
     tileGrid.clear();
     enemies.clear();
     items.clear();
@@ -702,6 +717,7 @@ void GameEngine::resetGame()
     map.LoadFromJsonFile(level->getMapPath());
     map.loadBackgroundTexture(level->getBackGroundName());
 	tileGrid = map.getTileGrid();
+	movingBlocks = map.getMovingBlocks();
     enemies = map.getEnemies();
     items = map.getItems();
     decor = map.getDecor();

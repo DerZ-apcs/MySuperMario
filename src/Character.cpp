@@ -1,4 +1,4 @@
-#include "../include/Character.h"
+﻿#include "../include/Character.h"
 #include"../include/Item.h"
 #include"../include/Enemy.h"
 #include "../include/Effect.h"
@@ -12,7 +12,7 @@
 #include"../include/Coin.h"
 #include "../include/DustEffect.h"
 #include "../include/Moon.h"
-
+#include "../include/MovingBlock.h"
 Character::Character():
 	Character({ 32, 400 }, { 0, 0 })
 {
@@ -52,7 +52,9 @@ Character::Character(Vector2 pos, Vector2 sz, CharacterState characterstate, Cha
 	countImmortalTime(0.f),
 	countThrowTime(0.f),
 	invicibleStarTime(0.f),
-	sinkingTime(0.f)
+	sinkingTime(0.f),
+	movingBlockStandOn(nullptr),
+	specificVelocity({ 0, 0 })
 {
 	std::cout << "Character created with size: " << size.x << ", " << size.y << std::endl;
 
@@ -170,8 +172,7 @@ EntityType Character::getEntityType() const
 }
 
 // reset when die & continue with that level 
-void Character::resetInGame()
-{
+void Character::resetInGame(){
 	setPosition({ 32, 400 });
 	Character_state = STATE_SMALL;
 	if (characterType == MARIO) {
@@ -218,6 +219,8 @@ void Character::resetInGame()
 	updateCollision();
 	victory = false;
 	exitlevel = false;
+	movingBlockStandOn = nullptr; // reset moving block stand on
+	specificVelocity = { 0, 0 };
 }
 
 // reset when changing map (reset all)
@@ -247,7 +250,6 @@ void Character::reset()
 	else {
 		throw std::runtime_error("Unknown character type");
 	}
-	//this->size = { (float)texture.width, (float)texture.height };
 	setPosition({ 32, 400 });
 	setVel({ 0, 0 });
 	direction = RIGHT;
@@ -270,6 +272,8 @@ void Character::reset()
 	updateCollision();
 	victory = false;
 	exitlevel = false;
+	movingBlockStandOn = nullptr; // reset moving block stand on
+	specificVelocity = { 0, 0 };
 }
 
 void Character::setPhase(Phase phase)
@@ -278,6 +282,7 @@ void Character::setPhase(Phase phase)
 		setVelX(0.f);
 		setVelY(-DEAD_PLAYER_INITIAL_VELOCITY);
 		setCollisionAvailable(false);
+		setMovingBlockStandOn(nullptr); 
 		setHolding(false);
 		lives--;
 	}
@@ -296,6 +301,14 @@ const Phase& Character::getPhase() const
 const CharacterState& Character::getCharacterState() const
 {
 	return Character_state;
+}
+
+void Character::setMovingBlockStandOn(MovingBlock* block) {
+	this->movingBlockStandOn = block;
+}
+
+MovingBlock* Character::getMovingBlockStandOn() const {
+	return this->movingBlockStandOn;
 }
 
 bool Character::isInvicible() const
@@ -427,7 +440,8 @@ void Character::setLostLife(bool lostLife)
 void Character::Jumping()
 {
 	if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("jump.wav");
-	velocity.y = Character_state == MARIO ? -MARIO_MAXSPEEDY : -LUIGI_MAXSPEEDY;
+	float speedY = MAXSPEED_Y;
+	velocity.y = -speedY;
 	state = JUMPING;
 }
 
@@ -435,10 +449,10 @@ void Character::Standing()
 {
 	const float deltaTime = GetFrameTime();
 	if (velocity.x > 0) {
-		velocity.x -= accelerationX * deltaTime;
+		velocity.x -= DECEL_X * deltaTime;
 	}
 	else if (velocity.x < 0) {
-		velocity.x += accelerationX * deltaTime;
+		velocity.x += DECEL_X * deltaTime;
 	}
 	if (abs(velocity.x) < 20) velocity.x = 0;
 }
@@ -476,17 +490,24 @@ void Character::Update()
 		takeDamage = false;
 	}
 
+	specificVelocity = getVelocity();
+
+	if (movingBlockStandOn != nullptr) {
+		setVelX(specificVelocity.x + movingBlockStandOn->getVelocity().x);
+		setVelY(specificVelocity.y + movingBlockStandOn->getVelocity().y);
+	}
+
 	// physics
 	position.x += velocity.x * deltaTime;
 	position.y += velocity.y * deltaTime;
+	setVel(specificVelocity);
 	
 	if (velocity.y > 20 && state != SINKING)
 		state = FALLING;
-	velocity.y += GRAVITY * deltaTime + 2;
+	velocity.y += CHARACTER_GRAVITY * deltaTime + 2;
 	if (state == SINKING) { 
 		sinkingTime -= deltaTime;
-		velocity.y = GRAVITY / 32;
-		//printf("SINKING\n");
+		velocity.y = CHARACTER_GRAVITY / 32;
 		if (sinkingTime <= 0.f) {
 			state = FALLING;
 		}
@@ -840,6 +861,52 @@ void Character::StartTransition(const std::vector<int>& frameOrder, int steps) {
 	transitionCurrentFramePos = 0;
 }
 
+void Character::ReleaseRunFast()
+{
+	if (state == ON_GROUND || state == SINKING) {
+		float dt = GetFrameTime();
+		float targetSpeed = MAX_WALK_SPEED_X; // mục tiêu khi thả shift
+		float decelAmount = DECEL_X * dt;     // giảm tốc mỗi frame
+
+		if (direction == RIGHT && velocity.x > targetSpeed) {
+			velocity.x -= decelAmount;
+			if (velocity.x < targetSpeed) {
+				velocity.x = targetSpeed; // chặn không giảm quá
+			}
+		}
+		else if (direction == LEFT && velocity.x < -targetSpeed) {
+			velocity.x += decelAmount;
+			if (velocity.x > -targetSpeed) {
+				velocity.x = -targetSpeed; // chặn không giảm quá
+			}
+		}
+	}
+}
+
+
+void Character::RunFast()
+{
+	float deltaTime = GetFrameTime();
+	if (state == ON_GROUND || state == SINKING) {
+		if (direction == RIGHT) {
+			if (velocity.x < 0) 
+				velocity.x = 0;
+			velocity.x += ACCEL_X * deltaTime * 1.5;
+			if (velocity.x >= MAX_RUN_SPEED_X) {
+				velocity.x = MAX_RUN_SPEED_X;
+			}
+		}
+		else if (direction == LEFT) {
+			if (velocity.x > 0) 
+				velocity.x = 0;
+			velocity.x -= ACCEL_X * deltaTime * 1.5;
+			if (velocity.x <= -MAX_RUN_SPEED_X) {
+				velocity.x = -MAX_RUN_SPEED_X;
+			}
+		}
+	}
+}
+
 void Character::RunLeft()
 {
 	float deltaTime = GetFrameTime();
@@ -856,12 +923,12 @@ void Character::RunLeft()
 		velocity.x = 0;
 	}
 
-	float speed = Character_state == MARIO ? MARIO_MAXSPEEDX : LUIGI_MAXSPEEDX;
-	if (abs(velocity.x) + accelerationX * deltaTime >= speed) {
+	float speed = MAX_WALK_SPEED_X;
+	if (abs(velocity.x) + ACCEL_X * deltaTime >= speed) {
 		velocity.x = -speed;
 	}
 	else {
-		velocity.x -= accelerationX * deltaTime;
+		velocity.x -= ACCEL_X * deltaTime;
 	}
 }
 
@@ -880,12 +947,12 @@ void Character::RunRight()
 		direction = RIGHT;
 		velocity.x = 0;
 	}
-	float speed = Character_state == MARIO ? MARIO_MAXSPEEDX : LUIGI_MAXSPEEDX;
-	if (velocity.x + accelerationX * deltaTime >= speed) {
+	float speed = MAX_WALK_SPEED_X;
+	if (velocity.x + ACCEL_X * deltaTime >= speed) {
 		velocity.x = speed;
 	}
 	else {
-		velocity.x += accelerationX * deltaTime;
+		velocity.x += ACCEL_X * deltaTime;
 	}
 }
 
@@ -934,7 +1001,7 @@ void Character::UpdateTransitioningTexture()
 
 float Character::getAcclerationX() const
 {
-	return accelerationX;
+	return ACCEL_X;
 }
 void Character::ThrowingFireBalls()
 {

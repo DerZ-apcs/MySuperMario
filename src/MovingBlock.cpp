@@ -3,6 +3,7 @@
 MovingBlock::MovingBlock(Vector2 pos, Vector2 size):
 	Blocks(pos, size)
 {
+    texture = RESOURCE_MANAGER.getTexture("TILE_1");
     // Initialize bounds relative to initial position (e.g., ±100 units)
     boundLeft = pos.x - 100.0f;
     boundRight = pos.x + 100.0f;
