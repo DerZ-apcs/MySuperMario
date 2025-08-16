@@ -80,6 +80,7 @@ public:
     //GameEngine(float screenWidth, float screenHeight, Level& level, Character*& player);
     GameEngine(float screenWidth, float screenHeight, Level& level, std::vector<std::unique_ptr<Character>>* multiplayers);
     void loadGameMap(Level& level);
+    void InitGameCamera();
     ~GameEngine();
     void addScore(int amount);
     void addEnemyFireBall(EnemyFireBall* fireball);

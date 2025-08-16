@@ -377,6 +377,11 @@ Vector2 Map::getMapSize() const
 	return Vector2{ width, height };
 }
 
+Vector2 Map::getGoalPosition() const
+{
+	return Vector2{goalX, goalY};
+}
+
 void Map::setMapSize(Vector2 size)
 {
 	width = size.x;

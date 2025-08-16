@@ -1174,7 +1174,7 @@ void Character::loadEntity(const json& j)
 	//
 	holding = j["holding"];
 	isThrowing = j["isThrowing"];
-
+	playerId = j["playerId"];
 	countThrowTime = j["countThrowTime"];
 	countImmortalTime = j["countImmortalTime"];
 	standingUp = j["standingUp"];
@@ -1206,7 +1206,7 @@ void Character::saveEntity(json& j) const
 	j["lives"] = lives;
 	j["invicibleStarTime"] = invicibleStarTime;
 	j["sinkingTime"] = sinkingTime;
-
+	j["playerId"] = playerId;
 	j["holding"] = holding;
 	j["isThrowing"] = isThrowing;
 	j["countThrowTime"] = countThrowTime;

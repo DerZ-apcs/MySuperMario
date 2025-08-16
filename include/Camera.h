@@ -25,6 +25,7 @@ public:
 	void loadRenderTexture(Vector2 size);
 	void update(float characterX, float characterY);
 	void update(float p1x, float p1y, float p2x, float p2y);
+	void update(float p1x, float p1y, float p2x, float p2y, float goalX, float goalY);
 	void render() const;
 	void beginDrawing();
 	void endDrawing();

@@ -17,6 +17,9 @@ GameCamera::~GameCamera() {
 
 void GameCamera::loadRenderTexture(Vector2 size)
 {
+	if (renderTexture.texture.id != 0) {
+		UnloadRenderTexture(renderTexture);
+	}
     renderTexture = LoadRenderTexture(static_cast<int>(round(size.x)), static_cast<int>(round(size.y)));
 }
 
@@ -36,17 +39,24 @@ void GameCamera::update(float characterX, float characterY) {
         cameraY = renderTexture.texture.height - scaledHeight;
 }
 
-void GameCamera::update(float p1x, float p1y, float p2x, float p2y) {
-    // Compute center between two players
+void GameCamera::update(float p1x, float p1y, float p2x, float p2y, float goalX, float goalY) {
+// Compute center between two players
     float centerX = (p1x + p2x) / 2.0f;
     float centerY = (p1y + p2y) / 2.0f;
+
+    // Detect sudden large changes (e.g., respawn/teleport)
+    static float previousCenterX = centerX;
+    static float previousCenterY = centerY;
+    float deltaX = fabs(centerX - previousCenterX);
+    float deltaY = fabs(centerY - previousCenterY);
+    const float respawnThreshold = 1500.0f;
 
     // Distance between players
     float distanceX = fabs(p1x - p2x);
     float distanceY = fabs(p1y - p2y);
 
     // Add visual buffer to ensure players aren't on edge
-    const float bufferX = 300.0f;  // Increased for better spacing
+    const float bufferX = 1000.0f;
     const float bufferY = 500.0f;
 
     // View size that would be needed to fit both players + buffer
@@ -59,33 +69,73 @@ void GameCamera::update(float p1x, float p1y, float p2x, float p2y) {
     float desiredScale = fmin(desiredScaleX, desiredScaleY);
 
     // Clamp scale to safe zoom levels
-    // clamp target scale;
     const float minZoom = 0.85f;
     const float maxZoom = 1.6f;
     desiredScale = Myclamp(desiredScale, minZoom, maxZoom);
 
-    // smooth transition to new scale (lerp)
-    const float zoomSmooth = 0.02f;
+    // Smooth transition to new scale (lerp)
+    const float zoomSmooth = 0.01f;
     scale = scale + (desiredScale - scale) * zoomSmooth;
 
     // Calculate actual scaled view size
     float scaledWidth = cameraWidth / scale;
     float scaledHeight = cameraHeight / scale;
 
-    // Center the camera
-    cameraX = centerX - scaledWidth / 2.0f;
-    cameraY = renderTexture.texture.height - (centerY + scaledHeight / 2.0f) /*+ verticalOffset + 100*/;
+    // Calculate dynamic goal weight based on distance to goal
+    float distToGoalP1 = sqrt(pow(p1x - goalX, 2) + pow(p1y - goalY, 2));
+    float distToGoalP2 = sqrt(pow(p2x - goalX, 2) + pow(p2y - goalY, 2));
+    float minDistToGoal = fmin(distToGoalP1, distToGoalP2);
 
-    // 9. Clamp target position to within texture bounds
-    targetX = Myclamp(targetX, 0.0f, renderTexture.texture.width - scaledWidth);
-    targetY = Myclamp(targetY, 0.0f, renderTexture.texture.height - scaledHeight);
+    // Enhanced goal weight logic: Full priority when very close to goal
+    const float maxGoalDistance = 1500.0f;
+    const float minGoalDistance = 500.0f;
+    const float closeGoalThreshold = 300.0f; // Full focus when very close
+    float goalWeight = 1.0f - Myclamp((minDistToGoal - minGoalDistance) / (maxGoalDistance - minGoalDistance), 0.0f, 1.0f);
+    if (minDistToGoal < closeGoalThreshold) {
+        goalWeight = 1.0f; // Force full focus on goal when very close
+    }
 
-    // 10. Smooth camera movement transition (main fix for jump jitter)
-    const float moveSmooth = 0.05f;  // Try 0.05f for even smoother
-    cameraX += (targetX - cameraX) * moveSmooth;
-    cameraY += (targetY - cameraY) * moveSmooth;
+    // Smooth the goalWeight transition
+    static float smoothedGoalWeight = 0.0f;
+    const float weightSmooth = 0.05f;
+    smoothedGoalWeight += (goalWeight - smoothedGoalWeight) * weightSmooth;
 
-    // Clamp camera to inside the texture bounds
+    // Calculate target position with smoothed goal influence
+    float targetX = centerX * (1.0f - smoothedGoalWeight) + goalX * smoothedGoalWeight;
+    float targetY = centerY * (1.0f - smoothedGoalWeight) + goalY * smoothedGoalWeight;
+
+    // Adjust camera position with buffer for goal
+    float desiredCameraX = targetX - scaledWidth / 2.0f;
+    float desiredCameraY = renderTexture.texture.height - (targetY + scaledHeight / 2.0f) + verticalOffset - 100;
+
+    // Add buffer to ensure goal is visible on the right
+    const float goalBufferX = 200.0f; // Adjust this to ensure goal is in view
+    if (minDistToGoal < minGoalDistance) {
+        desiredCameraX = Myclamp(goalX - scaledWidth + goalBufferX, 0.0f, renderTexture.texture.width - scaledWidth);
+    }
+
+    // Clamp desired position to within texture bounds
+    desiredCameraX = Myclamp(desiredCameraX, 0.0f, renderTexture.texture.width - scaledWidth);
+    desiredCameraY = Myclamp(desiredCameraY, 0.0f, renderTexture.texture.height - scaledHeight) - 100;
+
+    // Handle respawn/teleport: Instantly reset camera to desired position
+    if (deltaX > respawnThreshold || deltaY > respawnThreshold) {
+        cameraX = desiredCameraX;
+        cameraY = desiredCameraY;
+        smoothedGoalWeight = 0.0f; // Reset goal weight to avoid goal influence post-respawn
+    }
+    else {
+        // Otherwise, smooth camera movement transition
+        const float moveSmooth = 0.1f;
+        cameraX += (desiredCameraX - cameraX) * moveSmooth;
+        cameraY += (desiredCameraY - cameraY) * moveSmooth;
+    }
+
+    // Update previous center for next frame
+    previousCenterX = centerX;
+    previousCenterY = centerY;
+
+    // Final clamp to ensure camera stays within bounds
     if (cameraX < 0) cameraX = 0;
     if (cameraX + scaledWidth > renderTexture.texture.width)
         cameraX = renderTexture.texture.width - scaledWidth;
@@ -93,8 +143,6 @@ void GameCamera::update(float p1x, float p1y, float p2x, float p2y) {
     if (cameraY + scaledHeight > renderTexture.texture.height)
         cameraY = renderTexture.texture.height - scaledHeight;
 }
-
-
 
 void GameCamera::render() const {
     Rectangle sourceRec = {

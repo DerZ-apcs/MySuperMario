@@ -50,6 +50,8 @@ private:
 	std::vector<Vector2> BackGroundPos;
 	float width;
 	float height;
+	float goalX; // for goal
+	float goalY; // for goal
 	std::string backGroundName;
 	std::vector<MovingBlock*> movingBlocks; // for moving blocks
 	std::vector<std::vector<Blocks*>> tileGrid; // for tile grid
@@ -69,8 +71,9 @@ public:
 	Vector2 LoadMapSize(const std::string& filepath);
 	void loadBackgroundTexture(const std::string& backgroundName);
 	Vector2 getMapSize() const;
+	Vector2 getGoalPosition() const;
 	void setMapSize(Vector2 size);
-
+	
 	void LoadFromJsonFile(const std::string& filepath);
 	bool LoadFromJsonFile(std::ifstream& file, std::vector<Blocks*>& blocks,
 		std::vector<Enemy*>& enemies, std::vector<Item*>& items, std::vector<Blocks*>& decors);

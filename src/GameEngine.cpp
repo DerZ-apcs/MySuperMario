@@ -90,7 +90,7 @@ void GameEngine::loadGameMap(Level& level) {
     map.loadBackgroundTexture(level.getBackGroundName());
     Vector2 Msize = map.getMapSize();
     camera.loadRenderTexture(Msize);
-    bounce = map.getMapSize();
+    bounce = Msize;
 
 	movingBlocks = map.getMovingBlocks();
     tileGrid = map.getTileGrid();
@@ -114,6 +114,10 @@ void GameEngine::loadGameMap(Level& level) {
     Cannon* cannon = new Cannon({ 600, 600 });
     cannon->setBulletType(0);
     tileGrid[20].push_back(cannon);
+}
+void GameEngine::InitGameCamera()
+{
+   
 }
 GameEngine::~GameEngine() {
     for (size_t i = 0; i < enemyFireball.size(); i++)
@@ -325,20 +329,6 @@ void GameEngine::update()
     }
 
     // player udpate
-        // handle input
-    //for (int i = 0; i < (*multiplayers).size(); ++i) {
-    //    if ((*multiplayers)[i] != nullptr) {
-    //        (*multiplayers)[i]->HandleInput(
-    //            controlBindings[i].left,
-    //            controlBindings[i].right,
-    //            controlBindings[i].up,
-    //            controlBindings[i].down,
-    //            controlBindings[i].fire
-    //        );
-    //        (*multiplayers)[i]->Update();
-    //    }
-    //    else std::cout << "multiplayers[" << i << "] is nullptr!\n";
-    //}
 	for (auto& p : *multiplayers) {
 		if (p == nullptr) continue;
 		p->HandleInput(inputHandler1, inputHandler2);
@@ -350,8 +340,9 @@ void GameEngine::update()
 
     // camera update
     if ((*multiplayers).size() == 2) {
+        // need to know the goal
         camera.update((*multiplayers)[0]->getX(), (*multiplayers)[0]->getY(),
-            (*multiplayers)[1]->getX(), (*multiplayers)[1]->getY());
+            (*multiplayers)[1]->getX(), (*multiplayers)[1]->getY(), 7940, 100);
     }
     else camera.update((*multiplayers)[0]->getX(), (*multiplayers)[0]->getY());
 }
@@ -571,12 +562,11 @@ bool GameEngine::run() {
         if (SETTING.isMusicEnabled()) {
             UpdateMusicStream(RESOURCE_MANAGER.getMusic(level->getMusic()));
         }
-
         update();
         ClearBackground(RAYWHITE);
         draw();
         if (IsKeyPressed(KEY_T)) {
-            cout << "Bound" << getBound().x << " " << getBound().y << endl;
+            cout << "Bound: " << getBound().x << " " << getBound().y << endl;
         }
         if (cleared == true && isPaused == false) {
             RESOURCE_MANAGER.stopCurrentMusic();
@@ -591,11 +581,6 @@ bool GameEngine::run() {
         }
 
         for (auto& p : *multiplayers) {
-            if (IsKeyPressed(KEY_T)) {
-                cout << "died: " << died << endl;
-				cout << p->isLostLife() << endl;
-				cout << "phase" << static_cast<int>(p->getPhase()) << endl;
-            }
             if (this->time <= 0) // outof time
                 p->setLostLife(true);
             // set lost life for falling out of bound
@@ -818,7 +803,9 @@ void GameEngine::saveGameEngineState(GameEngine* engine, json& j) {
         {"isPaused", engine->isPaused},
         {"cleared", engine->cleared},
         {"time", engine->time},
-        {"bounce", {engine->bounce.x, engine->bounce.y}}
+        {"bounce", {engine->bounce.x, engine->bounce.y}},
+		{"musicEnabled", SETTING.isMusicEnabled()},
+        {"soundEnabled", SETTING.isSoundEnabled()}
     };
 
     json secretArray = json::array();
@@ -843,6 +830,8 @@ void GameEngine::loadGameEngineState(GameEngine* engine, const json& j) {
         engine->cleared = state["cleared"];
         engine->time = state["time"];
         engine->bounce = { state["bounce"][0], state["bounce"][1] };
+		SETTING.setMusic(state["musicEnabled"]);
+		SETTING.setSound(state["soundEnabled"]);
         
     }
 
