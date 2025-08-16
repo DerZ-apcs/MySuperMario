@@ -2,7 +2,7 @@
 
 EditorEngine* globalEditorEngine = nullptr;
 
-EditorEngine::EditorEngine(float width, float height)
+EditorEngine::EditorEngine()
 	: camera() {
 	globalEditorEngine = this;
 	tileGrid.resize(30, std::vector<Blocks*>(100, nullptr)); // Initialize a 30x100 grid
@@ -59,6 +59,7 @@ EditorEngine::EditorEngine(float width, float height)
 	tiles.push_back({ 106, { startX, startY + 34, 32, 32 } });
 	tiles.push_back({ 109, { startX + 36, startY, 32, 32 } });
 	tiles.push_back({ 108, { startX + 36, startY + 34, 32, 32 } });
+	decorTiles = { 23, 24, 25, 111, 112, 107, 106, 109, 108 };
 
 	// special
 	startX = 20; startY += 36 * 2 + 8;
@@ -215,13 +216,22 @@ void EditorEngine::drawGrid() {
 	}
 
 	// Debug
-	
+	/*
 	for (int y = startY; y < endY; ++y) {
 		for (int x = startX; x < endX; ++x) {
 			std::string coord = "(" + std::to_string(x) + "," + std::to_string(y) + ")";
 			DrawText(coord.c_str(), x * tileSize + 2, y * tileSize + 2, 10, DARKGRAY);
 		}
+	}*/
+}
+
+void EditorEngine::resizeGrid(int newWidth) {
+	if (newWidth <= 0) return; 
+	// Resize tile grid
+	for (auto& row : tileGrid) {
+		row.resize(newWidth, nullptr); // Initialize with nullptr
 	}
+	width = newWidth; // Update width
 }
 
 void EditorEngine::draw() {
@@ -313,6 +323,7 @@ void EditorEngine::saveToJson() {
 
 	nlohmann::json tileData;
 	nlohmann::json objectData = nlohmann::json::array();
+	nlohmann::json decorData;
 	for (int y = 0; y < tileGrid.size(); ++y) {
 		for (int x = 0; x < tileGrid[y].size(); ++x) {
 			auto* block = tileGrid[y][x];
@@ -327,17 +338,40 @@ void EditorEngine::saveToJson() {
 					objectData.push_back(obj);
 
 					tileData.push_back(0); // Empty tile 
+					decorData.push_back(0); // Empty decor
 				}
-				else { tileData.push_back(block->getId() + 1); }
+				else if (decorTiles.find(block->getId()) != decorTiles.end()) {
+					decorData.push_back(block->getId() + 1); 
+					tileData.push_back(0); // Empty tile
+				}
+				else { 
+					tileData.push_back(block->getId() + 1); 
+					decorData.push_back(0); // Empty decor
+				}
 			}
-			else { tileData.push_back(0); }
+			else { 
+				tileData.push_back(0); 
+				decorData.push_back(0);
+			}
 		}
 	}
-	
-	mapJson["layers"] = nlohmann::json::array({
-		{ {"name", "TileLayer"}, {"type", "tilelayer"}, {"data", tileData} },
-		{ {"name", "ObjectLayer"}, {"type", "objectgroup"}, {"objects", objectData} }
-	});
+
+	mapJson["layers"] = nlohmann::json::array();
+	mapJson["layers"].push_back({
+		{"name", "TileLayer"},
+		{"type", "tilelayer"},
+		{"data", tileData}
+		});
+	mapJson["layers"].push_back({
+		{"name", "ObjectLayer"},
+		{"type", "objectgroup"},
+		{"objects", objectData}
+		});
+	mapJson["layers"].push_back({
+		{"name", "DecorLayer"},
+		{"type", "tilelayer"},
+		{"data", decorData}
+		});
 
 	std::ofstream file("resources/maps/emap_1.json");
 	if (!file.is_open()) {
@@ -389,6 +423,21 @@ void EditorEngine::loadFromJson() {
 			itemBlock->setId(105);
 			itemBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_105"));
 			tileGrid[y][x] = itemBlock;
+		}
+	}
+
+	if (mapJson["layers"].size() < 3) { return; } // No decor layer found
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			int blockId = mapJson["layers"][2]["data"][y * width + x];
+			if (blockId > 0) {
+				blockId--; // Adjust for zero-based index
+				DecorBlock* decorBlock = dynamic_cast<DecorBlock*>(BlockFactory::getInstance().createBlock(DECOR,
+					{ (float)x * 32, (float)y * 32 }, { 32, 32 }));
+				decorBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_" + std::to_string(blockId)));
+				decorBlock->setId(blockId);
+				decor.push_back(decorBlock);
+			}
 		}
 	}
 

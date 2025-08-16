@@ -1,6 +1,8 @@
 #ifndef EDITORENGINE_H
 #define EDITORENGINE_H
 
+#include <unordered_set>
+//-----------------
 #include "../include/Camera.h"
 #include "../include/Map.h"
 #include "../include/GUI.h"
@@ -26,6 +28,7 @@ private:
 
 	EditorCamera camera;
 
+	std::unordered_set<int> decorTiles;
 	std::vector<TileSelector> tiles; 
 	int selectedBlockId = -1; 
 
@@ -35,11 +38,12 @@ private:
 	Vector2  popupPos;
 
 public:
-	EditorEngine(float width, float height);
+	EditorEngine();
 	~EditorEngine();
 
 	void draw();           // draw map + editor UI
 	void drawGrid();
+	void resizeGrid(int newWidth);
 
 	const std::vector<TileSelector>& getTiles() const { return tiles; }
 	const int getSelectedBlockId() const { return selectedBlockId; }

@@ -35,6 +35,7 @@ bool GUI::home_is_pressed = false;
 bool GUI::restart_is_pressed = false;
 bool GUI::sound_is_pressed = false;
 bool GUI::setting_is_pressed = false;
+bool GUI::input_box_is_active = false;
 
 void GUI::drawPlayerStatus(const Character* player, Vector2 origin) {
     float scale = 0.75f;
@@ -313,27 +314,52 @@ void GUI::drawEditorUI() {
     DrawRectangle(0, 0, 468, GetScreenHeight(), Fade(LIGHTGRAY, 0.8f)); // sidebar
     DrawText("Editor Menu", 20, 20, 30, BLACK);
 
-    DrawText(TextFormat("Grid: %d x %d", 150, 30), 20, 60, 20, DARKGRAY);
+    DrawText(TextFormat("Grid: %d x %d", 100, 30), 20, 60, 20, DARKGRAY);
 
 	Rectangle saveButton = { 20, 100, 100, 30 };
 	DrawRectangleRec(saveButton, DARKGRAY);
     DrawText("Save", 30, 108, 16, WHITE);
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), saveButton)) {
-        globalEditorEngine->saveToJson();
-		printf("Map saved successfully!\n");
-	}
 
 	Rectangle loadButton = { 140, 100, 100, 30 };
 	DrawRectangleRec(loadButton, DARKGRAY);
     DrawText("Load", 150, 108, 16, WHITE);
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), loadButton)) {
-        globalEditorEngine->loadFromJson();
-        printf("Map loaded successfully!\n");
-	}
+
+	static bool isResizing = false;
+	Rectangle resizeButton = { 310, 100, 100, 30 };
+    DrawRectangleRec(resizeButton, DARKGRAY);
+    DrawText("Resize", 320, 108, 16, WHITE);
 
 	Rectangle playButton = { 20, 140, 100, 30 };
 	DrawRectangleRec(playButton, DARKGRAY);
 	DrawText("Play", 30, 148, 16, WHITE);
+
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), saveButton)) {
+        globalEditorEngine->saveToJson();
+        printf("Map saved successfully!\n");
+    }
+
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), loadButton)) {
+        globalEditorEngine->loadFromJson();
+        printf("Map loaded successfully!\n");
+    }
+
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), resizeButton)) { 
+        isResizing = true; 
+		input_box_is_active = true;
+    }
+    if (isResizing) {
+		static std::string inputText = "100"; 
+		Vector2 inputBoxPos = { 310, 140 };
+        drawInputBox(inputBoxPos, inputText);
+        if (input_box_is_active == false) {
+            int newWidth = std::stoi(inputText);
+            if (newWidth > 0) {
+                globalEditorEngine->resizeGrid(newWidth);
+                isResizing = false;
+            }
+        }
+    }
+
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), playButton)) {
         globalEditorEngine->loadFromJson();
 
@@ -342,15 +368,15 @@ void GUI::drawEditorUI() {
             globalGameEngine = nullptr;
         }
 
-		Level* level = make_unique<Level>(Map::basePath + "emap_1.json", "BACKGROUND_1", "MUSIC_1", "2 - 1").release();
-		printf("Level loaded successfully!\n");
+        Level* level = make_unique<Level>(Map::basePath + "emap_1.json", "BACKGROUND_1", "MUSIC_1", "2 - 1").release();
+        printf("Level loaded successfully!\n");
         std::vector<std::unique_ptr<Character>> character;
         character.push_back(std::make_unique<Mario>());
         character[0]->setPosition({ 20, 200 });
         character[0]->setVel({ 0, 0 });
         character[0]->setState(FALLING);
         globalGameEngine = new GameEngine(1600, 800, *level, &character);
-		globalGameEngine->loadGameMap(*level);
+        globalGameEngine->loadGameMap(*level);
 
         while (globalGameEngine != nullptr) {
             if (globalGameEngine->run()) { break; }
@@ -404,6 +430,27 @@ void GUI::drawItemChoice(Vector2 position, ITEM_TYPE& itemChoice) {
                 case 2: itemChoice = STAR; break;
                 case 3: itemChoice = MOON; break;
             }
+        }
+    }
+}
+
+void GUI::drawInputBox(Vector2 position, std::string& inputText)     {
+
+    DrawRectangle(position.x, position.y, 100, 30, WHITE);    
+    DrawText(inputText.c_str(), position.x + 10, position.y + 8, 20, BLACK);
+    
+    if (IsKeyPressed(KEY_BACKSPACE) && !inputText.empty()) {
+        inputText.pop_back(); 
+    } else if (IsKeyPressed(KEY_ENTER)) {
+		input_box_is_active = false; 
+        printf("Input confirmed: %s\n", inputText.c_str());
+    } else {
+        int key = GetCharPressed();
+        while (key > 0) {
+            if (inputText.length() < 8) {
+                inputText += (char)key;
+            }
+            key = GetCharPressed();
         }
     }
 }
