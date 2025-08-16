@@ -1,8 +1,10 @@
-#pragma once
+﻿#pragma once
 #include <string>
 #include <vector>
 #include <fstream>
 #include <filesystem>
+#include "json.hpp"
+using json = nlohmann::json;
 
 class SaveManager {
 public:
@@ -11,4 +13,8 @@ public:
     static void deleteSlot(int slot);
     static std::vector<int> listAvailableSlots();
     static void ensureSaveDirectoryExists();
+    static int findNextFreeSlot(int maxSlots = 5);
+private:
+    static void cleanupInvalidFiles();
 };
+

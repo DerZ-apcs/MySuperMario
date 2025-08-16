@@ -51,11 +51,18 @@ void TemporaryBlock::draw()
 
 void TemporaryBlock::loadEntity(const json& j)
 {
-
+	Blocks::loadEntity(j);
+	lifeTime = j["lifeTime"];
+	isDying = j["isDying"];
+	dead = j["dead"];
 }
 
 void TemporaryBlock::saveEntity(json& j) const
 {
+	Blocks::saveEntity(j);
+	j["lifeTime"] = lifeTime;
+	j["isDying"] = isDying;
+	j["dead"] = dead;
 }
 
 BLOCK_TYPE TemporaryBlock::getBlockType() const

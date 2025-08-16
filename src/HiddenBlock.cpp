@@ -54,8 +54,14 @@ void HiddenBlock::reveal()
 
 void HiddenBlock::loadEntity(const json& j)
 {
+	Blocks::loadEntity(j);
+	revealed = j["revealed"];
+	revealType = static_cast<BLOCK_TYPE>(j["revealType"].get<int>());
 }
 
 void HiddenBlock::saveEntity(json& j) const
 {
+	Blocks::saveEntity(j);
+	j["revealed"] = revealed;
+	j["revealType"] = static_cast<int>(revealType);
 }

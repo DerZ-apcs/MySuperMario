@@ -5,6 +5,7 @@ Mushroom::Mushroom(MushroomType type, Vector2 position, Direction direction):
 	PowerItem(position, { 32, 32 }, direction, type == GREENMUSHROOM ? RESOURCE_MANAGER.getTexture("GreenMushroom") : RESOURCE_MANAGER.getTexture("RedMushroom")),
 	type(type)
 {
+	subType = type == GREENMUSHROOM ? 1 : 0;
 	INTERVAL_JUMPING = 0.8f;
 	texture = type == GREENMUSHROOM ? RESOURCE_MANAGER.getTexture("GreenMushroom") : RESOURCE_MANAGER.getTexture("RedMushroom");
 }

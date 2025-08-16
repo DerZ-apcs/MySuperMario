@@ -105,9 +105,9 @@ public:
     void loadGame(int slot);
     void saveGameEngineState(GameEngine* engine, json& j);
     void loadGameEngineState(GameEngine* engine, const json& j);
+    json serialize();
+	void deserialize(const json& j);
     std::vector<std::vector<Blocks*>>& getTileGrid(); // for tile grid
-    /*void saveGame(const std::string& path);
-    bool loadGame(const std::string& path);*/
 };
 extern GameEngine* globalGameEngine;
 

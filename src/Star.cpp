@@ -6,7 +6,7 @@ Star::Star(StarType type, Vector2 position, Direction direction) :
 	type(type)
 {
 	INTERVAL_JUMPING = 0.8f;
-	
+	subType = (type == YELLOW_STAR) ? 0 : 1; // 0 for yellow star, 1 for blue star
 	texture = type == YELLOW_STAR ? RESOURCE_MANAGER.getTexture("YellowStar") : RESOURCE_MANAGER.getTexture("BlueStar");
 }
 

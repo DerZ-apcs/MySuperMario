@@ -75,8 +75,23 @@ void MovingBlock::Update()
 
 void MovingBlock::loadEntity(const json& j)
 {
+	Blocks::loadEntity(j);
+	// Load bounds and velocity from JSON
+	boundLeft = j["boundLeft"];
+	boundRight = j["boundRight"];
+	boundTop = j["boundTop"];
+	boundBottom = j["boundBottom"];
+	velocity.x = j["velocity"][0];
+	velocity.y = j["velocity"][1];
 }
 
 void MovingBlock::saveEntity(json& j) const
 {
+	Blocks::saveEntity(j);
+	// Save bounds and velocity to JSON
+	j["boundLeft"] = boundLeft;
+	j["boundRight"] = boundRight;
+	j["boundTop"] = boundTop;
+	j["boundBottom"] = boundBottom;
+	j["velocity"] = { velocity.x, velocity.y };
 }

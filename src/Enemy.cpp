@@ -7,7 +7,7 @@
 
 // Enemy Class Implementation
 Enemy::Enemy(Vector2 pos, Vector2 size, Vector2 vel, Direction direction, EntityState state, Texture2D texture, float frameTime, int maxFrame, Color color)
-    : Entity(pos, size, vel, direction, state, frameTime, maxFrame, color), deathTimer(0.0f), squashScale(1.0f), isFlipped(false), isKicked(false)
+    : Entity(pos, size, vel, direction, state, frameTime, maxFrame, color), collisionTimer(0.f), deathTimer(0.0f), squashScale(1.0f), isFlipped(false), isKicked(false)
 {
     CollNorth.setSize({ size.x / 2, 5 });
     CollSouth.setSize({ size.x / 2, 5 });
@@ -164,22 +164,27 @@ void Enemy::setDeathTimer(float time)
 void Enemy::loadEntity(const json& j)
 {
     Entity::loadEntity(j);
+	// Load base class data
+    velocity = { j["vel"][0], j["vel"][1] };
     deathTimer = j["deathTimer"];
     squashScale = j["squashScale"];
     isFlipped = j["isFlipped"];
     isKicked = j["isKicked"];
     collisionTimer = j["collisionTimer"];
     scores = j["scores"];
+
 }
 
 void Enemy::saveEntity(json& j) const
 {
     Entity::saveEntity(j); // Save base class data
-
+	// Save derived class data
+	j["vel"] = { velocity.x, velocity.y };
     j["deathTimer"] = deathTimer;
     j["squashScale"] = squashScale;
     j["isFlipped"] = isFlipped;
     j["isKicked"] = isKicked;
     j["collisionTimer"] = collisionTimer;
     j["scores"] = scores;
+
 }

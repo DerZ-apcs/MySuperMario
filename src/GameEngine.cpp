@@ -752,15 +752,7 @@ bool GameEngine::isInCameraView(Rectangle entityRect) const {
 }
 
 void GameEngine::saveGame(int slot) {
-    json j;
-    level->saveLevel(j);
-    map.saveMap(j);
-    j["mapSize"] = { map.getMapSize().x, map.getMapSize().y };
-    j["background"] = level->getBackGroundName();
-    //camera.saveCamera(j);
-    
-    saveMultiCharacters(*multiplayers, j);        // Characters
-    saveGameEngineState(this, j);
+    json j = serialize();   
 
     std::string path = SaveManager::getSlotPath(slot);
     SaveManager::ensureSaveDirectoryExists();
@@ -780,19 +772,7 @@ void GameEngine::loadGame(int slot)
 
     json j;
     file >> j;
-
-    level->loadLevel(j);
-	loadGameMap(*level);
-    map.loadMap(j);
-    Vector2 Msize = { j["mapSize"][0], j["mapSize"][1] };
-    //camera.loadCamera(j);
-    //camera.loadRenderTexture(Msize);
-    map.setMapSize(Msize);
-    std::string backgroundName = j["background"];
-    map.loadBackgroundTexture(backgroundName);
-    loadMultiCharacters(*multiplayers, j);
-    loadGameEngineState(this, j);
-
+    deserialize(j);
 }
 
 void GameEngine::saveGameEngineState(GameEngine* engine, json& j) {
@@ -845,6 +825,41 @@ void GameEngine::loadGameEngineState(GameEngine* engine, const json& j) {
             });
     }
     engine->secretAreas = secretAreas;
+}
+
+json GameEngine::serialize()
+{
+    json j;
+    level->saveLevel(j);
+    map.saveMap(j);
+    j["mapSize"] = { map.getMapSize().x, map.getMapSize().y };
+    j["background"] = level->getBackGroundName();
+
+    saveMultiCharacters(*multiplayers, j);
+    saveGameEngineState(this, j);
+    saveEnemies(enemies, j);
+    saveItems(items, j);
+    saveTileGrids(tileGrid, j);
+    return j;
+}
+
+void GameEngine::deserialize(const json& j)
+{
+    level->loadLevel(j);
+    loadGameMap(*level);
+    map.loadMap(j);
+
+    Vector2 Msize = { j["mapSize"][0], j["mapSize"][1] };
+    map.setMapSize(Msize);
+
+    std::string backgroundName = j["background"];
+    map.loadBackgroundTexture(backgroundName);
+
+    loadMultiCharacters(*multiplayers, j);
+    loadGameEngineState(this, j);
+    loadEnemies(enemies, j);
+    loadItems(items, j);
+    loadTileGrids(tileGrid, j);
 }
 
 std::vector<std::vector<Blocks*>>& GameEngine::getTileGrid()

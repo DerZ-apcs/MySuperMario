@@ -12,6 +12,7 @@ PiranhaPlant::PiranhaPlant(Vector2 pos, Texture2D texture)
     piranhaType(NORMAL_PIRANHA)
 { 
     gravityAvailable = true;
+    collisionTimer = 0.f;
     scores = 200.f;
 }
 
@@ -144,12 +145,6 @@ float PiranhaPlant::getScores() const
     return SCORE_STOMP_REX;
 }
 
-float popUpTimer; // Timer để kiểm soát chu kỳ trồi/rút
-bool isPoppingUp; // Trạng thái trồi lên hay rút xuống
-float popUpHeight; // Độ cao tối đa khi trồi lên
-float baseY; // Vị trí Y ban đầu (đáy ống)
-float invincibilityTimer;
-float delayTimer;
 void PiranhaPlant::loadEntity(const json& j)
 {
     Enemy::loadEntity(j);

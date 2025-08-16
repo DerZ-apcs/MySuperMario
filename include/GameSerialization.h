@@ -24,6 +24,7 @@ void loadItems(std::vector<Item*>& items, const json& j);
 void saveTileGrids(const std::vector<std::vector<Blocks*>>& tileGrid, json& j);
 void loadTileGrids(std::vector<std::vector<Blocks*>>& tileGrid, const json& j);
 
+bool isBasisBlock(BLOCK_TYPE type);
 //void saveEffects(const std::vector<Effect> effects, json& j);
 //void loadEffects(std::vector<Effect>& effects, const json& j);
 
@@ -41,8 +42,3 @@ void loadTileGrids(std::vector<std::vector<Blocks*>>& tileGrid, const json& j);
 
 //void saveSecretArea(const std::vector<Rectangle> secret, json& j);
 //void loadSecretArea(std::vector<Rectangle>& scret, const json& j);
-//
-//void saveGameState(const int Remainedtime, const int level, json& j);
-//void loadGameState(int& Remainedtime, int& level, const json& j);
-
-static Texture2D loadTextureFromType(ENEMY_TYPE type);

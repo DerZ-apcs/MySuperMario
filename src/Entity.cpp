@@ -306,7 +306,7 @@ void Entity::saveEntity(json& j) const {
 
 	j["maxFrame"] = maxFrame;
 	j["currFrame"] = currFrame;
-	j["frameTime"] = 0;
+	j["frameTime"] = frameTime;
 	j["frameAcum"] = 0;
 
 	// Note: Texture2D is not serializable directly. Save the path instead.
@@ -331,7 +331,7 @@ void Entity::loadEntity(const json& j)
 	maxFrame = j["maxFrame"];
 	currFrame = j["currFrame"];
 	frameTime = j["frameTime"];
-	frameAcum = j["frameAcum"];
+	frameAcum = 0; // frameAcum is reset to 0 when loading
 
 	isjumping = j["isJumping"];
 	gravityAvailable = j["gravityAvailable"];
