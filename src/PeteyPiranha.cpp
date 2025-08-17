@@ -193,8 +193,8 @@ void PeteyPiranha::shootFireball() {
     // Vị trí bắt đầu của quả cầu lửa
     Vector2 fireBallPos = { position.x, position.y + 10 };
     const int numFireballs = 3;
-    const float angleSpread = 15.0f; // Góc tỏa ra của các viên đạn
-    const float baseSpeed = 300.0f;
+    const float angleSpread = 10.0f; // Góc tỏa ra của các viên đạn
+    const float baseSpeed = 250.0f;
 
     // --- BẮN VỀ BÊN PHẢI ---
     for (int i = 0; i < numFireballs; ++i) {
