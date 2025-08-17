@@ -20,6 +20,7 @@ public:
     void Update() override;
     void UpdateTexture() override;
     void stomped() override;
+	void CollisionWithFireball(FireBall* fireball) override;
     void Explode(); // Hàm xử lý logic vụ nổ
     void loadEntity(const json& j) override;
     void saveEntity(json& j) const override;

@@ -9,6 +9,7 @@
 #include "../include/Character.h"
 #include "../include/TextButton.h"
 #include "../include/GameEngine.h"
+#include "../include/EditorEngine.h"
 #include "../include/GUI.h"
 
 // forward declaration
@@ -36,10 +37,12 @@ public:
 private:
 	TextButton startButton;
 	TextButton continueButton;
+	TextButton saveButton;
+	TextButton loadButton;
 	TextButton settingButton;
 	TextButton mapSelectionButton;
 	TextButton modePlayerButton;
-	std::vector<int> choosingPosition = { 0, 1, 2, 3, 4 };
+	std::vector<int> choosingPosition = { 0, 1, 2, 3, 4, 5, 6 };
 	Texture2D guiArrow;
 	int currentPosition = 0;
 };
@@ -120,5 +123,43 @@ private:
 	Texture2D GuiP1;
 	Texture2D GuiP2;
 		
+};
+
+class LoadGameState : public MenuState {
+public:
+	explicit LoadGameState(Game* game);
+	void draw() override;
+	void handleInput() override;
+	void update() override;
+private:
+	int slotLoadGame = -1;
+	TextButton loadGame1Button;
+	TextButton loadGame2Button;
+	TextButton loadGame3Button;
+	TextButton loadGame4Button;
+	TextButton loadGame5Button;
+	TextButton backButton;
+	std::vector<int> choosingPosition = { 0, 1, 2, 3, 4, 5};
+	Texture2D guiArrow;
+	int currentPosition = 0;
+};
+
+class SaveGameState : public MenuState {
+public:
+	explicit SaveGameState(Game* game);
+	void draw() override;
+	void handleInput() override;
+	void update() override;
+private:
+	int slotSaveGame = -1;
+	TextButton saveGame1Button;
+	TextButton saveGame2Button;
+	TextButton saveGame3Button;
+	TextButton saveGame4Button;
+	TextButton saveGame5Button;
+	TextButton backButton;
+	std::vector<int> choosingPosition = { 0, 1, 2, 3, 4, 5 };
+	Texture2D guiArrow;
+	int currentPosition = 0;
 };
 #endif

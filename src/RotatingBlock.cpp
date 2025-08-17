@@ -65,3 +65,17 @@ void RotatingBlock::UpdateTexture() {
 void RotatingBlock::draw() {
 	DrawTexture(texture, position.x, position.y, WHITE);
 }
+
+void RotatingBlock::loadEntity(const json& j)
+{
+	Blocks::loadEntity(j);
+	isActive = j["isActive"];
+	rotatingTime = j["rotatingTime"];
+}
+
+void RotatingBlock::saveEntity(json& j) const
+{
+	Blocks::saveEntity(j);
+	j["isActive"] = isActive;
+	j["rotatingTime"] = rotatingTime;
+}

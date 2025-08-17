@@ -1,14 +1,17 @@
 #include "../include/Menu.h"
 #include "../include/Game.h"
+#include "../include/SaveManager.h"
 
 MainMenuState::MainMenuState(Game* game)
 {
 	this->game = game;
 	startButton = { Vector2{400, 300}, Vector2{160, 80}, "Start" };
 	continueButton = { {400, 360}, {160, 80}, "Continue" };
-	settingButton = { {400, 420}, {160, 80}, "Setting" };
-	modePlayerButton = { {400, 480}, {200, 80}, "Mode" }; // for mode
-	mapSelectionButton = { {400, 540}, {160, 80}, "Map" };
+	saveButton = { {400, 420}, {160, 80}, "Save Game" };
+	loadButton = { {400, 480}, {160, 80}, "Load Game" };
+	settingButton = { {400, 540}, {160, 80}, "Setting" };
+	modePlayerButton = { {400, 600}, {200, 80}, "Mode" }; // for mode
+	mapSelectionButton = { {400, 660}, {160, 80}, "Map" };
 	guiArrow = RESOURCE_MANAGER.getTexture("choosingArrow");
 }
 
@@ -16,6 +19,8 @@ void MainMenuState::draw()
 {
 	startButton.draw();
 	continueButton.draw();
+	saveButton.draw();
+	loadButton.draw();
 	settingButton.draw();
 	modePlayerButton.draw();
 	mapSelectionButton.draw();
@@ -39,9 +44,7 @@ void MainMenuState::handleInput()
 	if (startButton.isPressed() || (currentPosition == 0 && IsKeyPressed(KEY_ENTER))) {
 		if (game->multiplayers.empty()) {
 			game->multiplayers.push_back(std::make_unique<Mario>());
-			game->multiplayers[0]->setPosition({ 32, 400 });
-			game->multiplayers[0]->setVel({ 0, 0 });
-			game->multiplayers[0]->setState(FALLING);
+			game->multiplayers[0]->ResetEnterNewMap();
 		}
 		else {
 			for (auto& p : game->multiplayers)
@@ -53,7 +56,7 @@ void MainMenuState::handleInput()
 			globalGameEngine = nullptr;
 		}
 		globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
-
+		globalGameEngine->loadGameMap(*game->level);
 		while (globalGameEngine != nullptr) {
 			if (globalGameEngine->run()) {
 				auto& players = globalGameEngine->getMultiplayers();
@@ -65,9 +68,7 @@ void MainMenuState::handleInput()
 				if ((game->getSelectedMap() + 1) <= 3) {
 					for (auto& p : players) {
 						if (p) {
-							p->setPosition({ 16, 400 });
-							p->setVel({ 0, 0 });
-							p->setState(FALLING);
+							p->ResetEnterNewMap();
 						}
 					}
 					delete globalGameEngine;
@@ -76,7 +77,9 @@ void MainMenuState::handleInput()
 					game->selectMap(game->getSelectedMap() + 1);
 					// Create a new GameEngine with the updated map and players
 					globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
-				}
+					globalGameEngine->loadGameMap(*game->level);
+					globalGameEngine->InitGameCamera(); // init lai gamecamera
+				} 
 				else break;
 			}
 			else {
@@ -89,52 +92,94 @@ void MainMenuState::handleInput()
 		}
 	}
 	else if (continueButton.isPressed() || (currentPosition == 1 && IsKeyPressed(KEY_ENTER))) {
+		// fix when game over and press continue
 		if (globalGameEngine == nullptr) {
-			if (game->multiplayers.empty())
+			if (game->multiplayers.empty()) {
 				game->multiplayers.push_back(std::make_unique<Mario>());
-			game->multiplayers[0]->setPosition({32, 400});
-			game->multiplayers[0]->setVel({ 0, 0 });
-			game->multiplayers[0]->setState(FALLING);
+				game->multiplayers[0]->ResetEnterNewMap();
+			}
+			else {
+				for (auto& p : game->multiplayers)
+					if (p) p->reset();
+			}
 			globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
+			globalGameEngine->loadGameMap(*game->level);
 		}
+		else if (globalGameEngine->isOver()) {
+			for (auto& p : game->multiplayers)
+				p->reset();
+			// delete the old gameengine
+			if (globalGameEngine != nullptr) {
+				delete globalGameEngine;
+				globalGameEngine = nullptr;
+			}
+			globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
+			globalGameEngine->loadGameMap(*game->level);
+		}
+
 		while (globalGameEngine != nullptr) {
 			if (globalGameEngine->run()) {
 				delete globalGameEngine;
 				globalGameEngine = nullptr;
 				if ((game->getSelectedMap() + 1) <= 3)
 				{
-		/*			if (game->multiplayers.empty())
-						game->multiplayers.push_back(std::make_unique<Mario>());*/
 					for (auto& p : game->multiplayers) {
-						p->setPosition({ 32, 400 });
-						p->setVel({ 0, 0 });
-						p->setState(FALLING);
+						if (p)
+							p->ResetEnterNewMap();
 					}
 					game->selectMap(game->getSelectedMap() + 1);
 					globalGameEngine = new GameEngine(1600.0f, 800.0f, *game->level, &game->multiplayers);
+					globalGameEngine->loadGameMap(*game->level);
 				}
 				else break;
 			}
 			else {
-				if (globalGameEngine->isOver())
+				if (globalGameEngine->isOver()) {
 					for (auto& p : game->multiplayers)
 						p->reset();
+					// delete the old gameengine
+					if (globalGameEngine != nullptr) {
+						delete globalGameEngine;
+						globalGameEngine = nullptr;
+					}
+				}
 				break;
 			}
 		}
 	}
-	else if (settingButton.isPressed() || (currentPosition == 2 && IsKeyPressed(KEY_ENTER)))
+	else if (saveButton.isPressed() || (currentPosition == 2 && IsKeyPressed(KEY_ENTER))) 
+		game->setState(std::make_unique<SaveGameState>(game));
+	else if (loadButton.isPressed() || (currentPosition == 3 && IsKeyPressed(KEY_ENTER))) 
+		game->setState(std::make_unique<LoadGameState>(game));
+	else if (settingButton.isPressed() || (currentPosition == 4 && IsKeyPressed(KEY_ENTER)))
 		game->setState(std::make_unique<SettingState>(game));
-	else if (modePlayerButton.isPressed() || (currentPosition == 3 && IsKeyPressed(KEY_ENTER)))
+	else if (modePlayerButton.isPressed() || (currentPosition == 5 && IsKeyPressed(KEY_ENTER)))
 		game->setState(std::make_unique<ModePlayer>(game));
-	else if (mapSelectionButton.isPressed()|| (currentPosition == 4 && IsKeyPressed(KEY_ENTER)))
+	else if (mapSelectionButton.isPressed()|| (currentPosition == 6 && IsKeyPressed(KEY_ENTER)))
 		game->setState(std::make_unique<MapSelection>(game));
+	else if (IsKeyPressed(KEY_E)) {
+		if (globalEditorEngine != nullptr) {
+			delete globalEditorEngine;
+			globalEditorEngine = nullptr;
+		}
+		globalEditorEngine = new EditorEngine(1600, 800);
+
+		while (globalEditorEngine != nullptr) {
+			if (globalEditorEngine->run()) {
+				delete globalEditorEngine;
+				globalEditorEngine = nullptr;
+			}
+			else break;
+		}
+	}
 }
 
 void MainMenuState::update()
 {
 	startButton.update();
 	continueButton.update();
+	saveButton.update();
+	loadButton.update();
 	settingButton.update();
 	modePlayerButton.update();
 	mapSelectionButton.update();
@@ -142,11 +187,15 @@ void MainMenuState::update()
 	else startButton.setHovered(false);
 	if (currentPosition == 1) continueButton.setHovered(true);
 	else continueButton.setHovered(false);
-	if (currentPosition == 2) settingButton.setHovered(true);
+	if (currentPosition == 2) saveButton.setHovered(true);
+	else saveButton.setHovered(false);
+	if (currentPosition == 3) loadButton.setHovered(true);
+	else loadButton.setHovered(false);
+	if (currentPosition == 4) settingButton.setHovered(true);
 	else settingButton.setHovered(false);
-	if (currentPosition == 3) modePlayerButton.setHovered(true);
+	if (currentPosition == 5) modePlayerButton.setHovered(true);
 	else modePlayerButton.setHovered(false);
-	if (currentPosition == 4) mapSelectionButton.setHovered(true);
+	if (currentPosition == 6) mapSelectionButton.setHovered(true);
 	else mapSelectionButton.setHovered(false);
 }
 
@@ -334,7 +383,7 @@ void MapSelection::handleInput()
 			p->reset();
 		game->returnToMainMenu();
 	}
-	else if (backButton.isPressed() || (currentPosition == 1 && IsKeyPressed(KEY_ENTER)))
+	else if (backButton.isPressed() || (currentPosition == 3 && IsKeyPressed(KEY_ENTER)))
 		game->returnToMainMenu();
 
 	if (IsKeyPressed(KEY_UP)) {
@@ -427,7 +476,8 @@ void SingleCharSelection::handleInput()
 			game->multiplayers.push_back(std::make_unique<Peach>());
 		else if (currentPlayer == 4)
 			game->multiplayers.push_back(std::make_unique<Marisa>());
-
+		
+		game->multiplayers[0]->setPlayerid(0);
 		if (globalGameEngine != nullptr) {
 			delete globalGameEngine;
 			globalGameEngine = nullptr;
@@ -534,6 +584,8 @@ void DualCharSelection::handleInput()
 		else if (currentPlayer2 == 4)
 			game->multiplayers.push_back(std::make_unique<Marisa>());
 
+		game->multiplayers[0]->setPlayerid(0);
+		game->multiplayers[1]->setPlayerid(1);
 		if (globalGameEngine != nullptr) {
 			delete globalGameEngine;
 			globalGameEngine = nullptr;
@@ -545,4 +597,274 @@ void DualCharSelection::handleInput()
 void DualCharSelection::update()
 {
 
+}
+
+LoadGameState::LoadGameState(Game* game)
+{
+	this->game = game;
+	// Load the available save slots
+	loadGame1Button = { {400, 300}, {160, 80}, "Load Slot 1: Empty" };
+	loadGame2Button = { {400, 360}, {160, 80}, "Load Slot 2: Empty" };
+	loadGame3Button = { {400, 420}, {160, 80}, "Load Slot 3: Empty" };
+	loadGame4Button = { {400, 480}, {160, 80}, "Load Slot 4: Empty" };
+	loadGame5Button = { {400, 540}, {160, 80}, "Load Slot 5: Empty" };
+	backButton = { {400, 600}, {160, 80}, "Return" };
+	guiArrow = RESOURCE_MANAGER.getTexture("choosingArrow");
+	currentPosition = 0;
+}
+
+void LoadGameState::draw()
+{
+	loadGame1Button.draw();
+	loadGame2Button.draw();
+	loadGame3Button.draw();
+	loadGame4Button.draw();
+	loadGame5Button.draw();
+	backButton.draw();
+	if (guiArrow.id == 0)
+		guiArrow = RESOURCE_MANAGER.getTexture("choosingArrow");
+	DrawTexturePro(guiArrow, { 0, 0, (float)guiArrow.width, (float)guiArrow.height },
+		{ 330, (float)305 + currentPosition * 60, (float)guiArrow.width, (float)guiArrow.height }, { 0, 0 }, 0.f, WHITE);
+}
+
+void LoadGameState::handleInput()
+{	
+	slotLoadGame = -1; // Initialize slotLoadGame to -1 (no slot selected)
+	if (loadGame1Button.isPressed() || (currentPosition == 0 && IsKeyPressed(KEY_ENTER))) {
+		slotLoadGame = 1; // Set the slot to 1 for loading
+	}
+	else if (loadGame2Button.isPressed() || (currentPosition == 1 && IsKeyPressed(KEY_ENTER))) {
+		slotLoadGame = 2;
+	}
+	else if (loadGame3Button.isPressed() || (currentPosition == 2 && IsKeyPressed(KEY_ENTER))) {
+		slotLoadGame = 3;
+	}
+	else if (loadGame4Button.isPressed() || (currentPosition == 3 && IsKeyPressed(KEY_ENTER))) {
+		slotLoadGame = 4;
+	}
+	else if (loadGame5Button.isPressed() || (currentPosition == 4 && IsKeyPressed(KEY_ENTER))) {
+		slotLoadGame = 5;
+	}
+	else if (backButton.isPressed() || (currentPosition == 5 && IsKeyPressed(KEY_ENTER))) {
+		game->returnToMainMenu();
+		return;
+	}
+
+	if (IsKeyPressed(KEY_UP)) {
+		currentPosition--;
+		if (currentPosition < 0) currentPosition = 5; // wrap around to last position
+	}
+	else if (IsKeyPressed(KEY_DOWN)) {
+		currentPosition++;
+		if (currentPosition >= 6) currentPosition = 0; // wrap around to first position
+	}
+	std::vector<int> slots = SaveManager::listAvailableSlots();
+	bool found = false;
+	for (int i = 0; i < slots.size(); ++i) {
+		if (slotLoadGame == slots[i]) {
+			found = true; // slotLoadGame is a valid slot
+			break;
+		}
+	}
+	if (!found) {
+		slotLoadGame = -1; // Reset to -1 if not found
+		return;
+	}
+	if (slotLoadGame == -1) return;
+	// return trong th slot do empty
+
+
+	int chosenSlot = slotLoadGame; // lay tu o tren
+	if (chosenSlot != -1) {
+		if (globalGameEngine != nullptr) {
+			delete globalGameEngine;
+			globalGameEngine = nullptr;
+		}
+		globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
+		globalGameEngine->loadGame(chosenSlot);
+
+		std::cout << "Game loaded from slot " << chosenSlot << "\n";
+		while (globalGameEngine != nullptr) {
+			if (globalGameEngine->run()) {
+				delete globalGameEngine;
+				globalGameEngine = nullptr;
+				if (game->getSelectedMap() + 1 <= 3) {
+					for (auto& p : game->multiplayers) {
+						if (p) 
+							p->ResetEnterNewMap();
+					}
+					game->selectMap(game->getSelectedMap() + 1);
+					globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
+					globalGameEngine->loadGameMap(*game->level);
+				}
+				else {
+					break;
+				}
+			}
+			else {
+				if (globalGameEngine->isOver()) {
+					for (auto& p : game->multiplayers) {
+						p->reset();
+					}
+				}
+				break;
+			}
+		}
+	}
+	else {
+		std::cout << "No valid slot selected!\n";
+	}
+}
+
+void LoadGameState::update()
+{
+	loadGame1Button.update();
+	loadGame2Button.update();
+	loadGame3Button.update();
+	loadGame4Button.update();
+	loadGame5Button.update();
+	backButton.update();
+
+	// Update the text of the load buttons based on available slots
+	std::vector<int> slots = SaveManager::listAvailableSlots();
+	auto getSlotText = [&](int slotNumber) {
+		if (std::find(slots.begin(), slots.end(), slotNumber) != slots.end()) {
+			return "Load Slot " + std::to_string(slotNumber) + ": Used";
+		}
+		else {
+			return "Load Slot " + std::to_string(slotNumber) + ": Empty";
+		}
+	};
+	loadGame1Button.setText(getSlotText(1));
+	loadGame2Button.setText(getSlotText(2));
+	loadGame3Button.setText(getSlotText(3));
+	loadGame4Button.setText(getSlotText(4));
+	loadGame5Button.setText(getSlotText(5));
+
+	// Set hovered state based on current position
+	if (currentPosition == 0) loadGame1Button.setHovered(true);
+	else loadGame1Button.setHovered(false);
+	if (currentPosition == 1) loadGame2Button.setHovered(true);
+	else loadGame2Button.setHovered(false);
+	if (currentPosition == 2) loadGame3Button.setHovered(true);
+	else loadGame3Button.setHovered(false);
+	if (currentPosition == 3) loadGame4Button.setHovered(true);
+	else loadGame4Button.setHovered(false);
+	if (currentPosition == 4) loadGame5Button.setHovered(true);
+	else loadGame5Button.setHovered(false);
+	if (currentPosition == 5) backButton.setHovered(true);
+	else backButton.setHovered(false);
+}
+
+SaveGameState::SaveGameState(Game* game)
+{
+	this->game = game;
+	saveGame1Button = { {400, 300}, {160, 80}, "Save Slot 1: Empty" };
+	saveGame2Button = { {400, 360}, {160, 80}, "Save Slot 2: Empty" };
+	saveGame3Button = { {400, 420}, {160, 80}, "Save Slot 3: Empty" };
+	saveGame4Button = { {400, 480}, {160, 80}, "Save Slot 4: Empty" };
+	saveGame5Button = { {400, 540}, {160, 80}, "Save Slot 5: Empty" };
+	backButton = { {400, 600}, {160, 80}, "Return" };
+	guiArrow = RESOURCE_MANAGER.getTexture("choosingArrow");
+	currentPosition = 0;
+}
+
+void SaveGameState::draw()
+{
+	saveGame1Button.draw();
+	saveGame2Button.draw();
+	saveGame3Button.draw();
+	saveGame4Button.draw();
+	saveGame5Button.draw();
+	backButton.draw();
+	if (guiArrow.id == 0)
+		guiArrow = RESOURCE_MANAGER.getTexture("choosingArrow");
+	DrawTexturePro(guiArrow, { 0, 0, (float)guiArrow.width, (float)guiArrow.height },
+		{ 330, (float)305 + currentPosition * 60, (float)guiArrow.width, (float)guiArrow.height }, { 0, 0 }, 0.f, WHITE);
+}
+
+void SaveGameState::handleInput()
+{
+	slotSaveGame = -1; // Initialize slotSaveGame to -1 (no slot selected)
+	if (saveGame1Button.isPressed() || (currentPosition == 0 && IsKeyPressed(KEY_ENTER))) {
+		slotSaveGame = 1;
+	}
+	else if (saveGame2Button.isPressed() || (currentPosition == 1 && IsKeyPressed(KEY_ENTER))) {
+		slotSaveGame = 2;
+	}
+	else if (saveGame3Button.isPressed() || (currentPosition == 2 && IsKeyPressed(KEY_ENTER))) {
+		slotSaveGame = 3;
+	}
+	else if (saveGame4Button.isPressed() || (currentPosition == 3 && IsKeyPressed(KEY_ENTER))) {
+		slotSaveGame = 4;
+	}
+	else if (saveGame5Button.isPressed() || (currentPosition == 4 && IsKeyPressed(KEY_ENTER))) {
+		slotSaveGame = 5;
+	}
+	else if (backButton.isPressed() || (currentPosition == 5 && IsKeyPressed(KEY_ENTER))) {
+		game->returnToMainMenu();
+	}
+	if (IsKeyPressed(KEY_UP)) {
+		currentPosition--;
+		if (currentPosition < 0) currentPosition = 5; // wrap around to last position
+	}
+	else if (IsKeyPressed(KEY_DOWN)) {
+		currentPosition++;
+		if (currentPosition >= 6) currentPosition = 0; // wrap around to first position
+	}
+
+	if (slotSaveGame == -1) return; // No slot selected
+
+	if (globalGameEngine != nullptr) {
+		int slot = slotSaveGame; // lay tu o tren
+		if (slot != -1) {
+			globalGameEngine->saveGame(slot); // save in the chosen free slot
+			std::cout << "Game saved in slot " << slot << "\n";
+		}
+		else {
+			std::cout << "No free slots available!\n";
+		}
+	}
+	else {
+		std::cout << "No game is running to save\n";
+	}
+}
+
+void SaveGameState::update()
+{
+	saveGame1Button.update();
+	saveGame2Button.update();
+	saveGame3Button.update();
+	saveGame4Button.update();
+	saveGame5Button.update();
+	backButton.update();
+	// Update the text of the save buttons based on available slots
+	
+	std::vector<int> slots = SaveManager::listAvailableSlots();
+	auto getSlotText = [&](int slotNumber) {
+		if (std::find(slots.begin(), slots.end(), slotNumber) != slots.end()) {
+			return "Save Slot " + std::to_string(slotNumber) + ": Used";
+		}
+		else {
+			return "Save Slot " + std::to_string(slotNumber) + ": Empty";
+		}
+	};
+	saveGame1Button.setText(getSlotText(1));
+	saveGame2Button.setText(getSlotText(2));
+	saveGame3Button.setText(getSlotText(3));
+	saveGame4Button.setText(getSlotText(4));
+	saveGame5Button.setText(getSlotText(5));
+
+	if (currentPosition == 0) saveGame1Button.setHovered(true);
+	else saveGame1Button.setHovered(false);
+	if (currentPosition == 1) saveGame2Button.setHovered(true);
+	else saveGame2Button.setHovered(false);
+	if (currentPosition == 2) saveGame3Button.setHovered(true);
+	else saveGame3Button.setHovered(false);
+	if (currentPosition == 3) saveGame4Button.setHovered(true);
+	else saveGame4Button.setHovered(false);
+	if (currentPosition == 4) saveGame5Button.setHovered(true);
+	else saveGame5Button.setHovered(false);
+	if (currentPosition == 5) backButton.setHovered(true);
+	else backButton.setHovered(false);
 }

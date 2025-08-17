@@ -36,15 +36,3 @@ void Item::updateCollision()
 void Item::UpdateTexture()
 {
 }
-
-void Item::loadEntity(const json& j)
-{
-	Entity::loadEntity(j);
-	point = j["point"];
-}
-
-void Item::saveEntity(json& j) const
-{
-	Entity::saveEntity(j);
-	j["point"] = point;
-}

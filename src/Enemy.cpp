@@ -7,7 +7,7 @@
 
 // Enemy Class Implementation
 Enemy::Enemy(Vector2 pos, Vector2 size, Vector2 vel, Direction direction, EntityState state, Texture2D texture, float frameTime, int maxFrame, Color color)
-    : Entity(pos, size, vel, direction, state, frameTime, maxFrame, color), deathTimer(0.0f), squashScale(1.0f), isFlipped(false), isKicked(false)
+    : Entity(pos, size, vel, direction, state, frameTime, maxFrame, color), collisionTimer(0.f), deathTimer(0.0f), squashScale(1.0f), isFlipped(false), isKicked(false)
 {
     CollNorth.setSize({ size.x / 2, 5 });
     CollSouth.setSize({ size.x / 2, 5 });
@@ -84,14 +84,11 @@ void Enemy::CollisionWithFireball(FireBall* fireball) {
     if (!isDead() && state != STATE_IS_DYING && !fireball->isDead()) {
         fireball->setEntityDead();
         state = STATE_IS_DYING;
-        //if (getEnemyType() == BOBOMB) {
-
-        //}
         deathTimer = ENEMY_DEATH_TIMER_DEFAULT;
         velocity.y = -250; // Nhảy lên nhẹ
         velocity.x = (rand() % 100) - 50; // Văng ngang ngẫu nhiên
         updateCollision();
-        if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomped.wav");
+        if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomp.wav");
         // text effect
         Effect* score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string(SCORE_STOMP_GOOMBA).c_str()), Vector2{this->getCenterX(), this->getTop()});
         globalGameEngine->addEffect(score);
@@ -167,24 +164,27 @@ void Enemy::setDeathTimer(float time)
 void Enemy::loadEntity(const json& j)
 {
     Entity::loadEntity(j);
+	// Load base class data
+    velocity = { j["vel"][0], j["vel"][1] };
     deathTimer = j["deathTimer"];
     squashScale = j["squashScale"];
     isFlipped = j["isFlipped"];
     isKicked = j["isKicked"];
     collisionTimer = j["collisionTimer"];
     scores = j["scores"];
-    enemyType = j["enemyType"];
+
 }
 
 void Enemy::saveEntity(json& j) const
 {
     Entity::saveEntity(j); // Save base class data
-
+	// Save derived class data
+	j["vel"] = { velocity.x, velocity.y };
     j["deathTimer"] = deathTimer;
     j["squashScale"] = squashScale;
     j["isFlipped"] = isFlipped;
     j["isKicked"] = isKicked;
     j["collisionTimer"] = collisionTimer;
     j["scores"] = scores;
-    j["enemyType"] = enemyType;
+
 }

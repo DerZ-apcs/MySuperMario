@@ -6,6 +6,7 @@
 class Item : public Entity {
 private:
 	int point;
+	ITEM_TYPE itemType;
 public:
 	Item(int point = 0);
 	Item(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState state, Texture2D tex);
@@ -17,8 +18,7 @@ public:
 	virtual void draw() override;
 	virtual void updateCollision() override;
 	virtual void UpdateTexture() override;
-	void loadEntity(const json& j) override;
-	void saveEntity(json& j) const override;
+
 };
 
 #endif

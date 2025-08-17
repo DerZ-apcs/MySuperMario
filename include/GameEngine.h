@@ -14,8 +14,9 @@
 #include "../include/Blocks.h"
 #include "../include/CollisionInfo.h"
 #include "../include/ScoreEffect.h"
+#include "../include/SmokeEffect.h"
 #include "../include/GameSerialization.h"
-#include "SaveManager.h"
+#include "../include/InputHandler.h"
 #include <vector>
 #include <string>
 #include <map>
@@ -32,10 +33,25 @@ private:
         {KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_RIGHT_SHIFT},
         {KEY_A, KEY_D, KEY_W, KEY_S, KEY_LEFT_SHIFT}
     };
+    std::vector<InputHandler> inputHandlers;
+	InputHandler inputHandler1;
+	InputHandler inputHandler2;
+    // Commands (shared between handlers)
+    MoveLeftCommand runLeft;
+    MoveRightCommand runRight;
+	RunFasterCommand runFast;
+	ReleaseRunFastCommand releaseRunFast;
+	StandingCommand stand;
+    JumpCommand jump;
+    DuckCommand duck;
+    ShortHopReleaseCommand shortHop;
+    FireCommand fire;
+    // other
     Level* level;
     Map map;
     std::vector<std::unique_ptr<Character>>* multiplayers; // for multiplayers
-    std::vector<Blocks*> blocks;
+    //std::vector<Blocks*> blocks;
+	std::vector<MovingBlock*> movingBlocks; // for moving blocks
     std::vector<Enemy*> enemies;
     std::vector<Item*> items;
     std::vector<EnemyFireBall*> enemyFireball;
@@ -50,18 +66,21 @@ private:
     bool isvictory = false;
     bool died = false;
     bool gameover = false;
-    bool isPaused;
+    bool isPaused = false;
     bool cleared = false;
     float time;
     float deltaTime;
     int sharedLives = 5;
     Texture2D BackGroundTex;
+    Vector2 bounce;
 
     std::map<std::string, Texture2D> backgroundTextures;
     std::vector<Vector2> BackGroundPos;
 public:
     //GameEngine(float screenWidth, float screenHeight, Level& level, Character*& player);
     GameEngine(float screenWidth, float screenHeight, Level& level, std::vector<std::unique_ptr<Character>>* multiplayers);
+    void loadGameMap(Level& level);
+    void InitGameCamera();
     ~GameEngine();
     void addScore(int amount);
     void addEnemyFireBall(EnemyFireBall* fireball);
@@ -78,13 +97,17 @@ public:
     float resetTimer();
     bool isOver() const;
     void resetGame();
-    Vector2 getBound();
+    Vector2 getBound() const;
     std::vector<std::unique_ptr<Character>>& getMultiplayers(); 
     std::vector<Blocks*> getNearbyBlocks(Vector2 pos, int range);
-    bool isInCameraView(Rectangle entityRect) const;;
-
-    void saveGame(int slot) const;
+    bool isInCameraView(Rectangle entityRect) const;
+    void saveGame(int slot);
     void loadGame(int slot);
+    void saveGameEngineState(GameEngine* engine, json& j);
+    void loadGameEngineState(GameEngine* engine, const json& j);
+    json serialize();
+	void deserialize(const json& j);
+    std::vector<std::vector<Blocks*>>& getTileGrid(); // for tile grid
 };
 extern GameEngine* globalGameEngine;
 

@@ -9,7 +9,7 @@ DryBones::DryBones(Vector2 pos, Texture2D tex)
 	texture = RESOURCE_MANAGER.getTexture("DryBones_LEFT_0");
 	frameTime = 1.5f;
     maxFrame = 1;
-    enemyType = DRYBONES;
+    scores = SCORE_STOMPED_DRYBONES;
 }
 
 void DryBones::Update() {

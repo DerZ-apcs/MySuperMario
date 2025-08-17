@@ -300,14 +300,14 @@ bool Entity::getGravityAvailable()
 void Entity::saveEntity(json& j) const {
 	j["pos"] = { position.x, position.y };
 	j["size"] = { size.x, size.y };
-	j["vel"] = { velocity.x, velocity.y };
+	j["vel"] = { 0.f, 0.f };
 	j["direction"] = static_cast<int>(direction);
-	j["state"] = static_cast<int>(state);
+	j["EntityState"] = static_cast<int>(state);
 
 	j["maxFrame"] = maxFrame;
 	j["currFrame"] = currFrame;
 	j["frameTime"] = frameTime;
-	j["frameAcum"] = frameAcum;
+	j["frameAcum"] = 0;
 
 	// Note: Texture2D is not serializable directly. Save the path instead.
 
@@ -326,12 +326,12 @@ void Entity::loadEntity(const json& j)
 	size = { j["size"][0], j["size"][1] };
 	velocity = { j["vel"][0], j["vel"][1] };
 	direction = static_cast<Direction>(j["direction"].get<int>());
-	state = static_cast<EntityState>(j["state"].get<int>());
+	state = static_cast<EntityState>(j["EntityState"].get<int>());
 
 	maxFrame = j["maxFrame"];
 	currFrame = j["currFrame"];
 	frameTime = j["frameTime"];
-	frameAcum = j["frameAcum"];
+	frameAcum = 0; // frameAcum is reset to 0 when loading
 
 	isjumping = j["isJumping"];
 	gravityAvailable = j["gravityAvailable"];

@@ -64,6 +64,7 @@ enum BLOCK_TYPE {
 	SOLIDBLOCK, // unmovable, unbreakable
 	MOVINGBLOCK,
 	ITEMBLOCK, // carry items
+	CANNON, // cannon block
 	HIDDEN, 
 	TEMPBLOCK,
 	DECOR, // for decor, not collision
@@ -93,7 +94,9 @@ enum ITEM_TYPE {
 enum ENEMY_TYPE {
 	GOOMBA,
 	KOOPA,
+	PARAKOOPA,
 	BULLET,
+	BANZAIBILL,
 	REX,
 	PIRANHA,
 	SHELL,
@@ -101,7 +104,8 @@ enum ENEMY_TYPE {
 	BOBOMB,
 	SPINY,
 	BUZZYBEETLE,
-	DRYBONES
+	DRYBONES,
+	BOSS
 };
 
 enum GOOMBA_TYPE {
@@ -114,6 +118,13 @@ enum KOOPA_TYPE {
 	GREEN_KOOPA,
 	RED_KOOPA,
 	BLUE_KOOPA
+};
+
+enum PARAKOOPA_TYPE {
+	YELLOW_PARAKOOPA,
+	GREEN_PARAKOOPA,
+	RED_PARAKOOPA,
+	BLUE_PARAKOOPA
 };
 
 enum BULLET_TYPE {
@@ -152,7 +163,7 @@ enum FlowerType {
 	FIRE_FLOWER // 0
 };
 enum MoonType {
-	NORMAL_MOON
+	NORMAL_MOON // 0
 };
 enum StarType {
 	YELLOW_STAR, // 0

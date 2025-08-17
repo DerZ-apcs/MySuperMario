@@ -4,11 +4,9 @@
 
 class Goomba : public Enemy {
 protected:
-    float pauseTimer;
-    bool isPaused;
-    bool beattacked;
     float collisionTimer;
     float detectMarioRange;
+    GOOMBA_TYPE goombaType;
 public:
     bool isAttacked() const;
     ENEMY_TYPE getEnemyType() const;
@@ -26,12 +24,11 @@ public:
 
 class FlyingGoomba : public Goomba {
 private:
-    float jumpTimer; // Timer để kiểm soát tần suất nhảy
-    float detectMarioRange;
-    float collisionTimer;
     bool hasWings;
-    bool isSearchPaused;
-	float searchCooldownTimer;
+    float topY;
+    float bottomY;
+    float leftPatrolX;  
+    float rightPatrolX;
 public:
     ENEMY_TYPE getEnemyType() const;
     GOOMBA_TYPE getGoombaType() const;
@@ -41,6 +38,7 @@ public:
     float getScores() const override;
     void setJumpTimer(float time);
     void stomped() override;
+	void CollisionWithFireball(FireBall* fireball) override;
     void loadEntity(const json& j) override;
     void saveEntity(json& j) const override;
 };

@@ -10,6 +10,7 @@ Flower::Flower(FlowerType type, Vector2 position, Direction direction):
 	currFrame = 0;
 	frameTime = 0.2f;
 	maxFrame = 2;
+	subType = 0;
 }
 
 //-----------------

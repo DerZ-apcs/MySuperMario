@@ -10,7 +10,7 @@ BobOmb::BobOmb(Vector2 pos, Texture2D texture)
     fuseTimer(BOBOMB_FUSE_TIME) 
 {
     velocity.x = -BOBOMB_WALK_SPEED;
-    enemyType = BOBOMB;
+    scores = 100.f;
 }
 
 BobOmb::~BobOmb() {}
@@ -98,6 +98,17 @@ void BobOmb::stomped()
 	// Khi Bob-omb bị dẫm, nó sẽ được kích hoạt
     isActivated = true;
     velocity.x = 0;
+}
+
+void BobOmb::CollisionWithFireball(FireBall* fireball)
+{
+    if (isDying() || isDead()) return;
+    Explode(); // Nổ ngay khi bị bắn
+    fireball->setEntityDead();
+    SmokeEffect* smokeright = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ 60, 120 });
+    globalGameEngine->addEffect(smokeright);
+    SmokeEffect* smokeleft = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ -60, 120 });
+    globalGameEngine->addEffect(smokeleft);
 }
 
 

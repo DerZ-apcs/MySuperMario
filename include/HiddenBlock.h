@@ -6,14 +6,14 @@
 class HiddenBlock : public Blocks {
 private:
     bool revealed = false;
+	BLOCK_TYPE revealType = ITEMBLOCK;
 public:
     HiddenBlock(Vector2 pos = { 0, 0 }, Vector2 size = { 32, 32 });
-    HiddenBlock(Vector2 pos = { 0, 0 }, Vector2 size = { 32, 32 }, std::string textureName = "TILE_0");
+	void setRevealType(BLOCK_TYPE type) { revealType = type; }
     BLOCK_TYPE getBlockType() const override;
-    void Update() override;
-    void UpdateTexture() override;
     void draw() override;
     void reveal();
+	bool isrevealed() const { return revealed; }
     void loadEntity(const json& j) override;
     void saveEntity(json& j) const override;
 };

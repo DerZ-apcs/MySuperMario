@@ -5,17 +5,16 @@
 #include "../include/ResourceManager.h"
 
 Coin::Coin(CoinType type, Vector2 pos)
-	: Item(POINT), coinType(type) {
+	: Item(POINT), coinType(type), subType(0) {
 	this->texture = RESOURCE_MANAGER.getTexture("Coin_0");
 	this->position = pos;
 	this->size = { (float)texture.width, (float)texture.height };
 	this->dead = false;
-
 	this->maxFrame = 3;
 	this->currFrame = 0;
 	this->frameTime = 0.15f;
 	this->frameAcum = 0.0f;
-
+	coinType = STATIC_COIN;
 	setGravityAvailable(false);
 	setCollisionAvailable(true);
 	Entity::updateCollision();
@@ -79,10 +78,13 @@ void Coin::loadEntity(const json& j)
 {
 	Item::loadEntity(j);
 	coinType = static_cast<CoinType>(j["coinType"].get<int>());
+	subType = j["subType"];
 }
 
 void Coin::saveEntity(json& j) const
 {
 	Item::saveEntity(j);
 	j["coinType"] = static_cast<int>(coinType);
+	j["subType"] = subType;
 }
+

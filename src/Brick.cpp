@@ -46,4 +46,3 @@ void Brick::saveEntity(json& j) const
 	Blocks::saveEntity(j);
 	j["isBroken"] = isBroken;
 }
-

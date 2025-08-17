@@ -9,7 +9,7 @@ class Coin : public Item {
 private:
 	static constexpr int POINT = 100;
 	CoinType coinType;
-
+	int subType;
 public:
 	Coin(CoinType type, Vector2 pos);
 	~Coin() = default;

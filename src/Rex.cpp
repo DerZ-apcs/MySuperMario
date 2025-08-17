@@ -8,7 +8,7 @@ Rex::Rex(Vector2 pos, Texture2D texture)
     velocity.x = -REX_SPEED; // REX_SPEED được định nghĩa trong Enemy.h
     updateCollision();
     collisionTimer = 0.f;
-    enemyType = REX;
+    scores = SCORE_STOMP_REX;
 }
 
 ENEMY_TYPE Rex::getEnemyType() const
@@ -34,33 +34,40 @@ void Rex::Update() {
         collisionTimer -= deltaTime;
     }
 
-    //Character* character = globalGameEngine->getCharacter() ? globalGameEngine->getCharacter() : nullptr;
-    for (auto& p : globalGameEngine->getMultiplayers()) {
-        if (p && p->getState() != STATE_IS_DYING && collisionTimer <= 0) {
-            float distance = Vector2Distance(position, p->getPosition());
-            if (distance <= detectMarioRange) {
-                // Mario trong phạm vi phát hiện, thay đổi hướng và tốc độ
-                if (p->getX() < position.x) {
-                    direction = LEFT;
-                    velocity.x = (rexState == REX_NORMAL) ? -REX_SPEED : -REX_COMPRESSED_SPEED;
-                }
-                else {
-                    direction = RIGHT;
-                    velocity.x = (rexState == REX_NORMAL) ? REX_SPEED : REX_COMPRESSED_SPEED;
+    bool marioDetected = false;
+    bool sameHeight = false;
+    Vector2 marioPos;
+
+    // 1. Logic phát hiện Mario
+    if (collisionTimer <= 0) {
+        for (auto& p : globalGameEngine->getMultiplayers()) {
+            if (p != nullptr && p->getPhase() != DEAD_PHASE && p->getPhase() != CLEARLEVEL_PHASE) {
+                float dist = Vector2Distance(position, p->getPosition());
+                if (dist <= detectMarioRange) {
+                    marioDetected = true;
+                    // ktra chenh lech do cao
+                    float heightDiff = fabs(p->getBottom() - getBottom());
+                    if (heightDiff < 16.0f) { // nếu chênh lệch chiều cao nhỏ hơn 16 pixel
+                        sameHeight = true;
+                    }
+                    marioPos = p->getPosition();
+                    break; // chỉ cần phát hiện một Mario
                 }
             }
-            else {
-                // Mario ngoài phạm vi, di chuyển bình thường
-                velocity.x = (direction == LEFT) ? ((rexState == REX_NORMAL) ? -REX_SPEED : -REX_COMPRESSED_SPEED) :
-                    ((rexState == REX_NORMAL) ? REX_SPEED : REX_COMPRESSED_SPEED);
-            }
-        }
-        else {
-            // Di chuyển bình thường
-            velocity.x = (direction == LEFT) ? ((rexState == REX_NORMAL) ? -REX_SPEED : -REX_COMPRESSED_SPEED) :
-                ((rexState == REX_NORMAL) ? REX_SPEED : REX_COMPRESSED_SPEED);
         }
     }
+
+    float current_speed = REX_SPEED;
+    if (marioDetected && sameHeight) {
+        current_speed *= 1.5f;
+        direction = (marioPos.x < position.x) ? LEFT : RIGHT; // Đổi hướng theo Mario
+    }
+    else if (marioDetected) {
+        // Nếu Mario không cùng chiều cao, Goomba sẽ không đổi hướng
+        direction = (velocity.x < 0) ? LEFT : RIGHT;
+    }
+    velocity.x = (direction == LEFT) ? -current_speed : current_speed;
+
    
     if (velocity.y > 50)
         state = FALLING;

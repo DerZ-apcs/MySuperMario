@@ -1,10 +1,11 @@
-#ifndef CHARACTER_H
+﻿#ifndef CHARACTER_H
 #define CHARACTER_H
 
 #include "../include/Entity.h"
 #include "../include/Global.h"
 #include <../include/TextEffect.h>
 #include <../include/Item.h>
+#include "../include/InputHandler.h"
 #include "raymath.h"
 #include <list>
 
@@ -14,13 +15,11 @@ class Blocks;
 class FireBall;
 class EnemyFireBall;
 class GameEngine;
+class MovingBlock;
 
 enum Phase {
 	DEFAULT_PHASE,
-	TRANSFORM_PHASE,
 	DEAD_PHASE,
-	EXIT_PHASE,
-	ENTER_PHASE,
 	CLEARLEVEL_PHASE
 };
 
@@ -39,6 +38,10 @@ public:
 	virtual void setPhase(Phase phase);
 	virtual const Phase& getPhase() const;
 	virtual const CharacterState& getCharacterState() const;
+	void setMovingBlockStandOn(MovingBlock* block);
+	MovingBlock* getMovingBlockStandOn() const;
+	
+	void ResetEnterNewMap();
 
 	bool isInvicible() const;
 	bool isImmortal() const;
@@ -48,6 +51,8 @@ public:
 	bool isStandingUp() const;
 	bool isJumping() const;
 
+	void setPlayerid(int id) { playerId = id; }
+	int getPlayerid() const { return playerId; }
 	int getLives() const;
 	int getCoins() const;
 	int getScores() const;
@@ -73,6 +78,15 @@ public:
 	
 	void StartTransition(const std::vector<int>& frameOrder, int steps);
 
+	float getMAX_WALK_SPEED_X() const { return MAX_WALK_SPEED_X; }
+	float getMAX_RUN_SPEED_X() const { return MAX_RUN_SPEED_X; }
+	float getMAXSPEED_Y() const { return MAXSPEED_Y; }
+	float getACCEL_X() const { return ACCEL_X; }
+	float getDECEL_X() const { return DECEL_X; }
+	float getCHARACTER_GRAVITY() const { return CHARACTER_GRAVITY; }
+	
+	virtual void ReleaseRunFast();
+	virtual void RunFast();
 	virtual void RunLeft();
 	virtual void RunRight();
 	virtual void Jumping();
@@ -82,6 +96,7 @@ public:
 	virtual void draw() override;
 	virtual void HandleInput() override;
 	void HandleInput(int leftKey, int rightKey, int upKey, int downKey, int fireKey);
+	void HandleInput(InputHandler& inputHandler1, InputHandler& inputHandler2);
 	virtual void updateCollision() override;
 	virtual void UpdateTexture() override;
 	virtual void UpdateTransitioningTexture();
@@ -105,10 +120,10 @@ public:
 				std::tie(other.character_state, other.entity_state, other.direction, other.frame);
 		}
 	};
-
 	void loadEntity(const json& j) override;
 	void saveEntity(json& j) const override;
 protected:
+	int playerId = 0; // 0 for player1, 1 for player2
 	struct TransitionFrame {
 		std::string textureKey;
 		Vector2 size;
@@ -122,6 +137,8 @@ protected:
 	std::vector<TransitionFrame> transitionFramesMarisa;
 	Phase phase;
 	CharacterType characterType;
+	MovingBlock* movingBlockStandOn = nullptr; // for standing up on moving block
+	Vector2 specificVelocity; // specific velocity for character
 	bool lostLife;
 	bool isducking;
 	int scores;
@@ -130,9 +147,11 @@ protected:
 	float invicibleStarTime;
 	float sinkingTime;
 
+	bool takeDamage = true;
 	bool holding;
 	bool isThrowing;
 
+	float timeNoTakeDamage = 0.f;
 	float countThrowTime;
 	float countImmortalTime;
 	bool standingUp;
@@ -147,7 +166,6 @@ protected:
 	std::vector<int> transitionFrameOrder;
 
 	CharacterState Character_state;
-	SPRITE_STATE Character_sprite_State;
 	std::list<FireBall*> fireballs;
 
 	const float DEAD_PLAYER_INITIAL_VELOCITY = 500.f;
@@ -159,13 +177,16 @@ protected:
 	const float star_invicible_time = 12.f;
 	const float transform_time = 1.f;
 
-	const float MARIO_MAXSPEEDY = 550;
-	const float MARIO_MAXSPEEDX = 550;
-	const float LUIGI_MAXSPEEDY = 650;
-	const float LUIGI_MAXSPEEDX = 500;
-
+	// mỗi nhân vật sẽ có các thông số khác nhau
+	float MAX_WALK_SPEED_X; 
+	float MAX_RUN_SPEED_X;
+	float MAXSPEED_Y;
+	float ACCEL_X;
+	float DECEL_X;
+	float CHARACTER_GRAVITY;
+	//
 	bool victory = false;
-	bool exitlevel;
+	bool exitlevel = false;
 	bool lostSuitTrigger = false;
 };
 #endif

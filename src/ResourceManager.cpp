@@ -3,17 +3,14 @@
 #include <iostream>
 
 void ResourceManager::loadTextures() {
-	// move //
-	
 	// small mario
 		// for choosing character
 	textures["SmallMario_Straight"] = LoadTexture("resources/images/sprites/mario/SmallMario_Straight_0.png");
-
 	textures["SmallMario_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SmallMario_0.png");
 	textures["SmallMario_RIGHT_1"] = LoadTexture("resources/images/sprites/mario/SmallMario_1.png");
 	textures["SmallMario_LEFT_0"] = flipTexture(textures["SmallMario_RIGHT_0"]);
 	textures["SmallMario_LEFT_1"] = flipTexture(textures["SmallMario_RIGHT_1"]);
-
+	
 	// super mario
 	textures["SuperMario_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SuperMario_0.png");
 	textures["SuperMario_RIGHT_1"] = LoadTexture("resources/images/sprites/mario/SuperMario_1.png");
@@ -362,7 +359,7 @@ void ResourceManager::loadTextures() {
 	textures["TransitioningFireToad_LEFT_0"] = textures["FireToad_LEFT_0"];
 
 	//tile
-	for (int i = 0; i <= 115; i++) {
+	for (int i = 0; i <= 116; i++) {
 		std::string path = "resources/images/tiles/AllTiles/tile_" + std::to_string(i) + ".png";
 		textures["TILE_" + std::to_string(i)] = LoadTexture(path.c_str());
 	}
@@ -516,13 +513,23 @@ void ResourceManager::loadTextures() {
 	textures["ParaKoopaBlue_LEFT_0"] = flipTexture(textures["ParaKoopaBlue_RIGHT_0"]);
 	textures["ParaKoopaBlue_LEFT_1"] = flipTexture(textures["ParaKoopaBlue_RIGHT_1"]);
 
+	textures["ParaKoopaGreen_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/ParaKoopaGreen_0.png");
+	textures["ParaKoopaGreen_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/ParaKoopaGreen_1.png");
+	textures["ParaKoopaGreen_LEFT_0"] = flipTexture(textures["ParaKoopaGreen_RIGHT_0"]);
+	textures["ParaKoopaGreen_LEFT_1"] = flipTexture(textures["ParaKoopaGreen_RIGHT_1"]);
+
+	textures["ParaKoopaYellow_RIGHT_0"] = LoadTexture("resources/images/sprites/baddies/ParaKoopaYellow_0.png");
+	textures["ParaKoopaYellow_RIGHT_1"] = LoadTexture("resources/images/sprites/baddies/ParaKoopaYellow_1.png");
+	textures["ParaKoopaYellow_LEFT_0"] = flipTexture(textures["ParaKoopaYellow_RIGHT_0"]);
+	textures["ParaKoopaYellow_LEFT_1"] = flipTexture(textures["ParaKoopaYellow_RIGHT_1"]);
+
 	// bullet
 	textures["Bullet_RIGHT"] = LoadTexture("resources/images/sprites/baddies/BulletBill_0.png");
-	textures["BenzaiBill_RIGHT"] = LoadTexture("resources/images/sprites/baddies/BanzaiBill_0.png");
+	textures["BanzaiBill_RIGHT"] = LoadTexture("resources/images/sprites/baddies/BanzaiBill_0.png");
 	textures["Bullet_LEFT"] = flipTexture(textures["Bullet_RIGHT"]);
-	textures["BenzaiBill_LEFT"] = flipTexture(textures["BenzaiBill_RIGHT"]);
+	textures["BanzaiBill_LEFT"] = flipTexture(textures["BanzaiBill_RIGHT"]);
 	textures["Bullet_Dead"] = textures["Bullet_RIGHT"];
-	textures["BenzaiBill_Dead"] = textures["BenzaiBill_RIGHT"];
+	textures["BanzaiBill_Dead"] = textures["BanzaiBill_RIGHT"];
 	// enemy fireball
 	textures["EnemyFireball_RIGHT_0"] = ConvertFireballToBlue(textures["FlowerMarioFireball_RIGHT_0"]);
 	textures["EnemyFireball_RIGHT_1"] = ConvertFireballToBlue(textures["FlowerMarioFireball_RIGHT_1"]);
@@ -586,6 +593,19 @@ void ResourceManager::loadTextures() {
 	textures["BuzzyBeetle_Shell_1"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_Shell_1.png");
 	textures["BuzzyBeetle_Shell_0"] = LoadTexture("resources/images/sprites/baddies/BuzzyBeetle_Shell_0.png");
 
+	// boss
+	//BoomBoom
+	textures["boomboom_walk_right_0"] = LoadTexture("resources/images/sprites/baddies/boomboom_walk_0.png");
+	textures["boomboom_walk_right_1"] = LoadTexture("resources/images/sprites/baddies/boomboom_walk_1.png");
+	textures["boomboom_walk_right_2"] = LoadTexture("resources/images/sprites/baddies/boomboom_walk_2.png");
+	textures["boomboom_walk_left_0"] = flipTexture(textures["boomboom_walk_right_0"]);
+	textures["boomboom_walk_left_1"] = flipTexture(textures["boomboom_walk_right_1"]);
+	textures["boomboom_walk_left_2"] = flipTexture(textures["boomboom_walk_right_2"]);
+	textures["boomboom_spin"] = LoadTexture("resources/images/sprites/baddies/boomboom_spin.png");
+	textures["boomboom_jump"] = LoadTexture("resources/images/sprites/baddies/boomboom_jump.png");
+	textures["boomboom_charge"] = LoadTexture("resources/images/sprites/baddies/boomboom_charge.png");
+	textures["boomboom_stunned"] = LoadTexture("resources/images/sprites/baddies/boomboom_stunned.png");
+	textures["boomboom_hidden"] = LoadTexture("resources/images/sprites/baddies/boomboom_hidden.png");
 	// gui scores
 	textures["10"] = LoadTexture("resources/images/gui/gui10.png");
 	textures["20"] = LoadTexture("resources/images/gui/gui20.png");

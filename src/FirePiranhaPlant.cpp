@@ -15,6 +15,8 @@ FirePiranhaPlant::FirePiranhaPlant(Vector2 pos, Texture2D texture)
     size = { 32, 66 };
     frameTime = 0.15f;
     maxFrame = 1;
+    scores = 200.f;
+    piranhaType = FIRE_PIRANHA;
 }
 
 FirePiranhaPlant::~FirePiranhaPlant() {
@@ -75,6 +77,7 @@ void FirePiranhaPlant::Update() {
         fireBallTimer += deltaTime;
         if (fireBallTimer >= FIREBALL_INTERVAL) {
             ShootFireBall();
+            RESOURCE_MANAGER.playSound("fireball.wav");
             fireBallTimer = 0.0f;
         }
     }
@@ -136,7 +139,6 @@ void FirePiranhaPlant::ShootFireBall() {
         }
     }
    
-    //RESOURCE_MANAGER.playSound("fireball.wav");
 }
 
 void FirePiranhaPlant::loadEntity(const json& j)
@@ -154,6 +156,8 @@ void FirePiranhaPlant::saveEntity(json& j) const
 // RapidFirePiranha Class Implementation
 RapidFirePiranha::RapidFirePiranha(Vector2 pos, Texture2D texture)
     : FirePiranhaPlant(pos, texture) {
+    scores = 200.f;
+    piranhaType = RAPIDFIRE_PIRANHA;
 }
 
 void RapidFirePiranha::ShootFireBall() {
@@ -167,11 +171,12 @@ void RapidFirePiranha::ShootFireBall() {
             globalGameEngine->addEnemyFireBall(fireball);
         }
     }
-    if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("fireball.wav");
 }
 
 HomingFirePiranha::HomingFirePiranha(Vector2 pos, Texture2D texture)
     : FirePiranhaPlant(pos, texture) {
+    scores = 200.f;
+    piranhaType = HOMING_PIRANHA;
 }
 
 void HomingFirePiranha::ShootFireBall() {
@@ -198,5 +203,4 @@ void HomingFirePiranha::ShootFireBall() {
             globalGameEngine->addEnemyFireBall(fireball);
         }
     }
-    if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("fireball.wav");
 }

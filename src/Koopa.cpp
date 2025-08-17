@@ -5,9 +5,9 @@
 Koopa::Koopa(Vector2 pos, Texture2D texture)
     : Enemy(pos, { 32, 54 }, { 0, 0 }, LEFT, FALLING, texture, 0.2f, 1, GREEN),
     reviveTimer(0.0f), isReviving(false), reviveShakeTimer(0.0f),
-    koopaState(NORMAL_KOOPA)
+    koopaState(NORMAL_KOOPA), koopaType(GREEN_KOOPA)
 {
-    enemyType = KOOPA;
+    scores = SCORE_STOMP_KOOPA;
 }
 
 void Koopa::setKoopaType(KOOPA_TYPE type)
@@ -184,7 +184,7 @@ void Koopa::kicked(Direction direction)
         return;
     // kick the shell
     this->isKicked = true;
-    velocity.x = (direction == LEFT) ? KOOPA_SHELL_SPEED * 0.75 : -KOOPA_SHELL_SPEED * 0.75;
+    velocity.x = (direction == LEFT) ? KOOPA_SHELL_SPEED : -KOOPA_SHELL_SPEED;
     this->direction = (direction == LEFT) ? RIGHT : LEFT;
     reviveTimer = 0.0f;
     isReviving = false;
@@ -210,6 +210,13 @@ void Koopa::updateCollision()
 void Koopa::setKoopaState(KoopaState state)
 {
     this->koopaState = state;
+}
+
+void Koopa::CollisionWithFireball(FireBall* fireball)
+{
+    fireball->setEntityDead();
+	if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomp.wav");
+	stomped();
 }
 
 void Koopa::loadEntity(const json& j)
@@ -241,9 +248,9 @@ GreenKoopa::GreenKoopa(Vector2 pos, Texture2D texture)
 	updateCollision();
 	// Set the initial texture for Green Koopa
 	texture = RESOURCE_MANAGER.getTexture("GreenKoopa_LEFT_0");
-	if (texture.id == 0) {
-		throw std::runtime_error("Failed to load Green Koopa texture");
-	}
+    if (texture.id == 0) {
+        throw std::runtime_error("Failed to load Green Koopa texture");
+    }
 }
 
 KOOPA_TYPE GreenKoopa::getKoopaType() const

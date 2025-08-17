@@ -1,4 +1,4 @@
-#include "../include/Character.h"
+﻿#include "../include/Character.h"
 #include"../include/Item.h"
 #include"../include/Enemy.h"
 #include "../include/Effect.h"
@@ -12,6 +12,7 @@
 #include"../include/Coin.h"
 #include "../include/DustEffect.h"
 #include "../include/Moon.h"
+#include "../include/MovingBlock.h"
 
 Character::Character():
 	Character({ 32, 400 }, { 0, 0 })
@@ -34,7 +35,7 @@ Character::Character(Vector2 pos, Vector2 sz, CharacterState characterstate, Cha
 	isducking(false),
 	scores(0),
 	coins(0),
-	lives(5),
+	lives(3),
 	holding(false),
 	isThrowing(false),
 	standingUp(false),
@@ -47,9 +48,14 @@ Character::Character(Vector2 pos, Vector2 sz, CharacterState characterstate, Cha
 	transitionCurrentFramePos(0),
 	Character_state(characterstate),
 	characterType(characterType),
-	Character_sprite_State(NORMAL),
 	victory(false),
-	exitlevel(false)
+	exitlevel(false),
+	countImmortalTime(0.f),
+	countThrowTime(0.f),
+	invicibleStarTime(0.f),
+	sinkingTime(0.f),
+	movingBlockStandOn(nullptr),
+	specificVelocity({ 0, 0 })
 {
 	std::cout << "Character created with size: " << size.x << ", " << size.y << std::endl;
 
@@ -167,8 +173,7 @@ EntityType Character::getEntityType() const
 }
 
 // reset when die & continue with that level 
-void Character::resetInGame()
-{
+void Character::resetInGame(){
 	setPosition({ 32, 400 });
 	Character_state = STATE_SMALL;
 	if (characterType == MARIO) {
@@ -196,6 +201,8 @@ void Character::resetInGame()
 	}
 	//this->size = { (float)texture.width, (float)texture.height };
 	setVel({ 0, 0 });
+	scores = 0;
+	coins = 0;
 	direction = RIGHT;
 	phase = DEFAULT_PHASE;
 	collisionAvailable = true;
@@ -215,6 +222,8 @@ void Character::resetInGame()
 	updateCollision();
 	victory = false;
 	exitlevel = false;
+	movingBlockStandOn = nullptr; // reset moving block stand on
+	specificVelocity = { 0, 0 };
 }
 
 // reset when changing map (reset all)
@@ -244,13 +253,14 @@ void Character::reset()
 	else {
 		throw std::runtime_error("Unknown character type");
 	}
-	//this->size = { (float)texture.width, (float)texture.height };
+	setGravityAvailable(true);
+	setCollisionAvailable(true);
 	setPosition({ 32, 400 });
 	setVel({ 0, 0 });
 	direction = RIGHT;
 	scores = 0;
 	coins = 0;
-	lives = 5;
+	lives = 3;
 	phase = DEFAULT_PHASE;
 	isjumping = false;
 	holding = false;
@@ -267,6 +277,8 @@ void Character::reset()
 	updateCollision();
 	victory = false;
 	exitlevel = false;
+	movingBlockStandOn = nullptr; // reset moving block stand on
+	specificVelocity = { 0, 0 };
 }
 
 void Character::setPhase(Phase phase)
@@ -275,6 +287,7 @@ void Character::setPhase(Phase phase)
 		setVelX(0.f);
 		setVelY(-DEAD_PLAYER_INITIAL_VELOCITY);
 		setCollisionAvailable(false);
+		setMovingBlockStandOn(nullptr); 
 		setHolding(false);
 		lives--;
 	}
@@ -293,6 +306,38 @@ const Phase& Character::getPhase() const
 const CharacterState& Character::getCharacterState() const
 {
 	return Character_state;
+}
+
+void Character::setMovingBlockStandOn(MovingBlock* block) {
+	this->movingBlockStandOn = block;
+}
+
+MovingBlock* Character::getMovingBlockStandOn() const {
+	return this->movingBlockStandOn;
+}
+
+void Character::ResetEnterNewMap()
+{
+	if (movingBlockStandOn != nullptr) {
+		movingBlockStandOn = nullptr; // reset moving block stand on
+	}
+	isjumping = false;
+	isducking = false;
+	lostLife = false;
+	countThrowTime = 0.f;
+	sinkingTime = 0.f;
+	takeDamage = true;
+	timeNoTakeDamage = 0.f;
+	victory = false;
+	exitlevel = false;
+	transitioningFrameAcum = 0.f;
+	state = FALLING;
+	position = { 32, 400 };
+	velocity = { 0, 0 };
+	collisionAvailable = true;
+	gravityAvailable = true;
+	phase = DEFAULT_PHASE;
+	Character_state = STATE_SMALL;
 }
 
 bool Character::isInvicible() const
@@ -396,8 +441,10 @@ void Character::lostSuit()
 		setLostLife(true);
 		return;
 	}
-
 	countImmortalTime = 15.f * transitioningFrameTime;
+	if (IsKeyPressed(KEY_P)) {
+		cout << "transitionFrametime: " << transitioningFrameTime << endl;
+	}
 	//lostSuitTrigger = false;
 	if (Character_state == STATE_SUPER) {
 		StartTransition({ 2, 1, 2, 1, 2, 1, 2, 1, 0, 1, 0, 1, 0, 1, 0 }, 15);
@@ -424,7 +471,8 @@ void Character::setLostLife(bool lostLife)
 void Character::Jumping()
 {
 	if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("jump.wav");
-	velocity.y = Character_state == MARIO ? -MARIO_MAXSPEEDY : -LUIGI_MAXSPEEDY;
+	float speedY = MAXSPEED_Y;
+	velocity.y = -speedY;
 	state = JUMPING;
 }
 
@@ -432,10 +480,10 @@ void Character::Standing()
 {
 	const float deltaTime = GetFrameTime();
 	if (velocity.x > 0) {
-		velocity.x -= accelerationX * deltaTime;
+		velocity.x -= DECEL_X * deltaTime;
 	}
 	else if (velocity.x < 0) {
-		velocity.x += accelerationX * deltaTime;
+		velocity.x += DECEL_X * deltaTime;
 	}
 	if (abs(velocity.x) < 20) velocity.x = 0;
 }
@@ -462,17 +510,35 @@ void Character::Update()
 			lostSuitTrigger = true;
 		}
 	}
+	// time for take damage
+	timeNoTakeDamage -= GetFrameTime();
+	if (timeNoTakeDamage <= 0.f) {
+		timeNoTakeDamage = 0.f;
+		// character will take damaged when true
+		takeDamage = true;
+	}
+	else {
+		takeDamage = false;
+	}
+
+	specificVelocity = getVelocity();
+
+	if (movingBlockStandOn != nullptr) {
+		setVelX(specificVelocity.x + movingBlockStandOn->getVelocity().x);
+		setVelY(specificVelocity.y + movingBlockStandOn->getVelocity().y);
+	}
 
 	// physics
 	position.x += velocity.x * deltaTime;
 	position.y += velocity.y * deltaTime;
+	setVel(specificVelocity);
+	
 	if (velocity.y > 20 && state != SINKING)
 		state = FALLING;
-	velocity.y += GRAVITY * deltaTime + 2;
+	velocity.y += CHARACTER_GRAVITY * deltaTime + 2;
 	if (state == SINKING) { 
 		sinkingTime -= deltaTime;
-		velocity.y = GRAVITY / 32;
-		//printf("SINKING\n");
+		velocity.y = CHARACTER_GRAVITY / 32;
 		if (sinkingTime <= 0.f) {
 			state = FALLING;
 		}
@@ -490,10 +556,12 @@ void Character::Update()
 			++i;
 		}
 	}
+	// lost suit sound
 	if (phase == DEFAULT_PHASE) {
 		if (countImmortalTime > 0.f) {
 			countImmortalTime = max(0.f, countImmortalTime - deltaTime);
-			if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("lost_suit.wav");
+			if (SETTING.isSoundEnabled()) 
+				RESOURCE_MANAGER.playSound("lost_suit.wav");
 		}
 	}
 	if (characterType == MARIO || characterType == TOAD) {
@@ -609,6 +677,30 @@ void Character::HandleInput(int leftKey, int rightKey, int upKey, int downKey, i
 
 	if (IsKeyPressed(fireKey) && (Character_state == STATE_FIRE || Character_state == STATE_FIRESTAR) && !isducking) {
 		ThrowingFireBalls();
+	}
+	if (IsKeyPressed(KEY_T)) { // for debug
+		cout << position.x << " " << position.y << endl;
+	}
+}
+
+void Character::HandleInput(InputHandler& inputHandler1, InputHandler& inputHandler2)
+{
+	if (playerId == 0) {
+		// Player 1 controls
+		inputHandler1.handleInput(*this);
+	}
+	else if (playerId == 1) {
+		// Player 2 controls
+		inputHandler2.handleInput(*this);
+	}
+	// Handle character-specific input
+	if (IsKeyPressed(KEY_F1)) eatGreenMushrooms();
+	if (IsKeyPressed(KEY_F2)) eatRedMushrooms();
+	if (IsKeyPressed(KEY_F3)) eatFireFlower();
+	if (IsKeyPressed(KEY_F4)) eatStar();
+	if (IsKeyPressed(KEY_L))  lostSuit();
+	if (IsKeyPressed(KEY_T)) { // for debug
+		cout << position.x << " " << position.y << endl;
 	}
 }
 
@@ -802,6 +894,52 @@ void Character::StartTransition(const std::vector<int>& frameOrder, int steps) {
 	transitionCurrentFramePos = 0;
 }
 
+void Character::ReleaseRunFast()
+{
+	if (state == ON_GROUND || state == SINKING) {
+		float dt = GetFrameTime();
+		float targetSpeed = MAX_WALK_SPEED_X; // mục tiêu khi thả shift
+		float decelAmount = DECEL_X * dt;     // giảm tốc mỗi frame
+
+		if (direction == RIGHT && velocity.x > targetSpeed) {
+			velocity.x -= decelAmount;
+			if (velocity.x < targetSpeed) {
+				velocity.x = targetSpeed; // chặn không giảm quá
+			}
+		}
+		else if (direction == LEFT && velocity.x < -targetSpeed) {
+			velocity.x += decelAmount;
+			if (velocity.x > -targetSpeed) {
+				velocity.x = -targetSpeed; // chặn không giảm quá
+			}
+		}
+	}
+}
+
+
+void Character::RunFast()
+{
+	float deltaTime = GetFrameTime();
+	if (state == ON_GROUND || state == SINKING) {
+		if (direction == RIGHT) {
+			if (velocity.x < 0) 
+				velocity.x = 0;
+			velocity.x += ACCEL_X * deltaTime * 1.5;
+			if (velocity.x >= MAX_RUN_SPEED_X) {
+				velocity.x = MAX_RUN_SPEED_X;
+			}
+		}
+		else if (direction == LEFT) {
+			if (velocity.x > 0) 
+				velocity.x = 0;
+			velocity.x -= ACCEL_X * deltaTime * 1.5;
+			if (velocity.x <= -MAX_RUN_SPEED_X) {
+				velocity.x = -MAX_RUN_SPEED_X;
+			}
+		}
+	}
+}
+
 void Character::RunLeft()
 {
 	float deltaTime = GetFrameTime();
@@ -818,12 +956,12 @@ void Character::RunLeft()
 		velocity.x = 0;
 	}
 
-	float speed = Character_state == MARIO ? MARIO_MAXSPEEDX : LUIGI_MAXSPEEDX;
-	if (abs(velocity.x) + accelerationX * deltaTime >= speed) {
+	float speed = MAX_WALK_SPEED_X;
+	if (abs(velocity.x) + ACCEL_X * deltaTime >= speed) {
 		velocity.x = -speed;
 	}
 	else {
-		velocity.x -= accelerationX * deltaTime;
+		velocity.x -= ACCEL_X * deltaTime;
 	}
 }
 
@@ -842,12 +980,12 @@ void Character::RunRight()
 		direction = RIGHT;
 		velocity.x = 0;
 	}
-	float speed = Character_state == MARIO ? MARIO_MAXSPEEDX : LUIGI_MAXSPEEDX;
-	if (velocity.x + accelerationX * deltaTime >= speed) {
+	float speed = MAX_WALK_SPEED_X;
+	if (velocity.x + ACCEL_X * deltaTime >= speed) {
 		velocity.x = speed;
 	}
 	else {
-		velocity.x += accelerationX * deltaTime;
+		velocity.x += ACCEL_X * deltaTime;
 	}
 }
 
@@ -896,16 +1034,16 @@ void Character::UpdateTransitioningTexture()
 
 float Character::getAcclerationX() const
 {
-	return accelerationX;
+	return ACCEL_X;
 }
 void Character::ThrowingFireBalls()
 {
 	isThrowing = true;
 	if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("fireball.wav");
-	if (direction == RIGHT)
-		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2 - 5, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, Vector2{ 250 , -250 }, RIGHT, 2));
-	else if (direction == LEFT)
-		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2 - 5, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, Vector2{ -250, -250}, LEFT, 2));
+	if (direction == RIGHT) 
+		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2 - 5, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, Vector2{250, -250}, RIGHT, 2));
+	else if (direction == LEFT) 
+		fireballs.push_back(new FireBall(Vector2{ position.x + size.x / 2 - 5, position.y + size.y / 2 - 5 }, Vector2{ 16, 16 }, Vector2{-250, -250}, LEFT, 2));
 }
 void Character::collisionWithItem(const Item* item)
 {
@@ -977,9 +1115,6 @@ void Character::collisionWithEnemy(Enemy* enemy, CollisionType CollType)
 		// attacked
 		scores += enemy->getScores();
 		if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomp.wav");
-
-	
-		//enemy->attacked(this->direction); for attacked
 		enemy->stomped();
 		
 	}
@@ -1017,11 +1152,15 @@ void Character::collisionWithEnemy(Enemy* enemy, CollisionType CollType)
 			if (!enemy->getIsKicked()) {
 				Direction dir = CollType == COLLISION_TYPE_EAST ? LEFT : RIGHT;
 				enemy->kicked(dir);
+				timeNoTakeDamage = 0.3f;
 				if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("kick.wav");
 			}
 			else if (countImmortalTime > 0.f)
 				return;
-			else lostSuit();
+			else if (takeDamage) {
+				lostSuit();
+				timeNoTakeDamage = 0.f;
+			}
 		}
 	}
 }
@@ -1043,9 +1182,11 @@ std::list<FireBall*>* Character::getFireBalls()
 
 void Character::loadEntity(const json& j)
 {
-	Entity::loadEntity(j);
+	Entity::loadEntity(j); // Load base class data
+
 	phase = static_cast<Phase>(j["phase"].get<int>());
 	characterType = static_cast<CharacterType>(j["characterType"].get<int>());
+	Character_state = static_cast<CharacterState>(j["characterState"].get<int>());
 	lostLife = j["lostLife"];
 	isducking = j["isducking"];
 	scores = j["scores"];
@@ -1053,28 +1194,38 @@ void Character::loadEntity(const json& j)
 	lives = j["lives"];
 	invicibleStarTime = j["invicibleStarTime"];
 	sinkingTime = j["sinkingTime"];
+	// for safe
+	frameTime = 0.f;
+	frameAcum = 0.f;
+	velocity = { 0, 0 };
+	//
 	holding = j["holding"];
 	isThrowing = j["isThrowing"];
+	playerId = j["playerId"];
+	countThrowTime = j["countThrowTime"];
+	countImmortalTime = j["countImmortalTime"];
 	standingUp = j["standingUp"];
-	transitioningFrameTime = j["transitioningFrameTime"];
-	transitioningFrameAcum = j["transitioningFrameAcum"];
+
+	transitioningFrameTime = 0.06f;
+	transitioningFrameAcum = 0.f;
 	transitionSteps = j["transitionSteps"];
 	transitionCurrentFrame = j["transitionCurrentFrame"];
 	transitionCurrentFramePos = j["transitionCurrentFramePos"];
-	Character_state = static_cast<CharacterState>(j["Character_state"].get<int>());
-	Character_sprite_State = static_cast<SPRITE_STATE>(j["Character_sprite_State"].get<int>());
+	throwFrameCounter = j["throwFrameCounter"];
+	victoryFrameCounter = j["victoryFrameCounter"];
 	victory = j["victory"];
 	exitlevel = j["exitlevel"];
 	lostSuitTrigger = j["lostSuitTrigger"];
-	throwFrameCounter = j["throwFrameCounter"];
-	victoryFrameCounter = j["victoryFrameCounter"];
 }
+
 
 void Character::saveEntity(json& j) const
 {
-	Entity::saveEntity(j);
+	Entity::saveEntity(j); // Save base class data
+
 	j["phase"] = static_cast<int>(phase);
 	j["characterType"] = static_cast<int>(characterType);
+	j["characterState"] = static_cast<int>(Character_state);
 	j["lostLife"] = lostLife;
 	j["isducking"] = isducking;
 	j["scores"] = scores;
@@ -1082,23 +1233,25 @@ void Character::saveEntity(json& j) const
 	j["lives"] = lives;
 	j["invicibleStarTime"] = invicibleStarTime;
 	j["sinkingTime"] = sinkingTime;
+	j["playerId"] = playerId;
 	j["holding"] = holding;
 	j["isThrowing"] = isThrowing;
+	j["countThrowTime"] = countThrowTime;
+	j["countImmortalTime"] = countImmortalTime;
 	j["standingUp"] = standingUp;
+
 	j["transitioningFrameTime"] = transitioningFrameTime;
-	j["transitioningFrameAcum"] = transitioningFrameAcum;
+	j["transitioningFrameAcum"] = 0;
 	j["transitionSteps"] = transitionSteps;
-	j["transitionCurrentFrame"] = transitionCurrentFrame;
-	j["transitionCurrentFramePos"] = transitionCurrentFramePos;
-	j["Character_state"] = static_cast<int>(Character_state);
-	j["Character_sprite_State"] = static_cast<int>(Character_sprite_State);
+	j["transitionCurrentFrame"] = 0;
+	j["transitionCurrentFramePos"] = 0;
+	j["throwFrameCounter"] = throwFrameCounter;
+	j["victoryFrameCounter"] = victoryFrameCounter;
 	j["victory"] = victory;
 	j["exitlevel"] = exitlevel;
 	j["lostSuitTrigger"] = lostSuitTrigger;
-	j["throwFrameCounter"] = throwFrameCounter;
-	j["victoryFrameCounter"] = victoryFrameCounter;
-
 }
+
 
 void Character::setVictory(bool victory)
 {

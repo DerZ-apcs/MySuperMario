@@ -13,7 +13,7 @@ BuzzyBeetle::BuzzyBeetle(Vector2 pos, Texture2D texture):
     reviveShakeTimer = 0.0f;
     isReviving = false;
     reviveTimer = 0.0f;
-    enemyType = BUZZYBEETLE;
+    scores = SCORE_STOMP_BUZZY;
 }
 
 void BuzzyBeetle::UpdateTexture() {
@@ -142,6 +142,18 @@ void BuzzyBeetle::kicked(Direction direction)
 ENEMY_TYPE BuzzyBeetle::getEnemyType() const
 {
 	return BuzzyState == SHELL_BUZZY ? SHELL : BUZZYBEETLE;
+}
+
+void BuzzyBeetle::CollisionWithFireball(FireBall* fireball)
+{
+    fireball->setEntityDead();
+    if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomp.wav");
+    setVelY(-400); // Buzzy Beetle bị bắn sẽ bay lên
+    setState(JUMPING);
+    SmokeEffect* smokeright = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ 60, 120 });
+    globalGameEngine->addEffect(smokeright);
+    SmokeEffect* smokeleft = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ -60, 120 });
+    globalGameEngine->addEffect(smokeleft);
 }
 
 void BuzzyBeetle::loadEntity(const json& j)

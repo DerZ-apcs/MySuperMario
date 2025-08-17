@@ -18,31 +18,27 @@ void loadMultiCharacters(std::vector<std::unique_ptr<Character>>& multiplayers, 
 void saveEnemies(const std::vector<Enemy*>& enemies, json& j);
 void loadEnemies(std::vector<Enemy*>& enemies, const json& j);
 
-void saveItems(const std::vector<Item*> items, json& j);
+void saveItems(const std::vector<Item*>& items, json& j);
 void loadItems(std::vector<Item*>& items, const json& j);
 
-void saveTileGrids(const std::vector<std::vector<Blocks*>> tileGrid, json& j);
+void saveTileGrids(const std::vector<std::vector<Blocks*>>& tileGrid, json& j);
 void loadTileGrids(std::vector<std::vector<Blocks*>>& tileGrid, const json& j);
 
-void saveEffects(const std::vector<Effect> effects, json& j);
-void loadEffects(std::vector<Effect>& effects, const json& j);
+bool isBasisBlock(BLOCK_TYPE type);
+//void saveEffects(const std::vector<Effect> effects, json& j);
+//void loadEffects(std::vector<Effect>& effects, const json& j);
 
-void saveFireBall(const std::vector<FireBall> fireballs, json& j);
-void loadFireBall(std::vector<FireBall>& fireballs, const json& j);
+//void saveFireBall(const std::vector<FireBall> fireballs, json& j);
+//void loadFireBall(std::vector<FireBall>& fireballs, const json& j);
+//
+//void saveEnemyFireBall(const std::vector<FireBall> enemyfireballs, json& j);
+//void loadEnemyFireBall(std::vector<FireBall>& enemyfireballs, const json& j);
 
-void saveEnemyFireBall(const std::vector<FireBall> enemyfireballs, json& j);
-void loadEnemyFireBall(std::vector<FireBall>& enemyfireballs, const json& j);
+//void saveDecor(const std::vector<Blocks> decors, json& j);
+//void loadDecor(std::vector<Blocks>& decors, const json& j);
+//
+//void saveCover(const std::vector<Blocks> covers, json& j);
+//void loadCover(std::vector<Blocks>& covers, const json& j);
 
-void saveDecor(const std::vector<Blocks> decors, json& j);
-void loadDecor(std::vector<Blocks>& decors, const json& j);
-
-void saveCover(const std::vector<Blocks> covers, json& j);
-void loadCover(std::vector<Blocks>& covers, const json& j);
-
-void saveSecretArea(const std::vector<Rectangle> secret, json& j);
-void loadSecretArea(std::vector<Rectangle>& scret, const json& j);
-
-void saveGameState(const int Remainedtime, const int level, json& j);
-void loadGameState(int& Remainedtime, int& level, const json& j);
-
-static Texture2D loadTextureFromType(ENEMY_TYPE type);
+//void saveSecretArea(const std::vector<Rectangle> secret, json& j);
+//void loadSecretArea(std::vector<Rectangle>& scret, const json& j);

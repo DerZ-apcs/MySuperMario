@@ -9,7 +9,7 @@
 class PowerItem : public Item {
 protected:
 	PowerUpState powerUpState = EMERGING;
-
+	int subType = 0; // for mushroom, flower, star, moon
 	float emergenceDis = 0.0f;
 	static const float EMERGENCE_HEIGHT;
 	static const float EMERGENCE_SPEED;
