@@ -32,7 +32,7 @@ EditorEngine::~EditorEngine() {
 
 void EditorEngine::populateTiles() {
 	float startX = 20;
-	float startY = 200;
+	float startY = 250;
 	for (int i = 0; i < 12; i++) { tiles.push_back({ i, { startX + i * 36, startY, 32, 32 } }); }
 	startY += 36;
 	for (int i = 26; i < 38; i++) { tiles.push_back({ i, { startX + (i - 26) * 36, startY, 32, 32 } }); }
@@ -96,7 +96,7 @@ void EditorEngine::populateTiles() {
 
 void EditorEngine::populateEnemy() {
 	float startX = 30;
-	float startY = 240;
+	float startY = 280;
 	Texture2D tex;
 
 	tex = RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0");
@@ -463,7 +463,7 @@ Vector2 EditorEngine::PosToCoordinate(Vector2 pos) {
 
 //--------------------
 
-void EditorEngine::saveToJson() {
+void EditorEngine::saveToJson(int slot) {
 	nlohmann::json mapJson;
 	mapJson["width"] = tileGrid[0].size();
 	mapJson["height"] = tileGrid.size();
@@ -544,20 +544,22 @@ void EditorEngine::saveToJson() {
 		{"data", decorData}
 		});
 
-	std::ofstream file("resources/maps/emap_1.json");
+	std::string filename = "resources/maps/emap_" + std::to_string(slot) + ".json";
+	std::ofstream file(filename);
 	if (!file.is_open()) {
-		std::cerr << "Failed to open file for writing." << std::endl;
+		std::cerr << "Failed to open file for writing: " << filename << std::endl;
 		return;
 	}
 	file << mapJson.dump(3); 
 	file.close();
 }
 
-void EditorEngine::loadFromJson() {
+void EditorEngine::loadFromJson(int slot) {
 	clear();
-	std::ifstream file("resources/maps/emap_1.json");
+	std::string filename = "resources/maps/emap_" + std::to_string(slot) + ".json";
+	std::ifstream file(filename);
 	if (!file.is_open()) {
-		std::cerr << "Failed to open map file." << std::endl;
+		std::cerr << "Failed to open file for reading: " << filename << std::endl;
 		return;
 	}
 	

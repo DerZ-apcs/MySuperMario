@@ -50,6 +50,7 @@ public:
 	void draw();           // draw map + editor UI
 	void drawGrid();
 	void resizeGrid(int newWidth);
+	const int getWidth() const { return width; }
 
 	const std::vector<TileSelector>& getTiles() const { return tiles; }
 	const int getSelectedBlockId() const { return selectedBlockId; }
@@ -68,8 +69,8 @@ public:
 	bool run();            
 	void clear();
 
-	void saveToJson();     // write map
-	void loadFromJson();   // load map
+	void saveToJson(int slot);     // write map
+	void loadFromJson(int slot);   // load map
 };
 extern EditorEngine* globalEditorEngine;
 

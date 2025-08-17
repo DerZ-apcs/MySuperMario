@@ -53,6 +53,7 @@ public:
 	static void drawEditorUI();
 	static void drawItemChoice(Vector2 position, ITEM_TYPE& itemChoice);
 	static void drawInputBox(Vector2 position, std::string& inputText);
+	static void drawMapChoice(int& mapChoice);
 
 	static bool home_is_pressed;
 	static bool restart_is_pressed;

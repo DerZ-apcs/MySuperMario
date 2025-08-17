@@ -314,7 +314,7 @@ void GUI::drawEditorUI() {
     DrawRectangle(0, 0, 468, GetScreenHeight(), Fade(LIGHTGRAY, 0.8f)); // sidebar
     DrawText("Editor Menu", 20, 20, 30, BLACK);
 
-    DrawText(TextFormat("Grid: %d x %d", 100, 30), 20, 60, 20, DARKGRAY);
+    DrawText(TextFormat("Grid: %d x %d", globalEditorEngine->getWidth(), 30), 20, 60, 20, DARKGRAY);
 
 	Rectangle saveButton = { 20, 100, 100, 30 };
 	DrawRectangleRec(saveButton, DARKGRAY);
@@ -333,14 +333,17 @@ void GUI::drawEditorUI() {
 	DrawRectangleRec(playButton, DARKGRAY);
 	DrawText("Play", 30, 148, 16, WHITE);
 
+    static int slot = 1;
+    drawMapChoice(slot);
+
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), saveButton)) {
-        globalEditorEngine->saveToJson();
-        printf("Map saved successfully!\n");
+        globalEditorEngine->saveToJson(slot);
+        printf("Map %d saved successfully!\n", slot);
     }
 
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), loadButton)) {
-        globalEditorEngine->loadFromJson();
-        printf("Map loaded successfully!\n");
+        globalEditorEngine->loadFromJson(slot);
+        printf("Map %d loaded successfully!\n", slot);
     }
 
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), resizeButton)) { 
@@ -361,15 +364,15 @@ void GUI::drawEditorUI() {
     }
 
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), playButton)) {
-        globalEditorEngine->loadFromJson();
+        globalEditorEngine->loadFromJson(slot);
 
         if (globalGameEngine != nullptr) {
             delete globalGameEngine;
             globalGameEngine = nullptr;
         }
 
-        Level* level = make_unique<Level>(Map::basePath + "emap_1.json", "BACKGROUND_1", "MUSIC_1", "2 - 1").release();
-        printf("Level loaded successfully!\n");
+        std::string filename = "resources/maps/emap_" + std::to_string(slot) + ".json";
+        Level* level = make_unique<Level>(filename, "BACKGROUND_1", "MUSIC_1", "2 - 1").release();
         std::vector<std::unique_ptr<Character>> character;
         character.push_back(std::make_unique<Mario>());
         character[0]->setPosition({ 20, 200 });
@@ -464,6 +467,30 @@ void GUI::drawInputBox(Vector2 position, std::string& inputText)     {
                 inputText += (char)key;
             }
             key = GetCharPressed();
+        }
+    }
+}
+
+void GUI::drawMapChoice(int& mapChoice) {
+    const char* labels[3] = { "Map 1", "Map 2", "Map 3" };
+    Rectangle buttons[3] = {
+        { 20, 190, 100, 30 },
+        { 140, 190, 100, 30 },
+        { 260, 190, 100, 30 }
+    };
+
+    // Draw buttons
+    for (int i = 0; i < 3; i++) {
+        DrawRectangleRec(buttons[i], DARKGRAY);
+        DrawText(labels[i], (int)buttons[i].x + 10, (int)buttons[i].y + 8, 16, WHITE);
+
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) &&
+            CheckCollisionPointRec(GetMousePosition(), buttons[i])) {
+            mapChoice = i + 1;  // slot 1, 2, or 3
+        }
+
+        if (i + 1 == mapChoice) {
+            DrawRectangleLinesEx(buttons[i], 3, RED);
         }
     }
 }
