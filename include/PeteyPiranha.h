@@ -16,14 +16,13 @@ enum class PeteyPiranhaState {
     BURROW_DOWN,    // Giai đoạn đang đào xuống đất
     HIDDEN,         // Giai đoạn ẩn và di chuyển dưới lòng đất
     EMERGE,          // Giai đoạn trồi lên khỏi mặt đất
-    SPORE_CLOUD
+  
 };
 
 class PeteyPiranha : public Boss {
 private:
     PeteyPiranhaState currentState;
     Character* target; // Mục tiêu (người chơi)
-    SporeCloud* activeCloud;
 
     float walkSpeed;
     float jumpPower;
@@ -40,11 +39,9 @@ private:
     void updateHurt();
 	void updateBurrowDown();
 	void updateHidden();
-	void updateEmerge();
-	void updateSporeCloud(); 
+    void updateEmerge();
 
     void enterState(PeteyPiranhaState newState);
-    void releaseSporeCloud();
     std::vector<Texture2D> walkLeftTextures;
     std::vector<Texture2D> walkRightTextures;
     Texture2D hurtTexture;

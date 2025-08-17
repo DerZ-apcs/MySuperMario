@@ -2,7 +2,6 @@
 #include "../include/GameEngine.h"
 #include "../include/ResourceManager.h"
 #include "../include/EnemyFireBall.h" 
-#include "../include/SporeCloud.h"
 
 const float PETEY_WALK_SPEED = 80.0f;
 const float PETEY_JUMP_POWER = -1000.0f;
@@ -21,8 +20,7 @@ PeteyPiranha::PeteyPiranha(Vector2 pos, Character* player)
     walkSpeed(PETEY_WALK_SPEED),
     jumpPower(PETEY_JUMP_POWER),
     groundPoundSpeed(PETEY_GROUND_POUND_SPEED),
-    actionTimer(PETEY_ACTION_INTERVAL),
-    activeCloud(nullptr)
+    actionTimer(PETEY_ACTION_INTERVAL)
 {
     currentFrame = 0;
     frameTimer = 0.0f;
@@ -72,7 +70,7 @@ void PeteyPiranha::enterState(PeteyPiranhaState newState) {
         setGravityAvailable(false); // Tắt trọng lực để kiểm soát việc lún xuống
         setCollisionAvailable(false); // Không thể va chạm khi đang biến mất
         statePhaseTimer = 1.0f; // Thời gian để hoàn thành việc đào xuống
-		setTexture(RESOURCE_MANAGER.getTexture("petey_burrow_down")); 
+        setTexture(RESOURCE_MANAGER.getTexture("petey_burrow_down"));
         break;
 
     case PeteyPiranhaState::HIDDEN:
@@ -89,7 +87,7 @@ void PeteyPiranha::enterState(PeteyPiranhaState newState) {
         velocity = { 0, -50 }; // Từ từ trồi lên
         statePhaseTimer = 1.0f; // Thời gian để hoàn thành việc trồi lên
         setCollisionAvailable(true);
-		setTexture(RESOURCE_MANAGER.getTexture("petey_emerge")); // Giả sử có texture này
+        setTexture(RESOURCE_MANAGER.getTexture("petey_emerge")); // Giả sử có texture này
         break;
 
     case PeteyPiranhaState::VULNERABLE:
@@ -105,35 +103,7 @@ void PeteyPiranha::enterState(PeteyPiranhaState newState) {
         statePhaseTimer = PETEY_HURT_DURATION;
         setTexture(hurtTexture);
         break;
-
-    case PeteyPiranhaState::SPORE_CLOUD:
-        vulnerable = true; // QUAN TRỌNG: Cho phép Petey bị tấn công
-		statePhaseTimer = SPORE_CLOUD_LIFESPAN; // Thời gian tồn tại của đám mây
-        setTexture(RESOURCE_MANAGER.getTexture("petey_spore_release"));
-
-        if (target) {
-            direction = (target->getPosition().x > position.x) ? RIGHT : LEFT;
-            float directionAway = (target->getPosition().x < position.x) ? 1.0f : -1.0f;
-            float newX = position.x + (directionAway * PETEY_TELEPORT_DISTANCE);
-            // 3. QUAN TRỌNG: Giới hạn vị trí trong màn chơi để Petey không dịch chuyển ra ngoài
-            // Giả sử màn chơi có chiều rộng là LEVEL_WIDTH (bạn cần thay bằng hằng số của mình)
-            // #include "raymath.h" nếu bạn chưa có
-            // newX = Clamp(newX, 0, LEVEL_WIDTH - size.x); 
-            // Nếu không có LEVEL_WIDTH, bạn có thể tạm bỏ qua bước này nhưng nó rất quan trọng
-
-            position.x = newX;
-            direction = (target->getPosition().x > position.x) ? RIGHT : LEFT;
-        }
-
-        // QUAN TRỌNG: Giữ Petey đứng yên
-        velocity.x = 0;
-        velocity.y = 0;
-
-        releaseSporeCloud(); // Gọi hàm tạo đám mây
-        break;
     }
-
-
 }
 
 void PeteyPiranha::updateBehavior() {
@@ -146,7 +116,6 @@ void PeteyPiranha::updateBehavior() {
     case PeteyPiranhaState::EMERGE:         updateEmerge(); break;
     case PeteyPiranhaState::VULNERABLE:     updateVulnerable(); break;
     case PeteyPiranhaState::HURT:           updateHurt(); break;
-    case PeteyPiranhaState::SPORE_CLOUD:    updateSporeCloud(); break;
     }
 
 }
@@ -163,9 +132,9 @@ void PeteyPiranha::updateWalking() {
 
    actionTimer -= GetFrameTime();
    if (actionTimer <= 0) {
-       /* int choice = GetRandomValue(0, 1);*/
-       /* enterState(choice == 0 ? PeteyPiranhaState::JUMP_ASCEND : PeteyPiranhaState::SHOOTING);*/
-       enterState(PeteyPiranhaState::SPORE_CLOUD);
+       /*int choice = GetRandomValue(0, 1);
+       enterState(choice == 0 ? PeteyPiranhaState::BURROW_DOWN : PeteyPiranhaState::SHOOTING);*/
+	   enterState(PeteyPiranhaState::SHOOTING); // Chỉ bắn đạn lửa
    }
 }
 
@@ -216,55 +185,42 @@ void PeteyPiranha::updateHurt() {
     }
 }
 
-void PeteyPiranha::updateSporeCloud() {
-    if (target) {
-		direction = (target->getPosition().x > position.x) ? RIGHT : LEFT;
-    }
-    statePhaseTimer -= GetFrameTime();
-    if (statePhaseTimer <= 0) {
-        activeCloud = nullptr;
-        vulnerable = false; // Tắt trạng thái có thể bị tấn công trước khi chuyển state
-        enterState(PeteyPiranhaState::WALKING);
-    }
-}
-
-void PeteyPiranha::releaseSporeCloud() {
-    if (globalGameEngine && target) {
-        // Lấy kích thước của Petey và đám mây để tính toán vị trí chính xác
-  //      Vector2 peteySize = getSize();
-  //      Vector2 cloudSize = { 64.0f, 64.0f }; // Lấy từ hằng số của SporeCloud
-
-  //      float offsetX = position.x + (peteySize.x / 2.0f) - (cloudSize.x / 2.0f);
-  //      float offsetY = position.y - cloudSize.y - 20.0f;
-  //     
-  //      Vector2 cloudSpawnPos = { offsetX, offsetY };
-
-  //      SporeCloud* cloud = new SporeCloud(cloudSpawnPos, this->target);
-		//this->activeCloud = cloud; // Lưu đám mây để có thể quản lý sau này
-  //      globalGameEngine->addEffect(cloud);
-    }
-}
-
 void PeteyPiranha::shootFireball() {
     if (!target || target->getPhase() == CLEARLEVEL_PHASE || target->getPhase() == DEAD_PHASE) {
         return;
     }
 
-    Direction dir = (target->getX() > position.x) ? RIGHT : LEFT;
+    // Vị trí bắt đầu của quả cầu lửa
     Vector2 fireBallPos = { position.x, position.y + 10 };
     const int numFireballs = 3;
     const float angleSpread = 15.0f; // Góc tỏa ra của các viên đạn
     const float baseSpeed = 300.0f;
 
+    // --- BẮN VỀ BÊN PHẢI ---
     for (int i = 0; i < numFireballs; ++i) {
        float angle = (i - (numFireballs - 1) / 2.0f) * angleSpread;
        float rad = angle * DEG2RAD;
 
-        float velX = baseSpeed * cosf(rad) * (dir == RIGHT ? 1.0f : -1.0f);
+        // Vận tốc X luôn dương để bắn sang phải
+        float velX = baseSpeed * cosf(rad);
         float velY = -200.0f + baseSpeed * sinf(rad); 
 
         Vector2 fireBallVel = { velX, velY };
-        EnemyFireBall* fireball = new EnemyFireBall(fireBallPos, { 16, 16 }, fireBallVel, dir, 2.0f);
+        EnemyFireBall* fireball = new EnemyFireBall(fireBallPos, { 16, 16 }, fireBallVel, RIGHT, 2.0f);
+        globalGameEngine->addEnemyFireBall(fireball);
+    }
+
+    // --- BẮN VỀ BÊN TRÁI ---
+    for (int i = 0; i < numFireballs; ++i) {
+       float angle = (i - (numFireballs - 1) / 2.0f) * angleSpread;
+       float rad = angle * DEG2RAD;
+
+        // Vận tốc X luôn âm để bắn sang trái
+        float velX = -baseSpeed * cosf(rad); 
+        float velY = -200.0f + baseSpeed * sinf(rad);
+
+        Vector2 fireBallVel = { velX, velY };
+        EnemyFireBall* fireball = new EnemyFireBall(fireBallPos, { 16, 16 }, fireBallVel, LEFT, 2.0f);
         globalGameEngine->addEnemyFireBall(fireball);
     }
 }
@@ -283,11 +239,7 @@ void PeteyPiranha::onDeath() {
 void PeteyPiranha::stomped() {
     if (isDying()) return;
 
-    if (currentState == PeteyPiranhaState::VULNERABLE || currentState == PeteyPiranhaState::SPORE_CLOUD) {
-        if (currentState == PeteyPiranhaState::SPORE_CLOUD && activeCloud) {
-            activeCloud->setEntityDead(); // Bảo đám mây tự hủy
-            activeCloud = nullptr;        // Đặt con trỏ về rỗng
-        }
+    if (currentState == PeteyPiranhaState::VULNERABLE) {
         takeDamage(1);
         globalGameEngine->addScore(1000); // Thưởng điểm khi tấn công đúng lúc
         if (target) {
@@ -299,12 +251,7 @@ void PeteyPiranha::stomped() {
 void PeteyPiranha::CollisionWithFireball(FireBall* fireball) {
     if (isDying() || !fireball) return;
 
-    if (currentState == PeteyPiranhaState::VULNERABLE || currentState == PeteyPiranhaState::SPORE_CLOUD) {
-
-        if (currentState == PeteyPiranhaState::SPORE_CLOUD && activeCloud) {
-            activeCloud->setEntityDead();
-            activeCloud = nullptr;
-        }
+    if (currentState == PeteyPiranhaState::VULNERABLE) {
 
         takeDamage(1);
         globalGameEngine->addScore(500);
