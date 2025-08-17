@@ -59,9 +59,7 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std:
 }
 
 void GameEngine::loadGameMap(Level& level) {
-	printf("Loading map from %s\n", level.getMapPath().c_str());
     map.LoadFromJsonFile(level.getMapPath());
-    printf("Map loaded successfully!\n");
     map.loadBackgroundTexture(level.getBackGroundName());
     Vector2 Msize = map.getMapSize();
     camera.loadRenderTexture(Msize);

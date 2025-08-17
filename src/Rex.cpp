@@ -135,6 +135,20 @@ void Rex::saveEntity(json& j) const
     Enemy::saveEntity(j);
     j["rexState"] = static_cast<int>(rexState);
     j["detectMarioRange"] = detectMarioRange;
+
+    // Add Tiled-compatible properties array
+    j["properties"] = json::array({
+        {
+            { "name", "Name" },
+            { "type", "string" },
+            { "value", "Enemy" }
+        },
+        {
+            { "name", "Type" },
+            { "type", "string" },
+            { "value", "Rex"}
+        }
+        });
 }
 
 

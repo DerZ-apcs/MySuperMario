@@ -381,6 +381,7 @@ void GUI::drawEditorUI() {
 
         while (globalGameEngine != nullptr) {
             if (globalGameEngine->run()) { break; }
+            else { break; }
         }
         delete globalGameEngine;
         globalGameEngine = nullptr;

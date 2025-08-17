@@ -89,4 +89,18 @@ void Spiny::loadEntity(const json& j)
 void Spiny::saveEntity(json& j) const
 {
     Enemy::saveEntity(j);
+
+    // Add Tiled-compatible properties array
+    j["properties"] = json::array({
+        {
+            { "name", "Name" },
+            { "type", "string" },
+            { "value", "Enemy" }
+        },
+        {
+            { "name", "Type" },
+            { "type", "string" },
+            { "value", "Spiny"}
+        }
+        });
 }

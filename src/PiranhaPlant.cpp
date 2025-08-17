@@ -172,4 +172,18 @@ void PiranhaPlant::saveEntity(json& j) const
     j["baseY"] = baseY;
     j["invincibilityTimer"] = invincibilityTimer;
     j["delayTimer"] = delayTimer;
+
+    // Add Tiled-compatible properties array
+    j["properties"] = json::array({
+        {
+            { "name", "Name" },
+            { "type", "string" },
+            { "value", "Enemy" }
+        },
+        {
+            { "name", "Type" },
+            { "type", "string" },
+            { "value", "PiranhaPlant"}
+        }
+        });
 }

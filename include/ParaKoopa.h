@@ -22,6 +22,7 @@ public:
     ParaKoopaRed(Vector2 pos, Texture2D texture);
     void Update() override;
     void UpdateTexture() override;
+    void saveEntity(json& j) const override;
 };
 
 class ParaKoopaBlue : public ParaKoopa {

@@ -133,4 +133,18 @@ void BobOmb::saveEntity(json& j) const
     Enemy::saveEntity(j);
     j["isActivated"] = isActivated;          
     j["fuseTimer"] = fuseTimer;
+
+    // Add Tiled-compatible properties array
+    j["properties"] = json::array({
+        {
+            { "name", "Name" },
+            { "type", "string" },
+            { "value", "Enemy" }
+        },
+        {
+            { "name", "Type" },
+            { "type", "string" },
+            { "value", "BobOmb"}
+        }
+        });
 }

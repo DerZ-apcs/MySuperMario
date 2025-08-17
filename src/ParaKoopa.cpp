@@ -84,6 +84,24 @@ void ParaKoopaRed::UpdateTexture() {
     }
 }
 
+void ParaKoopaRed::saveEntity(json& j) const {
+    ParaKoopa::saveEntity(j);
+
+    // Add Tiled-compatible properties array
+    j["properties"] = json::array({
+        {
+            { "name", "Name" },
+            { "type", "string" },
+            { "value", "Enemy" }
+        },
+        {
+            { "name", "Type" },
+            { "type", "string" },
+            { "value", "ParaKoopaRed"}
+        }
+        });
+}
+
 ParaKoopaBlue::ParaKoopaBlue(Vector2 pos, Texture2D texture)
     : ParaKoopa(pos, texture) {
     paraKoopaType = BLUE_PARAKOOPA;

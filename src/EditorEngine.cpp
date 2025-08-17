@@ -101,14 +101,38 @@ void EditorEngine::populateEnemy() {
 
 	tex = RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0");
 	enemy.push_back({ "Goomba", tex, { startX, startY,(float)tex.width, (float)tex.height } });
+	tex = RESOURCE_MANAGER.getTexture("FlyingGoomba_RIGHT_0");
+	enemy.push_back({ "FlyingGoomba", tex, { startX + 54, startY - 18, (float)tex.width, (float)tex.height } });
+
+	startY += 48;
 	tex = RESOURCE_MANAGER.getTexture("GreenKoopa_RIGHT_0");
-	enemy.push_back({ "GreenKoopa", tex, { startX + 72, startY - 22, (float)tex.width, (float)tex.height } });
+	enemy.push_back({ "GreenKoopa", tex, { startX, startY, (float)tex.width, (float)tex.height } });
 	tex = RESOURCE_MANAGER.getTexture("RedKoopa_RIGHT_0");
-	enemy.push_back({ "RedKoopa", tex, { startX + 120, startY - 22, (float)tex.width, (float)tex.height } });
+	enemy.push_back({ "RedKoopa", tex, { startX + 48, startY, (float)tex.width, (float)tex.height } });
 	tex = RESOURCE_MANAGER.getTexture("YellowKoopa_RIGHT_0");
-	enemy.push_back({ "YellowKoopa", tex, { startX + 168, startY - 22, (float)tex.width, (float)tex.height } });
+	enemy.push_back({ "YellowKoopa", tex, { startX + 96, startY, (float)tex.width, (float)tex.height } });
 	tex = RESOURCE_MANAGER.getTexture("BlueKoopa_RIGHT_0");
-	enemy.push_back({ "BlueKoopa", tex, { startX + 216, startY - 22, (float)tex.width, (float)tex.height } });
+	enemy.push_back({ "BlueKoopa", tex, { startX + 144, startY, (float)tex.width, (float)tex.height } });
+	tex = RESOURCE_MANAGER.getTexture("ParaKoopaRed_RIGHT_0");
+	enemy.push_back({ "ParaKoopaRed", tex, { startX + 198, startY + 4, (float)tex.width, (float)tex.height } });
+
+	startY += 80;
+	tex = RESOURCE_MANAGER.getTexture("Spiny_RIGHT_0");
+	enemy.push_back({ "Spiny", tex, { startX, startY, (float)tex.width, (float)tex.height } });
+	tex = RESOURCE_MANAGER.getTexture("Muncher_0");
+	enemy.push_back({ "Muncher", tex, { startX + 48, startY, (float)tex.width, (float)tex.height } });
+	tex = RESOURCE_MANAGER.getTexture("BuzzyBeetle_RIGHT_0");
+	enemy.push_back({ "BuzzyBeetle", tex, { startX + 96, startY, (float)tex.width, (float)tex.height } });
+	tex = RESOURCE_MANAGER.getTexture("DryBones_RIGHT_0");
+	enemy.push_back({ "DryBones", tex, { startX + 144, startY, (float)tex.width, (float)tex.height } });
+	tex = RESOURCE_MANAGER.getTexture("BobOmb_RIGHT_0");
+	enemy.push_back({ "BobOmb", tex, { startX + 192, startY, (float)tex.width, (float)tex.height } });
+
+	startY += 48;
+	tex = RESOURCE_MANAGER.getTexture("PiranhaPlant_OPEN");
+	enemy.push_back({ "PiranhaPlant", tex, { startX, startY, (float)tex.width, (float)tex.height } });
+	tex = RESOURCE_MANAGER.getTexture("Rex_RIGHT_0");
+	enemy.push_back({ "Rex", tex, { startX + 48 * 4, startY, (float)tex.width, (float)tex.height } });
 }
 
 //-----------------
@@ -184,7 +208,11 @@ void EditorEngine::handleInput() {
 				if (!exists) {
 					if (selectedEnemyName == "Goomba") {
 						enemies.push_back(new Goomba({ (float)x * 32, (float)y * 32 },
-							RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0")));
+							selectedEnemyTexture));
+					}
+					else if (selectedEnemyName == "FlyingGoomba") {
+						enemies.push_back(new FlyingGoomba({ (float)x * 32, (float)y * 32 },
+							selectedEnemyTexture));
 					}
 					else if (selectedEnemyName == "GreenKoopa") {
 						enemies.push_back(new GreenKoopa({ (float)x * 32, (float)y * 32 },
@@ -200,6 +228,38 @@ void EditorEngine::handleInput() {
 					}
 					else if (selectedEnemyName == "BlueKoopa") {
 						enemies.push_back(new BlueKoopa({ (float)x * 32, (float)y * 32 },
+							selectedEnemyTexture));
+					}
+					else if (selectedEnemyName == "ParaKoopaRed") {
+						enemies.push_back(new ParaKoopaRed({ (float)x * 32, (float)y * 32 },
+							selectedEnemyTexture));
+					}
+					else if (selectedEnemyName == "Spiny") {
+						enemies.push_back(new Spiny({ (float)x * 32, (float)y * 32 },
+							selectedEnemyTexture));
+					}
+					else if (selectedEnemyName == "Muncher") {
+						enemies.push_back(new Muncher({ (float)x * 32, (float)y * 32 },
+							selectedEnemyTexture));
+					}
+					else if (selectedEnemyName == "BuzzyBeetle") {
+						enemies.push_back(new BuzzyBeetle({ (float)x * 32, (float)y * 32 },
+							selectedEnemyTexture));
+					} 
+					else if (selectedEnemyName == "DryBones") {
+						enemies.push_back(new DryBones({ (float)x * 32, (float)y * 32 },
+							selectedEnemyTexture));
+					} 
+					else if (selectedEnemyName == "BobOmb") {
+						enemies.push_back(new BobOmb({ (float)x * 32, (float)y * 32 },
+							selectedEnemyTexture));
+					}
+					else if (selectedEnemyName == "PiranhaPlant") {
+						enemies.push_back(new PiranhaPlant({ (float)x * 32, (float)y * 32 },
+							selectedEnemyTexture));
+					} 
+					else if (selectedEnemyName == "Rex") {
+						enemies.push_back(new Rex({ (float)x * 32, (float)y * 32 },
 							selectedEnemyTexture));
 					}
 				}
@@ -319,20 +379,21 @@ void EditorEngine::draw() {
 		for (size_t j = 0; j < tileGrid[i].size(); j++) {
 			if (tileGrid[i][j] != nullptr) {
 				tileGrid[i][j]->draw();
-				//printf("Block at (%zu, %zu) with ID %d\n", i, j, tileGrid[i][j]->getId());
 			}
 		}
 	}
 	// Draw enemies
 	for (auto& enemy : enemies) {
 		if (enemy) enemy->draw();
-		//printf("Enemy at (%f, %f)\n", enemy->getPosition().x, enemy->getPosition().y);
+		//DrawRectangle(enemy->getPosition().x, enemy->getPosition().y, 32, 32, RED); // Placeholder for enemy drawing
+		//DrawTexture(enemy->getCurrTexture(), enemy->getPosition().x, enemy->getPosition().y, WHITE);
 	}
 	drawGrid();
 	camera.endDrawing();
 
 	GUI::drawEditorUI();
-	if (selectedBlockId >= 0) {
+	// Draw current selection
+	if (selectedBlockId >= 0 && displayMode == 0) {
 		Vector2 co = PosToCoordinate(GetMousePosition());
 
 		// Now re-project back to screen position for drawing
@@ -350,17 +411,23 @@ void EditorEngine::draw() {
 		// Draw the seleced block ID
 		/*std::string blockIdText = "Selected Block ID: " + std::to_string(selectedBlockId);
 		DrawText(blockIdText.c_str(), 10, 650, 20, BLACK);*/
-	} else if (selectedEnemyName != "---") {
+	} else if (selectedEnemyName != "---" && displayMode == 1) {
 		Vector2 co = PosToCoordinate(GetMousePosition());
 		Vector2 screenPos = GetWorldToScreen2D(co, camera.GetCamera2D());
 
 		float scale = camera.GetCamera2D().zoom;
 
-		Texture2D tex = globalEditorEngine->getSelectedEnemyTexture();
+		Texture2D tex = selectedEnemyTexture;
 		Rectangle src = { 0, 0, (float)tex.width, (float)tex.height };
 		Rectangle dst = { screenPos.x, screenPos.y, tex.width * scale, tex.height * scale };
 
 		DrawTexturePro(tex, src, dst, { 0, 0 }, 0.0f, Fade(WHITE, 0.5f));
+
+		// Draw the selected enemy name
+		/*
+		std::string enemyNameText = "Selected Enemy: " + globalEditorEngine->getSelectedEnemyName();
+		DrawText(enemyNameText.c_str(), 10, 650, 20, BLACK);
+		DrawTexture(selectedEnemyTexture, 300, 650, WHITE);*/
 	} else {
 		Vector2 co = PosToCoordinate(GetMousePosition());
 		Vector2 screenPos = GetWorldToScreen2D(co, camera.GetCamera2D());
@@ -551,7 +618,45 @@ void EditorEngine::loadFromJson() {
 
 			if (type == "Goomba") {
 				enemies.push_back(new Goomba(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0")));
-				printf("Created enemy Goomba at (%d, %d)\n", x, y);
+			}
+			if (type == "FlyingGoomba") {
+				enemies.push_back(new FlyingGoomba(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("FlyingGoomba_RIGHT_0")));
+			}
+			if (type == "GreenKoopa") {
+				enemies.push_back(new GreenKoopa(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("GreenKoopa_RIGHT_0")));
+			}
+			if (type == "RedKoopa") {
+				enemies.push_back(new RedKoopa(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("RedKoopa_RIGHT_0")));
+			}
+			if (type == "YellowKoopa") {
+				enemies.push_back(new YellowKoopa(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("YellowKoopa_RIGHT_0")));
+			}
+			if (type == "BlueKoopa") {
+				enemies.push_back(new BlueKoopa(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("BlueKoopa_RIGHT_0")));
+			}
+			if (type == "ParaKoopaRed") {
+				enemies.push_back(new ParaKoopaRed(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("ParaKoopaRed_RIGHT_0")));
+			}
+			if (type == "Spiny") {
+				enemies.push_back(new Spiny(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("Spiny_RIGHT_0")));
+			}
+			if (type == "Muncher") {
+				enemies.push_back(new Muncher(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("Muncher_0")));
+			}
+			if (type == "BuzzyBeetle") {
+				enemies.push_back(new BuzzyBeetle(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("BuzzyBeetle_RIGHT_0")));
+			}
+			if (type == "DryBones") {
+				enemies.push_back(new DryBones(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("DryBones_0")));
+			}
+			if (type == "BobOmb") {
+				enemies.push_back(new BobOmb(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("BobOmb_RIGHT_0")));
+			}
+			if (type == "PiranhaPlant") {
+				enemies.push_back(new PiranhaPlant(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_RIGHT_0")));
+			}
+			if (type == "Rex") {
+				enemies.push_back(new Rex(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("Rex_RIGHT_0")));
 			}
 		}
 

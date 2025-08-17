@@ -36,24 +36,28 @@ class YellowKoopa : public Koopa {
 public:
     YellowKoopa(Vector2 pos, Texture2D texture);
     KOOPA_TYPE getKoopaType() const override;
+	void saveEntity(json& j) const override;
 };
 
 class BlueKoopa : public Koopa {
 public:
 	BlueKoopa(Vector2 pos, Texture2D texture);
     KOOPA_TYPE getKoopaType() const override;
+    void saveEntity(json& j) const override;
 };
 
 class GreenKoopa : public Koopa {
 public:
 	GreenKoopa(Vector2 pos, Texture2D texture);
     KOOPA_TYPE getKoopaType() const override;
+    void saveEntity(json& j) const override;
 };
 
 class RedKoopa : public Koopa {
 public:
     RedKoopa(Vector2 pos, Texture2D texture);
     KOOPA_TYPE getKoopaType() const override;
+    void saveEntity(json& j) const override;
     //void UpdateTexture() override;
 };
 

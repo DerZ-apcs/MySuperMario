@@ -154,4 +154,18 @@ void BuzzyBeetle::saveEntity(json& j) const
 {
     Koopa::saveEntity(j);
     j["BuzzyState"] = static_cast<int>(BuzzyState);
+
+    // Add Tiled-compatible properties array
+    j["properties"] = json::array({
+        {
+            { "name", "Name" },
+            { "type", "string" },
+            { "value", "Enemy" }
+        },
+        {
+            { "name", "Type" },
+            { "type", "string" },
+            { "value", "BuzzyBeetle"}
+        }
+        });
 }
