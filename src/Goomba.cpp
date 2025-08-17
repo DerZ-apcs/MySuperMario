@@ -294,6 +294,15 @@ void FlyingGoomba::stomped()
 void FlyingGoomba::CollisionWithFireball(FireBall* fireball)
 {
     // like stomped
+	fireball->setEntityDead();
+    if (SETTING.isSoundEnabled())
+		RESOURCE_MANAGER.playSound("stomp.wav");
+    if (hasWings) {
+        SmokeEffect* smokeright = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ 60, 120 });
+        globalGameEngine->addEffect(smokeright);
+        SmokeEffect* smokeleft = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ -60, 120 });
+        globalGameEngine->addEffect(smokeleft);
+    }
     stomped();
 }
 

@@ -879,25 +879,6 @@ bool FireBallEnemyInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	Enemy* enemy = dynamic_cast<Enemy*>(entityB);
 	if (!fireball || !enemy || !fireball->getCollisionAvailable() || !enemy->getCollisionAvailable())
 		return false;
-	if (enemy->getEnemyType() == MUNCHER || enemy->getEnemyType() == BULLET 
-		|| enemy->getEnemyType() == BANZAIBILL)
-		return false;
-	if (enemy->getEnemyType() == BOBOMB) {
-		if (enemy->isDying()) return false;
-		dynamic_cast<BobOmb*>(enemy)->Explode(); // Nổ ngay khi bị bắn
-		fireball->setEntityDead();
-		return true;
-	}
-	if (enemy->getEnemyType() == BUZZYBEETLE) {
-		fireball->setEntityDead();
-		if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomped.wav");
-		enemy->setVelY(-400); // Buzzy Beetle bị bắn sẽ bay lên
-		enemy->setState(JUMPING);
-		SmokeEffect* smokeright = new SmokeEffect(Vector2{ enemy->getCenter().x, enemy->getTop() }, Vector2{ 60, 120 });
-		globalGameEngine->addEffect(smokeright);
-		SmokeEffect* smokeleft = new SmokeEffect(Vector2{ enemy->getCenter().x, enemy->getTop() }, Vector2{ -60, 120 });
-		globalGameEngine->addEffect(smokeleft);
-	}
 	CollisionType Colltype = fireball->CheckCollision(*enemy);
 	if (Colltype == COLLISION_TYPE_NONE)
 		return false;

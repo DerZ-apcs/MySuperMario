@@ -88,7 +88,7 @@ void Enemy::CollisionWithFireball(FireBall* fireball) {
         velocity.y = -250; // Nhảy lên nhẹ
         velocity.x = (rand() % 100) - 50; // Văng ngang ngẫu nhiên
         updateCollision();
-        if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomped.wav");
+        if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomp.wav");
         // text effect
         Effect* score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string(SCORE_STOMP_GOOMBA).c_str()), Vector2{this->getCenterX(), this->getTop()});
         globalGameEngine->addEffect(score);

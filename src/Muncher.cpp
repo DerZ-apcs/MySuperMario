@@ -1,4 +1,4 @@
-#include "../include/Muncher.h"
+﻿#include "../include/Muncher.h"
 #include "../include/GameEngine.h"
 
 Muncher::Muncher(Vector2 pos, Texture2D texture)
@@ -59,4 +59,13 @@ void Muncher::saveEntity(json& j) const
 
 float Muncher::getScores() const {
     return SCORE_STOMP_MUNCHER;
+}
+
+void Muncher::CollisionWithFireball(FireBall* fireball) {
+    fireball->setEntityDead();
+    if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomp.wav");
+    SmokeEffect* smokeright = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ 60, 120 });
+    globalGameEngine->addEffect(smokeright);
+    SmokeEffect* smokeleft = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ -60, 120 });
+    globalGameEngine->addEffect(smokeleft);
 }

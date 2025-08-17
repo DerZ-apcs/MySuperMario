@@ -27,6 +27,7 @@ public:
 	BuzzyBeetleState getBuzzyBeetleState() const { return BuzzyState; }
 	float getScores() const override { return SCORE_STOMP_BUZZY; }
 	ENEMY_TYPE getEnemyType() const override;
+	void CollisionWithFireball(FireBall* fireball) override;	
 	void loadEntity(const json& j) override;
 	void saveEntity(json& j) const override;
 };

@@ -28,6 +28,7 @@ public:
     void kicked(Direction direction) override;
     void updateCollision() override;
     void setKoopaState(KoopaState state);
+	void CollisionWithFireball(FireBall* fireball) override;
     void loadEntity(const json& j) override;
     void saveEntity(json& j) const override;
 };
@@ -57,17 +58,4 @@ public:
     //void UpdateTexture() override;
 };
 
-//class FlyingKoopa : public Koopa {
-//private:
-//    float jumpTimer; // Timer để kiểm soát tần suất nhảy
-//    float collisionTimer;
-//public:
-//    ENEMY_TYPE getEnemyType() const;
-//    FlyingKoopa(Vector2 pos, Texture2D texture);
-//    void Update() override;
-//    void UpdateTexture() override;
-//    float getScores() const override;
-//    void loadEntity(const json& j) override;
-//    void saveEntity(json& j) const override;
-//};
 #endif

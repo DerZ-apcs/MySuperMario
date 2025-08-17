@@ -316,6 +316,30 @@ MovingBlock* Character::getMovingBlockStandOn() const {
 	return this->movingBlockStandOn;
 }
 
+void Character::ResetEnterNewMap()
+{
+	if (movingBlockStandOn != nullptr) {
+		movingBlockStandOn = nullptr; // reset moving block stand on
+	}
+	isjumping = false;
+	isducking = false;
+	lostLife = false;
+	countThrowTime = 0.f;
+	sinkingTime = 0.f;
+	takeDamage = true;
+	timeNoTakeDamage = 0.f;
+	victory = false;
+	exitlevel = false;
+	transitioningFrameAcum = 0.f;
+	state = FALLING;
+	position = { 32, 400 };
+	velocity = { 0, 0 };
+	collisionAvailable = true;
+	gravityAvailable = true;
+	phase = DEFAULT_PHASE;
+	Character_state = STATE_SMALL;
+}
+
 bool Character::isInvicible() const
 {
 	return invicibleStarTime > 0.f;
@@ -417,8 +441,10 @@ void Character::lostSuit()
 		setLostLife(true);
 		return;
 	}
-
 	countImmortalTime = 15.f * transitioningFrameTime;
+	if (IsKeyPressed(KEY_P)) {
+		cout << "transitionFrametime: " << transitioningFrameTime << endl;
+	}
 	//lostSuitTrigger = false;
 	if (Character_state == STATE_SUPER) {
 		StartTransition({ 2, 1, 2, 1, 2, 1, 2, 1, 0, 1, 0, 1, 0, 1, 0 }, 15);
@@ -530,10 +556,12 @@ void Character::Update()
 			++i;
 		}
 	}
+	// lost suit sound
 	if (phase == DEFAULT_PHASE) {
 		if (countImmortalTime > 0.f) {
 			countImmortalTime = max(0.f, countImmortalTime - deltaTime);
-			if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("lost_suit.wav");
+			if (SETTING.isSoundEnabled()) 
+				RESOURCE_MANAGER.playSound("lost_suit.wav");
 		}
 	}
 	if (characterType == MARIO || characterType == TOAD) {
@@ -1179,7 +1207,7 @@ void Character::loadEntity(const json& j)
 	countImmortalTime = j["countImmortalTime"];
 	standingUp = j["standingUp"];
 
-	transitioningFrameTime = 0.f;
+	transitioningFrameTime = 0.06f;
 	transitioningFrameAcum = 0.f;
 	transitionSteps = j["transitionSteps"];
 	transitionCurrentFrame = j["transitionCurrentFrame"];
@@ -1214,10 +1242,10 @@ void Character::saveEntity(json& j) const
 	j["standingUp"] = standingUp;
 
 	j["transitioningFrameTime"] = transitioningFrameTime;
-	j["transitioningFrameAcum"] = transitioningFrameAcum;
+	j["transitioningFrameAcum"] = 0;
 	j["transitionSteps"] = transitionSteps;
-	j["transitionCurrentFrame"] = transitionCurrentFrame;
-	j["transitionCurrentFramePos"] = transitionCurrentFramePos;
+	j["transitionCurrentFrame"] = 0;
+	j["transitionCurrentFramePos"] = 0;
 	j["throwFrameCounter"] = throwFrameCounter;
 	j["victoryFrameCounter"] = victoryFrameCounter;
 	j["victory"] = victory;

@@ -66,7 +66,7 @@ private:
     bool isvictory = false;
     bool died = false;
     bool gameover = false;
-    bool isPaused;
+    bool isPaused = false;
     bool cleared = false;
     float time;
     float deltaTime;

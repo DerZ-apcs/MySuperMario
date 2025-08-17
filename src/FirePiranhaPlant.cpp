@@ -77,6 +77,7 @@ void FirePiranhaPlant::Update() {
         fireBallTimer += deltaTime;
         if (fireBallTimer >= FIREBALL_INTERVAL) {
             ShootFireBall();
+            RESOURCE_MANAGER.playSound("fireball.wav");
             fireBallTimer = 0.0f;
         }
     }
@@ -138,7 +139,6 @@ void FirePiranhaPlant::ShootFireBall() {
         }
     }
    
-    //RESOURCE_MANAGER.playSound("fireball.wav");
 }
 
 void FirePiranhaPlant::loadEntity(const json& j)
@@ -171,7 +171,6 @@ void RapidFirePiranha::ShootFireBall() {
             globalGameEngine->addEnemyFireBall(fireball);
         }
     }
-    if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("fireball.wav");
 }
 
 HomingFirePiranha::HomingFirePiranha(Vector2 pos, Texture2D texture)
@@ -204,5 +203,4 @@ void HomingFirePiranha::ShootFireBall() {
             globalGameEngine->addEnemyFireBall(fireball);
         }
     }
-    if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("fireball.wav");
 }

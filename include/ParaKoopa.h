@@ -17,6 +17,7 @@ public:
 	void draw() override;
 	void UpdateTexture() override;
 	void stomped() override;
+	void CollisionWithFireball(FireBall* fireball) override;
     void loadEntity(const json& j) override;
     void saveEntity(json& j) const override;
 };

@@ -1,6 +1,7 @@
 // ParaKoopa.cpp
 #include "../include/ParaKoopa.h"
 #include "../include/ResourceManager.h"
+#include "../include/GameEngine.h"
 
 static constexpr float RED_JUMP_INTERVAL = 2.5f;
 static constexpr float RED_JUMP_VELOCITY = 250.0f;
@@ -144,6 +145,17 @@ void ParaKoopa::stomped()
 	else {
 		Koopa::stomped();
 	}
+}
+
+void ParaKoopa::CollisionWithFireball(FireBall* fireball)
+{
+	fireball->setEntityDead();
+	SmokeEffect* smokeright = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ 60, 120 });
+	globalGameEngine->addEffect(smokeright);
+	SmokeEffect* smokeleft = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ -60, 120 });
+	globalGameEngine->addEffect(smokeleft);
+	if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomp.wav");
+	stomped();
 }
 
 void ParaKoopa::loadEntity(const json& j)

@@ -44,11 +44,7 @@ void MainMenuState::handleInput()
 	if (startButton.isPressed() || (currentPosition == 0 && IsKeyPressed(KEY_ENTER))) {
 		if (game->multiplayers.empty()) {
 			game->multiplayers.push_back(std::make_unique<Mario>());
-			game->multiplayers[0]->setGravityAvailable(true);
-			game->multiplayers[0]->setPlayerid(0);
-			game->multiplayers[0]->setPosition({ 32, 400 });
-			game->multiplayers[0]->setVel({ 0, 0 });
-			game->multiplayers[0]->setState(FALLING);
+			game->multiplayers[0]->ResetEnterNewMap();
 		}
 		else {
 			for (auto& p : game->multiplayers)
@@ -72,9 +68,7 @@ void MainMenuState::handleInput()
 				if ((game->getSelectedMap() + 1) <= 3) {
 					for (auto& p : players) {
 						if (p) {
-							p->setPosition({ 16, 400 });
-							p->setVel({ 0, 0 });
-							p->setState(FALLING);
+							p->ResetEnterNewMap();
 						}
 					}
 					delete globalGameEngine;
@@ -84,8 +78,8 @@ void MainMenuState::handleInput()
 					// Create a new GameEngine with the updated map and players
 					globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
 					globalGameEngine->loadGameMap(*game->level);
-
-				}
+					globalGameEngine->InitGameCamera(); // init lai gamecamera
+				} 
 				else break;
 			}
 			else {
@@ -102,11 +96,7 @@ void MainMenuState::handleInput()
 		if (globalGameEngine == nullptr) {
 			if (game->multiplayers.empty()) {
 				game->multiplayers.push_back(std::make_unique<Mario>());
-				game->multiplayers[0]->setGravityAvailable(true);
-				game->multiplayers[0]->setPlayerid(0);
-				game->multiplayers[0]->setPosition({ 32, 400 });
-				game->multiplayers[0]->setVel({ 0, 0 });
-				game->multiplayers[0]->setState(FALLING);
+				game->multiplayers[0]->ResetEnterNewMap();
 			}
 			else {
 				for (auto& p : game->multiplayers)
@@ -133,12 +123,9 @@ void MainMenuState::handleInput()
 				globalGameEngine = nullptr;
 				if ((game->getSelectedMap() + 1) <= 3)
 				{
-		/*			if (game->multiplayers.empty())
-						game->multiplayers.push_back(std::make_unique<Mario>());*/
 					for (auto& p : game->multiplayers) {
-						p->setPosition({ 32, 400 });
-						p->setVel({ 0, 0 });
-						p->setState(FALLING);
+						if (p)
+							p->ResetEnterNewMap();
 					}
 					game->selectMap(game->getSelectedMap() + 1);
 					globalGameEngine = new GameEngine(1600.0f, 800.0f, *game->level, &game->multiplayers);
@@ -703,9 +690,8 @@ void LoadGameState::handleInput()
 				globalGameEngine = nullptr;
 				if (game->getSelectedMap() + 1 <= 3) {
 					for (auto& p : game->multiplayers) {
-						p->setPosition({ 32, 400 });
-						p->setVel({ 0, 0 });
-						p->setState(FALLING);
+						if (p) 
+							p->ResetEnterNewMap();
 					}
 					game->selectMap(game->getSelectedMap() + 1);
 					globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);

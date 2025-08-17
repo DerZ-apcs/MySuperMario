@@ -212,6 +212,13 @@ void Koopa::setKoopaState(KoopaState state)
     this->koopaState = state;
 }
 
+void Koopa::CollisionWithFireball(FireBall* fireball)
+{
+    fireball->setEntityDead();
+	if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomp.wav");
+	stomped();
+}
+
 void Koopa::loadEntity(const json& j)
 {
     Enemy::loadEntity(j);

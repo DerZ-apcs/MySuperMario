@@ -15,6 +15,7 @@ public:
     void UpdateTexture() override;
     void stomped() override;
     float getScores() const override;
+    void CollisionWithFireball(FireBall* fireball) override;
     ENEMY_TYPE getEnemyType() const override;    
     void loadEntity(const json& j) override;
     void saveEntity(json& j) const override;

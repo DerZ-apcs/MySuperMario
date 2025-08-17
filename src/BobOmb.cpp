@@ -100,6 +100,17 @@ void BobOmb::stomped()
     velocity.x = 0;
 }
 
+void BobOmb::CollisionWithFireball(FireBall* fireball)
+{
+    if (isDying() || isDead()) return;
+    Explode(); // Nổ ngay khi bị bắn
+    fireball->setEntityDead();
+    SmokeEffect* smokeright = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ 60, 120 });
+    globalGameEngine->addEffect(smokeright);
+    SmokeEffect* smokeleft = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ -60, 120 });
+    globalGameEngine->addEffect(smokeleft);
+}
+
 
 void BobOmb::Explode() {
     if (state == STATE_IS_DYING) return;

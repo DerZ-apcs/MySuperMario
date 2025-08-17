@@ -107,9 +107,6 @@ void GameEngine::loadGameMap(Level& level) {
 		block->setVelocity({ 50.0f, 0.0f });
 		movingBlocks.push_back(block);
     }
-	//enemies.push_back(new BanzaiBill({ 1000, 650 }, RESOURCE_MANAGER.getTexture("BanzaiBill_LEFT_0")));
-	//enemies.push_back(new Bullet({ 1000, 500 }, RESOURCE_MANAGER.getTexture("")));
-    //enemies.push_back(new JumpingPiranhaPlant({ 400, 500 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_JUMP_UP_0")));
 	enemies.push_back(new FlyingGoomba({ 700, 800 }, RESOURCE_MANAGER.getTexture("FlyingGoomba_LEFT_0")));
     Cannon* cannon = new Cannon({ 600, 600 });
     cannon->setBulletType(0);
@@ -117,7 +114,10 @@ void GameEngine::loadGameMap(Level& level) {
 }
 void GameEngine::InitGameCamera()
 {
-   
+	if (multiplayers->empty() || (*multiplayers)[0] == nullptr) return;
+	camera = GameCamera(GetScreenWidth(), GetScreenHeight(), 1.25f);
+	Vector2 Msize = map.getMapSize();
+	camera.loadRenderTexture(Msize);
 }
 GameEngine::~GameEngine() {
     for (size_t i = 0; i < enemyFireball.size(); i++)
@@ -365,13 +365,17 @@ void GameEngine::handleCollision() {
 			if (!block || !isInCameraView(block->getRect())) continue; 
 			CollI.HandleCollision(p.get(), block);
 		}
-		// player vs enemy fireball
+		// player fireball
 		for (auto& fireball : *p->getFireBalls()) {
 			auto nearby = getNearbyBlocks(fireball->getPosition(), 2);
 			for (Blocks* b : nearby) {
 				if (b == nullptr || b->getBlockType() == DECOR) continue;
 				CollI.HandleCollision(fireball, b);
 			}
+            for (auto& mb : movingBlocks) {
+                if (!mb || !isInCameraView(mb->getRect())) continue;
+                CollI.HandleCollision(fireball, mb);
+            }
 		}
     }
 
@@ -388,6 +392,10 @@ void GameEngine::handleCollision() {
         auto nearby = getNearbyBlocks(enemy->getPosition(), 2);
         for (Blocks* b : nearby)
             CollI.HandleCollision(enemy, b);
+        for (auto& mb : movingBlocks) {
+            if (!mb || !isInCameraView(mb->getRect())) continue;
+            CollI.HandleCollision(enemy, mb);
+        }
     }
     // items    
     for (auto& item : items) {
@@ -402,6 +410,10 @@ void GameEngine::handleCollision() {
             if (!b || b->getBlockType() == DECOR) continue;
 			CollI.HandleCollision(enemyFireball[i], b);
 		}
+        for (auto& mb : movingBlocks) {
+			if (!mb || !isInCameraView(mb->getRect())) continue; 
+			CollI.HandleCollision(enemyFireball[i], mb);
+        }
 	}
 
     // player vs enemy
@@ -566,7 +578,11 @@ bool GameEngine::run() {
         ClearBackground(RAYWHITE);
         draw();
         if (IsKeyPressed(KEY_T)) {
-            cout << "Bound: " << getBound().x << " " << getBound().y << endl;
+			cout << "Character state: " << static_cast<CharacterState>((*multiplayers)[0]->getCharacterState()) << endl;
+			cout << "died: " << died << endl;
+			cout << "gameover: " << gameover << endl;
+			cout << "lost life: " << (*multiplayers)[0]->isLostLife() << endl;
+			cout << "phase: " << static_cast<Phase>((*multiplayers)[0]->getPhase()) << endl;
         }
         if (cleared == true && isPaused == false) {
             RESOURCE_MANAGER.stopCurrentMusic();
@@ -574,7 +590,9 @@ bool GameEngine::run() {
             return true;
         }
 
+        // game over
         if (gameover && !isPaused) break;
+        // home is press
         if (GUI::home_is_pressed) {
             GUI::home_is_pressed = false;
             break;
