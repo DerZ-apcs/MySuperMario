@@ -377,6 +377,7 @@ void GUI::drawEditorUI() {
         character[0]->setState(FALLING);
         globalGameEngine = new GameEngine(1600, 800, *level, &character);
         globalGameEngine->loadGameMap(*level);
+		printf("Map loaded successfully!\n");
 
         while (globalGameEngine != nullptr) {
             if (globalGameEngine->run()) { break; }
@@ -406,6 +407,17 @@ void GUI::drawEditorUI() {
             DrawTexture(RESOURCE_MANAGER.getTexture("TILE_" + std::to_string(tile.id)), tile.rect.x, tile.rect.y, WHITE);
             if (tile.id == selectedBlockId) {
                 DrawRectangleLinesEx(tile.rect, 2, RED); // Highlight selected tile
+            }
+        }
+    }
+    else if (displayMode == 1) {
+        std::vector<EnemySelector> enemies = globalEditorEngine->getEnemy();
+        std::string selectedEnemyName = globalEditorEngine->getSelectedEnemyName();
+
+        for (const auto& enemy : enemies) {
+            DrawTexture(enemy.tex, enemy.rect.x, enemy.rect.y, WHITE);
+            if (enemy.name == selectedEnemyName) {
+                DrawRectangleLinesEx(enemy.rect, 2, RED); // Highlight selected enemy
             }
         }
     }

@@ -172,10 +172,14 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 	}
 
 	if (mapJson["layers"].size() < 2) { return; }
+	printf("Loading objects from layer 1\n");
 	nlohmann::json objectLayer = mapJson["layers"][1];
 	nlohmann::json objects = objectLayer["objects"];
 	for (auto& obj : objects) {
-		int gid = obj["gid"];
+		int gid = -1;
+		if (obj.contains("gid") && obj["gid"].is_number_integer()) {
+			gid = obj["gid"];
+		}
 		int x = obj["x"] / 32;
 		int y = obj["y"] / 32 - 1;
 
@@ -253,6 +257,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			tileGrid[y][x] = cannon;
 		}
 		if (name == "Enemy") {
+			printf("Object: %s, Type: %s\n", name.c_str(), type.c_str());
 			if (type == "Goomba") {
 				enemies.push_back(new Goomba(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0")));
 			}

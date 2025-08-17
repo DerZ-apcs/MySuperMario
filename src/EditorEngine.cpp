@@ -9,9 +9,31 @@ EditorEngine::EditorEngine()
 	decor.clear();
 	enemies.clear();
 
+	populateTiles();
+	populateEnemy();
+}
+
+EditorEngine::~EditorEngine() {
+	for (size_t i = 0; i < tileGrid.size(); i++) {
+		for (size_t j = 0; j < tileGrid[i].size(); j++) {
+			delete tileGrid[i][j];
+		}
+	}
+	tileGrid.clear();
+	for (auto& dec : decor) {
+		delete dec;
+	}
+	decor.clear();
+	for (auto& enemy : enemies) {
+		delete enemy;
+	}
+	enemies.clear();
+}
+
+void EditorEngine::populateTiles() {
 	float startX = 20;
 	float startY = 200;
-	for (int i =  0; i < 12; i++) { tiles.push_back({ i, { startX + i * 36, startY, 32, 32 } }); }
+	for (int i = 0; i < 12; i++) { tiles.push_back({ i, { startX + i * 36, startY, 32, 32 } }); }
 	startY += 36;
 	for (int i = 26; i < 38; i++) { tiles.push_back({ i, { startX + (i - 26) * 36, startY, 32, 32 } }); }
 	startY += 36;
@@ -63,32 +85,30 @@ EditorEngine::EditorEngine()
 
 	// special
 	startX = 20; startY += 36 * 2 + 8;
-	tiles.push_back({ 104, { startX, startY, 32, 32 } }); 
+	tiles.push_back({ 104, { startX, startY, 32, 32 } });
 	tiles.push_back({ 110, { startX, startY + 34, 32, 32 } });
 	tiles.push_back({ 105, { startX + 36, startY, 32, 32 } });
 	tiles.push_back({ 113, { startX + 40, startY + 36, 32, 32 } });
 	tiles.push_back({ 114, { startX + 72, startY, 32, 32 } });
 	tiles.push_back({ 115, { startX + 108, startY, 32, 32 } });
 	tiles.push_back({ 117, { startX + 144, startY, 32, 32 } });
-
-
 }
 
-EditorEngine::~EditorEngine() {
-	for (size_t i = 0; i < tileGrid.size(); i++) {
-		for (size_t j = 0; j < tileGrid[i].size(); j++) {
-			delete tileGrid[i][j];
-		}
-	}
-	tileGrid.clear();
-	for (auto& dec : decor) {
-		delete dec;
-	}
-	decor.clear();
-	for (auto& enemy : enemies) {
-		delete enemy;
-	}
-	enemies.clear();
+void EditorEngine::populateEnemy() {
+	float startX = 30;
+	float startY = 240;
+	Texture2D tex;
+
+	tex = RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0");
+	enemy.push_back({ "Goomba", tex, { startX, startY,(float)tex.width, (float)tex.height } });
+	tex = RESOURCE_MANAGER.getTexture("GreenKoopa_RIGHT_0");
+	enemy.push_back({ "GreenKoopa", tex, { startX + 72, startY - 22, (float)tex.width, (float)tex.height } });
+	tex = RESOURCE_MANAGER.getTexture("RedKoopa_RIGHT_0");
+	enemy.push_back({ "RedKoopa", tex, { startX + 120, startY - 22, (float)tex.width, (float)tex.height } });
+	tex = RESOURCE_MANAGER.getTexture("YellowKoopa_RIGHT_0");
+	enemy.push_back({ "YellowKoopa", tex, { startX + 168, startY - 22, (float)tex.width, (float)tex.height } });
+	tex = RESOURCE_MANAGER.getTexture("BlueKoopa_RIGHT_0");
+	enemy.push_back({ "BlueKoopa", tex, { startX + 216, startY - 22, (float)tex.width, (float)tex.height } });
 }
 
 //-----------------
@@ -101,19 +121,32 @@ void EditorEngine::handleInput() {
 	Vector2 mousePos = GetMousePosition();
 
 	// Check if tile selector is clicked
-	for (const auto& tile : tiles) {
-		if (CheckCollisionPointRec(mousePos, tile.rect) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-			selectedBlockId = tile.id;
-			return;
+	if (displayMode == 0) {
+		for (const auto& tile : tiles) {
+			if (CheckCollisionPointRec(mousePos, tile.rect) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+				selectedBlockId = tile.id;
+				selectedEnemyName = "---"; 
+				return;
+			}
+		}
+	} else if (displayMode == 1) {
+		for (const auto& enemySelector : enemy) {
+			if (CheckCollisionPointRec(mousePos, enemySelector.rect) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+				selectedEnemyName = enemySelector.name;
+				selectedEnemyTexture = enemySelector.tex;
+				selectedBlockId = -1;
+				return;
+			}
 		}
 	}
+	
 
 	// Draw
 	if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
 		Vector2 co = PosToCoordinate(GetMousePosition());
 		int x = (int)co.x / 32;
 		int y = (int)co.y / 32;
-		//printf("Click at (%d, %d)\n", (int)co.x / 32, (int)co.y / 32);
+
 		if (selectedBlockId != -1) {
 			if (x >= 0 && x < tileGrid[0].size() && y >= 0 && y < tileGrid.size()) {
 				if (tileGrid[y][x] != nullptr) {
@@ -126,7 +159,6 @@ void EditorEngine::handleInput() {
 					itemBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_105"));
 					itemBlock->setId(selectedBlockId);
 					tileGrid[y][x] = itemBlock; 
-					printf("Created ItemBlock at (%d, %d)\n", x, y);
 					return;
 				}
 
@@ -137,20 +169,65 @@ void EditorEngine::handleInput() {
 				tileGrid[y][x] = solidBlock; // Create new block
 			}
 		}
+		else if (selectedEnemyName != "---") {
+			if (x >= 0 && x < tileGrid[0].size() && y >= 0 && y < tileGrid.size()) {
+				bool exists = false;
+				for (auto* enemy : enemies) {
+					int ex = (int)(enemy->getPosition().x / 32);
+					int ey = (int)(enemy->getPosition().y / 32);
+					if (ex == x && ey == y) {
+						exists = true;
+						break;
+					}
+				}
+
+				if (!exists) {
+					if (selectedEnemyName == "Goomba") {
+						enemies.push_back(new Goomba({ (float)x * 32, (float)y * 32 },
+							RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0")));
+					}
+					else if (selectedEnemyName == "GreenKoopa") {
+						enemies.push_back(new GreenKoopa({ (float)x * 32, (float)y * 32 },
+							selectedEnemyTexture));
+					}
+					else if (selectedEnemyName == "RedKoopa") {
+						enemies.push_back(new RedKoopa({ (float)x * 32, (float)y * 32 },
+							selectedEnemyTexture));
+					}
+					else if (selectedEnemyName == "YellowKoopa") {
+						enemies.push_back(new YellowKoopa({ (float)x * 32, (float)y * 32 },
+							selectedEnemyTexture));
+					}
+					else if (selectedEnemyName == "BlueKoopa") {
+						enemies.push_back(new BlueKoopa({ (float)x * 32, (float)y * 32 },
+							selectedEnemyTexture));
+					}
+				}
+			}
+		}
 	}
 
 	// Delete
 	if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) || IsMouseButtonDown(MOUSE_BUTTON_RIGHT) || IsKeyDown(KEY_LEFT_ALT)) {
 		selectedBlockId = -1; // Deselect block
+		selectedEnemyName = "---"; // Deselect enemy
 
 		Vector2 co = PosToCoordinate(GetMousePosition());
 		int x = (int)co.x / 32;
 		int y = (int)co.y / 32;
+
 		if (x >= 0 && x < tileGrid[0].size() && y >= 0 && y < tileGrid.size()) {
 			if (tileGrid[y][x] != nullptr) {
 				delete tileGrid[y][x]; 
 				tileGrid[y][x] = nullptr; 
 			}
+		}
+		for (auto it = enemies.begin(); it != enemies.end();) {
+			if ((*it)->getPosition().x / 32 == x && (*it)->getPosition().y / 32 == y) {
+				delete *it; // Delete enemy
+				it = enemies.erase(it); // Remove from vector
+			}
+			else { ++it; }
 		}
 	}
 
@@ -216,13 +293,13 @@ void EditorEngine::drawGrid() {
 	}
 
 	// Debug
-	/*
+	
 	for (int y = startY; y < endY; ++y) {
 		for (int x = startX; x < endX; ++x) {
 			std::string coord = "(" + std::to_string(x) + "," + std::to_string(y) + ")";
 			DrawText(coord.c_str(), x * tileSize + 2, y * tileSize + 2, 10, DARKGRAY);
 		}
-	}*/
+	}
 }
 
 void EditorEngine::resizeGrid(int newWidth) {
@@ -242,16 +319,14 @@ void EditorEngine::draw() {
 		for (size_t j = 0; j < tileGrid[i].size(); j++) {
 			if (tileGrid[i][j] != nullptr) {
 				tileGrid[i][j]->draw();
+				//printf("Block at (%zu, %zu) with ID %d\n", i, j, tileGrid[i][j]->getId());
 			}
 		}
-	}
-	// Draw decor
-	for (auto& dec : decor) {
-		if (dec) dec->draw();
 	}
 	// Draw enemies
 	for (auto& enemy : enemies) {
 		if (enemy) enemy->draw();
+		//printf("Enemy at (%f, %f)\n", enemy->getPosition().x, enemy->getPosition().y);
 	}
 	drawGrid();
 	camera.endDrawing();
@@ -273,10 +348,20 @@ void EditorEngine::draw() {
 		DrawTexturePro(tex, src, dst, { 0, 0 }, 0.0f, Fade(WHITE, 0.5f));
 
 		// Draw the seleced block ID
-		std::string blockIdText = "Selected Block ID: " + std::to_string(selectedBlockId);
-		DrawText(blockIdText.c_str(), 10, 650, 20, BLACK);
-	}
-	else {
+		/*std::string blockIdText = "Selected Block ID: " + std::to_string(selectedBlockId);
+		DrawText(blockIdText.c_str(), 10, 650, 20, BLACK);*/
+	} else if (selectedEnemyName != "---") {
+		Vector2 co = PosToCoordinate(GetMousePosition());
+		Vector2 screenPos = GetWorldToScreen2D(co, camera.GetCamera2D());
+
+		float scale = camera.GetCamera2D().zoom;
+
+		Texture2D tex = globalEditorEngine->getSelectedEnemyTexture();
+		Rectangle src = { 0, 0, (float)tex.width, (float)tex.height };
+		Rectangle dst = { screenPos.x, screenPos.y, tex.width * scale, tex.height * scale };
+
+		DrawTexturePro(tex, src, dst, { 0, 0 }, 0.0f, Fade(WHITE, 0.5f));
+	} else {
 		Vector2 co = PosToCoordinate(GetMousePosition());
 		Vector2 screenPos = GetWorldToScreen2D(co, camera.GetCamera2D());
 		// Draw a rectangle at the mouse position
@@ -356,6 +441,25 @@ void EditorEngine::saveToJson() {
 		}
 	}
 
+	for (auto& dec : decor) {
+		if (dec) {
+			int blockId = dec->getId() + 1; // Adjust for zero-based index
+			int x = (int)(dec->getPosition().x / 32);
+			int y = (int)(dec->getPosition().y / 32);
+			if (x >= 0 && x < tileGrid[0].size() && y >= 0 && y < tileGrid.size()) {
+				decorData[y * tileGrid[0].size() + x] = blockId; // Set decor block
+			}
+		}
+	}
+
+	for (auto& enemy : enemies) {
+		nlohmann::json obj;
+		enemy->saveEntity(obj);
+		obj["x"] = enemy->getPosition().x;
+		obj["y"] = enemy->getPosition().y + 32;
+		objectData.push_back(obj);
+	}
+
 	mapJson["layers"] = nlohmann::json::array();
 	mapJson["layers"].push_back({
 		{"name", "TileLayer"},
@@ -378,7 +482,7 @@ void EditorEngine::saveToJson() {
 		std::cerr << "Failed to open file for writing." << std::endl;
 		return;
 	}
-	file << mapJson.dump(); 
+	file << mapJson.dump(3); 
 	file.close();
 }
 
@@ -413,7 +517,23 @@ void EditorEngine::loadFromJson() {
 
 	if (mapJson["layers"].size() < 2) { return; } // No object layer found
 	for (auto& obj : mapJson["layers"][1]["objects"]) {
-		if (obj["type"] == "ItemBlock") {
+		std::string name;
+		std::string type;
+
+		// Extract Name/Type from properties array
+		if (obj.contains("properties") && obj["properties"].is_array()) {
+			for (auto& prop : obj["properties"]) {
+				if (prop["name"] == "Name") {
+					name = prop["value"];
+				}
+				else if (prop["name"] == "Type") {
+					type = prop["value"];
+				}
+			}
+		}
+		printf("Object: %s, Type: %s\n", name.c_str(), type.c_str());
+
+		if (name == "QuestionBlock") {
 			int x = obj["x"] / 32;
 			int y = obj["y"] / 32 - 1;
 
@@ -424,6 +544,17 @@ void EditorEngine::loadFromJson() {
 			itemBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_105"));
 			tileGrid[y][x] = itemBlock;
 		}
+
+		if (name == "Enemy") {
+			int x = obj["x"] / 32;
+			int y = obj["y"] / 32 - 1;
+
+			if (type == "Goomba") {
+				enemies.push_back(new Goomba(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0")));
+				printf("Created enemy Goomba at (%d, %d)\n", x, y);
+			}
+		}
+
 	}
 
 	if (mapJson["layers"].size() < 3) { return; } // No decor layer found
@@ -437,6 +568,10 @@ void EditorEngine::loadFromJson() {
 				decorBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_" + std::to_string(blockId)));
 				decorBlock->setId(blockId);
 				decor.push_back(decorBlock);
+
+				int x = (int)(decorBlock->getPosition().x / 32);
+				int y = (int)(decorBlock->getPosition().y / 32);
+				tileGrid[y][x] = decorBlock;
 			}
 		}
 	}

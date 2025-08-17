@@ -208,6 +208,20 @@ void Goomba::saveEntity(json& j) const
     j["chaseTimer"] = chaseTimer;
     j["goombaType"] = static_cast<int>(goombaType);
 
+    // Add Tiled-compatible properties array
+    j["properties"] = json::array({
+        {
+            { "name", "Name" },
+            { "type", "string" },
+            { "value", "Enemy" }
+        },
+        {
+            { "name", "Type" },
+            { "type", "string" },
+            { "value", "Goomba"}
+        }
+        });
+
 }
 
 // ---------------------------------------------- FLYINGGOOMBA --------------------------------------------------------- 
@@ -364,5 +378,19 @@ void FlyingGoomba::saveEntity(json& j) const
     j["bottomY"] = bottomY;
     j["leftPatrolX"] = leftPatrolX;
     j["rightPatrolX"] = rightPatrolX;
+
+    // Add Tiled-compatible properties array
+    j["properties"] = json::array({
+        {
+            { "name", "Name" },
+            { "type", "string" },
+            { "value", "Enemy" }
+        },
+        {
+            { "name", "Type" },
+            { "type", "string" },
+            { "value", "FlyingGoomba"}
+        }
+        });
 }
 

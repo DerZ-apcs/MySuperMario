@@ -14,6 +14,7 @@ struct TileSelector {
 
 struct EnemySelector {
 	string name;
+	Texture2D tex;
 	Rectangle rect;
 };
 
@@ -31,6 +32,11 @@ private:
 	std::unordered_set<int> decorTiles;
 	std::vector<TileSelector> tiles; 
 	int selectedBlockId = -1; 
+	void populateTiles(); 
+	std::vector<EnemySelector> enemy;
+	string selectedEnemyName = "---";
+	Texture2D selectedEnemyTexture = RESOURCE_MANAGER.getTexture("Coin_0");
+	void populateEnemy();
 
 	int displayMode = 0; // 0: block | 1: enemy
 	bool isEditingItemBlock = false;
@@ -47,6 +53,11 @@ public:
 
 	const std::vector<TileSelector>& getTiles() const { return tiles; }
 	const int getSelectedBlockId() const { return selectedBlockId; }
+
+	const std::vector<EnemySelector>& getEnemy() const { return enemy; }
+	const string getSelectedEnemyName() const { return selectedEnemyName; }
+	const Texture2D getSelectedEnemyTexture() const { return selectedEnemyTexture; }
+
 	const int getDisplayMode() const { return displayMode; }
 	void setDisplayMode(int mode) { displayMode = mode; }
 
