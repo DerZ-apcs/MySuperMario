@@ -13,10 +13,7 @@ public:
     ENEMY_TYPE getEnemyType() const override;
 	void UpdateTexture() override;
     float getScores() const override;
-	void saveEntity(json& j) const override {
-		Bullet::saveEntity(j);
-		j["EnemyType"] = static_cast<int>(BANZAIBILL);
-	};
+	void saveEntity(json& j) const override;
 	void loadEntity(const json& j) override {
 		Bullet::loadEntity(j);
 	};

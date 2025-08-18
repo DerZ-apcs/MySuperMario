@@ -151,6 +151,19 @@ void FirePiranhaPlant::saveEntity(json& j) const
 {
     PiranhaPlant::saveEntity(j);
     j["fireBallTimer"] = fireBallTimer; 
+    // Add Tiled-compatible properties array
+    j["properties"] = json::array({
+        {
+            { "name", "Name" },
+            { "type", "string" },
+            { "value", "Enemy" }
+        },
+        {
+            { "name", "Type" },
+            { "type", "string" },
+            { "value", "FirePiranhaPlant"}
+        }
+        });
 }
 
 // RapidFirePiranha Class Implementation
@@ -171,6 +184,24 @@ void RapidFirePiranha::ShootFireBall() {
             globalGameEngine->addEnemyFireBall(fireball);
         }
     }
+}
+
+void RapidFirePiranha::saveEntity(json& j) const
+{
+	FirePiranhaPlant::saveEntity(j);
+	// Add Tiled-compatible properties array
+	j["properties"] = json::array({
+		{
+			{ "name", "Name" },
+			{ "type", "string" },
+			{ "value", "Enemy" }
+		},
+		{
+			{ "name", "Type" },
+			{ "type", "string" },
+			{ "value", "RapidFirePiranha"}
+		}
+		});
 }
 
 HomingFirePiranha::HomingFirePiranha(Vector2 pos, Texture2D texture)
@@ -203,4 +234,22 @@ void HomingFirePiranha::ShootFireBall() {
             globalGameEngine->addEnemyFireBall(fireball);
         }
     }
+}
+
+void HomingFirePiranha::saveEntity(json& j) const
+{
+	FirePiranhaPlant::saveEntity(j);
+	// Add Tiled-compatible properties array
+	j["properties"] = json::array({
+		{
+			{ "name", "Name" },
+			{ "type", "string" },
+			{ "value", "Enemy" }
+		},
+		{
+			{ "name", "Type" },
+			{ "type", "string" },
+			{ "value", "HomingFirePiranha"}
+		}
+		});
 }

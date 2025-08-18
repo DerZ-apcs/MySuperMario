@@ -16,7 +16,7 @@ private:
 public:
     JumpingPiranhaPlant(Vector2 pos, Texture2D texture);
     void Update() override;
-    void stomped() override;
+    //void stomped() override;
     void loadEntity(const json& j) override;
     void saveEntity(json& j) const override;
 };

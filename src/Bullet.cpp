@@ -98,6 +98,18 @@ void Bullet::saveEntity(json& j) const
 {
     Enemy::saveEntity(j);
     j["bulletType"] = static_cast<int>(bulletType);
+	j["properties"] = json::array({
+	{
+		{ "name", "Name" },
+		{ "type", "string" },
+		{ "value", "Enemy" }
+	},
+	{
+		{ "name", "Type" },
+		{ "type", "string" },
+		{ "value", "Bullet" }
+	}
+		});
 }
 
 
@@ -173,6 +185,18 @@ void FireBullet::loadEntity(const json& j)
 
 void FireBullet::saveEntity(json& j) const
 {
-    Enemy::saveEntity(j);
+    Bullet::saveEntity(j);
     j["fireBallTimer"] = fireBallTimer;
+    j["properties"] = json::array({
+    {
+        { "name", "Name" },
+        { "type", "string" },
+        { "value", "Enemy" }
+    },
+    {
+        { "name", "Type" },
+        { "type", "string" },
+        { "value", "FireBullet"}
+    }
+        });
 }

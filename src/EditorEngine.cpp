@@ -146,7 +146,7 @@ void EditorEngine::populateEnemy() {
 
 
 	startY += 96;
-	tex = RESOURCE_MANAGER.getTexture("boomboom_walk_right_1");
+	tex = RESOURCE_MANAGER.getTexture("boomboom_walk_left_0");
 	enemy.push_back({ "BoomBoom", tex, { startX, startY, (float)tex.width, (float)tex.height } });
 	tex = RESOURCE_MANAGER.getTexture("petey_walk_right_0");
 	enemy.push_back({ "PeteyPiranha", tex, { startX + 80, startY, (float)tex.width , (float)tex.height } });
@@ -725,7 +725,7 @@ void EditorEngine::loadFromJson(int slot) {
 				enemies.push_back(new BobOmb(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("BobOmb_RIGHT_0")));
 			}
 			if (type == "PiranhaPlant") {
-				enemies.push_back(new PiranhaPlant(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_RIGHT_0")));
+				enemies.push_back(new PiranhaPlant(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_0")));
 			}
 			if (type == "Rex") {
 				enemies.push_back(new Rex(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("Rex_RIGHT_0")));

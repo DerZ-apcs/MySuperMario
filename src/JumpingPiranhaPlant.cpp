@@ -17,6 +17,19 @@ JumpingPiranhaPlant::JumpingPiranhaPlant(Vector2 pos, Texture2D texture)
 }
 
 void JumpingPiranhaPlant::Update() {
+    Entity::Update();
+    if (isDead() || state == STATE_IS_DYING) {
+        if (deathTimer > 0) {
+            deathTimer -= GetFrameTime();
+            updateSquashEffect();
+            if (deathTimer <= 0) {
+                dead = true;
+            }
+        }
+        UpdateTexture(true);
+        return;
+    }
+
     float dt = GetFrameTime();
     animTimer += dt;
     if (animTimer >= ANIM_INTERVAL) animTimer -= ANIM_INTERVAL;
@@ -58,19 +71,6 @@ void JumpingPiranhaPlant::Update() {
     UpdateTexture(isGoingUp);
 }
 
-void JumpingPiranhaPlant::stomped()
-{
-    if (isDead() || state == STATE_IS_DYING || invincibilityTimer > 0) return;
-    state = STATE_IS_DYING;
-    velocity.x = 0;
-    velocity.y = 0;
-    deathTimer = ENEMY_DEATH_TIMER_DEFAULT;
-    invincibilityTimer = 0.5f;
-    updateSquashEffect();
-    Effect* score = new ScoreEffect(RESOURCE_MANAGER.getTexture(to_string(SCORE_STOMP_REX).c_str()), getCenter());
-    globalGameEngine->addEffect(score);
-}
-
 void JumpingPiranhaPlant::loadEntity(const json& j)
 {
     PiranhaPlant::loadEntity(j);
@@ -81,9 +81,25 @@ void JumpingPiranhaPlant::saveEntity(json& j) const
 {
     PiranhaPlant::saveEntity(j);
     j["animTimer"] = animTimer;
+    j["properties"] = json::array({
+    {
+        { "name", "Name" },
+        { "type", "string" },
+        { "value", "Enemy" }
+    },
+    {
+        { "name", "Type" },
+        { "type", "string" },
+        { "value", "JumpingPiranhaPlant"}
+    }
+        });
 }
 
 void JumpingPiranhaPlant::UpdateTexture(bool isGoingUp) {
+    if (isDead() || state == STATE_IS_DYING) {
+        texture = RESOURCE_MANAGER.getTexture("PiranhaPlant_JUMP_UP_0");
+        return;
+    }
     // Tốc độ animation đóng/mở miệng. bạn có thể thay đổi số này.
     const float FRAME_ANIMATION_SPEED = 0.2f;
 

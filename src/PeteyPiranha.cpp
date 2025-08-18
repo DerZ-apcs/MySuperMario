@@ -282,7 +282,8 @@ void PeteyPiranha::CollisionWithFireball(FireBall* fireball) {
         globalGameEngine->addScore(500);
     }
 
-
+    if (SETTING.isSoundEnabled()) 
+		RESOURCE_MANAGER.playSound("stomp.wav");
     fireball->setEntityDead(); // Phá hủy quả cầu lửa của Mario
 }
 
@@ -316,4 +317,16 @@ void PeteyPiranha::saveEntity(json& j) const
 	j["statePhaseTimer"] = statePhaseTimer;
 	j["currentHp"] = currentHp;
 	j["maxHp"] = maxHp;
+    j["properties"] = json::array({
+    {
+        { "name", "Name" },
+        { "type", "string" },
+        { "value", "Enemy" }
+    },
+    {
+        { "name", "Type" },
+        { "type", "string" },
+        { "value", "PeteyPiranha"}
+    }
+        });
 }

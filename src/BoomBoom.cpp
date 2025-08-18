@@ -261,4 +261,16 @@ void BoomBoom::saveEntity(json& j) const
     j["currentFrame"] = currentFrame;
     j["frameTimer"] = frameTimer;
     j["frameDuration"] = frameDuration;
+    j["properties"] = json::array({
+    {
+        { "name", "Name" },
+        { "type", "string" },
+        { "value", "Enemy" }
+    },
+    {
+        { "name", "Type" },
+        { "type", "string" },
+        { "value", "BoomBoom"}
+    }
+        });
 }

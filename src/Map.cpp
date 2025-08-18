@@ -273,14 +273,20 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			else if (type == "FlyingGoomba") {
 				enemies.push_back(new FlyingGoomba(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FlyingGoomba_RIGHT_0")));
 			}
-			else if (type == "PiranhaPlant") {
+			else if (type == "PiranhaPlant" || type == "Piranha") {
 				enemies.push_back(new PiranhaPlant(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("PiranhaPlant_OPEN")));
 			}
-			else if (type == "JumpingPiranha") {
+			else if (type == "JumpingPiranhaPlant" || type == "JumpingPiranha") {
 				enemies.push_back(new JumpingPiranhaPlant(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("JumpingPiranha_OPEN")));
 			}
-			else if (type == "FirePiranha") {
+			else if (type == "FirePiranhaPlant" || type == "FirePiranha") {
 				enemies.push_back(new FirePiranhaPlant(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FirePiranha_OPEN")));
+			}
+			else if (type == "RapidFirePiranhaPlant" || type == "RapidFirePiranha") {
+				enemies.push_back(new RapidFirePiranha(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FirePiranha_OPEN")));
+			}
+			else if (type == "HomingFirePiranha" || type == "HomingFirePiranhaPlant") {
+				enemies.push_back(new HomingFirePiranha(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FirePiranha_OPEN")));
 			}
 			else if (type == "GreenKoopa") {
 				enemies.push_back(new GreenKoopa(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("GreenKoopa_RIGHT_0")));
@@ -335,12 +341,6 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			}
 			else if (type == "DryBones") {
 				enemies.push_back(new DryBones(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("DryBones_RIGHT_0")));
-			}
-			else if (type == "JumpingPiranhaPlant") {
-				enemies.push_back(new JumpingPiranhaPlant(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("JumpingPiranhaPlant_OPEN")));
-			}
-			else if (type == "FirePiranhaPlant") {
-				enemies.push_back(new FirePiranhaPlant(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FirePiranhaPlant_CLOSED")));
 			}
 			else if (type == "BobOmb") {
 				enemies.push_back(new BobOmb(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("BobOmb_RIGHT_0")));

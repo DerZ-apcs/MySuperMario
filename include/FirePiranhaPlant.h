@@ -32,6 +32,7 @@ public:
 	PIRANHA_TYPE getPiranhaType() const override {
 		return RAPIDFIRE_PIRANHA; // Trả về loại Rapid Fire Piranha
 	}
+    void saveEntity(json& j) const override;
 };
 
 class HomingFirePiranha : public FirePiranhaPlant {
@@ -44,6 +45,7 @@ public:
     PIRANHA_TYPE getPiranhaType() const override {
         return HOMING_PIRANHA;
     } 
+	void saveEntity(json& j) const override;
 };
 
 #endif
