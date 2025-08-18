@@ -170,6 +170,7 @@ void Game::setBackground(const std::string& imageName)
 
 void Game::loadGUI()
 {
+	GUI::heartTexture = RESOURCE_MANAGER.getTexture("HEART");
 	GUI::board = RESOURCE_MANAGER.getTexture("BOARD");
 	GUI::board1 = RESOURCE_MANAGER.getTexture("BOARD1");
 	GUI::board2 = RESOURCE_MANAGER.getTexture("BOARD2");

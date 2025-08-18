@@ -6,13 +6,11 @@
 using namespace std;
 
 class Character;
-
+class Boss;
 //Static class to draw GUI using raylib
 class GUI {
 public:
 	static Texture2D heartTexture;
-	static Texture2D coinTexture;
-	static Texture2D multiplicationSign;
 	static Texture2D board;
 	static Texture2D largeBoard;
 	static Texture2D board1;
@@ -54,6 +52,7 @@ public:
 	static void drawItemChoice(Vector2 position, ITEM_TYPE& itemChoice);
 	static void drawInputBox(Vector2 position, std::string& inputText);
 	static void drawMapChoice(int& mapChoice);
+	static void drawBossHealthBar(const Boss* boss);
 
 	static bool home_is_pressed;
 	static bool restart_is_pressed;

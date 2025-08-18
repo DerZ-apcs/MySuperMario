@@ -100,9 +100,10 @@ void GameEngine::loadGameMap(Level& level) {
     covers = map.getCovers();
     secretAreas = map.getSecretAreas(); 
 
-    Cannon* cannon = new Cannon({ 600, 600 });
-    cannon->setBulletType(0);
-    tileGrid[20].push_back(cannon);
+	enemies.push_back(new JumpingPiranhaPlant({ 400, 700 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_CLOSED")));
+    // test 2 boss
+	//enemies.push_back(new BoomBoom({ 1000, 500 }));
+
 
 }
 void GameEngine::InitGameCamera()

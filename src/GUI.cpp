@@ -1,10 +1,12 @@
-#include "../include/GUI.h"
+﻿#include "../include/GUI.h"
 #include "../include/Level.h"
 #include "../include/Character.h"
 #include "../include/GameEngine.h"
 #include <TextButton.h>
+#include "../include/Boss.h"
 #include "../include/EditorEngine.h"
 
+Texture2D GUI::heartTexture;
 Texture2D GUI::board;
 Texture2D GUI::largeBoard;
 Texture2D GUI::board1;
@@ -493,4 +495,28 @@ void GUI::drawMapChoice(int& mapChoice) {
             DrawRectangleLinesEx(buttons[i], 3, RED);
         }
     }
+}
+
+void GUI::drawBossHealthBar(const Boss* boss) {
+    // Nếu không có boss (con trỏ là nullptr) hoặc boss đã chết, không vẽ gì cả
+    if (!boss || boss->getCurrentHp() <= 0) {
+        return;
+    }
+
+    Rectangle dest, source;
+
+    float startY = 365.f;
+    if (!guiX.id) guiX = RESOURCE_MANAGER.getTexture("guiX");
+
+    // 2. Vẽ biểu tượng trái tim
+    source = { 0, 0, (float)heartTexture.width, (float)heartTexture.height };
+    dest = { 700.f, startY + 25.f, 40.f, 40.f };
+    DrawTexturePro(heartTexture, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+
+    // 3. Vẽ dấu nhân 'x'
+    source = { 0, 0, (float)guiX.width, (float)guiX.height };
+    dest = { 745.f, startY + 35.f, 20.f, 20.f };
+    DrawTexturePro(guiX, source, dest, { 0.f, 0.f }, 0.f, WHITE);
+
+    DrawText(to_string(boss->getCurrentHp()).c_str(), 770.0f, startY + 25.f, 40, BLACK);
 }

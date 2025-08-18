@@ -606,6 +606,20 @@ void ResourceManager::loadTextures() {
 	textures["boomboom_charge"] = LoadTexture("resources/images/sprites/baddies/boomboom_charge.png");
 	textures["boomboom_stunned"] = LoadTexture("resources/images/sprites/baddies/boomboom_stunned.png");
 	textures["boomboom_hidden"] = LoadTexture("resources/images/sprites/baddies/boomboom_hidden.png");
+	//Petey Piranha
+	textures["petey_walk_right_0"] = LoadTexture("resources/images/sprites/baddies/boomboom_walk_0.png");
+	textures["petey_walk_right_1"] = LoadTexture("resources/images/sprites/baddies/boomboom_walk_1.png");
+	textures["petey_walk_left_0"] = flipTexture(textures["petey_walk_right_0"]);
+	textures["petey_walk_left_1"] = flipTexture(textures["petey_walk_right_1"]);
+	textures["petey_shoot"] = LoadTexture("resources/images/sprites/baddies/boomboom_charge.png");
+	textures["petey_burrow_down"] = LoadTexture("resources/images/sprites/baddies/boomboom_spin.png");
+	textures["petey_emerge"] = LoadTexture("resources/images/sprites/baddies/boomboom_jump.png");
+	textures["petey_hurt"] = LoadTexture("resources/images/sprites/baddies/boomboom_stunned.png");
+	textures["petey_vulnerable"] = LoadTexture("resources/images/sprites/baddies/boomboom_hidden.png");
+	textures["spore_cloud"] = LoadTexture("resources/images/sprites/baddies/boomboom_charge.png");
+	textures["spore_droplet"] = LoadTexture("resources/images/sprites/baddies/Muncher_0.png");
+	textures["petey_spore_release"] = LoadTexture("resources/images/sprites/baddies/boomboom_charge.png");
+	//-----------------------------------------------------------------------------------
 	// gui scores
 	textures["10"] = LoadTexture("resources/images/gui/gui10.png");
 	textures["20"] = LoadTexture("resources/images/gui/gui20.png");

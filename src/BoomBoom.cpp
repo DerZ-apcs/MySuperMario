@@ -15,7 +15,7 @@ BoomBoom::BoomBoom(Vector2 pos):
     Boss(pos, { 64, 64 }, RESOURCE_MANAGER.getTexture("boomboom_walk_left_0"), BOOMBOOM_INITIAL_HP),
     walkSpeed(BOOMBOOM_WALK_SPEED),
     chargeSpeed(BOOMBOOM_CHARGE_SPEED),
-    jumpPower(BOOMBOOM_JUMP_POWER),
+    jumpPower(BOOMBOOM_JUMP_POWER), 
     actionTimer(BOOMBOOM_ACTION_INTERVAL)
 {
     currentFrame = 0;

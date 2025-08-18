@@ -66,3 +66,11 @@ void Boss::saveEntity(json& j) const
     j["vulnerable"] = vulnerable;
     j["stateTimer"] = stateTimer;
 }
+
+int Boss::getCurrentHp() const {
+    return currentHp;
+}
+
+int Boss::getMaxHp() const {
+    return maxHp;
+}
