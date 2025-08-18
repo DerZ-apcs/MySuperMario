@@ -89,7 +89,7 @@ void GameEngine::loadGameMap(Level& level) {
     map.LoadFromJsonFile(level.getMapPath());
     map.loadBackgroundTexture(level.getBackGroundName());
     Vector2 Msize = map.getMapSize();
-    camera.loadRenderTexture(Msize);
+	camera.loadRenderTexture(Msize);
     bounce = Msize;
 
 	movingBlocks = map.getMovingBlocks();
@@ -116,7 +116,9 @@ void GameEngine::InitGameCamera()
 {
 	if (multiplayers->empty() || (*multiplayers)[0] == nullptr) return;
 	camera = GameCamera(GetScreenWidth(), GetScreenHeight(), 1.25f);
+	camera.setPos((*multiplayers)[0]->getPosition());
 	Vector2 Msize = map.getMapSize();
+	cout << "Msize: " << Msize.x << " x " << Msize.y << endl;
 	camera.loadRenderTexture(Msize);
 }
 GameEngine::~GameEngine() {
@@ -193,20 +195,7 @@ void GameEngine::update()
     }
     if (IsKeyPressed(KEY_F5)) {
         saveGame(1);
-        const char* text = "Game has been saved";
-
-        Font* font = RESOURCE_MANAGER.getFont("SMW");
-        if (font) {
-            Vector2 position = { 400, 300 }; // Example position (adjust as needed)
-            float fontSize = 30.0f;
-            float spacing = 1.0f;
-
-            // Get size of the text to center it
-            Vector2 textSize = MeasureTextEx(*font, text, fontSize, spacing);
-            Vector2 origin = { textSize.x / 2, textSize.y / 2 };
-
-            DrawTextPro(*font, text, position, origin, 0.0f, fontSize, spacing, BLACK);
-        }
+        cout << "Game has been save" << endl;
     }
     if (IsKeyPressed(KEY_F9))
         loadGame(1);
@@ -864,8 +853,8 @@ json GameEngine::serialize()
 void GameEngine::deserialize(const json& j)
 {
     level->loadLevel(j);
-    loadGameMap(*level);
     map.loadMap(j);
+    loadGameMap(*level);
 
     Vector2 Msize = { j["mapSize"][0], j["mapSize"][1] };
     map.setMapSize(Msize);
@@ -878,6 +867,8 @@ void GameEngine::deserialize(const json& j)
     loadEnemies(enemies, j);
     loadItems(items, j);
     loadTileGrids(tileGrid, j);
+
+    //InitGameCamera();
 }
 
 std::vector<std::vector<Blocks*>>& GameEngine::getTileGrid()

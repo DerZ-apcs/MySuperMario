@@ -56,6 +56,7 @@ void Game::init()
 
 	// map
 	selectMap(selectedMap);
+	level = loadedLevel[0].get();
 
 	while (!WindowShouldClose()) {
 		BeginDrawing();
@@ -121,9 +122,6 @@ void Game::selectMap(int mapIndex)
 	case 3:
 		this->level = loadedLevel[2].get();
 		break;
-	//case 4:
-	//	this->level = loadedLevel[3];
-	//	break;
 	}
 	this->selectedMap = mapIndex;
 }

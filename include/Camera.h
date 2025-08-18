@@ -32,11 +32,11 @@ public:
 	void setScale(float newScale);
 	Vector2& getSize() const;
 	Vector2& getPos() const;
+	void setPos(Vector2 pos);
 	float getScale() const;
 	Rectangle getViewRect() const;
 	void loadCamera(const json& j);
 	void saveCamera(json& j) const;
-
 };
 
 //------------
