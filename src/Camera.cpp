@@ -263,6 +263,33 @@ void EditorCamera::handleInput() {
     if (IsMouseButtonReleased(MOUSE_BUTTON_MIDDLE)) {
         isDragging = false;
     }
+    // Handle arrow key movement
+    const float moveSpeed = 300.0f; // Pixels per second in world space
+    float dt = GetFrameTime();
+    Vector2 moveDelta = { 0.0f, 0.0f };
+
+    if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) {
+		if (IsKeyDown(KEY_LEFT_SHIFT)) 
+			moveDelta.x += moveSpeed * 2.0f * dt; // Faster movement with shift
+		else moveDelta.x += moveSpeed * dt;
+    }
+    if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)) {
+		if (IsKeyDown(KEY_LEFT_SHIFT)) 
+			moveDelta.x -= moveSpeed * 2.0f * dt; // Faster movement with shift
+        else moveDelta.x -= moveSpeed * dt;
+    }
+    if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W)) {
+		if (IsKeyDown(KEY_LEFT_SHIFT))
+			moveDelta.y -= moveSpeed * 2.0f * dt; // Faster movement with shift
+        else moveDelta.y -= moveSpeed * dt;
+    }
+    if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S)) {
+		if (IsKeyDown(KEY_LEFT_SHIFT))
+			moveDelta.y += moveSpeed * 2.0f * dt; // Faster movement with shift
+		else moveDelta.y += moveSpeed * dt;
+    }
+    // Apply movement, adjusted for zoom
+    position = Vector2Add(position, Vector2Scale(moveDelta, 1.0f / zoom));
 
     float scroll = GetMouseWheelMove();
     if (scroll != 0) {

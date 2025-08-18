@@ -35,6 +35,7 @@ static Texture2D loadTextureFromType(ENEMY_TYPE type) {
     case SPINY: return RESOURCE_MANAGER.getTexture("Spiny_RIGHT_0");
     case DRYBONES: return RESOURCE_MANAGER.getTexture("DryBones_LEFT_0");
     case BUZZYBEETLE: return RESOURCE_MANAGER.getTexture("BuzzyBeetle_RIGHT_0");
+	case BOSS: return RESOURCE_MANAGER.getTexture("BoomBoom_walk_right_1");
     default:
         std::cerr << "Unknown enemy type for texture loading\n";
         return {};

@@ -12,6 +12,7 @@ MainMenuState::MainMenuState(Game* game)
 	settingButton = { {400, 540}, {160, 80}, "Setting" };
 	modePlayerButton = { {400, 600}, {200, 80}, "Mode" }; // for mode
 	mapSelectionButton = { {400, 660}, {160, 80}, "Map" };
+	editorButton = { {400, 720}, {160, 80}, "Editor" };
 	guiArrow = RESOURCE_MANAGER.getTexture("choosingArrow");
 }
 
@@ -24,6 +25,7 @@ void MainMenuState::draw()
 	settingButton.draw();
 	modePlayerButton.draw();
 	mapSelectionButton.draw();
+	editorButton.draw();
 	if (guiArrow.id == 0)
 		guiArrow = RESOURCE_MANAGER.getTexture("choosingArrow");
 	DrawTexturePro(guiArrow, { 0, 0, (float)guiArrow.width, (float)guiArrow.height },
@@ -162,7 +164,7 @@ void MainMenuState::handleInput()
 		game->setState(std::make_unique<ModePlayer>(game));
 	else if (mapSelectionButton.isPressed()|| (currentPosition == 6 && IsKeyPressed(KEY_ENTER)))
 		game->setState(std::make_unique<MapSelection>(game));
-	else if (IsKeyPressed(KEY_E)) {
+	else if (editorButton.isPressed() || (currentPosition == 7 && IsKeyPressed(KEY_ENTER))) {
 		if (globalEditorEngine != nullptr) {
 			delete globalEditorEngine;
 			globalEditorEngine = nullptr;
@@ -171,10 +173,14 @@ void MainMenuState::handleInput()
 
 		while (globalEditorEngine != nullptr) {
 			if (globalEditorEngine->run()) {
+				//delete globalEditorEngine;
+				//globalEditorEngine = nullptr;
+				break;
+			}
+			else {
 				delete globalEditorEngine;
 				globalEditorEngine = nullptr;
-			}
-			else break;
+			};
 		}
 	}
 }
@@ -188,6 +194,7 @@ void MainMenuState::update()
 	settingButton.update();
 	modePlayerButton.update();
 	mapSelectionButton.update();
+	editorButton.update();
 	if (currentPosition == 0) startButton.setHovered(true);
 	else startButton.setHovered(false);
 	if (currentPosition == 1) continueButton.setHovered(true);
@@ -202,6 +209,8 @@ void MainMenuState::update()
 	else modePlayerButton.setHovered(false);
 	if (currentPosition == 6) mapSelectionButton.setHovered(true);
 	else mapSelectionButton.setHovered(false);
+	if (currentPosition == 7) editorButton.setHovered(true);
+	else editorButton.setHovered(false);
 }
 
 MainMenuState::~MainMenuState()

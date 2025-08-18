@@ -29,7 +29,6 @@ BoomBoom::BoomBoom(Vector2 pos):
 
 BoomBoom::BoomBoom(Vector2 pos, Character* player)
     : Boss(pos, { 64, 64 }, RESOURCE_MANAGER.getTexture("boomboom_walk_left_0"), BOOMBOOM_INITIAL_HP),
-    /*target(player)*/
     walkSpeed(BOOMBOOM_WALK_SPEED),
     chargeSpeed(BOOMBOOM_CHARGE_SPEED),
     jumpPower(BOOMBOOM_JUMP_POWER),
@@ -213,13 +212,27 @@ void BoomBoom::stomped() {
     }
 }
 
+void BoomBoom::updateCollision()
+{
+    // vi texture cua boomboom ko sat nen can hep lai cai collision
+	CollNorth.setSize({ size.x - 25.f, 5.0f });
+    CollNorth.setPos({ position.x + size.x / 2 - CollNorth.getWidth() / 2, position.y + 1});
+    CollSouth.setPos({ position.x + size.x / 2 - CollSouth.getWidth() / 2, position.y + size.y * squashScale - CollSouth.getHeight() - 1.2f});
+    CollEast.setPos({ position.x + size.x * squashScale - CollEast.getWidth() - 1, position.y + size.y * squashScale / 2 - CollEast.getHeight() / 2 });
+    CollWest.setPos({ position.x + 1, position.y + size.y * squashScale / 2 - CollWest.getHeight() / 2 });
+}
+
 void BoomBoom::CollisionWithFireball(FireBall* fireball) {
     if (isDying() || !vulnerable) {
         fireball->setEntityDead();
         return;
     }
+	
     enterState(BoomBoomState::STUNNED);
     fireball->setEntityDead(); 
+    if (SETTING.isSoundEnabled()) {
+        RESOURCE_MANAGER.playSound("stomp.wav");
+    }
 }
 
 void BoomBoom::loadEntity(const json& j)

@@ -297,6 +297,21 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			else if (type == "ParaKoopaRed") {
 				enemies.push_back(new ParaKoopaRed(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("ParaKoopa_RIGHT_0")));
 			}
+			else if (type == "ParaKoopaGreen") {
+				enemies.push_back(new ParaKoopaGreen(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("ParaKoopa_RIGHT_0")));
+			}
+			else if (type == "ParaKoopaYellow") {
+				enemies.push_back(new ParaKoopaYellow(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("ParaKoopa_RIGHT_0")));
+			}
+			else if (type == "ParaKoopaBlue") {
+				enemies.push_back(new ParaKoopaBlue(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("ParaKoopa_RIGHT_0")));
+			}
+			else if (type == "BoomBoom") {
+				enemies.push_back(new BoomBoom(Vector2{ (float)x * blockwidth, (float)y * blockwidth }));
+			}
+			else if (type == "PeteyPiranha") {
+				enemies.push_back(new PeteyPiranha(Vector2{ (float)x * blockwidth, (float)y * blockwidth }));
+			}
 			else if (type == "Bullet") {
 				enemies.push_back(new Bullet(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Bullet"), LEFT));
 			}
@@ -320,6 +335,12 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			}
 			else if (type == "DryBones") {
 				enemies.push_back(new DryBones(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("DryBones_RIGHT_0")));
+			}
+			else if (type == "JumpingPiranhaPlant") {
+				enemies.push_back(new JumpingPiranhaPlant(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("JumpingPiranhaPlant_OPEN")));
+			}
+			else if (type == "FirePiranhaPlant") {
+				enemies.push_back(new FirePiranhaPlant(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FirePiranhaPlant_CLOSED")));
 			}
 			else if (type == "BobOmb") {
 				enemies.push_back(new BobOmb(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("BobOmb_RIGHT_0")));

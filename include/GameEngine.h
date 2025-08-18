@@ -49,6 +49,7 @@ private:
     // other
     Level* level;
     Map map;
+    Boss* boss;
     std::vector<std::unique_ptr<Character>>* multiplayers; // for multiplayers
     //std::vector<Blocks*> blocks;
 	std::vector<MovingBlock*> movingBlocks; // for moving blocks

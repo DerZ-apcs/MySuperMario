@@ -115,6 +115,12 @@ void EditorEngine::populateEnemy() {
 	enemy.push_back({ "BlueKoopa", tex, { startX + 144, startY, (float)tex.width, (float)tex.height } });
 	tex = RESOURCE_MANAGER.getTexture("ParaKoopaRed_RIGHT_0");
 	enemy.push_back({ "ParaKoopaRed", tex, { startX + 198, startY + 4, (float)tex.width, (float)tex.height } });
+	tex = RESOURCE_MANAGER.getTexture("ParaKoopaGreen_RIGHT_0");
+	enemy.push_back({ "ParaKoopaGreen", tex, { startX + 252, startY + 4, (float)tex.width, (float)tex.height } });
+	tex = RESOURCE_MANAGER.getTexture("ParaKoopaYellow_RIGHT_0");
+	enemy.push_back({ "ParaKoopaYellow", tex, { startX + 306, startY + 4, (float)tex.width, (float)tex.height } });
+	tex = RESOURCE_MANAGER.getTexture("ParaKoopaBlue_RIGHT_0");
+	enemy.push_back({ "ParaKoopaBlue", tex, { startX + 360, startY + 4, (float)tex.width, (float)tex.height } });
 
 	startY += 80;
 	tex = RESOURCE_MANAGER.getTexture("Spiny_RIGHT_0");
@@ -131,8 +137,23 @@ void EditorEngine::populateEnemy() {
 	startY += 48;
 	tex = RESOURCE_MANAGER.getTexture("PiranhaPlant_OPEN");
 	enemy.push_back({ "PiranhaPlant", tex, { startX, startY, (float)tex.width, (float)tex.height } });
+	tex = RESOURCE_MANAGER.getTexture("FirePiranhaPlant_CLOSED");
+	enemy.push_back({ "FirePiranhaPlant", tex, { startX + 48, startY, (float)tex.width, (float)tex.height } });
+	tex = RESOURCE_MANAGER.getTexture("PiranhaPlant_JUMP_UP_0");
+	enemy.push_back({ "JumpingPiranhaPlant", tex, { startX + 96, startY, (float)tex.width, (float)tex.height } });
 	tex = RESOURCE_MANAGER.getTexture("Rex_RIGHT_0");
 	enemy.push_back({ "Rex", tex, { startX + 48 * 4, startY, (float)tex.width, (float)tex.height } });
+
+
+	startY += 96;
+	tex = RESOURCE_MANAGER.getTexture("boomboom_walk_right_1");
+	enemy.push_back({ "BoomBoom", tex, { startX, startY, (float)tex.width, (float)tex.height } });
+	tex = RESOURCE_MANAGER.getTexture("petey_walk_right_0");
+	enemy.push_back({ "PeteyPiranha", tex, { startX + 80, startY, (float)tex.width , (float)tex.height } });
+	tex = RESOURCE_MANAGER.getTexture("Bullet_LEFT");
+	enemy.push_back({ "Bullet", tex, { startX + 160, startY, (float)tex.width, (float)tex.height } });
+	tex = RESOURCE_MANAGER.getTexture("BanzaiBill_LEFT");
+	enemy.push_back({ "BanzaiBill", tex, { startX + 208, startY, (float)tex.width, (float)tex.height } });
 }
 
 //-----------------
@@ -234,6 +255,18 @@ void EditorEngine::handleInput() {
 						enemies.push_back(new ParaKoopaRed({ (float)x * 32, (float)y * 32 },
 							selectedEnemyTexture));
 					}
+					else if (selectedEnemyName == "ParaKoopaGreen") {
+						enemies.push_back(new ParaKoopaGreen({ (float)x * 32, (float)y * 32 },
+							selectedEnemyTexture));
+					}
+					else if (selectedEnemyName == "ParaKoopaYellow") {
+						enemies.push_back(new ParaKoopaYellow({ (float)x * 32, (float)y * 32 },
+							selectedEnemyTexture));
+					}
+					else if (selectedEnemyName == "ParaKoopaBlue") {
+						enemies.push_back(new ParaKoopaBlue({ (float)x * 32, (float)y * 32 },
+							selectedEnemyTexture));
+					}
 					else if (selectedEnemyName == "Spiny") {
 						enemies.push_back(new Spiny({ (float)x * 32, (float)y * 32 },
 							selectedEnemyTexture));
@@ -260,6 +293,28 @@ void EditorEngine::handleInput() {
 					} 
 					else if (selectedEnemyName == "Rex") {
 						enemies.push_back(new Rex({ (float)x * 32, (float)y * 32 },
+							selectedEnemyTexture));
+					}
+					else if (selectedEnemyName == "FirePiranhaPlant") {
+						enemies.push_back(new FirePiranhaPlant({ (float)x * 32, (float)y * 32 },
+							selectedEnemyTexture));
+					}
+					else if (selectedEnemyName == "JumpingPiranhaPlant") {
+						enemies.push_back(new JumpingPiranhaPlant({ (float)x * 32, (float)y * 32 },
+							selectedEnemyTexture));
+					}
+					else if (selectedEnemyName == "BoomBoom") {
+						enemies.push_back(new BoomBoom({ (float)x * 32, (float)y * 32 }));
+					}
+					else if (selectedEnemyName == "PeteyPiranha") {
+						enemies.push_back(new PeteyPiranha({ (float)x * 32, (float)y * 32 }));
+					}
+					else if (selectedEnemyName == "Bullet") {
+						enemies.push_back(new Bullet({ (float)x * 32, (float)y * 32 },
+							selectedEnemyTexture));
+					}
+					else if (selectedEnemyName == "BanzaiBill") {
+						enemies.push_back(new BanzaiBill({ (float)x * 32, (float)y * 32 },
 							selectedEnemyTexture));
 					}
 				}
@@ -311,6 +366,11 @@ bool EditorEngine::run() {
 	while (!WindowShouldClose()) {
 		update();
 		handleInput();
+		if (IsKeyPressed(KEY_ESCAPE) || GUI::back_editor_is_pressed) {
+			if (GUI::back_editor_is_pressed)
+				GUI::back_editor_is_pressed = false; // Reset the flag
+			return false; // Exit the editor
+		}
 		draw();
 		EndDrawing();
 	}
@@ -354,12 +414,12 @@ void EditorEngine::drawGrid() {
 
 	// Debug
 	
-	for (int y = startY; y < endY; ++y) {
-		for (int x = startX; x < endX; ++x) {
-			std::string coord = "(" + std::to_string(x) + "," + std::to_string(y) + ")";
-			DrawText(coord.c_str(), x * tileSize + 2, y * tileSize + 2, 10, DARKGRAY);
-		}
-	}
+	//for (int y = startY; y < endY; ++y) {
+	//	for (int x = startX; x < endX; ++x) {
+	//		std::string coord = "(" + std::to_string(x) + "," + std::to_string(y) + ")";
+	//		DrawText(coord.c_str(), x * tileSize + 2, y * tileSize + 2, 10, DARKGRAY);
+	//	}
+	//}
 }
 
 void EditorEngine::resizeGrid(int newWidth) {
@@ -373,7 +433,7 @@ void EditorEngine::resizeGrid(int newWidth) {
 
 void EditorEngine::draw() {
 	camera.beginDrawing();
-	ClearBackground(SKYBLUE);
+	ClearBackground(WHITE);
 	// Draw the tile grid
 	for (size_t i = 0; i < tileGrid.size(); i++) {
 		for (size_t j = 0; j < tileGrid[i].size(); j++) {
@@ -440,6 +500,7 @@ void EditorEngine::draw() {
 	// Draw item block editing popup
 	if (isEditingItemBlock && currentItemBlock) {
 		ITEM_TYPE choice = POWERITEM;
+		int subType = 0;
 		GUI::drawItemChoice(popupPos, choice); // always draw at fixed pos
 		if (choice != POWERITEM) {
 			currentItemBlock->setItem(choice, 0);
@@ -639,6 +700,15 @@ void EditorEngine::loadFromJson(int slot) {
 			if (type == "ParaKoopaRed") {
 				enemies.push_back(new ParaKoopaRed(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("ParaKoopaRed_RIGHT_0")));
 			}
+			if (type == "ParaKoopaGreen") {
+				enemies.push_back(new ParaKoopaGreen(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("ParaKoopaGreen_RIGHT_0")));
+			}
+			if (type == "ParaKoopaYellow") {
+				enemies.push_back(new ParaKoopaYellow(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("ParaKoopaYellow_RIGHT_0")));
+			}
+			if (type == "ParaKoopaBlue") {
+				enemies.push_back(new ParaKoopaBlue(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("ParaKoopaBlue_RIGHT_0")));
+			}
 			if (type == "Spiny") {
 				enemies.push_back(new Spiny(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("Spiny_RIGHT_0")));
 			}
@@ -659,6 +729,24 @@ void EditorEngine::loadFromJson(int slot) {
 			}
 			if (type == "Rex") {
 				enemies.push_back(new Rex(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("Rex_RIGHT_0")));
+			}
+			if (type == "FirePiranhaPlant") {
+				enemies.push_back(new FirePiranhaPlant(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("FirePiranhaPlant_CLOSED")));
+			}
+			if (type == "JumpingPiranhaPlant") {
+				enemies.push_back(new JumpingPiranhaPlant(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_JUMP_UP_0")));
+			}
+			if (type == "BoomBoom") {
+				enemies.push_back(new BoomBoom(Vector2{ (float)x * 32, (float)y * 32 }));
+			}
+			if (type == "PeteyPiranha") {
+				enemies.push_back(new PeteyPiranha(Vector2{ (float)x * 32, (float)y * 32 }));
+			}
+			if (type == "Bullet") {
+				enemies.push_back(new Bullet(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("Bullet_LEFT")));
+			}
+			if (type == "BanzaiBill") {
+				enemies.push_back(new BanzaiBill(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("BanzaiBill_LEFT")));
 			}
 		}
 

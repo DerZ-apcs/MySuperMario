@@ -42,7 +42,8 @@ private:
 	TextButton settingButton;
 	TextButton mapSelectionButton;
 	TextButton modePlayerButton;
-	std::vector<int> choosingPosition = { 0, 1, 2, 3, 4, 5, 6 };
+	TextButton editorButton;
+	std::vector<int> choosingPosition = { 0, 1, 2, 3, 4, 5, 6, 7 };
 	Texture2D guiArrow;
 	int currentPosition = 0;
 };

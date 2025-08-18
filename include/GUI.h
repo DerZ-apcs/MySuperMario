@@ -59,6 +59,7 @@ public:
 	static bool sound_is_pressed;
 	static bool setting_is_pressed;
 	static bool input_box_is_active;
+	static bool back_editor_is_pressed;
 };
 
 #endif

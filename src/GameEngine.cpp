@@ -24,6 +24,7 @@
 #include "../include/PiranhaPlant.h"
 #include "../include/DryBones.h"
 #include "../include/Spiny.h"
+#include "../include/PeteyPiranha.h"
 #include "../include/BoomBoom.h"
 #include "../include/SaveManager.h"
 #include <iostream>
@@ -31,7 +32,7 @@
 GameEngine* globalGameEngine = nullptr;
 
 GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std::vector<std::unique_ptr<Character>>* multiplayers):
-    camera(screenWidth, screenHeight, 1.25f), level(&level), multiplayers(multiplayers)
+    camera(screenWidth, screenHeight, 1.25f), level(&level), multiplayers(multiplayers), boss(nullptr)
 {
     globalGameEngine = this;
     isPaused = false;
@@ -68,6 +69,7 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std:
     inputHandler2.bindKey(KEY_KP_0, InputType::Press, &fire);
     inputHandler2.setDefaultCommand(&stand);
 
+
     //FirePiranhaPlant* plant = new FirePiranhaPlant({ 432, 710 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_CLOSED"));
     //enemies.push_back(plant);
 
@@ -100,11 +102,13 @@ void GameEngine::loadGameMap(Level& level) {
     covers = map.getCovers();
     secretAreas = map.getSecretAreas(); 
 
-	enemies.push_back(new JumpingPiranhaPlant({ 400, 700 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_CLOSED")));
+    //boss = new BoomBoom({ 1000, 500 });
+	boss = new PeteyPiranha({ 1000, 500 });
+    enemies.push_back(boss);
+	//enemies.push_back(new JumpingPiranhaPlant({ 400, 700 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_CLOSED")));
     // test 2 boss
 	//enemies.push_back(new BoomBoom({ 1000, 500 }));
-
-
+	//enemies.push_back(new PeteyPiranha({ 1000, 500 }));
 }
 void GameEngine::InitGameCamera()
 {
@@ -387,7 +391,9 @@ void GameEngine::handleCollision() {
             CollI.HandleCollision(item, b);
     }   
 	// enemy fireball
-	for (size_t i = 0; i < enemyFireball.size(); i++) {
+        // enemy fireball no collision with block
+
+	/*for (size_t i = 0; i < enemyFireball.size(); i++) {
 		auto nearby = getNearbyBlocks(enemyFireball[i]->getPosition(), 2);
 		for (Blocks* b : nearby) {
             if (!b || b->getBlockType() == DECOR) continue;
@@ -397,7 +403,7 @@ void GameEngine::handleCollision() {
 			if (!mb || !isInCameraView(mb->getRect())) continue; 
 			CollI.HandleCollision(enemyFireball[i], mb);
         }
-	}
+	}*/
 
     // player vs enemy
     for (auto& p : *multiplayers) {
@@ -493,7 +499,14 @@ void GameEngine::draw()
             }
         }
     }
-
+    // heart of boss draw (check that boss near character)
+    for (auto& c : *multiplayers) {
+        if (boss == nullptr || !isInCameraView(boss->getRect())) continue; // skip drawing boss
+        if (abs(boss->getX() - c->getX()) <= 1400 && (abs(boss->getY() - c->getY()) <= 700)) {
+            GUI::drawBossHealthBar(boss);
+            break; // only draw once
+        }
+    }
     // item draw
     for (auto* item : items) {
 		if (!item || !isInCameraView(item->getRect())) 

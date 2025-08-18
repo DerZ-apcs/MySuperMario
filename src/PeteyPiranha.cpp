@@ -28,6 +28,15 @@ PeteyPiranha::PeteyPiranha(Vector2 pos):
 	frameDuration = 0.2f; // Thời gian mỗi frame
 	loadAnimations();
 	enterState(PeteyPiranhaState::WALKING);
+    // take game player as target
+	target = globalGameEngine->getMultiplayers().empty() ? nullptr : globalGameEngine->getMultiplayers()[0].get();
+	if (target) {
+		targetPosition = target->getPosition();
+	}
+	else {
+		targetPosition = { 0, 0 }; // Nếu không có người chơi, đặt vị trí mục tiêu mặc định
+	}
+
 }
 
 PeteyPiranha::PeteyPiranha(Vector2 pos, Character* player)

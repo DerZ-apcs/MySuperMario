@@ -38,6 +38,7 @@ bool GUI::restart_is_pressed = false;
 bool GUI::sound_is_pressed = false;
 bool GUI::setting_is_pressed = false;
 bool GUI::input_box_is_active = false;
+bool GUI::back_editor_is_pressed = false;
 
 void GUI::drawPlayerStatus(const Character* player, Vector2 origin) {
     float scale = 0.75f;
@@ -317,26 +318,71 @@ void GUI::drawEditorUI() {
     DrawText("Editor Menu", 20, 20, 30, BLACK);
 
     DrawText(TextFormat("Grid: %d x %d", globalEditorEngine->getWidth(), 30), 20, 60, 20, DARKGRAY);
+    Color Normal = DARKGRAY;
+	Color hovered = LIGHTGRAY;
+	Color TextNormal = WHITE;
+	Color TextHovered = BLACK;
 
 	Rectangle saveButton = { 20, 100, 100, 30 };
-	DrawRectangleRec(saveButton, DARKGRAY);
-    DrawText("Save", 30, 108, 16, WHITE);
+	if (CheckCollisionPointRec(GetMousePosition(), saveButton)) {
+        DrawRectangleRec(saveButton, hovered);
+        DrawText("Save", 30, 108, 16, TextHovered);
+    }
+    else {
+		DrawRectangleRec(saveButton, Normal);
+		DrawText("Save", 30, 108, 16, TextNormal);
+    }
+
 
 	Rectangle loadButton = { 140, 100, 100, 30 };
-	DrawRectangleRec(loadButton, DARKGRAY);
-    DrawText("Load", 150, 108, 16, WHITE);
+    if (CheckCollisionPointRec(GetMousePosition(), loadButton)) {
+        DrawRectangleRec(loadButton, hovered);
+        DrawText("Load", 150, 108, 16, TextHovered);
+    }
+    else {
+        DrawRectangleRec(loadButton, Normal);
+        DrawText("Load", 150, 108, 16, TextNormal);
+    }
 
 	static bool isResizing = false;
 	Rectangle resizeButton = { 310, 100, 100, 30 };
-    DrawRectangleRec(resizeButton, DARKGRAY);
-    DrawText("Resize", 320, 108, 16, WHITE);
+	if (CheckCollisionPointRec(GetMousePosition(), resizeButton)) {
+		DrawRectangleRec(resizeButton, hovered);
+		DrawText("Resize", 320, 108, 16, TextHovered);
+	}
+	else {
+		DrawRectangleRec(resizeButton, Normal);
+		DrawText("Resize", 320, 108, 16, TextNormal);
+	}
 
 	Rectangle playButton = { 20, 140, 100, 30 };
-	DrawRectangleRec(playButton, DARKGRAY);
-	DrawText("Play", 30, 148, 16, WHITE);
+	if (CheckCollisionPointRec(GetMousePosition(), playButton)) {
+		DrawRectangleRec(playButton, hovered);
+		DrawText("Play", 30, 148, 16, TextHovered);
+	}
+	else {
+		DrawRectangleRec(playButton, Normal);
+		DrawText("Play", 30, 148, 16, TextNormal);
+	}
+
+    // Draw back button
+    Rectangle backButton = { 140, 140, 100, 30 };
+	if (CheckCollisionPointRec(GetMousePosition(), backButton)) {
+		DrawRectangleRec(backButton, hovered);
+		DrawText("Back", 150, 148, 16, TextHovered);
+	}
+	else {
+		DrawRectangleRec(backButton, Normal);
+		DrawText("Back", 150, 148, 16, TextNormal);
+	}
 
     static int slot = 1;
     drawMapChoice(slot);
+
+
+	if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), backButton)) {
+		back_editor_is_pressed = true;
+	}
 
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), saveButton)) {
         globalEditorEngine->saveToJson(slot);
@@ -395,11 +441,23 @@ void GUI::drawEditorUI() {
 	int displayMode = globalEditorEngine->getDisplayMode();
 	Rectangle modeButton = { 20, 700, 100, 30 };
     if (displayMode == 0) {
-        DrawRectangleRec(modeButton, DARKGRAY);
-        DrawText("Enemies", 30, 708, 16, WHITE);
+		if (CheckCollisionPointRec(GetMousePosition(), modeButton)) {
+			DrawRectangleRec(modeButton, hovered);
+			DrawText("Blocks", 30, 708, 16, TextHovered);
+		}
+        else {
+            DrawRectangleRec(modeButton, Normal);
+            DrawText("Enemies", 30, 708, 16, TextNormal);
+        }
     } else {
-        DrawRectangleRec(modeButton, DARKGRAY);
-        DrawText("Blocks", 30, 708, 16, WHITE);
+		if (CheckCollisionPointRec(GetMousePosition(), modeButton)) {
+			DrawRectangleRec(modeButton, hovered);
+			DrawText("Enemies", 30, 708, 16, TextHovered);
+		}
+        else {
+            DrawRectangleRec(modeButton, Normal);
+            DrawText("Blocks", 30, 708, 16, TextNormal);
+        }
 	}
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), modeButton)) {
         globalEditorEngine->setDisplayMode(1 - displayMode); // Toggle between 0 and 1
@@ -433,7 +491,7 @@ void GUI::drawItemChoice(Vector2 position, ITEM_TYPE& itemChoice) {
     // Draw item choice menu
     DrawRectangle(position.x, position.y, 200, 150, Fade(LIGHTGRAY, 0.8f));
     DrawText("Select Item:", position.x + 10, position.y + 10, 20, BLACK);
-
+    int currentitem = 0;
     const char* items[] = { "Mushroom", "Flower", "Star", "Moon" };
     for (int i = 0; i < 4; i++) {
         DrawText(items[i], position.x + 10, position.y + 40 + i * 30, 20, BLACK);
@@ -441,6 +499,13 @@ void GUI::drawItemChoice(Vector2 position, ITEM_TYPE& itemChoice) {
         if (CheckCollisionPointRec(GetMousePosition(), { position.x + 10, position.y + 40 + i * 30, 180, 30 })) {
             DrawRectangleLines(position.x + 10, position.y + 40 + i * 30, 180, 30, BLUE);
 		}   
+        // use arrow up and down
+		if (IsKeyPressed(KEY_UP) && currentitem > 0) {
+			currentitem--;
+		}
+        if (IsKeyPressed(KEY_DOWN) && currentitem < 3) {
+            currentitem++;
+        }
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), { position.x + 10, position.y + 40 + i * 30, 180, 30 })) {
            switch (i) {
                 case 0: itemChoice = MUSHROOM; break;
@@ -483,8 +548,14 @@ void GUI::drawMapChoice(int& mapChoice) {
 
     // Draw buttons
     for (int i = 0; i < 3; i++) {
-        DrawRectangleRec(buttons[i], DARKGRAY);
-        DrawText(labels[i], (int)buttons[i].x + 10, (int)buttons[i].y + 8, 16, WHITE);
+		if (CheckCollisionPointRec(GetMousePosition(), buttons[i])) {
+			DrawRectangleRec(buttons[i], LIGHTGRAY);
+            DrawText(labels[i], (int)buttons[i].x + 10, (int)buttons[i].y + 8, 16, BLACK);
+		}
+		else {
+			DrawRectangleRec(buttons[i], DARKGRAY);
+            DrawText(labels[i], (int)buttons[i].x + 10, (int)buttons[i].y + 8, 16, WHITE);
+		}
 
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) &&
             CheckCollisionPointRec(GetMousePosition(), buttons[i])) {
@@ -502,21 +573,12 @@ void GUI::drawBossHealthBar(const Boss* boss) {
     if (!boss || boss->getCurrentHp() <= 0) {
         return;
     }
-
-    Rectangle dest, source;
-
-    float startY = 365.f;
     if (!guiX.id) guiX = RESOURCE_MANAGER.getTexture("guiX");
+    // Lives
+	DrawTexturePro(heartTexture, { 0, 0, (float)heartTexture.width, (float)heartTexture.height },
+		{ boss->getX(), boss->getY() - 45, 28, 28}, { 0, 0 }, 0.f, WHITE);
 
-    // 2. Vẽ biểu tượng trái tim
-    source = { 0, 0, (float)heartTexture.width, (float)heartTexture.height };
-    dest = { 700.f, startY + 25.f, 40.f, 40.f };
-    DrawTexturePro(heartTexture, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-
-    // 3. Vẽ dấu nhân 'x'
-    source = { 0, 0, (float)guiX.width, (float)guiX.height };
-    dest = { 745.f, startY + 35.f, 20.f, 20.f };
-    DrawTexturePro(guiX, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-
-    DrawText(to_string(boss->getCurrentHp()).c_str(), 770.0f, startY + 25.f, 40, BLACK);
+    DrawTexturePro(guiX, { 0, 0, (float)guiX.width, (float)guiX.height },
+        { boss->getX() + boss->getWidth() / 2, boss->getY() - 40, 28 * 0.75, 28 * 0.75}, {0, 0}, 0.f, WHITE);
+    drawSmallNumber(boss->getCurrentHp(), { boss->getX() + boss->getWidth() / 2 + 30, boss->getY() - 40}, 20.f);
 }
