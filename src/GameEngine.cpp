@@ -150,8 +150,10 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std:
    //enemies.push_back(new Goomba({ 200, 500 }, RESOURCE_MANAGER.getTexture("Goomba_LEFT_0")));
    // enemies.push_back(new BoomBoom({300,200}, nullptr));
    //enemies.push_back(new Rex({ 300, 500 }, RESOURCE_MANAGER.getTexture("Rex_LEFT_0")));
-	//enemies.push_back(new PeteyPiranha({ 300, 500 }, nullptr);
-	enemies.push_back(new JumpingPiranhaPlant({ 300, 700 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_JUMP_UP_0")));
+    if (!(*multiplayers).empty()) {
+        enemies.push_back(new PeteyPiranha({ 300, 500 }, (*multiplayers)[0].get()));
+    }
+	//enemies.push_back(new JumpingPiranhaPlant({ 300, 700 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_JUMP_UP_0")));
 }
 
 

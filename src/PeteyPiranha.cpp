@@ -83,7 +83,7 @@ void PeteyPiranha::enterState(PeteyPiranhaState newState) {
 
     case PeteyPiranhaState::EMERGE:
         // Di chuyển đến vị trí mục tiêu và bắt đầu trồi lên
-        position = { targetPosition.x, targetPosition.y + 100 };
+        position = { targetPosition.x, targetPosition.y + 50 };
         velocity = { 0, -50 }; // Từ từ trồi lên
         statePhaseTimer = 1.0f; // Thời gian để hoàn thành việc trồi lên
         setCollisionAvailable(true);
@@ -132,9 +132,8 @@ void PeteyPiranha::updateWalking() {
 
    actionTimer -= GetFrameTime();
    if (actionTimer <= 0) {
-       /*int choice = GetRandomValue(0, 1);
-       enterState(choice == 0 ? PeteyPiranhaState::BURROW_DOWN : PeteyPiranhaState::SHOOTING);*/
-	   enterState(PeteyPiranhaState::SHOOTING); // Chỉ bắn đạn lửa
+       int choice = GetRandomValue(0, 1);
+       enterState(choice == 0 ? PeteyPiranhaState::BURROW_DOWN : PeteyPiranhaState::SHOOTING);  
    }
 }
 
