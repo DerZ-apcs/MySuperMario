@@ -35,6 +35,7 @@ bool GUI::home_is_pressed = false;
 bool GUI::restart_is_pressed = false;
 bool GUI::sound_is_pressed = false;
 bool GUI::setting_is_pressed = false;
+bool GUI::input_box_is_active = false;
 
 void GUI::drawPlayerStatus(const Character* player, Vector2 origin) {
     float scale = 0.75f;
@@ -310,50 +311,186 @@ void GUI::drawYellowNumber(int number, Vector2 position, float spacing)
 }
 
 void GUI::drawEditorUI() {
-    DrawRectangle(0, 0, 300, GetScreenHeight(), Fade(LIGHTGRAY, 0.8f)); // sidebar
+    DrawRectangle(0, 0, 468, GetScreenHeight(), Fade(LIGHTGRAY, 0.8f)); // sidebar
     DrawText("Editor Menu", 20, 20, 30, BLACK);
 
-    DrawText(TextFormat("Grid: %d x %d", 150, 30), 20, 60, 20, DARKGRAY);
+    DrawText(TextFormat("Grid: %d x %d", globalEditorEngine->getWidth(), 30), 20, 60, 20, DARKGRAY);
 
 	Rectangle saveButton = { 20, 100, 100, 30 };
 	DrawRectangleRec(saveButton, DARKGRAY);
     DrawText("Save", 30, 108, 16, WHITE);
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), saveButton)) {
-        globalEditorEngine->saveToJson();
-		printf("Map saved successfully!\n");
-	}
 
-	Rectangle loadButton = { 20, 140, 100, 30 };
+	Rectangle loadButton = { 140, 100, 100, 30 };
 	DrawRectangleRec(loadButton, DARKGRAY);
-	DrawText("Load", 30, 148, 16, WHITE);
+    DrawText("Load", 150, 108, 16, WHITE);
+
+	static bool isResizing = false;
+	Rectangle resizeButton = { 310, 100, 100, 30 };
+    DrawRectangleRec(resizeButton, DARKGRAY);
+    DrawText("Resize", 320, 108, 16, WHITE);
+
+	Rectangle playButton = { 20, 140, 100, 30 };
+	DrawRectangleRec(playButton, DARKGRAY);
+	DrawText("Play", 30, 148, 16, WHITE);
+
+    static int slot = 1;
+    drawMapChoice(slot);
+
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), saveButton)) {
+        globalEditorEngine->saveToJson(slot);
+        printf("Map %d saved successfully!\n", slot);
+    }
+
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), loadButton)) {
+        globalEditorEngine->loadFromJson(slot);
+        printf("Map %d loaded successfully!\n", slot);
+    }
+
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), resizeButton)) { 
+        isResizing = true; 
+		input_box_is_active = true;
+    }
+    if (isResizing) {
+		static std::string inputText = "100"; 
+		Vector2 inputBoxPos = { 310, 140 };
+        drawInputBox(inputBoxPos, inputText);
+        if (input_box_is_active == false) {
+            int newWidth = std::stoi(inputText);
+            if (newWidth > 0) {
+                globalEditorEngine->resizeGrid(newWidth);
+                isResizing = false;
+            }
+        }
+    }
+
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), playButton)) {
+        globalEditorEngine->loadFromJson(slot);
+
         if (globalGameEngine != nullptr) {
             delete globalGameEngine;
             globalGameEngine = nullptr;
         }
-		printf("Loading level...\n");
-		Level* level = make_unique<Level>(Map::basePath + "emap_1.json", "BACKGROUND_1", "MUSIC_1", "2 - 1").release();
+
+        std::string filename = "resources/maps/emap_" + std::to_string(slot) + ".json";
+        Level* level = make_unique<Level>(filename, "BACKGROUND_1", "MUSIC_1", "2 - 1").release();
         std::vector<std::unique_ptr<Character>> character;
         character.push_back(std::make_unique<Mario>());
         character[0]->setPosition({ 20, 200 });
         character[0]->setVel({ 0, 0 });
         character[0]->setState(FALLING);
         globalGameEngine = new GameEngine(1600, 800, *level, &character);
+        globalGameEngine->loadGameMap(*level);
+		printf("Map loaded successfully!\n");
 
         while (globalGameEngine != nullptr) {
             if (globalGameEngine->run()) { break; }
+            else { break; }
         }
         delete globalGameEngine;
         globalGameEngine = nullptr;
     }
 
-    std::vector<TileSelector> tiles = globalEditorEngine->getTiles();
-	int selectedBlockId = globalEditorEngine->getSelectedBlockId();
+	int displayMode = globalEditorEngine->getDisplayMode();
+	Rectangle modeButton = { 20, 700, 100, 30 };
+    if (displayMode == 0) {
+        DrawRectangleRec(modeButton, DARKGRAY);
+        DrawText("Enemies", 30, 708, 16, WHITE);
+    } else {
+        DrawRectangleRec(modeButton, DARKGRAY);
+        DrawText("Blocks", 30, 708, 16, WHITE);
+	}
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), modeButton)) {
+        globalEditorEngine->setDisplayMode(1 - displayMode); // Toggle between 0 and 1
+	}
 
-    for (const auto& tile : tiles) {
-		DrawTexture(RESOURCE_MANAGER.getTexture("TILE_" + std::to_string(tile.id)), tile.rect.x, tile.rect.y, WHITE);
-        if (tile.id == selectedBlockId) {
-            DrawRectangleLinesEx(tile.rect, 2, RED); // Highlight selected tile
-		}
+    if (displayMode == 0) {
+        std::vector<TileSelector> tiles = globalEditorEngine->getTiles();
+        int selectedBlockId = globalEditorEngine->getSelectedBlockId();
+
+        for (const auto& tile : tiles) {
+            DrawTexture(RESOURCE_MANAGER.getTexture("TILE_" + std::to_string(tile.id)), tile.rect.x, tile.rect.y, WHITE);
+            if (tile.id == selectedBlockId) {
+                DrawRectangleLinesEx(tile.rect, 2, RED); // Highlight selected tile
+            }
+        }
+    }
+    else if (displayMode == 1) {
+        std::vector<EnemySelector> enemies = globalEditorEngine->getEnemy();
+        std::string selectedEnemyName = globalEditorEngine->getSelectedEnemyName();
+
+        for (const auto& enemy : enemies) {
+            DrawTexture(enemy.tex, enemy.rect.x, enemy.rect.y, WHITE);
+            if (enemy.name == selectedEnemyName) {
+                DrawRectangleLinesEx(enemy.rect, 2, RED); // Highlight selected enemy
+            }
+        }
+    }
+}
+
+void GUI::drawItemChoice(Vector2 position, ITEM_TYPE& itemChoice) {
+    // Draw item choice menu
+    DrawRectangle(position.x, position.y, 200, 150, Fade(LIGHTGRAY, 0.8f));
+    DrawText("Select Item:", position.x + 10, position.y + 10, 20, BLACK);
+
+    const char* items[] = { "Mushroom", "Flower", "Star", "Moon" };
+    for (int i = 0; i < 4; i++) {
+        DrawText(items[i], position.x + 10, position.y + 40 + i * 30, 20, BLACK);
+		// Draw selection rectangle
+        if (CheckCollisionPointRec(GetMousePosition(), { position.x + 10, position.y + 40 + i * 30, 180, 30 })) {
+            DrawRectangleLines(position.x + 10, position.y + 40 + i * 30, 180, 30, BLUE);
+		}   
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), { position.x + 10, position.y + 40 + i * 30, 180, 30 })) {
+           switch (i) {
+                case 0: itemChoice = MUSHROOM; break;
+                case 1: itemChoice = FLOWER; break;
+                case 2: itemChoice = STAR; break;
+                case 3: itemChoice = MOON; break;
+            }
+        }
+    }
+}
+
+void GUI::drawInputBox(Vector2 position, std::string& inputText)     {
+
+    DrawRectangle(position.x, position.y, 100, 30, WHITE);    
+    DrawText(inputText.c_str(), position.x + 10, position.y + 8, 20, BLACK);
+    
+    if (IsKeyPressed(KEY_BACKSPACE) && !inputText.empty()) {
+        inputText.pop_back(); 
+    } else if (IsKeyPressed(KEY_ENTER)) {
+		input_box_is_active = false; 
+        printf("Input confirmed: %s\n", inputText.c_str());
+    } else {
+        int key = GetCharPressed();
+        while (key > 0) {
+            if (inputText.length() < 8) {
+                inputText += (char)key;
+            }
+            key = GetCharPressed();
+        }
+    }
+}
+
+void GUI::drawMapChoice(int& mapChoice) {
+    const char* labels[3] = { "Map 1", "Map 2", "Map 3" };
+    Rectangle buttons[3] = {
+        { 20, 190, 100, 30 },
+        { 140, 190, 100, 30 },
+        { 260, 190, 100, 30 }
+    };
+
+    // Draw buttons
+    for (int i = 0; i < 3; i++) {
+        DrawRectangleRec(buttons[i], DARKGRAY);
+        DrawText(labels[i], (int)buttons[i].x + 10, (int)buttons[i].y + 8, 16, WHITE);
+
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) &&
+            CheckCollisionPointRec(GetMousePosition(), buttons[i])) {
+            mapChoice = i + 1;  // slot 1, 2, or 3
+        }
+
+        if (i + 1 == mapChoice) {
+            DrawRectangleLinesEx(buttons[i], 3, RED);
+        }
     }
 }

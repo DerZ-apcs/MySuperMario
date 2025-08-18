@@ -17,6 +17,8 @@ Enemy::Enemy(Vector2 pos, Vector2 size, Vector2 vel, Direction direction, Entity
     CollSouth.setColor(GREEN);
     CollNorth.setColor(RED);
     CollWest.setColor(PURPLE);
+
+	this->texture = texture;
 }
 
 Enemy::~Enemy() {

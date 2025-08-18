@@ -2,7 +2,7 @@
 #include "../include/GameEngine.h"
 
 Entity::Entity():
-	Entity(Vector2{0, 0}, Vector2{0, 0}, Vector2{0, 0}, RIGHT, IDLING, texture, 0.1f, 0, BLACK)
+	Entity(Vector2{0, 0}, Vector2{0, 0}, Vector2{0, 0}, RIGHT, IDLING, {0}, 0.1f, 0, BLACK)
 {}
 Entity::Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState state, Texture2D tex, std::string name):
 	Entity(pos, sz, vel, dir, state, tex, 0.1, 0, BLACK)

@@ -98,19 +98,12 @@ void GameEngine::loadGameMap(Level& level) {
     items = map.getItems();
     decor = map.getDecor();
     covers = map.getCovers();
-    secretAreas = map.getSecretAreas();
+    secretAreas = map.getSecretAreas(); 
 
-    // test moving block
-    for (int i = 0; i < 3; i++) {
-        MovingBlock* block = new MovingBlock(Vector2{ (float)400 + i * 32, 850 }, { 32, 32 });
-		block->setBounds(400 + i * 32, 700 + i * 32, 700, 900);
-		block->setVelocity({ 50.0f, 0.0f });
-		movingBlocks.push_back(block);
-    }
-	enemies.push_back(new FlyingGoomba({ 700, 800 }, RESOURCE_MANAGER.getTexture("FlyingGoomba_LEFT_0")));
     Cannon* cannon = new Cannon({ 600, 600 });
     cannon->setBulletType(0);
     tileGrid[20].push_back(cannon);
+
 }
 void GameEngine::InitGameCamera()
 {

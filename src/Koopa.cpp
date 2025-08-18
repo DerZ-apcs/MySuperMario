@@ -258,6 +258,24 @@ KOOPA_TYPE GreenKoopa::getKoopaType() const
     return GREEN_KOOPA;
 }
 
+void GreenKoopa::saveEntity(json& j) const
+{
+    Koopa::saveEntity(j);
+    // Add Tiled-compatible properties array
+    j["properties"] = json::array({
+        {
+            { "name", "Name" },
+            { "type", "string" },
+            { "value", "Enemy" }
+        },
+        {
+            { "name", "Type" },
+            { "type", "string" },
+            { "value", "GreenKoopa"}
+        }
+        });
+}
+
 RedKoopa::RedKoopa(Vector2 pos, Texture2D texture):
 	Koopa(pos, texture)
 {
@@ -274,6 +292,24 @@ RedKoopa::RedKoopa(Vector2 pos, Texture2D texture):
 KOOPA_TYPE RedKoopa::getKoopaType() const
 {
     return RED_KOOPA;
+}
+
+void RedKoopa::saveEntity(json& j) const
+{
+    Koopa::saveEntity(j);
+    // Add Tiled-compatible properties array
+    j["properties"] = json::array({
+        {
+            { "name", "Name" },
+            { "type", "string" },
+            { "value", "Enemy" }
+        },
+        {
+            { "name", "Type" },
+            { "type", "string" },
+            { "value", "RedKoopa"}
+        }
+        });
 }
 
 YellowKoopa::YellowKoopa(Vector2 pos, Texture2D texture) :
@@ -294,6 +330,24 @@ KOOPA_TYPE YellowKoopa::getKoopaType() const
     return YELLOW_KOOPA;
 }
 
+void YellowKoopa::saveEntity(json& j) const
+{
+    Koopa::saveEntity(j);
+    // Add Tiled-compatible properties array
+    j["properties"] = json::array({
+        {
+            { "name", "Name" },
+            { "type", "string" },
+            { "value", "Enemy" }
+        },
+        {
+            { "name", "Type" },
+            { "type", "string" },
+            { "value", "YellowKoopa"}
+        }
+        });
+}
+
 BlueKoopa::BlueKoopa(Vector2 pos, Texture2D texture) :
 	Koopa(pos, texture)
 {
@@ -312,3 +366,20 @@ KOOPA_TYPE BlueKoopa::getKoopaType() const
     return BLUE_KOOPA;
 }
 
+void BlueKoopa::saveEntity(json& j) const
+{
+    Koopa::saveEntity(j);
+    // Add Tiled-compatible properties array
+    j["properties"] = json::array({
+        {
+            { "name", "Name" },
+            { "type", "string" },
+            { "value", "Enemy" }
+        },
+        {
+            { "name", "Type" },
+            { "type", "string" },
+            { "value", "BlueKoopa"}
+        }
+        });
+}

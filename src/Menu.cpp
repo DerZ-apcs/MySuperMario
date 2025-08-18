@@ -167,7 +167,7 @@ void MainMenuState::handleInput()
 			delete globalEditorEngine;
 			globalEditorEngine = nullptr;
 		}
-		globalEditorEngine = new EditorEngine(1600, 800);
+		globalEditorEngine = new EditorEngine();
 
 		while (globalEditorEngine != nullptr) {
 			if (globalEditorEngine->run()) {

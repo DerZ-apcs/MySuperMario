@@ -25,7 +25,6 @@ void Map::clear() {
 	movingBlocks.clear();
 	items.clear();
 	decors.clear();
-	covers.clear();
 	enemies.clear();
 	covers.clear();
 	secretAreas.clear();
@@ -149,7 +148,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 					continue;
 				}
 
-				if (blockId == 117) {
+				if (blockId == 118) {
 					RotatingBlock* block = dynamic_cast<RotatingBlock*>(BlockFactory::getInstance().createBlock(ROTATINGBLOCK,
 						{ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
 					if (!block) {
@@ -172,16 +171,18 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			}
 		}
 	}
+
 	if (mapJson["layers"].size() < 2) { return; }
+	printf("Loading objects from layer 1\n");
 	nlohmann::json objectLayer = mapJson["layers"][1];
 	nlohmann::json objects = objectLayer["objects"];
-
 	for (auto& obj : objects) {
-		int gid = obj["gid"];
+		int gid = -1;
+		if (obj.contains("gid") && obj["gid"].is_number_integer()) {
+			gid = obj["gid"];
+		}
 		int x = obj["x"] / 32;
 		int y = obj["y"] / 32 - 1;
-		int width = obj["width"];
-		int height = obj["height"];
 
 		std::string name;
 		std::string type;
@@ -189,6 +190,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			if (prop["name"] == "Name") name = prop["value"];
 			else if (prop["name"] == "Type") type = prop["value"];
 		}
+
 		if (name == "QuestionBlock") {
 			if (type == "Mushroom") {
 				Blocks* block = dynamic_cast<ItemBlock*>(BlockFactory::getInstance().createBlock(ITEMBLOCK, {(float)x * blockwidth, (float)y * blockwidth}, {32, 32}));
@@ -280,11 +282,20 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			else if (type == "FirePiranha") {
 				enemies.push_back(new FirePiranhaPlant(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FirePiranha_OPEN")));
 			}
-			else if (type == "Koopa") {
-				enemies.push_back(new GreenKoopa(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Koopa_RIGHT_0")));
+			else if (type == "GreenKoopa") {
+				enemies.push_back(new GreenKoopa(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("GreenKoopa_RIGHT_0")));
 			}
-			else if (type == "ParaKoopa") {
-				enemies.push_back(new ParaKoopa(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("ParaKoopa_RIGHT_0")));
+			else if (type == "RedKoopa") {
+				enemies.push_back(new RedKoopa(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("RedKoopa_RIGHT_0")));
+			} 
+			else if (type == "YellowKoopa") {
+				enemies.push_back(new YellowKoopa(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("YellowKoopa_RIGHT_0")));
+			}
+			else if (type == "BlueKoopa") {
+				enemies.push_back(new BlueKoopa(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("BlueKoopa_RIGHT_0")));
+			}
+			else if (type == "ParaKoopaRed") {
+				enemies.push_back(new ParaKoopaRed(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("ParaKoopa_RIGHT_0")));
 			}
 			else if (type == "Bullet") {
 				enemies.push_back(new Bullet(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Bullet"), LEFT));
@@ -306,6 +317,12 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			}
 			else if (type == "Spiny") {
 				enemies.push_back(new Spiny(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Spiny_RIGHT_0")));
+			}
+			else if (type == "DryBones") {
+				enemies.push_back(new DryBones(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("DryBones_RIGHT_0")));
+			}
+			else if (type == "BobOmb") {
+				enemies.push_back(new BobOmb(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("BobOmb_RIGHT_0")));
 			}
 			else { std::cerr << "Unknown enemy type: " << type << std::endl; }
 		}
