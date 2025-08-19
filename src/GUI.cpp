@@ -33,6 +33,18 @@ Texture2D GUI::guiX;
 Texture2D GUI::guiMario;
 Texture2D GUI::guiLuigi;
 
+// for choosing character
+Texture2D GUI::ChoosingMario;
+Texture2D GUI::ChoosingLuigi;
+Texture2D GUI::ChoosingPeach;
+Texture2D GUI::ChoosingMarisa;
+Texture2D GUI::ChoosingToad;
+Texture2D GUI::GuiP1;
+Texture2D GUI::GuiP2;
+std::vector <Texture2D> GUI::choosingTextures;
+
+bool GUI::inSelection = false;
+bool GUI::return_is_pressed = false;
 bool GUI::home_is_pressed = false;
 bool GUI::restart_is_pressed = false;
 bool GUI::sound_is_pressed = false;
@@ -101,15 +113,15 @@ void GUI::drawStatusBar(const Character* player) {
 	}
     else if (player->getCharacterType() == TOAD) {
         Font* font = RESOURCE_MANAGER.getFont("SMW");
-        TextButton::DrawTextWithOutline(font, "TOAD", { 400, 40 }, 160 * 0.75, 5, BLUE, BLACK);
+        TextButton::DrawTextWithOutline(font, "TOAD", { 400, 40 }, 160 * 0.2, 5, BLUE, BLACK);
     }
     else if (player->getCharacterType() == PEACH) {
         Font* font = RESOURCE_MANAGER.getFont("SMW");
-        TextButton::DrawTextWithOutline(font, "PEACH", { 400, 40 }, 160 * 0.75, 5, PINK, BLACK);
+        TextButton::DrawTextWithOutline(font, "PEACH", { 400, 40 }, 160 * 0.2, 5, PINK, BLACK);
     }
     else if (player->getCharacterType() == MARISA) {
         Font* font = RESOURCE_MANAGER.getFont("SMW");
-        TextButton::DrawTextWithOutline(font, "MARISA", { 400, 40 }, 160 * 0.75, 5, BROWN, BLACK);
+        TextButton::DrawTextWithOutline(font, "MARISA", { 400, 40 }, 160 * 0.2, 5, BROWN, BLACK);
     }
 
 	if (!guiX.id) {
@@ -171,12 +183,6 @@ void GUI::drawStatusBar(std::vector<std::unique_ptr<Character>>& multiplayers)
 
     int timer = floor(globalGameEngine->getRemainingTime());
     drawYellowNumber(timer, { GetScreenWidth() / 2.f + 405.f, y + 40.f }, 20.f);
-
-    //// Draw setting button (top right)
-    //Rectangle source = { 0, 0, (float)setting.width, (float)restart.height };
-    //Rectangle dest = { (float)GetScreenWidth() - 100.f, 30.f, 80.f, 80.f };
-    //DrawTexturePro(setting, source, dest, { 0.f, 0.f }, 0.f, WHITE);
-    //setting_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
 }
 
 void GUI::drawPauseMenu()
@@ -221,6 +227,8 @@ void GUI::drawPauseMenu()
     dest = { textX + 230, textY - 170, 90, 90 };
     DrawTexturePro(home, source, dest, { 0.f, 0.f }, 0.f, WHITE);
     home_is_pressed = CheckCollisionPointRec(GetMousePosition(), dest) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsKeyPressed(KEY_H);
+
+    inSelection = inSelection || IsKeyPressed(KEY_C) || IsKeyPressed(KEY_F8);
 }
 
 void GUI::drawLevelClear()
@@ -581,4 +589,190 @@ void GUI::drawBossHealthBar(const Boss* boss) {
     DrawTexturePro(guiX, { 0, 0, (float)guiX.width, (float)guiX.height },
         { boss->getX() + boss->getWidth() / 2, boss->getY() - 40, 28 * 0.75, 28 * 0.75}, {0, 0}, 0.f, WHITE);
     drawSmallNumber(boss->getCurrentHp(), { boss->getX() + boss->getWidth() / 2 + 30, boss->getY() - 40}, 20.f);
+}
+
+void GUI::drawChoosingSingleCharacter(int& choice) {
+	if (!inSelection) return; // Only draw if in selection mode
+    // Background
+    Texture2D selectionBg = RESOURCE_MANAGER.getTexture("SelectionBackground");
+    DrawTexturePro(selectionBg, { 0, 0, (float)selectionBg.width, (float)selectionBg.height },
+        { 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() }, { 0, 0 }, 0.f, WHITE);
+    // Draw Text    
+    TextButton::DrawTextWithOutline(RESOURCE_MANAGER.getFont("SMW"), "Change Your Character", { 540, 200 }, 30.f, 5, WHITE, BLACK);
+	TextButton::DrawTextWithOutline(RESOURCE_MANAGER.getFont("SMW"), "Press A/D to change", { 550, 250 }, 30.f, 5, WHITE, BLACK);
+
+    // Draw character textures (Mario, Luigi, Toad, Peach, Marisa)
+    DrawTexturePro(choosingTextures[0], { 0, 0, (float)choosingTextures[0].width, (float)choosingTextures[0].height },
+        { 270, 500 - 24, 32 * 4, 46 * 4 }, { 0, 0 }, 0.f, WHITE); // Mario
+    DrawTexturePro(choosingTextures[1], { 0, 0, (float)choosingTextures[1].width, (float)choosingTextures[1].height },
+        { 270 + 1 * 225, 500 - 40, 32 * 4, 50 * 4 }, { 0, 0 }, 0.f, WHITE); // Luigi
+    DrawTexturePro(choosingTextures[2], { 0, 0, (float)choosingTextures[2].width, (float)choosingTextures[2].height },
+        { 270 + 2 * 225, 500, 32 * 4, 40 * 4 }, { 0, 0 }, 0.f, WHITE); // Toad
+    DrawTexturePro(choosingTextures[3], { 0, 0, (float)choosingTextures[3].width, (float)choosingTextures[3].height },
+        { 270 + 3 * 225, 500 - 32, 32 * 4, 48 * 4 }, { 0, 0 }, 0.f, WHITE); // Peach
+    DrawTexturePro(choosingTextures[4], { 0, 0, (float)choosingTextures[4].width, (float)choosingTextures[4].height },
+        { 270 + 4 * 225, 500, 32 * 4, 40 * 4 }, { 0, 0 }, 0.f, WHITE); // Marisa
+
+    // Handle input for player (A/D to cycle through characters)
+    if (IsKeyPressed(KEY_A)) {
+        choice--;
+        if (choice < 0) choice = 4;
+    }
+    else if (IsKeyPressed(KEY_D)) {
+        choice++;
+        if (choice > 4) choice = 0;
+    }
+    // Draw player indicator (GuiP1)
+    DrawTexturePro(GuiP1, { 0, 0, (float)GuiP1.width, (float)GuiP1.height },
+        { (float)280 + choice * 225 + 10, 350, 75, 105 }, { 0, 0 }, 0.f, WHITE);
+
+    // Handle Enter key to confirm selection
+    if (IsKeyPressed(KEY_ENTER)) {
+        globalGameEngine->getMultiplayers().clear();
+        static Mario defaultCharacter; // Fallback if no existing 
+
+        // Helper function to create and clone character based on choice
+        auto createCharacter = [](int choice) -> std::unique_ptr<Character> {
+            CharacterType type;
+            switch (choice) {
+            case 0: type = MARIO; break;
+            case 1: type = LUIGI; break;
+            case 2: type = TOAD; break;
+            case 3: type = PEACH; break;
+            case 4: type = MARISA; break;
+            default: type = MARIO; // Fallback
+            }
+
+            // Create new character instance
+            std::unique_ptr<Character> newCharacter;
+            switch (type) {
+            case MARIO: newCharacter = std::make_unique<Mario>(); break;
+            case LUIGI: newCharacter = std::make_unique<Luigi>(); break;
+            case TOAD: newCharacter = std::make_unique<Toad>(); break;
+            case PEACH: newCharacter = std::make_unique<Peach>(); break;
+            case MARISA: newCharacter = std::make_unique<Marisa>(); break;
+            default: newCharacter = std::make_unique<Mario>(); // Fallback
+            }
+            newCharacter->clone(defaultCharacter, type);
+            return newCharacter;
+            };
+
+        // Create and add player
+        globalGameEngine->getMultiplayers().push_back(createCharacter(choice));
+
+        // Set player ID
+        if (!globalGameEngine->getMultiplayers().empty()) {
+            globalGameEngine->getMultiplayers()[0]->setPlayerid(0);
+        }
+
+        return_is_pressed = true; // Indicate that the players have been chosen
+        inSelection = false;
+    }
+}
+
+void GUI::drawChoosingDualCharacter(int& choice1, int& choice2) {
+    // Background
+    if (!inSelection) return;
+    Texture2D selectionBg = RESOURCE_MANAGER.getTexture("SelectionBackground");
+    DrawTexturePro(selectionBg, { 0, 0, (float)selectionBg.width, (float)selectionBg.height },
+        { 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() }, { 0, 0 }, 0.f, WHITE);
+    // Draw Text    
+    TextButton::DrawTextWithOutline(RESOURCE_MANAGER.getFont("SMW"), "Change Your Character", { 540, 200 }, 30.f, 5, WHITE, BLACK);
+    TextButton::DrawTextWithOutline(RESOURCE_MANAGER.getFont("SMW"), "Press A/D to change", { 550, 250 }, 30.f, 5, WHITE, BLACK);
+
+    // Draw character textures (Mario, Luigi, Toad, Peach, Marisa)
+    DrawTexturePro(choosingTextures[0], { 0, 0, (float)choosingTextures[0].width, (float)choosingTextures[0].height },
+        { 270, 500 - 24, 32 * 4, 46 * 4 }, { 0, 0 }, 0.f, WHITE); // Mario
+    DrawTexturePro(choosingTextures[1], { 0, 0, (float)choosingTextures[1].width, (float)choosingTextures[1].height },
+        { 270 + 1 * 225, 500 - 40, 32 * 4, 50 * 4 }, { 0, 0 }, 0.f, WHITE); // Luigi
+    DrawTexturePro(choosingTextures[2], { 0, 0, (float)choosingTextures[2].width, (float)choosingTextures[2].height },
+        { 270 + 2 * 225, 500, 32 * 4, 40 * 4 }, { 0, 0 }, 0.f, WHITE); // Toad
+    DrawTexturePro(choosingTextures[3], { 0, 0, (float)choosingTextures[3].width, (float)choosingTextures[3].height },
+        { 270 + 3 * 225, 500 - 32, 32 * 4, 48 * 4 }, { 0, 0 }, 0.f, WHITE); // Peach
+    DrawTexturePro(choosingTextures[4], { 0, 0, (float)choosingTextures[4].width, (float)choosingTextures[4].height },
+        { 270 + 4 * 225, 500, 32 * 4, 40 * 4 }, { 0, 0 }, 0.f, WHITE); // Marisa
+
+    // Draw player indicators (GuiP1 and GuiP2)
+    if (choice1 == choice2) {
+        // Adjust positions to avoid overlap when both players select the same character
+        DrawTexturePro(GuiP1, { 0, 0, (float)GuiP1.width, (float)GuiP1.height },
+            { (float)280 + choice1 * 225 - 30, 350, 75, 105 }, { 0, 0 }, 0.f, WHITE);
+        DrawTexturePro(GuiP2, { 0, 0, (float)GuiP2.width, (float)GuiP2.height },
+            { (float)280 + choice2 * 225 + 55, 350, 75, 105 }, { 0, 0 }, 0.f, WHITE);
+    }
+    else {
+        DrawTexturePro(GuiP1, { 0, 0, (float)GuiP1.width, (float)GuiP1.height },
+            { (float)280 + choice1 * 225 + 10, 350, 75, 105 }, { 0, 0 }, 0.f, WHITE);
+        DrawTexturePro(GuiP2, { 0, 0, (float)GuiP2.width, (float)GuiP2.height },
+            { (float)280 + choice2 * 225 + 10, 350, 75, 105 }, { 0, 0 }, 0.f, WHITE);
+    }
+
+    // Handle input for player 1 (A/D to cycle through characters)
+    if (IsKeyPressed(KEY_A)) {
+        choice1--;
+        if (choice1 < 0) choice1 = 4;
+    }
+    else if (IsKeyPressed(KEY_D)) {
+        choice1++;
+        if (choice1 > 4) choice1 = 0;
+    }
+
+    // Handle input for player 2 (Left/Right to cycle through characters)
+    if (IsKeyPressed(KEY_LEFT)) {
+        choice2--;
+        if (choice2 < 0) choice2 = 4;
+    }
+    else if (IsKeyPressed(KEY_RIGHT)) {
+        choice2++;
+        if (choice2 > 4) choice2 = 0;
+    }
+
+    // Handle Enter key to confirm selections
+    if (IsKeyPressed(KEY_ENTER)) {
+        // Clear existing players
+        globalGameEngine->getMultiplayers().clear();
+        static Mario templateCharacter;
+
+        // Helper function to create character based on choice
+        auto createCharacter = [](int choice) -> std::unique_ptr<Character> {
+            CharacterType type;
+            switch (choice) {
+            case 0: type = MARIO; break;
+            case 1: type = LUIGI;break;
+            case 2: type = TOAD;break;
+            case 3: type = PEACH;break;
+            case 4: type = MARISA;break;
+            default: type = MARIO; // Fallback
+            }
+            // Create new character instance
+            std::unique_ptr<Character> newCharacter;
+            switch (type) {
+                case CharacterType::MARIO: newCharacter = std::make_unique<Mario>(); break;
+                case CharacterType::LUIGI: newCharacter = std::make_unique<Luigi>(); break;
+                case CharacterType::TOAD: newCharacter = std::make_unique<Toad>(); break;
+                case CharacterType::PEACH: newCharacter = std::make_unique<Peach>(); break;
+                case CharacterType::MARISA: newCharacter = std::make_unique<Marisa>(); break;
+                default: newCharacter = std::make_unique<Mario>(); // Fallback
+            }
+
+            // Clone state from template character with specified characterType
+            newCharacter->clone(templateCharacter, type);
+            return newCharacter;
+        };
+
+        // Create and add player 1
+        globalGameEngine->getMultiplayers().push_back(createCharacter(choice1));
+        // Create and add player 2
+        globalGameEngine->getMultiplayers().push_back(createCharacter(choice2));
+
+        // Set player IDs
+        if (!globalGameEngine->getMultiplayers().empty()) {
+            globalGameEngine->getMultiplayers()[0]->setPlayerid(0);
+        }
+        if (globalGameEngine->getMultiplayers().size() > 1) {
+            globalGameEngine->getMultiplayers()[1]->setPlayerid(1);
+        }
+		return_is_pressed = true; // Indicate that the players have been chosen
+		inSelection = false; // Exit selection mode
+    }
 }

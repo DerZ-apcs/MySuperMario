@@ -197,4 +197,16 @@ void Game::loadGUI()
 	GUI::guiLuigi = RESOURCE_MANAGER.getTexture("LuigiGUI");
 	GUI::guiMario = RESOURCE_MANAGER.getTexture("MarioGUI");
 
+	GUI::ChoosingMario = RESOURCE_MANAGER.getTexture("SmallMario_Straight");
+	GUI::ChoosingLuigi = RESOURCE_MANAGER.getTexture("SmallLuigi_Straight");
+	GUI::ChoosingPeach = RESOURCE_MANAGER.getTexture("SmallPeach_Straight");
+	GUI::ChoosingMarisa = RESOURCE_MANAGER.getTexture("SmallMarisa_RIGHT_0");
+	GUI::ChoosingToad = RESOURCE_MANAGER.getTexture("SmallToad_Straight");
+	GUI::GuiP1 = RESOURCE_MANAGER.getTexture("P1GUI");
+	GUI::GuiP2 = RESOURCE_MANAGER.getTexture("P2GUI");
+	GUI::choosingTextures.push_back(GUI::ChoosingMario);
+	GUI::choosingTextures.push_back(GUI::ChoosingLuigi);
+	GUI::choosingTextures.push_back(GUI::ChoosingToad);
+	GUI::choosingTextures.push_back(GUI::ChoosingPeach);
+	GUI::choosingTextures.push_back(GUI::ChoosingMarisa);
 }

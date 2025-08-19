@@ -45,6 +45,8 @@ public:
 	Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState state,
 		Texture2D tex, float FrameTime, int MaxFrame, Color color);
 	Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState state, float FrameTime, int MaxFrame, Color color);
+	virtual ~Entity() = default;
+	virtual void clone(const Entity& entity); // clone the entity
 	virtual void Update();
 	virtual void draw();
 	virtual void HandleInput();

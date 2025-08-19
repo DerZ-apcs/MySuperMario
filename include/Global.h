@@ -42,9 +42,9 @@ enum SPRITE_STATE {
 enum CharacterType { 
 	MARIO,
 	LUIGI,
+	TOAD,
 	PEACH,
-	MARISA,
-	TOAD
+	MARISA
 };
 // State: Small, Super, Fireball
 enum CharacterState {

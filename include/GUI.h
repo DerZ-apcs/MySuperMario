@@ -36,6 +36,15 @@ public:
 	static Texture2D guiLuigi;
 	static Texture2D guiMario;
 
+	static Texture2D ChoosingMario;
+	static Texture2D ChoosingLuigi;
+	static Texture2D ChoosingPeach;
+	static Texture2D ChoosingMarisa;
+	static Texture2D ChoosingToad;
+	static Texture2D GuiP1;
+	static Texture2D GuiP2;
+	static std::vector<Texture2D> choosingTextures;
+
 	static void drawPlayerStatus(const Character* player, Vector2 origin);
 	static void drawStatusBar(const Character* player);
 	static void drawStatusBar(std::vector<std::unique_ptr<Character>>& multiplayers);
@@ -53,7 +62,11 @@ public:
 	static void drawInputBox(Vector2 position, std::string& inputText);
 	static void drawMapChoice(int& mapChoice);
 	static void drawBossHealthBar(const Boss* boss);
+	static void drawChoosingSingleCharacter(int& choice);
+	static void drawChoosingDualCharacter(int& choice1, int& choice2);
 
+	static bool inSelection;
+	static bool return_is_pressed;
 	static bool home_is_pressed;
 	static bool restart_is_pressed;
 	static bool sound_is_pressed;

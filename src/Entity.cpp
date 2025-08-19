@@ -37,6 +37,25 @@ Entity::Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState 
 	rect = { pos.x, pos.y, size.x, size.y };
 }
 
+void Entity::clone(const Entity& entity)
+{
+	this->position = entity.position;
+	//this->size = entity.size;
+	this->velocity = entity.velocity;
+	this->direction = entity.direction;
+	this->state = entity.state;
+	//this->texture = entity.texture;
+	this->frameTime = entity.frameTime;
+	//this->maxFrame = entity.maxFrame;
+	//this->currFrame = entity.currFrame;
+	this->frameAcum = 0;
+	this->color = entity.color;
+	collisionAvailable = entity.collisionAvailable;
+	gravityAvailable = entity.gravityAvailable;
+	isjumping = entity.isjumping;
+	dead = entity.dead;
+}
+
 void Entity::Update() {
 	if (isDead()) return;
 	if (globalGameEngine) {

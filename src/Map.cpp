@@ -288,7 +288,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			else if (type == "HomingFirePiranha" || type == "HomingFirePiranhaPlant") {
 				enemies.push_back(new HomingFirePiranha(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FirePiranha_OPEN")));
 			}
-			else if (type == "GreenKoopa") {
+			else if (type == "GreenKoopa" || type == "Koopa") {
 				enemies.push_back(new GreenKoopa(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("GreenKoopa_RIGHT_0")));
 			}
 			else if (type == "RedKoopa") {

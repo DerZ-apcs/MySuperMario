@@ -444,6 +444,9 @@ void SingleCharSelection::draw()
 		{ 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() }, { 0, 0 }, 0.f, WHITE);
 	// gui1
 	// draw 4 texture of character
+		// Draw Text    
+	TextButton::DrawTextWithOutline(RESOURCE_MANAGER.getFont("SMW"), "Choose Your Character", { 540, 200 }, 30.f, 5, WHITE, BLACK);
+	TextButton::DrawTextWithOutline(RESOURCE_MANAGER.getFont("SMW"), "Press A/D to change", { 550, 250 }, 30.f, 5, WHITE, BLACK);
 
 	DrawTexturePro(Textures[0], { 0, 0, (float)Textures[0].width, (float)Textures[0].height },
 		{ 270, 500 - 24, 32 * 4, 46 * 4 }, { 0, 0 }, 0.f, WHITE);
@@ -522,6 +525,9 @@ void DualCharSelection::draw()
 		{ 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() }, { 0, 0 }, 0.f, WHITE);
 	// gui1
 	// draw 4 texture of character
+		// Draw Text    
+	TextButton::DrawTextWithOutline(RESOURCE_MANAGER.getFont("SMW"), "Choose Your Character", { 540, 200 }, 30.f, 5, WHITE, BLACK);
+	TextButton::DrawTextWithOutline(RESOURCE_MANAGER.getFont("SMW"), "Press A/D to change", { 550, 250 }, 30.f, 5, WHITE, BLACK);
 
 	DrawTexturePro(Textures[0], { 0, 0, (float)Textures[0].width, (float)Textures[0].height },
 		{ 270, 500 - 24, 32 * 4, 46 * 4 }, { 0, 0 }, 0.f, WHITE);

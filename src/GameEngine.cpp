@@ -69,7 +69,13 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std:
     inputHandler2.bindKey(KEY_KP_0, InputType::Press, &fire);
     inputHandler2.setDefaultCommand(&stand);
 
-
+    if (multiplayers->size() == 1) {
+        choice1 = static_cast<int>((*multiplayers)[0]->getCharacterType());
+    }
+    else if (multiplayers->size() == 2) {
+        choice1 = static_cast<int>((*multiplayers)[0]->getCharacterType());
+        choice2 = static_cast<int>((*multiplayers)[1]->getCharacterType());
+    }
     //FirePiranhaPlant* plant = new FirePiranhaPlant({ 432, 710 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_CLOSED"));
     //enemies.push_back(plant);
 
@@ -215,6 +221,7 @@ void GameEngine::update()
             if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("pause.wav");
         }
     }
+
     if (GUI::restart_is_pressed) {
         GUI::restart_is_pressed = false;
         for (auto& p : *multiplayers) {
@@ -526,6 +533,7 @@ void GameEngine::draw()
 
     if (isPaused) {
         DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.3f));
+
         if (cleared) {
             GUI::drawLevelClear();
         }
@@ -542,6 +550,15 @@ void GameEngine::draw()
                     SETTING.setMusic(false);
                 }
                 else SETTING.setMusic(true);
+            }
+            if (GUI::inSelection) {
+
+                if (multiplayers->size() == 1) {
+                    GUI::drawChoosingSingleCharacter(choice1);
+                }
+                else {
+                    GUI::drawChoosingDualCharacter(choice1, choice2);
+                }
             }
         }
     }

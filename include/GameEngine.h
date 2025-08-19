@@ -74,7 +74,8 @@ private:
     int sharedLives = 5;
     Texture2D BackGroundTex;
     Vector2 bounce;
-
+    // for choosing character
+    int choice1 = 0, choice2 = 0;
     std::map<std::string, Texture2D> backgroundTextures;
     std::vector<Vector2> BackGroundPos;
 public:
