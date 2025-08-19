@@ -216,6 +216,57 @@ Rectangle GameCamera::getViewRect() const
 	};
 }
 
+void GameCamera::loadCamera(const json& j)
+{
+	if (j.contains("cameraX")) cameraX = j["cameraX"].get<float>();
+	if (j.contains("cameraY")) cameraY = j["cameraY"].get<float>();
+	if (j.contains("cameraWidth")) cameraWidth = j["cameraWidth"].get<float>();
+	if (j.contains("cameraHeight")) cameraHeight = j["cameraHeight"].get<float>();
+	if (j.contains("targetX")) targetX = j["targetX"].get<float>(); // Load target position
+	if (j.contains("targetY")) targetY = j["targetY"].get<float>(); // Load target position
+	if (j.contains("scale")) scale = j["scale"].get<float>();
+	if (j.contains("verticalOffset")) verticalOffset = j["verticalOffset"].get<float>();
+}
+
+void GameCamera::saveCamera(json& j) const
+{
+	j["cameraX"] = cameraX;
+	j["cameraY"] = cameraY;
+	j["cameraWidth"] = cameraWidth;
+	j["cameraHeight"] = cameraHeight;
+	j["targetX"] = targetX; // Save target position
+	j["targetY"] = targetY; // Save target position
+	j["scale"] = scale;
+	j["verticalOffset"] = verticalOffset;
+}
+
+void GameCamera::saveCameraToFile(const std::string& path)
+{
+    json camJson;
+    saveCamera(camJson);
+
+    std::ofstream file(path);
+    if (file.is_open()) {
+        file << camJson.dump(4); // pretty print
+        file.close();
+    }
+}
+
+void GameCamera::loadCameraFromFile(const std::string& path)
+{
+    std::ifstream file(path);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open camera file: " << path << std::endl;
+        return;
+    }
+
+    json camJson;
+    file >> camJson;
+    file.close();
+
+    loadCamera(camJson);
+}
+
 
 Vector2& GameCamera::getPos() const
 {

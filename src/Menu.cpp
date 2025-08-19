@@ -59,7 +59,6 @@ void MainMenuState::handleInput()
 		}
 		globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
 		globalGameEngine->loadGameMap(*game->level);
-		globalGameEngine->InitGameCamera(); // init lai gamecamera
 
 		while (globalGameEngine != nullptr) {
 			if (globalGameEngine->run()) {
@@ -82,7 +81,6 @@ void MainMenuState::handleInput()
 					// Create a new GameEngine with the updated map and players
 					globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
 					globalGameEngine->loadGameMap(*game->level);
-					globalGameEngine->InitGameCamera(); // init lai gamecamera
 				} 
 				else break;
 			}
@@ -108,7 +106,6 @@ void MainMenuState::handleInput()
 			}
 			globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
 			globalGameEngine->loadGameMap(*game->level);
-			globalGameEngine->InitGameCamera();
 		}
 		else if (globalGameEngine->isOver()) {
 			for (auto& p : game->multiplayers)
@@ -120,7 +117,6 @@ void MainMenuState::handleInput()
 			}
 			globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
 			globalGameEngine->loadGameMap(*game->level);
-			globalGameEngine->InitGameCamera(); // init lai gamecamera
 		}
 
 		while (globalGameEngine != nullptr) {
@@ -136,7 +132,6 @@ void MainMenuState::handleInput()
 					game->selectMap(game->getSelectedMap() + 1);
 					globalGameEngine = new GameEngine(1600.0f, 800.0f, *game->level, &game->multiplayers);
 					globalGameEngine->loadGameMap(*game->level);
-					globalGameEngine->InitGameCamera();
 				}
 				else break;
 			}
@@ -696,7 +691,6 @@ void LoadGameState::handleInput()
 		}
 		globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
 		globalGameEngine->loadGame(chosenSlot);
-		//globalGameEngine->InitGameCamera();
 		std::cout << "Game loaded from slot " << chosenSlot << "\n";
 		while (globalGameEngine != nullptr) {
 			if (globalGameEngine->run()) {
@@ -710,7 +704,6 @@ void LoadGameState::handleInput()
 					game->selectMap(game->getSelectedMap() + 1);
 					globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
 					globalGameEngine->loadGameMap(*game->level);
-					globalGameEngine->InitGameCamera();
 				}
 				else {
 					break;

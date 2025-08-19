@@ -363,7 +363,12 @@ void EditorEngine::handleInput() {
 }
 
 bool EditorEngine::run() {
+	RESOURCE_MANAGER.stopCurrentMusic();
+	RESOURCE_MANAGER.playMusic("MUSIC_5");
 	while (!WindowShouldClose()) {
+		if (SETTING.isMusicEnabled()) {
+			UpdateMusicStream(RESOURCE_MANAGER.getMusic("MUSIC_5"));
+		}
 		update();
 		handleInput();
 		if (IsKeyPressed(KEY_ESCAPE) || GUI::back_editor_is_pressed) {

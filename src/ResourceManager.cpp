@@ -744,6 +744,7 @@ void ResourceManager::loadMusics()
 	musics["MUSIC_1"] = LoadMusicStream("resources/musics/music1.mp3");
 	musics["MUSIC_2"] = LoadMusicStream("resources/musics/music2.mp3");
 	musics["MUSIC_3"] = LoadMusicStream("resources/musics/music2.mp3");
+	musics["MUSIC_5"] = LoadMusicStream("resources/musics/music5.mp3");
 	musics["COURSECLEAR"] = LoadMusicStream("resources/musics/courseClear.mp3");
 }
 

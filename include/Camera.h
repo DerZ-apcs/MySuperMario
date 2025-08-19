@@ -37,6 +37,8 @@ public:
 	Rectangle getViewRect() const;
 	void loadCamera(const json& j);
 	void saveCamera(json& j) const;
+	void saveCameraToFile(const std::string& path);
+	void loadCameraFromFile(const std::string& path);
 };
 
 //------------

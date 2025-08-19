@@ -101,24 +101,15 @@ void GameEngine::loadGameMap(Level& level) {
     decor = map.getDecor();
     covers = map.getCovers();
     secretAreas = map.getSecretAreas(); 
-
     //boss = new BoomBoom({ 1000, 500 });
-	boss = new PeteyPiranha({ 1000, 500 });
-    enemies.push_back(boss);
+	//boss = new PeteyPiranha({ 1000, 500 });
+    //enemies.push_back(boss);
 	//enemies.push_back(new JumpingPiranhaPlant({ 400, 700 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_CLOSED")));
     // test 2 boss
 	//enemies.push_back(new BoomBoom({ 1000, 500 }));
 	//enemies.push_back(new PeteyPiranha({ 1000, 500 }));
 }
-void GameEngine::InitGameCamera()
-{
-	if (multiplayers->empty() || (*multiplayers)[0] == nullptr) return;
-	camera = GameCamera(GetScreenWidth(), GetScreenHeight(), 1.25f);
-	camera.setPos((*multiplayers)[0]->getPosition());
-	Vector2 Msize = map.getMapSize();
-	cout << "Msize: " << Msize.x << " x " << Msize.y << endl;
-	camera.loadRenderTexture(Msize);
-}
+
 GameEngine::~GameEngine() {
     for (size_t i = 0; i < enemyFireball.size(); i++)
         delete enemyFireball[i];
@@ -563,8 +554,6 @@ void GameEngine::draw()
 bool GameEngine::run() {
     RESOURCE_MANAGER.stopCurrentMusic();
     RESOURCE_MANAGER.playMusic(level->getMusic());
-    // load and play the new music
-
     // second game loop (main game loop)
     while (!WindowShouldClose()) {
         if (SETTING.isMusicEnabled()) {
@@ -848,6 +837,9 @@ json GameEngine::serialize()
     map.saveMap(j);
     j["mapSize"] = { map.getMapSize().x, map.getMapSize().y };
     j["background"] = level->getBackGroundName();
+    // camera
+	j["Camera"] = json::object();
+   	camera.saveCamera(j["Camera"]);
 
     saveMultiCharacters(*multiplayers, j);
     saveGameEngineState(this, j);
@@ -874,7 +866,12 @@ void GameEngine::deserialize(const json& j)
     loadEnemies(enemies, j);
     loadItems(items, j);
     loadTileGrids(tileGrid, j);
-
+    // load camera
+	if (!j.contains("Camera")) {
+		std::cerr << "Error: Camera data not found in JSON." << std::endl;
+		return;
+	}
+	camera.loadCamera(j.at("Camera"));
     //InitGameCamera();
 }
 
