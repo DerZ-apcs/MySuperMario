@@ -21,11 +21,11 @@ static constexpr float YELLOW_RUN_SPEED = 50.0f;
 
 ParaKoopa::ParaKoopa(Vector2 pos, Texture2D texture)
 	: Koopa(pos, texture), jumpTimer(0.0f),
-	hasWings(true),
-    paraKoopaType(RED_PARAKOOPA)
+	hasWings(true)
+    //paraKoopaType(RED_PARAKOOPA)
 {
 	isKicked = false;
-	koopaType = RED_KOOPA; // Default type, can be changed in derived classes
+	//koopaType = RED_KOOPA; // Default type, can be changed in derived classes
 	direction = LEFT; // Default direction, can be changed later
 	velocity = (direction == LEFT) ? Vector2{ -RED_RUN_SPEED, 0.0f } : Vector2{ RED_RUN_SPEED, 0.0f };
 	frameTime = 0.15f;
@@ -95,39 +95,7 @@ void ParaKoopa::draw()
 
 void ParaKoopa::UpdateTexture()
 {
-	if (!hasWings) {
-		Koopa::UpdateTexture();
-		return;
-	}
-	std::string paraKoopaTypeStr;
-	switch (paraKoopaType) {
-	case RED_PARAKOOPA:
-		paraKoopaTypeStr = "Red";
-		break;
-	case BLUE_PARAKOOPA:
-		paraKoopaTypeStr = "Blue";
-		break;
-	case GREEN_PARAKOOPA:
-		paraKoopaTypeStr = "Green";
-		break;
-	case YELLOW_PARAKOOPA:
-		paraKoopaTypeStr = "Yellow";
-		break;
-	default:
-		throw std::runtime_error("Unknown ParaKoopa type");
-	}
-	
-    frameAcum += GetFrameTime();
-    if (frameAcum > frameTime) {
-        currFrame = (currFrame + 1) % (maxFrame + 1);
-        frameAcum = 0;
-    }
-    if (direction == LEFT) {
-        texture = RESOURCE_MANAGER.getTexture("ParaKoopa" + paraKoopaTypeStr + "_LEFT_" + std::to_string(currFrame));
-    }
-    else {
-        texture = RESOURCE_MANAGER.getTexture("ParaKoopa" + paraKoopaTypeStr + "_RIGHT_" + std::to_string(currFrame));
-    }
+
 }
 
 void ParaKoopa::stomped()
@@ -141,6 +109,9 @@ void ParaKoopa::stomped()
 		velocity.x = (direction == LEFT) ? -KOOPA_SPEED : KOOPA_SPEED;
 		state = FALLING;
 		setGravityAvailable(true);
+		if (SETTING.isSoundEnabled()) {
+			RESOURCE_MANAGER.playSound("stomp.wav");
+		}
 	}
 	else {
 		Koopa::stomped();
@@ -188,6 +159,43 @@ void ParaKoopaRed::Update() {
     }
 }
 
+void ParaKoopaRed::UpdateTexture()
+{
+	if (!hasWings) {
+		Koopa::UpdateTexture();
+		return;
+	}
+	std::string paraKoopaTypeStr = "Red";
+	frameAcum += GetFrameTime();
+	if (frameAcum > frameTime) {
+		currFrame = (currFrame + 1) % (maxFrame + 1);
+		frameAcum = 0;
+	}
+	if (direction == LEFT) {
+		texture = RESOURCE_MANAGER.getTexture("ParaKoopa" + paraKoopaTypeStr + "_LEFT_" + std::to_string(currFrame));
+	}
+	else {
+		texture = RESOURCE_MANAGER.getTexture("ParaKoopa" + paraKoopaTypeStr + "_RIGHT_" + std::to_string(currFrame));
+	}
+}
+
+void ParaKoopaRed::saveEntity(json& j) const
+{
+	ParaKoopa::saveEntity(j);
+	j["properties"] = json::array({
+	{
+		{ "name", "Name" },
+		{ "type", "string" },
+		{ "value", "Enemy" }
+	},
+	{
+		{ "name", "Type" },
+		{ "type", "string" },
+		{ "value", "ParaKoopaRed"}
+	}
+		});
+}
+
 ParaKoopaBlue::ParaKoopaBlue(Vector2 pos, Texture2D texture)
     : ParaKoopa(pos, texture) {
     paraKoopaType = BLUE_PARAKOOPA;
@@ -204,6 +212,43 @@ void ParaKoopaBlue::Update() {
  	    state = JUMPING;
         jumpTimer = 0.0f;
     }
+}
+
+void ParaKoopaBlue::UpdateTexture()
+{
+	if (!hasWings) {
+		Koopa::UpdateTexture();
+		return;
+	}
+	std::string paraKoopaTypeStr = "Blue";
+	frameAcum += GetFrameTime();
+	if (frameAcum > frameTime) {
+		currFrame = (currFrame + 1) % (maxFrame + 1);
+		frameAcum = 0;
+	}
+	if (direction == LEFT) {
+		texture = RESOURCE_MANAGER.getTexture("ParaKoopa" + paraKoopaTypeStr + "_LEFT_" + std::to_string(currFrame));
+	}
+	else {
+		texture = RESOURCE_MANAGER.getTexture("ParaKoopa" + paraKoopaTypeStr + "_RIGHT_" + std::to_string(currFrame));
+	}
+}
+
+void ParaKoopaBlue::saveEntity(json& j) const
+{
+	ParaKoopa::saveEntity(j);
+	j["properties"] = json::array({
+	{
+		{ "name", "Name" },
+		{ "type", "string" },
+		{ "value", "Enemy" }
+	},
+	{
+		{ "name", "Type" },
+		{ "type", "string" },
+		{ "value", "ParaKoopaBlue"}
+	}
+		});
 }
 
 ParaKoopaGreen::ParaKoopaGreen(Vector2 pos, Texture2D texture):
@@ -225,6 +270,43 @@ void ParaKoopaGreen::Update()
 	}
 }
 
+void ParaKoopaGreen::UpdateTexture()
+{
+	if (!hasWings) {
+		Koopa::UpdateTexture();
+		return;
+	}
+	std::string paraKoopaTypeStr = "Green";
+	frameAcum += GetFrameTime();
+	if (frameAcum > frameTime) {
+		currFrame = (currFrame + 1) % (maxFrame + 1);
+		frameAcum = 0;
+	}
+	if (direction == LEFT) {
+		texture = RESOURCE_MANAGER.getTexture("ParaKoopa" + paraKoopaTypeStr + "_LEFT_" + std::to_string(currFrame));
+	}
+	else {
+		texture = RESOURCE_MANAGER.getTexture("ParaKoopa" + paraKoopaTypeStr + "_RIGHT_" + std::to_string(currFrame));
+	}
+}
+
+void ParaKoopaGreen::saveEntity(json& j) const
+{
+	ParaKoopa::saveEntity(j);
+	j["properties"] = json::array({
+	{
+		{ "name", "Name" },
+		{ "type", "string" },
+		{ "value", "Enemy" }
+	},
+	{
+		{ "name", "Type" },
+		{ "type", "string" },
+		{ "value", "ParaKoopaGreen"}
+	}
+		});
+}
+
 
 ParaKoopaYellow::ParaKoopaYellow(Vector2 pos, Texture2D texture):
     ParaKoopa(pos, texture)
@@ -244,4 +326,41 @@ void ParaKoopaYellow::Update()
 		state = JUMPING;
 		jumpTimer = 0.0f;
 	}
+}
+
+void ParaKoopaYellow::UpdateTexture()
+{
+	if (!hasWings) {
+		Koopa::UpdateTexture();
+		return;
+	}
+	std::string paraKoopaTypeStr = "Yellow";
+	frameAcum += GetFrameTime();
+	if (frameAcum > frameTime) {
+		currFrame = (currFrame + 1) % (maxFrame + 1);
+		frameAcum = 0;
+	}
+	if (direction == LEFT) {
+		texture = RESOURCE_MANAGER.getTexture("ParaKoopa" + paraKoopaTypeStr + "_LEFT_" + std::to_string(currFrame));
+	}
+	else {
+		texture = RESOURCE_MANAGER.getTexture("ParaKoopa" + paraKoopaTypeStr + "_RIGHT_" + std::to_string(currFrame));
+	}
+}
+
+void ParaKoopaYellow::saveEntity(json& j) const
+{
+	ParaKoopa::saveEntity(j);
+	j["properties"] = json::array({
+	{
+		{ "name", "Name" },
+		{ "type", "string" },
+		{ "value", "Enemy" }
+	},
+	{
+		{ "name", "Type" },
+		{ "type", "string" },
+		{ "value", "ParaKoopaYellow"}
+	}
+		});
 }

@@ -730,7 +730,7 @@ void EditorEngine::loadFromJson(int slot) {
 				enemies.push_back(new BobOmb(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("BobOmb_RIGHT_0")));
 			}
 			if (type == "PiranhaPlant") {
-				enemies.push_back(new PiranhaPlant(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_0")));
+				enemies.push_back(new PiranhaPlant(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_OPEN")));
 			}
 			if (type == "Rex") {
 				enemies.push_back(new Rex(Vector2{ (float)x * 32, (float)y * 32 }, RESOURCE_MANAGER.getTexture("Rex_RIGHT_0")));

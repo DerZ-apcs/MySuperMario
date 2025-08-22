@@ -9,7 +9,7 @@ const float BOOMBOOM_ACTION_INTERVAL = 3.0f; // Thời gian giữa các hành đ
 const float BOOMBOOM_SPIN_DURATION = 1.0f;   // Thời gian quay trước khi lao
 const float BOOMBOOM_STUN_DURATION = 1.5f;   // Thời gian bị choáng
 const float BOOMBOOM_CHARGE_DURATION = 1.5f;
-const int   BOOMBOOM_INITIAL_HP = 3;         // Máu khởi điểm
+const int   BOOMBOOM_INITIAL_HP = 5;         // Máu khởi điểm
 
 BoomBoom::BoomBoom(Vector2 pos):
     Boss(pos, { 64, 64 }, RESOURCE_MANAGER.getTexture("boomboom_walk_left_0"), BOOMBOOM_INITIAL_HP),
@@ -39,6 +39,7 @@ BoomBoom::BoomBoom(Vector2 pos, Character* player)
     frameDuration = 0.15f; 
 
     loadAnimations(); 
+    loadAnimations(); 
     enterState(BoomBoomState::WALKING);
 }
 
@@ -59,7 +60,13 @@ float BoomBoom::getScores() const {
 void BoomBoom::enterState(BoomBoomState newState) {
     currentState = newState;
     stateTimer = 0.0f; // Reset state-wide timer
-
+	auto& character = globalGameEngine->getMultiplayers().at(0); // Giả định chỉ có một người chơi
+    if (character) {
+		direction = (character->getPosition().x < position.x) ? LEFT : RIGHT; // Xác định hướng dựa trên vị trí người chơi
+	}
+    else {
+        direction = RIGHT; // Mặc định nếu không có người chơi
+    }
     switch (currentState) {
     case BoomBoomState::WALKING:
         vulnerable = true;
@@ -138,6 +145,14 @@ void BoomBoom::updateWalking() {
         frameTimer = 0.0f;
         currentFrame = (currentFrame + 1) % walkLeftTextures.size();
     }
+	auto& character = globalGameEngine->getMultiplayers().at(0); // Giả định chỉ có một người chơi
+	if (character) {
+		direction = (character->getPosition().x < position.x) ? LEFT : RIGHT; // Cập nhật hướng dựa trên người chơi
+        velocity.x = walkSpeed * (direction == RIGHT ? 1 : -1);
+	}
+	else {
+		direction = RIGHT; // Mặc định nếu không có người chơi
+	}
 
     if (direction == LEFT) {
         setTexture(walkLeftTextures[currentFrame]);
@@ -147,8 +162,7 @@ void BoomBoom::updateWalking() {
     }
     actionTimer -= GetFrameTime();
     if (actionTimer <= 0) {
-        int choice = GetRandomValue(0, 1);
-        if (choice == 0) {
+        if (character && character->getPosition().y < position.y - 50.f) {
             enterState(BoomBoomState::JUMPING);
         }
         else {
@@ -166,6 +180,10 @@ void BoomBoom::updateJumping() {
 void BoomBoom::updateSpinning() {
     statePhaseTimer -= GetFrameTime();
     if (statePhaseTimer <= 0) {
+		auto& character = globalGameEngine->getMultiplayers().at(0); // Giả định chỉ có một người chơi
+        if (character) {
+			direction = (character->getPosition().x < position.x) ? LEFT : RIGHT; // Cập nhật hướng dựa trên người chơi
+        }
         enterState(BoomBoomState::CHARGING);
     }
 }
@@ -199,7 +217,8 @@ void BoomBoom::onHit() {
 }
 
 void BoomBoom::onDeath() {
-    setGravityAvailable(false);
+    //setGravityAvailable(false);
+    // set 
     velocity = { (float)GetRandomValue(-100, 100), -600 };
 }
 
@@ -227,7 +246,7 @@ void BoomBoom::CollisionWithFireball(FireBall* fireball) {
         fireball->setEntityDead();
         return;
     }
-	
+	// Nếu đang trong trạng thái ẩn mình, không bị ảnh hưởng
     enterState(BoomBoomState::STUNNED);
     fireball->setEntityDead(); 
     if (SETTING.isSoundEnabled()) {

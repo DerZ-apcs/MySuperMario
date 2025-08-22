@@ -273,20 +273,20 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			else if (type == "FlyingGoomba") {
 				enemies.push_back(new FlyingGoomba(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FlyingGoomba_RIGHT_0")));
 			}
-			else if (type == "PiranhaPlant" || type == "Piranha") {
+			else if (type == "PiranhaPlant") {
 				enemies.push_back(new PiranhaPlant(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("PiranhaPlant_OPEN")));
 			}
 			else if (type == "JumpingPiranhaPlant" || type == "JumpingPiranha") {
-				enemies.push_back(new JumpingPiranhaPlant(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("JumpingPiranha_OPEN")));
+				enemies.push_back(new JumpingPiranhaPlant(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("PiranhaPlant_JUMP_UP_0")));
 			}
 			else if (type == "FirePiranhaPlant" || type == "FirePiranha") {
-				enemies.push_back(new FirePiranhaPlant(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FirePiranha_OPEN")));
+				enemies.push_back(new FirePiranhaPlant(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FirePiranhaPLant_OPEN")));
 			}
 			else if (type == "RapidFirePiranhaPlant" || type == "RapidFirePiranha") {
-				enemies.push_back(new RapidFirePiranha(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FirePiranha_OPEN")));
+				enemies.push_back(new RapidFirePiranha(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FirePiranhaPlant_OPEN")));
 			}
 			else if (type == "HomingFirePiranha" || type == "HomingFirePiranhaPlant") {
-				enemies.push_back(new HomingFirePiranha(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FirePiranha_OPEN")));
+				enemies.push_back(new HomingFirePiranha(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FirePiranhaPlant_OPEN")));
 			}
 			else if (type == "GreenKoopa" || type == "Koopa") {
 				enemies.push_back(new GreenKoopa(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("GreenKoopa_RIGHT_0")));
@@ -301,16 +301,16 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 				enemies.push_back(new BlueKoopa(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("BlueKoopa_RIGHT_0")));
 			}
 			else if (type == "ParaKoopaRed") {
-				enemies.push_back(new ParaKoopaRed(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("ParaKoopa_RIGHT_0")));
+				enemies.push_back(new ParaKoopaRed(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("ParaKoopaRed_RIGHT_0")));
 			}
 			else if (type == "ParaKoopaGreen") {
-				enemies.push_back(new ParaKoopaGreen(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("ParaKoopa_RIGHT_0")));
+				enemies.push_back(new ParaKoopaGreen(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("ParaKoopaGreen_RIGHT_0")));
 			}
 			else if (type == "ParaKoopaYellow") {
-				enemies.push_back(new ParaKoopaYellow(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("ParaKoopa_RIGHT_0")));
+				enemies.push_back(new ParaKoopaYellow(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("ParaKoopaYellow_RIGHT_0")));
 			}
 			else if (type == "ParaKoopaBlue") {
-				enemies.push_back(new ParaKoopaBlue(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("ParaKoopa_RIGHT_0")));
+				enemies.push_back(new ParaKoopaBlue(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("ParaKoopaBlue_RIGHT_0")));
 			}
 			else if (type == "BoomBoom") {
 				enemies.push_back(new BoomBoom(Vector2{ (float)x * blockwidth, (float)y * blockwidth }));
@@ -319,16 +319,16 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 				enemies.push_back(new PeteyPiranha(Vector2{ (float)x * blockwidth, (float)y * blockwidth }));
 			}
 			else if (type == "Bullet") {
-				enemies.push_back(new Bullet(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Bullet"), LEFT));
+				enemies.push_back(new Bullet(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Bullet_LEFT"), LEFT));
 			}
 			else if (type == "BanzaiBill") {
 				enemies.push_back(new BanzaiBill(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("BanzaiBill_LEFT_0")));
 			}
 			else if (type == "FireBullet") {
-				enemies.push_back(new FireBullet(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FireBullet"), LEFT));
+				enemies.push_back(new FireBullet(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Bullet_LEFT"), LEFT));
 			}
 			else if (type == "Muncher") {
-				enemies.push_back(new Muncher(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Muncher")));
+				enemies.push_back(new Muncher(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Muncher_0")));
 			}
 			else if (type == "Rex") {
 				enemies.push_back(new Rex(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Rex_RIGHT_0")));

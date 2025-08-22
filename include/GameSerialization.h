@@ -25,20 +25,3 @@ void saveTileGrids(const std::vector<std::vector<Blocks*>>& tileGrid, json& j);
 void loadTileGrids(std::vector<std::vector<Blocks*>>& tileGrid, const json& j);
 
 bool isBasisBlock(BLOCK_TYPE type);
-//void saveEffects(const std::vector<Effect> effects, json& j);
-//void loadEffects(std::vector<Effect>& effects, const json& j);
-
-//void saveFireBall(const std::vector<FireBall> fireballs, json& j);
-//void loadFireBall(std::vector<FireBall>& fireballs, const json& j);
-//
-//void saveEnemyFireBall(const std::vector<FireBall> enemyfireballs, json& j);
-//void loadEnemyFireBall(std::vector<FireBall>& enemyfireballs, const json& j);
-
-//void saveDecor(const std::vector<Blocks> decors, json& j);
-//void loadDecor(std::vector<Blocks>& decors, const json& j);
-//
-//void saveCover(const std::vector<Blocks> covers, json& j);
-//void loadCover(std::vector<Blocks>& covers, const json& j);
-
-//void saveSecretArea(const std::vector<Rectangle> secret, json& j);
-//void loadSecretArea(std::vector<Rectangle>& scret, const json& j);
