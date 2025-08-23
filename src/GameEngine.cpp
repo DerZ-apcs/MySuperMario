@@ -416,7 +416,15 @@ void GameEngine::draw()
         lostLife = (lostLife == true || p->isLostLife());
     }
     bool drawCover = true;
-    // cover
+    for (auto& area : secretAreas) {
+        for (size_t i = 0; i < (*multiplayers).size(); i++) {
+            if (CheckCollisionPointRec((*multiplayers)[i]->getPosition(), area) == true) {
+                //printf("Character in the secret area at (%f, %f)\n", (*multiplayers)[i]->getX(), (*multiplayers)[i]->getY());
+                drawCover = false;
+                break;
+            }
+        }
+    }
     if (drawCover == true) {
         for (auto* cover : covers) {
             if (!cover || !isInCameraView(cover->getRect()))
