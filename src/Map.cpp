@@ -229,16 +229,31 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 				tileGrid[y][x] = block;
 			}
 		}
-		/*if (name == "HiddenBlocks") {
+
+		if (name == "HiddenBlock") {
 			int texId = gid - firstgid;
-			blockArray.push_back(new HiddenBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, { 32,32 }));
+			HiddenBlock* hiddenBlock = dynamic_cast<HiddenBlock*>(BlockFactory::getInstance().createBlock(HIDDEN, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
+			hiddenBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_" + std::to_string(texId)));
+			hiddenBlock->setTextureName("TILE_" + std::to_string(texId));
+
+			if (type == "ItemBlock") hiddenBlock->setRevealType(BLOCK_TYPE::ITEMBLOCK);
+			else if (type == "CoinBlock") hiddenBlock->setRevealType(BLOCK_TYPE::COINBLOCK);
+			else if (type == "Brick") hiddenBlock->setRevealType(BLOCK_TYPE::BRICK); 
+			else hiddenBlock->setRevealType(BLOCK_TYPE::SOLIDBLOCK); 
+
+			tileGrid[y][x] = hiddenBlock;
 		}
 
 		if (name == "MovingBlock")
 		{
 			int texId = gid - firstgid;
-			blockArray.push_back(new MovingBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
-		}*/
+			MovingBlock* movingBlock = dynamic_cast<MovingBlock*>(BlockFactory::getInstance().createBlock(MOVINGBLOCK, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
+			movingBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_" + std::to_string(texId)));
+			movingBlock->setTextureName("TILE_" + std::to_string(texId));
+
+			movingBlocks.push_back(movingBlock);
+		}
+
 		if (name == "CoinBlock") {
 			int texId = gid - firstgid;
 			Blocks* coinBlock = dynamic_cast<CoinBlock*>(BlockFactory::getInstance().createBlock(COINBLOCK, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
@@ -266,6 +281,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			cannon->setTextureName("TILE_116");
 			tileGrid[y][x] = cannon;
 		}
+
 		if (name == "Enemy") {
 			if (type == "Goomba") {
 				enemies.push_back(new Goomba(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0")));
@@ -345,6 +361,9 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			else if (type == "BobOmb") {
 				enemies.push_back(new BobOmb(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("BobOmb_RIGHT_0")));
 			}
+			else if (type == "BoomBoom") {
+				enemies.push_back(new BoomBoom(Vector2{ (float)x * blockwidth, (float)y * blockwidth }));
+			}
 			else { std::cerr << "Unknown enemy type: " << type << std::endl; }
 		}
 
@@ -381,6 +400,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 
 	// covers layer
 	if (mapJson["layers"].size() < 4) { return; }
+	printf("Loading covers from layer 3\n");
 	std::vector<int> coverData = mapJson["layers"][3]["data"];
 	for (int y = 0; y < height; ++y) {
 		for (int x = 0; x < width; ++x) {
