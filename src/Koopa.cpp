@@ -75,6 +75,9 @@ void Koopa::Update() {
     }
     position.y += velocity.y * deltaTime;
     position.x += velocity.x * deltaTime;
+
+    // check that when see tile then return
+    //for (Check)
     updateCollision();
     UpdateTexture();
 }

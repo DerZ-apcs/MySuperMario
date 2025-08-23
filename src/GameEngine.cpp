@@ -388,20 +388,6 @@ void GameEngine::handleCollision() {
         for (Blocks* b : nearby)
             CollI.HandleCollision(item, b);
     }   
-	// enemy fireball
-        // enemy fireball no collision with block
-
-	/*for (size_t i = 0; i < enemyFireball.size(); i++) {
-		auto nearby = getNearbyBlocks(enemyFireball[i]->getPosition(), 2);
-		for (Blocks* b : nearby) {
-            if (!b || b->getBlockType() == DECOR) continue;
-			CollI.HandleCollision(enemyFireball[i], b);
-		}
-        for (auto& mb : movingBlocks) {
-			if (!mb || !isInCameraView(mb->getRect())) continue; 
-			CollI.HandleCollision(enemyFireball[i], mb);
-        }
-	}*/
 
     // player vs enemy
     for (auto& p : *multiplayers) {
@@ -412,15 +398,22 @@ void GameEngine::handleCollision() {
                 CollI.HandleCollision(fireball, e);
         }
     }
-
     // Player vs Items
     for (auto& p : *multiplayers)
         for (auto& item : items)
             CollI.HandleCollision(p.get(), item);
     // Enemy fireball ↔ player
-    for (auto& ef : enemyFireball)
+    for (auto& ef : enemyFireball) {
         for (auto& p : *multiplayers)
             CollI.HandleCollision(ef, p.get());
+        // collsion with tile
+        auto nearbyBlocks = getNearbyBlocks(ef->getPosition(), 2);
+        for (Blocks* b : nearbyBlocks) {
+            if (b == nullptr) continue;
+            CollI.HandleCollision(ef, b);
+        }
+    }
+       
 }
 // draw
 void GameEngine::draw()

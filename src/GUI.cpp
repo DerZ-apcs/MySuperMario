@@ -628,7 +628,6 @@ void GUI::drawChoosingSingleCharacter(int& choice) {
 
     // Handle Enter key to confirm selection
     if (IsKeyPressed(KEY_ENTER)) {
-        globalGameEngine->getMultiplayers().clear();
         static Mario defaultCharacter; // Fallback if no existing 
 
         // Helper function to create and clone character based on choice
@@ -657,9 +656,18 @@ void GUI::drawChoosingSingleCharacter(int& choice) {
             return newCharacter;
             };
 
+		auto newCharacter = createCharacter(choice);
+        newCharacter->setPosition(globalGameEngine->getMultiplayers()[0]->getPosition());
+        newCharacter->setVel(globalGameEngine->getMultiplayers()[0]->getVelocity());
+        newCharacter->setState(globalGameEngine->getMultiplayers()[0]->getState());
+        newCharacter->setLives(globalGameEngine->getMultiplayers()[0]->getLives());
+        newCharacter->setScores(globalGameEngine->getMultiplayers()[0]->getScores());
+        newCharacter->setCoins(globalGameEngine->getMultiplayers()[0]->getCoins());
+		newCharacter->setCharacterState(globalGameEngine->getMultiplayers()[0]->getCharacterState());
+        //delete old character
+		globalGameEngine->getMultiplayers().clear(); // Clear existing players
         // Create and add player
-        globalGameEngine->getMultiplayers().push_back(createCharacter(choice));
-
+        globalGameEngine->getMultiplayers().push_back(std::move(newCharacter));
         // Set player ID
         if (!globalGameEngine->getMultiplayers().empty()) {
             globalGameEngine->getMultiplayers()[0]->setPlayerid(0);

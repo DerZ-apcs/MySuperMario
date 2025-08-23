@@ -174,4 +174,11 @@ enum CoinType {
 	STATIC_COIN, // 0
 	BLOCK_COIN // 1
 };
+
+enum Difficulty {
+	EASY,
+	MEDIUM,
+	HARD,
+	SUPERHARD
+};
 #endif
