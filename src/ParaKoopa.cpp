@@ -66,8 +66,13 @@ void ParaKoopa::Update()
 	if (collisionTimer > 0) {
 		collisionTimer -= deltaTime;
 	}
-	if (velocity.y > 50) {
+	/*if (velocity.y > 50) {
 		state = FALLING;
+	}*/
+	if (isOnGround()) {
+		velocity.y = 0;
+		state = ON_GROUND;
+		jumpTimer += deltaTime;
 	}
 	if (getGravityAvailable()) {
 		velocity.y += GRAVITY * deltaTime;

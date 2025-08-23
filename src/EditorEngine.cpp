@@ -20,9 +20,7 @@ EditorEngine::~EditorEngine() {
 		}
 	}
 	tileGrid.clear();
-	for (auto& dec : decor) {
-		delete dec;
-	}
+	
 	decor.clear();
 	for (auto& enemy : enemies) {
 		delete enemy;

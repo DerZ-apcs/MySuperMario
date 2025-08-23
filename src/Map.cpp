@@ -246,10 +246,13 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 
 		if (name == "MovingBlock")
 		{
-			int texId = gid - firstgid;
 			MovingBlock* movingBlock = dynamic_cast<MovingBlock*>(BlockFactory::getInstance().createBlock(MOVINGBLOCK, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
-			movingBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_" + std::to_string(texId)));
-			movingBlock->setTextureName("TILE_" + std::to_string(texId));
+			
+			string textureName = "MOVING_" + type;
+			Texture2D tex = RESOURCE_MANAGER.getTexture(textureName);
+			movingBlock->setTextureName(textureName);
+			movingBlock->setTexture(tex);
+			movingBlock->setSize({ (float)tex.width, (float)tex.height });
 
 			movingBlocks.push_back(movingBlock);
 		}
@@ -363,6 +366,9 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			}
 			else if (type == "BoomBoom") {
 				enemies.push_back(new BoomBoom(Vector2{ (float)x * blockwidth, (float)y * blockwidth }));
+			}
+			else if (type == "PeteyPiranha") {
+				enemies.push_back(new PeteyPiranha(Vector2{ (float)x * blockwidth, (float)y * blockwidth }));
 			}
 			else { std::cerr << "Unknown enemy type: " << type << std::endl; }
 		}
