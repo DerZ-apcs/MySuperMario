@@ -249,6 +249,7 @@ void Character::reset()
 	else {
 		throw std::runtime_error("Unknown character type");
 	}
+
 	setGravityAvailable(true);
 	setCollisionAvailable(true);
 	setPosition({ 32, 400 });
@@ -256,7 +257,6 @@ void Character::reset()
 	direction = RIGHT;
 	scores = 0;
 	coins = 0;
-	lives = 3;
 	phase = DEFAULT_PHASE;
 	isjumping = false;
 	holding = false;

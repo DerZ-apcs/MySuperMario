@@ -18,7 +18,7 @@ void ResourceManager::loadTextures() {
 	textures["SuperMario_LEFT_0"] = flipTexture(textures["SuperMario_RIGHT_0"]);
 	textures["SuperMario_LEFT_1"] = flipTexture(textures["SuperMario_RIGHT_1"]);
 	textures["SuperMario_LEFT_2"] = flipTexture(textures["SuperMario_RIGHT_2"]);
-
+	
 	// FireMario
 	textures["FireMario_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FireMario_0.png");
 	textures["FireMario_RIGHT_1"] = LoadTexture("resources/images/sprites/mario/FireMario_1.png");
@@ -26,13 +26,13 @@ void ResourceManager::loadTextures() {
 	textures["FireMario_LEFT_0"] = flipTexture(textures["FireMario_RIGHT_0"]);
 	textures["FireMario_LEFT_1"] = flipTexture(textures["FireMario_RIGHT_1"]);
 	textures["FireMario_LEFT_2"] = flipTexture(textures["FireMario_RIGHT_2"]);
-
+	
 	// jump 
 	textures["SmallMarioJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SmallMarioJumping_0.png");
 	textures["SmallMarioJumping_LEFT_0"] = flipTexture(textures["SmallMarioJumping_RIGHT_0"]);
 	textures["SuperMarioJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SuperMarioJumping_0.png");
 	textures["SuperMarioJumping_LEFT_0"] = flipTexture(textures["SuperMarioJumping_RIGHT_0"]);
-
+	
 	// fall
 		// mario
 	textures["SmallMarioFalling_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SmallMarioFalling_0.png");
@@ -223,11 +223,10 @@ void ResourceManager::loadTextures() {
 
 	textures["FirePeachFalling_RIGHT_0"] = LoadTexture("resources/images/sprites/peach/FirePeachFalling.png");
 	textures["FirePeachFalling_LEFT_0"] = flipTexture(textures["FirePeachFalling_RIGHT_0"]);
-
 	textures["FirePeachVictory"] = LoadTexture("resources/images/sprites/peach/FirePeach_Victory.png");
 
 	textures["FirePeachThrowingFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/peach/FirePeachFiring_0.png");
-	textures["FirePeachThrowingFireball_LEFT_0"] = flipTexture(textures["FireMarioThrowingFireball_RIGHT_0"]);
+	textures["FirePeachThrowingFireball_LEFT_0"] = flipTexture(textures["FirePeachThrowingFireball_RIGHT_0"]);
 
 		// transitioning
 		textures["TransitioningPeach_RIGHT_0"] = LoadTexture("resources/images/sprites/peach/SuperPeach_0.png");

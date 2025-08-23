@@ -123,7 +123,7 @@ void FirePiranhaPlant::ShootFireBall() {
         if (p && p->getPhase() != CLEARLEVEL_PHASE && p->getPhase() != DEAD_PHASE) {
             Direction dir = (p->getX() > position.x) ? RIGHT : LEFT;
             Vector2 fireBallPos = { position.x, position.y + 10 };
-            const int numFireballs = 3;
+            const int numFireballs = 1;
             const float angleSpread = 15.0f;
             const float baseSpeed = 300.0f;
 
