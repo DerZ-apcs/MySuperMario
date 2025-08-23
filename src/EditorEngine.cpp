@@ -1,4 +1,4 @@
-#include "EditorEngine.h"
+ï»¿#include "EditorEngine.h"
 
 EditorEngine* globalEditorEngine = nullptr;
 
@@ -14,27 +14,27 @@ EditorEngine::EditorEngine()
 }
 
 EditorEngine::~EditorEngine() {
-	// Xóa tileGrid
+	// XÃ³a tileGrid
 	for (size_t i = 0; i < tileGrid.size(); i++) {
-		for (size_t j = 0; j < tileGrid[i].size(); j++) { // S?a size()
+		for (size_t j = 0; j < tileGrid[i].size(); j++) { // Sá»­a size()
 			delete tileGrid[i][j];
-			tileGrid[i][j] = nullptr;
+			//tileGrid[i][j] = nullptr;
 		}
-		tileGrid[i].clear();
+		//tileGrid[i].clear();
 	}
 	tileGrid.clear();
 
-	// Xóa decor
-	for (auto& dec : decor) {
+	// XÃ³a decor
+	/*for (auto& dec : decor) {
 		delete dec;
 		dec = nullptr;
-	}
+	}*/
 	decor.clear();
 
-	// Xóa enemies
+	// XÃ³a enemies
 	for (auto& enemy : enemies) {
 		delete enemy;
-		enemy = nullptr;
+		//enemy = nullptr;
 	}
 	enemies.clear();
 }
@@ -374,10 +374,10 @@ void EditorEngine::handleInput() {
 
 bool EditorEngine::run() {
 	RESOURCE_MANAGER.stopCurrentMusic();
-	RESOURCE_MANAGER.playMusic("MUSIC_5");
+	RESOURCE_MANAGER.playMusic("MUSIC_EDIT");
 	while (!WindowShouldClose()) {
 		if (SETTING.isMusicEnabled()) {
-			UpdateMusicStream(RESOURCE_MANAGER.getMusic("MUSIC_5"));
+			UpdateMusicStream(RESOURCE_MANAGER.getMusic("MUSIC_EDIT"));
 		}
 		update();
 		handleInput();

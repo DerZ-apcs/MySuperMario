@@ -45,12 +45,13 @@ void Game::init()
 	// load map&level
 
 	loadedLevel.push_back(std::make_unique<Level>(
-		Map::basePath + "kmap_4.json", "BACKGROUND_1", "MUSIC_1", "1-1"));
+		Map::basePath + "kmap_1.json", "BACKGROUND_1", "MUSIC_1", "1-1"));
 	loadedLevel.push_back(std::make_unique<Level>(
 		Map::basePath + "kmap_2.json", "BACKGROUND_2", "MUSIC_2", "1-2"));
 	loadedLevel.push_back(std::make_unique<Level>(
 		Map::basePath + "kmap_3.json", "BACKGROUND_3", "MUSIC_3", "1-3"));
-	
+	loadedLevel.push_back(std::make_unique<Level>(
+		Map::basePath + "kmap_4.json", "BACKGROUND_4", "MUSIC_4", "1-4"));
 	// gui
 	loadGUI();
 
@@ -108,7 +109,7 @@ void Game::selectCharacter(int characterIndex)
 
 void Game::selectMap(int mapIndex)
 {
-	if (mapIndex > 3 || mapIndex <= 0)
+	if (mapIndex > 4 || mapIndex <= 0)
 		return;
 		
 	switch (mapIndex)
@@ -121,6 +122,9 @@ void Game::selectMap(int mapIndex)
 		break;
 	case 3:
 		this->level = loadedLevel[2].get();
+		break;
+	case 4: 
+		this->level = loadedLevel[3].get();
 		break;
 	}
 	this->selectedMap = mapIndex;

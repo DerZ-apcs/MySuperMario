@@ -395,7 +395,7 @@ void GameEngine::handleCollision() {
         // collsion with tile
         auto nearbyBlocks = getNearbyBlocks(ef->getPosition(), 2);
         for (Blocks* b : nearbyBlocks) {
-            if (b == nullptr) continue;
+            if (b == nullptr || b->getBlockType() == DECOR) continue;
             CollI.HandleCollision(ef, b);
         }
     }
@@ -405,7 +405,9 @@ void GameEngine::handleCollision() {
 void GameEngine::draw()
 {
     camera.beginDrawing();
-    ClearBackground(SKYBLUE);
+    if (getCurrentMapName() == "1-4")
+		ClearBackground(BLACK);
+    else ClearBackground(SKYBLUE);
 
     map.drawBackGround(camera.getSize(), camera.getScale());
     //map.drawMap();
@@ -444,7 +446,7 @@ void GameEngine::draw()
     }
 	// enemy draw
     for (auto* e : enemies) {
-        if (!e || !isInCameraView(e->getRect()))
+        if (!e || !isInCameraView(e->getRect()) || e->getEnemyType() == BOSS || e->getEnemyType() == BANZAIBILL || e->getEnemyType() == BULLET)
             continue; // skip drawing this enemy
 		e->draw();
     }
@@ -498,13 +500,17 @@ void GameEngine::draw()
 			continue; // skip drawing this item
         item->draw();
     }
+    for (auto* e : enemies) {
+        if (e->getEnemyType() == BOSS || e->getEnemyType() == BANZAIBILL || e->getEnemyType() == BULLET)
+            e->draw();
+    }
     // effects draw
     for (auto* ef : effects) {
 		if (!ef || !isInCameraView(ef->getRect()))
 			continue; // skip drawing this effect
         ef->draw();
     }
-   
+    
     camera.endDrawing();
 
     BeginDrawing();
@@ -566,13 +572,7 @@ bool GameEngine::run() {
         update();
         ClearBackground(RAYWHITE);
         draw();
-        if (IsKeyPressed(KEY_T)) {
-			cout << "Character state: " << static_cast<CharacterState>((*multiplayers)[0]->getCharacterState()) << endl;
-			cout << "died: " << died << endl;
-			cout << "gameover: " << gameover << endl;
-			cout << "lost life: " << (*multiplayers)[0]->isLostLife() << endl;
-			cout << "phase: " << static_cast<Phase>((*multiplayers)[0]->getPhase()) << endl;
-        }
+
         if (cleared == true && isPaused == false) {
             RESOURCE_MANAGER.stopCurrentMusic();
             RESOURCE_MANAGER.playMusic("MUSIC_1");
@@ -741,17 +741,23 @@ std::vector<Blocks*> GameEngine::getNearbyBlocks(Vector2 pos, int range)
 {
     std::vector<Blocks*> nearbyBlocks;
     int tileX = pos.x / 32;
-	int tileY = pos.y / 32;
-	for (int x = tileX - range; x <= tileX + range; ++x) {
-		for (int y = tileY - range; y <= tileY + range; ++y) {
-			if (x >= 0 && x < tileGrid[0].size() && y >= 0 && y < tileGrid.size()) {
-				Blocks* block = tileGrid[y][x];
-				if (block != nullptr) nearbyBlocks.push_back(block);
-			}
-		}
-	}
-	return nearbyBlocks;
+    int tileY = pos.y / 32;
+
+    for (int x = tileX - range; x <= tileX + range; ++x) {
+        for (int y = tileY - range; y <= tileY + range; ++y) {
+            if (y >= 0 && y < (int)tileGrid.size() &&
+                x >= 0 && x < (int)tileGrid[y].size())
+            {
+                Blocks* block = tileGrid[y][x];
+                if (block != nullptr) {
+                    nearbyBlocks.push_back(block);
+                }
+            }
+        }
+    }
+    return nearbyBlocks;
 }
+
 
 bool GameEngine::isInCameraView(Rectangle entityRect) const {
     Rectangle view = camera.getViewRect();

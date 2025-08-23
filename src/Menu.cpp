@@ -50,7 +50,10 @@ void MainMenuState::handleInput()
 		}
 		else {
 			for (auto& p : game->multiplayers)
-				if (p) p->reset();
+				if (p) {
+					p->reset();
+					p->setLives(3);
+				}
 		}
 
 		if (globalGameEngine != nullptr) {
@@ -68,7 +71,7 @@ void MainMenuState::handleInput()
 					break;
 				}
 
-				if ((game->getSelectedMap() + 1) <= 3) {
+				if ((game->getSelectedMap() + 1) <= 4) {
 					for (auto& p : players) {
 						if (p) {
 							p->ResetEnterNewMap();
@@ -86,8 +89,10 @@ void MainMenuState::handleInput()
 			}
 			else {
 				if (globalGameEngine->isOver()) {
-					for (auto& p : game->multiplayers)
+					for (auto& p : game->multiplayers) {
 						p->reset();
+						p->setLives(3);
+					}
 				}
 				break;
 			}
@@ -102,14 +107,19 @@ void MainMenuState::handleInput()
 			}
 			else {
 				for (auto& p : game->multiplayers)
-					if (p) p->reset();
+					if (p) {
+						p->reset();
+						p->setLives(3);
+					}
 			}
 			globalGameEngine = new GameEngine(1600, 800, *game->level, &game->multiplayers);
 			globalGameEngine->loadGameMap(*game->level);
 		}
 		else if (globalGameEngine->isOver()) {
-			for (auto& p : game->multiplayers)
+			for (auto& p : game->multiplayers) {
 				p->reset();
+				p->setLives(3);
+			}
 			// delete the old gameengine
 			if (globalGameEngine != nullptr) {
 				delete globalGameEngine;
@@ -123,7 +133,7 @@ void MainMenuState::handleInput()
 			if (globalGameEngine->run()) {
 				delete globalGameEngine;
 				globalGameEngine = nullptr;
-				if ((game->getSelectedMap() + 1) <= 3)
+				if ((game->getSelectedMap() + 1) <= 4)
 				{
 					for (auto& p : game->multiplayers) {
 						if (p)
@@ -137,8 +147,10 @@ void MainMenuState::handleInput()
 			}
 			else {
 				if (globalGameEngine->isOver()) {
-					for (auto& p : game->multiplayers)
+					for (auto& p : game->multiplayers) {
 						p->reset();
+						p->setLives(3);
+					}
 					// delete the old gameengine
 					if (globalGameEngine != nullptr) {
 						delete globalGameEngine;
@@ -348,7 +360,8 @@ MapSelection::MapSelection(Game* game)
 	map1Button = { {400, 300}, {160, 80}, "MAP 1" };
 	map2Button = { {400, 360}, {160, 80}, "MAP 2" };
 	map3Button = { {400, 420}, {160, 80}, "MAP 3" };
-	backButton = { {400, 480}, {160, 80}, "Return" };
+	map4Button = { {400, 480}, {160, 80}, "MAP 4" };
+	backButton = { {400, 540}, {160, 80}, "Return" };
 	guiArrow = RESOURCE_MANAGER.getTexture("choosingArrow");
 }
 
@@ -357,6 +370,7 @@ void MapSelection::draw()
 	map1Button.draw();
 	map2Button.draw();
 	map3Button.draw();
+	map4Button.draw();
 	backButton.draw();
 	if (guiArrow.id == 0)
 		guiArrow = RESOURCE_MANAGER.getTexture("choosingArrow");
@@ -384,16 +398,22 @@ void MapSelection::handleInput()
 			p->reset();
 		game->returnToMainMenu();
 	}
+	else if (map4Button.isPressed() || (currentPosition == 3 && IsKeyPressed(KEY_ENTER))) {
+		game->selectMap(4);
+		for (auto& p : game->multiplayers)
+			p->reset();
+			game->returnToMainMenu();
+	}
 	else if (backButton.isPressed() || (currentPosition == 3 && IsKeyPressed(KEY_ENTER)))
 		game->returnToMainMenu();
 
 	if (IsKeyPressed(KEY_UP)) {
 		currentPosition--;
-		if (currentPosition < 0) currentPosition = 3; // wrap around to last position
+		if (currentPosition < 0) currentPosition = 4; // wrap around to last position
 	}
 	else if (IsKeyPressed(KEY_DOWN)) {
 		currentPosition++;
-		if (currentPosition >= 4) currentPosition = 0; // wrap around to first position
+		if (currentPosition >= 5) currentPosition = 0; // wrap around to first position
 	}
 }
 
@@ -402,6 +422,7 @@ void MapSelection::update()
 	map1Button.update();
 	map2Button.update();
 	map3Button.update();
+	map4Button.update();
 	backButton.update();
 	if (currentPosition == 0) map1Button.setHovered(true);
 	else map1Button.setHovered(false);
@@ -409,7 +430,9 @@ void MapSelection::update()
 	else map2Button.setHovered(false);
 	if (currentPosition == 2) map3Button.setHovered(true);
 	else map3Button.setHovered(false);
-	if (currentPosition == 3) backButton.setHovered(true);
+	if (currentPosition == 3) map4Button.setHovered(true);
+	else map4Button.setHovered(false);
+	if (currentPosition == 4) backButton.setHovered(true);
 	else backButton.setHovered(false);
 }
 
@@ -518,8 +541,8 @@ void DualCharSelection::draw()
 	// gui1
 	// draw 4 texture of character
 		// Draw Text    
-	TextButton::DrawTextWithOutline(RESOURCE_MANAGER.getFont("SMW"), "Choose Your Character", { 540, 200 }, 30.f, 5, WHITE, BLACK);
-	TextButton::DrawTextWithOutline(RESOURCE_MANAGER.getFont("SMW"), "Press A/D to change", { 550, 250 }, 30.f, 5, WHITE, BLACK);
+	TextButton::DrawTextWithOutline(RESOURCE_MANAGER.getFont("SMW"), "Choose Your Characters", { 540, 200 }, 30.f, 5, WHITE, BLACK);
+	TextButton::DrawTextWithOutline(RESOURCE_MANAGER.getFont("SMW"), "Press A/D, arrow left/right to change", { 550, 250 }, 30.f, 5, WHITE, BLACK);
 
 	DrawTexturePro(Textures[0], { 0, 0, (float)Textures[0].width, (float)Textures[0].height },
 		{ 270, 500 - 24, 32 * 4, 46 * 4 }, { 0, 0 }, 0.f, WHITE);
@@ -694,7 +717,7 @@ void LoadGameState::handleInput()
 			if (globalGameEngine->run()) {
 				delete globalGameEngine;
 				globalGameEngine = nullptr;
-				if (game->getSelectedMap() + 1 <= 3) {
+				if (game->getSelectedMap() + 1 <= 4) {
 					for (auto& p : game->multiplayers) {
 						if (p) 
 							p->ResetEnterNewMap();
@@ -711,6 +734,7 @@ void LoadGameState::handleInput()
 				if (globalGameEngine->isOver()) {
 					for (auto& p : game->multiplayers) {
 						p->reset();
+						p->setLives(3);
 					}
 				}
 				break;

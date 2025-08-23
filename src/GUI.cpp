@@ -686,7 +686,7 @@ void GUI::drawChoosingDualCharacter(int& choice1, int& choice2) {
         { 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() }, { 0, 0 }, 0.f, WHITE);
     // Draw Text    
     TextButton::DrawTextWithOutline(RESOURCE_MANAGER.getFont("SMW"), "Change Your Character", { 540, 200 }, 30.f, 5, WHITE, BLACK);
-    TextButton::DrawTextWithOutline(RESOURCE_MANAGER.getFont("SMW"), "Press A/D to change", { 550, 250 }, 30.f, 5, WHITE, BLACK);
+    TextButton::DrawTextWithOutline(RESOURCE_MANAGER.getFont("SMW"), "Press A/D, arrow left/right to change", { 550, 250 }, 30.f, 5, WHITE, BLACK);
 
     // Draw character textures (Mario, Luigi, Toad, Peach, Marisa)
     DrawTexturePro(choosingTextures[0], { 0, 0, (float)choosingTextures[0].width, (float)choosingTextures[0].height },
@@ -738,7 +738,6 @@ void GUI::drawChoosingDualCharacter(int& choice1, int& choice2) {
     // Handle Enter key to confirm selections
     if (IsKeyPressed(KEY_ENTER)) {
         // Clear existing players
-        globalGameEngine->getMultiplayers().clear();
         static Mario templateCharacter;
 
         // Helper function to create character based on choice
@@ -767,11 +766,31 @@ void GUI::drawChoosingDualCharacter(int& choice1, int& choice2) {
             newCharacter->clone(templateCharacter, type);
             return newCharacter;
         };
+        auto newCharacter1 = createCharacter(choice1);
+        auto newCharacter2 = createCharacter(choice2);
+
+        newCharacter1->setPosition(globalGameEngine->getMultiplayers()[0]->getPosition());
+        newCharacter1->setVel(globalGameEngine->getMultiplayers()[0]->getVelocity());
+        newCharacter1->setState(globalGameEngine->getMultiplayers()[0]->getState());
+        newCharacter1->setLives(globalGameEngine->getMultiplayers()[0]->getLives());
+        newCharacter1->setScores(globalGameEngine->getMultiplayers()[0]->getScores());
+        newCharacter1->setCoins(globalGameEngine->getMultiplayers()[0]->getCoins());
+        newCharacter1->setCharacterState(globalGameEngine->getMultiplayers()[0]->getCharacterState());
+        // for player 2
+        newCharacter2->setPosition(globalGameEngine->getMultiplayers()[1]->getPosition());
+        newCharacter2->setVel(globalGameEngine->getMultiplayers()[1]->getVelocity());
+        newCharacter2->setState(globalGameEngine->getMultiplayers()[1]->getState());
+        newCharacter2->setLives(globalGameEngine->getMultiplayers()[1]->getLives());
+        newCharacter2->setScores(globalGameEngine->getMultiplayers()[1]->getScores());
+        newCharacter2->setCoins(globalGameEngine->getMultiplayers()[1]->getCoins());
+        newCharacter2->setCharacterState(globalGameEngine->getMultiplayers()[1]->getCharacterState());
+        
+        globalGameEngine->getMultiplayers().clear();
 
         // Create and add player 1
-        globalGameEngine->getMultiplayers().push_back(createCharacter(choice1));
+        globalGameEngine->getMultiplayers().push_back(std::move(newCharacter1));
         // Create and add player 2
-        globalGameEngine->getMultiplayers().push_back(createCharacter(choice2));
+        globalGameEngine->getMultiplayers().push_back(std::move(newCharacter2));
 
         // Set player IDs
         if (!globalGameEngine->getMultiplayers().empty()) {

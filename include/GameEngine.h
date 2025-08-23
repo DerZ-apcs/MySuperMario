@@ -33,7 +33,6 @@ private:
     //    {KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_RIGHT_SHIFT},
     //    {KEY_A, KEY_D, KEY_W, KEY_S, KEY_LEFT_SHIFT}
     //};
-	Difficulty difficulty = EASY; // default difficulty
     std::vector<InputHandler> inputHandlers;
 	InputHandler inputHandler1;
 	InputHandler inputHandler2;

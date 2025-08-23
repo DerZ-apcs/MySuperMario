@@ -175,10 +175,4 @@ enum CoinType {
 	BLOCK_COIN // 1
 };
 
-enum Difficulty {
-	EASY,
-	MEDIUM,
-	HARD,
-	SUPERHARD
-};
 #endif
