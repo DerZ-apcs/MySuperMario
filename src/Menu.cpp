@@ -293,8 +293,7 @@ ModePlayer::ModePlayer(Game* game)
 	this->game = game;
 	singleButton = { {400, 300}, {160, 80}, "Single" };
 	dualButton = { {400, 360}, {160, 80}, "Dual" };
-	difficultyButton = { {400, 420}, {160, 80}, "Difficulty" };
-	returnButton = { {400, 480}, {160, 80}, "Return" };
+	returnButton = { {400, 420}, {160, 80}, "Return" };
 	guiArrow = RESOURCE_MANAGER.getTexture("choosingArrow");
 }
 
@@ -302,7 +301,6 @@ void ModePlayer::draw()
 {
 	singleButton.draw();
 	dualButton.draw();
-	difficultyButton.draw();
 	returnButton.draw();
 	if (guiArrow.id == 0)
 		guiArrow = RESOURCE_MANAGER.getTexture("choosingArrow");
@@ -316,19 +314,16 @@ void ModePlayer::handleInput()
 		game->setState(make_unique<SingleCharSelection>(game));
 	else if (dualButton.isPressed() || (currentPosition == 1 && IsKeyPressed(KEY_ENTER)))
 		game->setState(make_unique<DualCharSelection>(game));
-	else if (difficultyButton.isPressed() || (currentPosition == 2 && IsKeyPressed(KEY_ENTER))) {
-		
-	}
-	else if (returnButton.isPressed() || (currentPosition == 3 && IsKeyPressed(KEY_ENTER))) {
+	else if (returnButton.isPressed() || (currentPosition == 2 && IsKeyPressed(KEY_ENTER))) {
 		game->returnToMainMenu();
 	}
 	if (IsKeyPressed(KEY_UP)) {
 		currentPosition--;
-		if (currentPosition < 0) currentPosition = 3; // wrap around to last position
+		if (currentPosition < 0) currentPosition = 2; // wrap around to last position
 	}
 	else if (IsKeyPressed(KEY_DOWN)) {
 		currentPosition++;
-		if (currentPosition >= 4) currentPosition = 0; // wrap around to first position
+		if (currentPosition >= 3) currentPosition = 0; // wrap around to first position
 	}
 }
 
@@ -336,15 +331,12 @@ void ModePlayer::update()
 {
 	singleButton.update();
 	dualButton.update();
-	difficultyButton.update();
 	returnButton.update();
 	if (currentPosition == 0) singleButton.setHovered(true);
 	else singleButton.setHovered(false);
 	if (currentPosition == 1) dualButton.setHovered(true);
 	else dualButton.setHovered(false);
-	if (currentPosition == 2) difficultyButton.setHovered(true);
-	else difficultyButton.setHovered(false);
-	if (currentPosition == 3) returnButton.setHovered(true);
+	if (currentPosition == 2) returnButton.setHovered(true);
 	else returnButton.setHovered(false);
 }
 

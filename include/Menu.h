@@ -73,9 +73,8 @@ public:
 private:
 	TextButton singleButton;
 	TextButton dualButton;
-	TextButton difficultyButton;
 	TextButton returnButton;
-	std::vector<int> choosingPosition = { 0, 1, 2, 3};
+	std::vector<int> choosingPosition = { 0, 1, 2};
 	Texture2D guiArrow;
 	int currentPosition = 0;
 };

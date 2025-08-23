@@ -76,21 +76,6 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std:
         choice1 = static_cast<int>((*multiplayers)[0]->getCharacterType());
         choice2 = static_cast<int>((*multiplayers)[1]->getCharacterType());
     }
-    //FirePiranhaPlant* plant = new FirePiranhaPlant({ 432, 710 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_CLOSED"));
-    //enemies.push_back(plant);
-
- //   Koopa* koopa = new YellowKoopa({ 100, 500 }, RESOURCE_MANAGER.getTexture("YellowKoopa_LEFT_0"));
- //   enemies.push_back(koopa);
-	//enemies.push_back(new GreenKoopa({ 200, 500 }, RESOURCE_MANAGER.getTexture("GreenKoopa_LEFT_0")));
-	//enemies.push_back(new RedKoopa({ 300, 500 }, RESOURCE_MANAGER.getTexture("RedKoopa_LEFT_0")));
-    //enemies.push_back(new FlyingGoomba({ 350, 500 }, RESOURCE_MANAGER.getTexture("FlyingGoomba_LEFT_0")));
-    //enemies.push_back(new Goomba({ 200, 500 }, RESOURCE_MANAGER.getTexture("Goomba_LEFT_0")));
-
-    //enemies.push_back(new BobOmb({ 200, 600 }, RESOURCE_MANAGER.getTexture("BobOmb_LEFT_0")));
-    //enemies.push_back(new BuzzyBeetle({ 200, 600 }, RESOURCE_MANAGER.getTexture("BuzzyBeetle_LEFT_0")));
-    //enemies.push_back(new Spiny({ 300, 500 }, RESOURCE_MANAGER.getTexture("Spiny_DEAD")));
-	//enemies.push_back(new DryBones({ 500, 500 }, RESOURCE_MANAGER.getTexture("DryBones_LEFT_0")));
-    //enemies.push_back(new BoomBoom({500, 400}));
 }
 
 void GameEngine::loadGameMap(Level& level) {
@@ -107,13 +92,14 @@ void GameEngine::loadGameMap(Level& level) {
     decor = map.getDecor();
     covers = map.getCovers();
     secretAreas = map.getSecretAreas(); 
-    //boss = new BoomBoom({ 1000, 500 });
-	//boss = new PeteyPiranha({ 1000, 500 });
-    //enemies.push_back(boss);
-	//enemies.push_back(new JumpingPiranhaPlant({ 400, 700 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_CLOSED")));
-    // test 2 boss
 	//enemies.push_back(new BoomBoom({ 1000, 500 }));
-	//enemies.push_back(new PeteyPiranha({ 1000, 500 }));
+    // load boss from enemies
+	for (auto& enemy : enemies) {
+		if (enemy->getEnemyType() == BOSS) {
+			boss = dynamic_cast<Boss*>(enemy);
+			break;
+		}
+	}
 }
 
 GameEngine::~GameEngine() {
@@ -876,6 +862,12 @@ void GameEngine::deserialize(const json& j)
     loadEnemies(enemies, j);
     loadItems(items, j);
     loadTileGrids(tileGrid, j);
+    for (auto& enemy : enemies) {
+        if (enemy->getEnemyType() == BOSS) {
+            boss = dynamic_cast<Boss*>(enemy);
+            break;
+        }
+    }
     // load camera
 	if (!j.contains("Camera")) {
 		std::cerr << "Error: Camera data not found in JSON." << std::endl;
