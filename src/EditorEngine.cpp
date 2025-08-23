@@ -14,7 +14,6 @@ EditorEngine::EditorEngine()
 }
 
 EditorEngine::~EditorEngine() {
-	// Xóa tileGrid
 	for (size_t i = 0; i < tileGrid.size(); i++) {
 		for (size_t j = 0; j < tileGrid[i].size(); j++) { // Sửa size()
 			delete tileGrid[i][j];
@@ -23,12 +22,7 @@ EditorEngine::~EditorEngine() {
 		//tileGrid[i].clear();
 	}
 	tileGrid.clear();
-
-	// Xóa decor
-	/*for (auto& dec : decor) {
-		delete dec;
-		dec = nullptr;
-	}*/
+	
 	decor.clear();
 
 	// Xóa enemies

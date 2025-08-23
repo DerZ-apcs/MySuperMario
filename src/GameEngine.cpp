@@ -438,12 +438,7 @@ void GameEngine::draw()
 		if (!dec || !isInCameraView(dec->getRect())) continue;
 		dec->draw();
     }
-    // enemy fireball draw
-    for (auto* ef : enemyFireball) {
-		if (!ef || !isInCameraView(ef->getRect())) 
-			continue; // skip drawing this fireball
-        ef->draw();
-    }
+
 	// enemy draw
     for (auto* e : enemies) {
         if (!e || !isInCameraView(e->getRect()) || e->getEnemyType() == BOSS || e->getEnemyType() == BANZAIBILL || e->getEnemyType() == BULLET)
@@ -503,6 +498,12 @@ void GameEngine::draw()
     for (auto* e : enemies) {
         if (e->getEnemyType() == BOSS || e->getEnemyType() == BANZAIBILL || e->getEnemyType() == BULLET)
             e->draw();
+    }
+    // enemy fireball draw
+    for (auto* ef : enemyFireball) {
+        if (!ef || !isInCameraView(ef->getRect()))
+            continue; // skip drawing this fireball
+        ef->draw();
     }
     // effects draw
     for (auto* ef : effects) {

@@ -380,6 +380,10 @@ void ResourceManager::loadTextures() {
 	textures["ROTATING_1"] = LoadTexture("resources/images/sprites/blocks/Rotating_1.png");
 	textures["ROTATING_2"] = LoadTexture("resources/images/sprites/blocks/Rotating_2.png");
 	textures["ROTATING_3"] = LoadTexture("resources/images/sprites/blocks/Rotating_3.png");
+		// moving block
+	textures["MOVING_0"] = LoadTexture("resources/images/sprites/blocks/MovingBlock_0.png");
+	textures["MOVING_1"] = LoadTexture("resources/images/sprites/blocks/MovingBlock_1.png");
+	textures["MOVING_2"] = LoadTexture("resources/images/sprites/blocks/MovingBlock_2.png");
 	
 	// background
 
