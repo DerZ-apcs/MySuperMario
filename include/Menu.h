@@ -87,12 +87,13 @@ public:
 	void update() override;
 private:
 	TextButton map1Button,
-		   map2Button,
-		   map3Button,
-	map4Button;
+		map2Button,
+		map3Button,
+		map4Button,
+		map5Button;
 	//map5Button;
 	TextButton backButton;
-	std::vector<int> choosingPosition = { 0, 1, 2, 3, 4};
+	std::vector<int> choosingPosition = { 0, 1, 2, 3, 4, 5};
 	Texture2D guiArrow;
 	int currentPosition = 0;
 };

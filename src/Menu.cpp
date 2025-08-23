@@ -361,7 +361,8 @@ MapSelection::MapSelection(Game* game)
 	map2Button = { {400, 360}, {160, 80}, "MAP 2" };
 	map3Button = { {400, 420}, {160, 80}, "MAP 3" };
 	map4Button = { {400, 480}, {160, 80}, "MAP 4" };
-	backButton = { {400, 540}, {160, 80}, "Return" };
+	map5Button = { {400, 540}, {160, 80}, "MAP 5" };
+	backButton = { {400, 600}, {160, 80}, "Return" };
 	guiArrow = RESOURCE_MANAGER.getTexture("choosingArrow");
 }
 
@@ -371,6 +372,7 @@ void MapSelection::draw()
 	map2Button.draw();
 	map3Button.draw();
 	map4Button.draw();
+	map5Button.draw();
 	backButton.draw();
 	if (guiArrow.id == 0)
 		guiArrow = RESOURCE_MANAGER.getTexture("choosingArrow");
@@ -382,38 +384,54 @@ void MapSelection::handleInput()
 {
 	if (map1Button.isPressed() || (currentPosition == 0 && IsKeyPressed(KEY_ENTER))) {
 		game->selectMap(1);
-		for (auto& p : game->multiplayers)
+		for (auto& p : game->multiplayers) {
+			p->setLives(3);
 			p->reset();
+		}
 		game->returnToMainMenu();
 	}
 	else if (map2Button.isPressed() || (currentPosition == 1 && IsKeyPressed(KEY_ENTER))) {
 		game->selectMap(2);
-		for (auto& p : game->multiplayers)
+		for (auto& p : game->multiplayers) {
+			p->setLives(3);
 			p->reset();
+		}
 		game->returnToMainMenu();
 	}
 	else if (map3Button.isPressed() || (currentPosition == 2 && IsKeyPressed(KEY_ENTER))) {
 		game->selectMap(3);
-		for (auto& p : game->multiplayers)
+		for (auto& p : game->multiplayers) {
 			p->reset();
+			p->setLives(3);
+		}
 		game->returnToMainMenu();
 	}
 	else if (map4Button.isPressed() || (currentPosition == 3 && IsKeyPressed(KEY_ENTER))) {
 		game->selectMap(4);
-		for (auto& p : game->multiplayers)
+		for (auto& p : game->multiplayers) {
 			p->reset();
-			game->returnToMainMenu();
+			p->setLives(3);
+		}
+		game->returnToMainMenu();
 	}
-	else if (backButton.isPressed() || (currentPosition == 3 && IsKeyPressed(KEY_ENTER)))
+	else if (map5Button.isPressed() || (currentPosition == 4 && IsKeyPressed(KEY_ENTER))) {
+		game->selectMap(5);
+		for (auto& p : game->multiplayers) {
+			p->reset();
+			p->setLives(3);
+		}
+		game->returnToMainMenu();
+	}
+	else if (backButton.isPressed() || (currentPosition == 5 && IsKeyPressed(KEY_ENTER)))
 		game->returnToMainMenu();
 
 	if (IsKeyPressed(KEY_UP)) {
 		currentPosition--;
-		if (currentPosition < 0) currentPosition = 4; // wrap around to last position
+		if (currentPosition < 0) currentPosition = 5; // wrap around to last position
 	}
 	else if (IsKeyPressed(KEY_DOWN)) {
 		currentPosition++;
-		if (currentPosition >= 5) currentPosition = 0; // wrap around to first position
+		if (currentPosition >= 6) currentPosition = 0; // wrap around to first position
 	}
 }
 
@@ -423,6 +441,7 @@ void MapSelection::update()
 	map2Button.update();
 	map3Button.update();
 	map4Button.update();
+	map5Button.update();
 	backButton.update();
 	if (currentPosition == 0) map1Button.setHovered(true);
 	else map1Button.setHovered(false);
@@ -432,7 +451,9 @@ void MapSelection::update()
 	else map3Button.setHovered(false);
 	if (currentPosition == 3) map4Button.setHovered(true);
 	else map4Button.setHovered(false);
-	if (currentPosition == 4) backButton.setHovered(true);
+	if (currentPosition == 4) map5Button.setHovered(true);
+	else map5Button.setHovered(false);
+	if (currentPosition == 5) backButton.setHovered(true);
 	else backButton.setHovered(false);
 }
 

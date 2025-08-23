@@ -387,6 +387,8 @@ void ResourceManager::loadTextures() {
 	textures["BACKGROUND_2"] = LoadTexture("resources/images/backgrounds/background2.png");
 	textures["BACKGROUND_3"] = LoadTexture("resources/images/backgrounds/background3.png");
 	textures["BACKGROUND_4"] = LoadTexture("resources/images/backgrounds/background9_0.png");
+	textures["BACKGROUND_5"] = LoadTexture("resources/images/backgrounds/background5.png");
+
 	textures["MENU_SCREEN"] = LoadTexture("resources/images/backgrounds/SMW.png");
 	textures["BACKGROUND_8"] = LoadTexture("resources/images/backgrounds/background8.png");
 	textures["WHITE"] = LoadTexture("resources/images/backgrounds/white.png");
@@ -745,6 +747,8 @@ void ResourceManager::loadMusics()
 	musics["MUSIC_2"] = LoadMusicStream("resources/musics/music2.mp3");
 	musics["MUSIC_3"] = LoadMusicStream("resources/musics/music2.mp3");
 	musics["MUSIC_4"] = LoadMusicStream("resources/musics/music7.mp3");
+	musics["MUSIC_5"] = LoadMusicStream("resources/musics/music5.mp3");
+	
 	musics["MUSIC_EDIT"] = LoadMusicStream("resources/musics/music5.mp3");
 	musics["COURSECLEAR"] = LoadMusicStream("resources/musics/courseClear.mp3");
 }
