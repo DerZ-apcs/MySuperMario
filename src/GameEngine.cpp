@@ -287,6 +287,8 @@ void GameEngine::update()
 			ef->Update();
 	}
     // enemies
+
+
     for (auto* e : enemies) {
         if (!e || !isInCameraView(e->getRect()))
             continue;
@@ -312,8 +314,24 @@ void GameEngine::update()
     // camera update
     if ((*multiplayers).size() == 2) {
         // need to know the goal
+        Vector2 goal = { 7900, 200 };
+        if (getCurrentMapName() == "1-1") {
+            goal = { 7940, 200 };
+        }
+        else if (getCurrentMapName() == "1-2") {
+            goal = {8512, 832};
+        }
+        else if (getCurrentMapName() == "1-3") {
+            goal = { 9216, 544 };
+        }
+        else if (getCurrentMapName() == "1-4") {
+            goal = { 1632, 224 };
+        }
+        else if (getCurrentMapName() == "1-5") {
+            goal = { 2368, 96 };
+        }
         camera.update((*multiplayers)[0]->getX(), (*multiplayers)[0]->getY(),
-            (*multiplayers)[1]->getX(), (*multiplayers)[1]->getY(), 7940, 100);
+            (*multiplayers)[1]->getX(), (*multiplayers)[1]->getY(), goal.x, goal.y);
     }
     else camera.update((*multiplayers)[0]->getX(), (*multiplayers)[0]->getY());
 }
@@ -441,7 +459,7 @@ void GameEngine::draw()
 
 	// enemy draw
     for (auto* e : enemies) {
-        if (!e || !isInCameraView(e->getRect()) || e->getEnemyType() == BOSS || e->getEnemyType() == BANZAIBILL || e->getEnemyType() == BULLET)
+        if (!e || !isInCameraView(e->getRect()) || e->getEnemyType() != PIRANHA)
             continue; // skip drawing this enemy
 		e->draw();
     }
@@ -496,7 +514,7 @@ void GameEngine::draw()
         item->draw();
     }
     for (auto* e : enemies) {
-        if (e->getEnemyType() == BOSS || e->getEnemyType() == BANZAIBILL || e->getEnemyType() == BULLET)
+        if (e->getEnemyType() != PIRANHA)
             e->draw();
     }
     // enemy fireball draw
