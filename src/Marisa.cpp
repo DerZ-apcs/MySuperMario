@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-Marisa::Marisa() : Marisa(Vector2{ 32, 400 }, Vector2{ 37, 54 }, STATE_SMALL) {
+Marisa::Marisa() : Marisa(Vector2{ 32, 400 }, Vector2{ 37 , 54}, STATE_SMALL) {
 	std::cout << "Marisa is created" << std::endl;
 	characterType = MARISA;
 }

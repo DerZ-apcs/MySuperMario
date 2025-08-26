@@ -25,7 +25,6 @@ void Map::clear() {
 	movingBlocks.clear();
 	items.clear();
 	decors.clear();
-	covers.clear();
 	enemies.clear();
 	covers.clear();
 	secretAreas.clear();
@@ -149,7 +148,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 					continue;
 				}
 
-				if (blockId == 117) {
+				if (blockId == 118) {
 					RotatingBlock* block = dynamic_cast<RotatingBlock*>(BlockFactory::getInstance().createBlock(ROTATINGBLOCK,
 						{ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
 					if (!block) {
@@ -172,16 +171,18 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			}
 		}
 	}
+
 	if (mapJson["layers"].size() < 2) { return; }
+	printf("Loading objects from layer 1\n");
 	nlohmann::json objectLayer = mapJson["layers"][1];
 	nlohmann::json objects = objectLayer["objects"];
-
 	for (auto& obj : objects) {
-		int gid = obj["gid"];
+		int gid = -1;
+		if (obj.contains("gid") && obj["gid"].is_number_integer()) {
+			gid = obj["gid"];
+		}
 		int x = obj["x"] / 32;
 		int y = obj["y"] / 32 - 1;
-		int width = obj["width"];
-		int height = obj["height"];
 
 		std::string name;
 		std::string type;
@@ -189,6 +190,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			if (prop["name"] == "Name") name = prop["value"];
 			else if (prop["name"] == "Type") type = prop["value"];
 		}
+
 		if (name == "QuestionBlock") {
 			if (type == "Mushroom") {
 				Blocks* block = dynamic_cast<ItemBlock*>(BlockFactory::getInstance().createBlock(ITEMBLOCK, {(float)x * blockwidth, (float)y * blockwidth}, {32, 32}));
@@ -227,16 +229,34 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 				tileGrid[y][x] = block;
 			}
 		}
-		/*if (name == "HiddenBlocks") {
+
+		if (name == "HiddenBlock") {
 			int texId = gid - firstgid;
-			blockArray.push_back(new HiddenBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, { 32,32 }));
+			HiddenBlock* hiddenBlock = dynamic_cast<HiddenBlock*>(BlockFactory::getInstance().createBlock(HIDDEN, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
+			hiddenBlock->setTexture(RESOURCE_MANAGER.getTexture("TILE_" + std::to_string(texId)));
+			hiddenBlock->setTextureName("TILE_" + std::to_string(texId));
+
+			if (type == "ItemBlock") hiddenBlock->setRevealType(BLOCK_TYPE::ITEMBLOCK);
+			else if (type == "CoinBlock") hiddenBlock->setRevealType(BLOCK_TYPE::COINBLOCK);
+			else if (type == "Brick") hiddenBlock->setRevealType(BLOCK_TYPE::BRICK); 
+			else hiddenBlock->setRevealType(BLOCK_TYPE::SOLIDBLOCK); 
+
+			tileGrid[y][x] = hiddenBlock;
 		}
 
 		if (name == "MovingBlock")
 		{
-			int texId = gid - firstgid;
-			blockArray.push_back(new MovingBlock(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
-		}*/
+			MovingBlock* movingBlock = dynamic_cast<MovingBlock*>(BlockFactory::getInstance().createBlock(MOVINGBLOCK, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
+			
+			string textureName = "MOVING_" + type;
+			Texture2D tex = RESOURCE_MANAGER.getTexture(textureName);
+			movingBlock->setTextureName(textureName);
+			movingBlock->setTexture(tex);
+			movingBlock->setSize({ (float)tex.width, (float)tex.height });
+
+			movingBlocks.push_back(movingBlock);
+		}
+
 		if (name == "CoinBlock") {
 			int texId = gid - firstgid;
 			Blocks* coinBlock = dynamic_cast<CoinBlock*>(BlockFactory::getInstance().createBlock(COINBLOCK, { (float)x * blockwidth, (float)y * blockwidth }, { 32, 32 }));
@@ -264,6 +284,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			cannon->setTextureName("TILE_116");
 			tileGrid[y][x] = cannon;
 		}
+
 		if (name == "Enemy") {
 			if (type == "Goomba") {
 				enemies.push_back(new Goomba(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Goomba_RIGHT_0")));
@@ -274,29 +295,59 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			else if (type == "PiranhaPlant") {
 				enemies.push_back(new PiranhaPlant(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("PiranhaPlant_OPEN")));
 			}
-			else if (type == "JumpingPiranha") {
-				enemies.push_back(new JumpingPiranhaPlant(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("JumpingPiranha_OPEN")));
+			else if (type == "JumpingPiranhaPlant" || type == "JumpingPiranha") {
+				enemies.push_back(new JumpingPiranhaPlant(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("PiranhaPlant_JUMP_UP_0")));
 			}
-			else if (type == "FirePiranha") {
-				enemies.push_back(new FirePiranhaPlant(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FirePiranha_OPEN")));
+			else if (type == "FirePiranhaPlant" || type == "FirePiranha") {
+				enemies.push_back(new FirePiranhaPlant(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FirePiranhaPLant_OPEN")));
 			}
-			else if (type == "Koopa") {
-				enemies.push_back(new GreenKoopa(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Koopa_RIGHT_0")));
+			else if (type == "RapidFirePiranhaPlant" || type == "RapidFirePiranha") {
+				enemies.push_back(new RapidFirePiranha(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FirePiranhaPlant_OPEN")));
 			}
-			else if (type == "ParaKoopa") {
-				enemies.push_back(new ParaKoopa(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("ParaKoopa_RIGHT_0")));
+			else if (type == "HomingFirePiranha" || type == "HomingFirePiranhaPlant") {
+				enemies.push_back(new HomingFirePiranha(Vector2{ (float)x * blockwidth + 0.5f * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FirePiranhaPlant_OPEN")));
+			}
+			else if (type == "GreenKoopa" || type == "Koopa") {
+				enemies.push_back(new GreenKoopa(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("GreenKoopa_RIGHT_0")));
+			}
+			else if (type == "RedKoopa") {
+				enemies.push_back(new RedKoopa(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("RedKoopa_RIGHT_0")));
+			} 
+			else if (type == "YellowKoopa") {
+				enemies.push_back(new YellowKoopa(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("YellowKoopa_RIGHT_0")));
+			}
+			else if (type == "BlueKoopa") {
+				enemies.push_back(new BlueKoopa(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("BlueKoopa_RIGHT_0")));
+			}
+			else if (type == "ParaKoopaRed") {
+				enemies.push_back(new ParaKoopaRed(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("ParaKoopaRed_RIGHT_0")));
+			}
+			else if (type == "ParaKoopaGreen") {
+				enemies.push_back(new ParaKoopaGreen(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("ParaKoopaGreen_RIGHT_0")));
+			}
+			else if (type == "ParaKoopaYellow") {
+				enemies.push_back(new ParaKoopaYellow(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("ParaKoopaYellow_RIGHT_0")));
+			}
+			else if (type == "ParaKoopaBlue") {
+				enemies.push_back(new ParaKoopaBlue(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("ParaKoopaBlue_RIGHT_0")));
+			}
+			else if (type == "BoomBoom") {
+				enemies.push_back(new BoomBoom(Vector2{ (float)x * blockwidth, (float)y * blockwidth }));
+			}
+			else if (type == "PeteyPiranha") {
+				enemies.push_back(new PeteyPiranha(Vector2{ (float)x * blockwidth, (float)y * blockwidth }));
 			}
 			else if (type == "Bullet") {
-				enemies.push_back(new Bullet(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Bullet"), LEFT));
+				enemies.push_back(new Bullet(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Bullet_LEFT"), LEFT));
 			}
 			else if (type == "BanzaiBill") {
 				enemies.push_back(new BanzaiBill(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("BanzaiBill_LEFT_0")));
 			}
 			else if (type == "FireBullet") {
-				enemies.push_back(new FireBullet(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("FireBullet"), LEFT));
+				enemies.push_back(new FireBullet(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Bullet_LEFT"), LEFT));
 			}
 			else if (type == "Muncher") {
-				enemies.push_back(new Muncher(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Muncher")));
+				enemies.push_back(new Muncher(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Muncher_0")));
 			}
 			else if (type == "Rex") {
 				enemies.push_back(new Rex(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Rex_RIGHT_0")));
@@ -306,6 +357,18 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 			}
 			else if (type == "Spiny") {
 				enemies.push_back(new Spiny(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("Spiny_RIGHT_0")));
+			}
+			else if (type == "DryBones") {
+				enemies.push_back(new DryBones(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("DryBones_RIGHT_0")));
+			}
+			else if (type == "BobOmb") {
+				enemies.push_back(new BobOmb(Vector2{ (float)x * blockwidth, (float)y * blockwidth }, RESOURCE_MANAGER.getTexture("BobOmb_RIGHT_0")));
+			}
+			else if (type == "BoomBoom") {
+				enemies.push_back(new BoomBoom(Vector2{ (float)x * blockwidth, (float)y * blockwidth }));
+			}
+			else if (type == "PeteyPiranha") {
+				enemies.push_back(new PeteyPiranha(Vector2{ (float)x * blockwidth, (float)y * blockwidth }));
 			}
 			else { std::cerr << "Unknown enemy type: " << type << std::endl; }
 		}
@@ -343,6 +406,7 @@ void Map::LoadFromJsonFile(const std::string& filepath)
 
 	// covers layer
 	if (mapJson["layers"].size() < 4) { return; }
+	printf("Loading covers from layer 3\n");
 	std::vector<int> coverData = mapJson["layers"][3]["data"];
 	for (int y = 0; y < height; ++y) {
 		for (int x = 0; x < width; ++x) {

@@ -18,7 +18,7 @@ void ResourceManager::loadTextures() {
 	textures["SuperMario_LEFT_0"] = flipTexture(textures["SuperMario_RIGHT_0"]);
 	textures["SuperMario_LEFT_1"] = flipTexture(textures["SuperMario_RIGHT_1"]);
 	textures["SuperMario_LEFT_2"] = flipTexture(textures["SuperMario_RIGHT_2"]);
-
+	
 	// FireMario
 	textures["FireMario_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/FireMario_0.png");
 	textures["FireMario_RIGHT_1"] = LoadTexture("resources/images/sprites/mario/FireMario_1.png");
@@ -26,13 +26,13 @@ void ResourceManager::loadTextures() {
 	textures["FireMario_LEFT_0"] = flipTexture(textures["FireMario_RIGHT_0"]);
 	textures["FireMario_LEFT_1"] = flipTexture(textures["FireMario_RIGHT_1"]);
 	textures["FireMario_LEFT_2"] = flipTexture(textures["FireMario_RIGHT_2"]);
-
+	
 	// jump 
 	textures["SmallMarioJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SmallMarioJumping_0.png");
 	textures["SmallMarioJumping_LEFT_0"] = flipTexture(textures["SmallMarioJumping_RIGHT_0"]);
 	textures["SuperMarioJumping_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SuperMarioJumping_0.png");
 	textures["SuperMarioJumping_LEFT_0"] = flipTexture(textures["SuperMarioJumping_RIGHT_0"]);
-
+	
 	// fall
 		// mario
 	textures["SmallMarioFalling_RIGHT_0"] = LoadTexture("resources/images/sprites/mario/SmallMarioFalling_0.png");
@@ -223,11 +223,10 @@ void ResourceManager::loadTextures() {
 
 	textures["FirePeachFalling_RIGHT_0"] = LoadTexture("resources/images/sprites/peach/FirePeachFalling.png");
 	textures["FirePeachFalling_LEFT_0"] = flipTexture(textures["FirePeachFalling_RIGHT_0"]);
-
 	textures["FirePeachVictory"] = LoadTexture("resources/images/sprites/peach/FirePeach_Victory.png");
 
 	textures["FirePeachThrowingFireball_RIGHT_0"] = LoadTexture("resources/images/sprites/peach/FirePeachFiring_0.png");
-	textures["FirePeachThrowingFireball_LEFT_0"] = flipTexture(textures["FireMarioThrowingFireball_RIGHT_0"]);
+	textures["FirePeachThrowingFireball_LEFT_0"] = flipTexture(textures["FirePeachThrowingFireball_RIGHT_0"]);
 
 		// transitioning
 		textures["TransitioningPeach_RIGHT_0"] = LoadTexture("resources/images/sprites/peach/SuperPeach_0.png");
@@ -359,7 +358,7 @@ void ResourceManager::loadTextures() {
 	textures["TransitioningFireToad_LEFT_0"] = textures["FireToad_LEFT_0"];
 
 	//tile
-	for (int i = 0; i <= 116; i++) {
+	for (int i = 0; i <= 117; i++) {
 		std::string path = "resources/images/tiles/AllTiles/tile_" + std::to_string(i) + ".png";
 		textures["TILE_" + std::to_string(i)] = LoadTexture(path.c_str());
 	}
@@ -381,12 +380,19 @@ void ResourceManager::loadTextures() {
 	textures["ROTATING_1"] = LoadTexture("resources/images/sprites/blocks/Rotating_1.png");
 	textures["ROTATING_2"] = LoadTexture("resources/images/sprites/blocks/Rotating_2.png");
 	textures["ROTATING_3"] = LoadTexture("resources/images/sprites/blocks/Rotating_3.png");
+		// moving block
+	textures["MOVING_0"] = LoadTexture("resources/images/sprites/blocks/MovingBlock_0.png");
+	textures["MOVING_1"] = LoadTexture("resources/images/sprites/blocks/MovingBlock_1.png");
+	textures["MOVING_2"] = LoadTexture("resources/images/sprites/blocks/MovingBlock_2.png");
 	
 	// background
 
 	textures["BACKGROUND_1"] = LoadTexture("resources/images/backgrounds/background1.png");
 	textures["BACKGROUND_2"] = LoadTexture("resources/images/backgrounds/background2.png");
 	textures["BACKGROUND_3"] = LoadTexture("resources/images/backgrounds/background3.png");
+	textures["BACKGROUND_4"] = LoadTexture("resources/images/backgrounds/background9_0.png");
+	textures["BACKGROUND_5"] = LoadTexture("resources/images/backgrounds/background5.png");
+
 	textures["MENU_SCREEN"] = LoadTexture("resources/images/backgrounds/SMW.png");
 	textures["BACKGROUND_8"] = LoadTexture("resources/images/backgrounds/background8.png");
 	textures["WHITE"] = LoadTexture("resources/images/backgrounds/white.png");
@@ -606,6 +612,17 @@ void ResourceManager::loadTextures() {
 	textures["boomboom_charge"] = LoadTexture("resources/images/sprites/baddies/boomboom_charge.png");
 	textures["boomboom_stunned"] = LoadTexture("resources/images/sprites/baddies/boomboom_stunned.png");
 	textures["boomboom_hidden"] = LoadTexture("resources/images/sprites/baddies/boomboom_hidden.png");
+	//Petey Piranha
+	textures["petey_walk_right_0"] = LoadTexture("resources/images/sprites/baddies/petey_walk_left_0.png");
+	textures["petey_walk_right_1"] = LoadTexture("resources/images/sprites/baddies/petey_walk_left_1.png");
+	textures["petey_walk_left_0"] = flipTexture(textures["petey_walk_right_0"]);
+	textures["petey_walk_left_1"] = flipTexture(textures["petey_walk_right_1"]);
+	textures["petey_shoot"] = LoadTexture("resources/images/sprites/baddies/petey_shoot.png");
+	textures["petey_burrow_down"] = LoadTexture("resources/images/sprites/baddies/petey_burrow_down.png");
+	textures["petey_emerge"] = LoadTexture("resources/images/sprites/baddies/petey_emerge.png");
+	textures["petey_hurt"] = LoadTexture("resources/images/sprites/baddies/petey_hurt.png");
+	textures["petey_vulnerable"] = LoadTexture("resources/images/sprites/baddies/petey_vulnerable.png");
+	//-----------------------------------------------------------------------------------
 	// gui scores
 	textures["10"] = LoadTexture("resources/images/gui/gui10.png");
 	textures["20"] = LoadTexture("resources/images/gui/gui20.png");
@@ -733,6 +750,10 @@ void ResourceManager::loadMusics()
 	musics["MUSIC_1"] = LoadMusicStream("resources/musics/music1.mp3");
 	musics["MUSIC_2"] = LoadMusicStream("resources/musics/music2.mp3");
 	musics["MUSIC_3"] = LoadMusicStream("resources/musics/music2.mp3");
+	musics["MUSIC_4"] = LoadMusicStream("resources/musics/music7.mp3");
+	musics["MUSIC_5"] = LoadMusicStream("resources/musics/music5.mp3");
+	
+	musics["MUSIC_EDIT"] = LoadMusicStream("resources/musics/music5.mp3");
 	musics["COURSECLEAR"] = LoadMusicStream("resources/musics/courseClear.mp3");
 }
 

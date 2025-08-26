@@ -30,6 +30,10 @@
 #include "../include/Muncher.h"
 #include "../include/BuzzyBeetle.h"
 #include "../include/Spiny.h"
+#include "../include/DryBones.h"
+#include "../include/BobOmb.h"
+#include "../include/PeteyPiranha.h"
+#include "../include/BoomBoom.h"
 
 #include <iostream>
 #include <fstream>

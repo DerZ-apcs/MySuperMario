@@ -37,3 +37,20 @@ float BanzaiBill::getScores() const
 {
 	return 0.f;
 }
+
+void BanzaiBill::saveEntity(json& j) const
+{
+	Bullet::saveEntity(j);
+	j["properties"] = json::array({
+	{
+		{ "name", "Name" },
+		{ "type", "string" },
+		{ "value", "Enemy" }
+	},
+	{
+		{ "name", "Type" },
+		{ "type", "string" },
+		{ "value", "BanzaiBill"}
+	}
+		});
+}

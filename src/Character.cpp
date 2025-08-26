@@ -73,7 +73,7 @@ Character::Character(Vector2 pos, Vector2 sz, CharacterState characterstate, Cha
 	}
 	else if (characterType == MARISA) {
 		texture = RESOURCE_MANAGER.getTexture("SmallMarisa_RIGHT_0");
-		size = { 37, 54 };
+		size = { 37 , 54 };
 	}
 	else if (characterType == TOAD) {
 		texture = RESOURCE_MANAGER.getTexture("SmallToad_RIGHT_0");
@@ -163,10 +163,6 @@ Character::Character(Vector2 pos, Vector2 sz, CharacterState characterstate, Cha
 	};
 }
 
-Character::~Character()
-{
-}
-
 EntityType Character::getEntityType() const
 {
 	return CHARACTER;
@@ -253,6 +249,7 @@ void Character::reset()
 	else {
 		throw std::runtime_error("Unknown character type");
 	}
+
 	setGravityAvailable(true);
 	setCollisionAvailable(true);
 	setPosition({ 32, 400 });
@@ -260,7 +257,6 @@ void Character::reset()
 	direction = RIGHT;
 	scores = 0;
 	coins = 0;
-	lives = 3;
 	phase = DEFAULT_PHASE;
 	isjumping = false;
 	holding = false;
@@ -1250,6 +1246,60 @@ void Character::saveEntity(json& j) const
 	j["victory"] = victory;
 	j["exitlevel"] = exitlevel;
 	j["lostSuitTrigger"] = lostSuitTrigger;
+}
+
+void Character::clone(const Entity& entity, CharacterType newCharacterType) {
+	// Perform dynamic_cast to ensure the entity is a Character
+	const Character* character = dynamic_cast<const Character*>(&entity);
+	if (!character) {
+		std::cout << "Error: Failed to cast entity to Character in clone!" << endl;
+		// Handle invalid cast (e.g., log error or throw exception)
+		return; // Or throw std::invalid_argument("Cannot clone: entity is not a Character");
+	}
+
+	// Clone base class data
+	Entity::clone(entity); // Fixed typo: use 'entity' instead of 'other'
+
+	// Copy Character-specific data
+	this->phase = character->phase;
+	this->characterType = newCharacterType;
+	this->Character_state = character->Character_state;
+	this->lostLife = character->lostLife;
+	this->isducking = false; // Reset isducking for new instance
+	this->scores = character->scores;
+	this->coins = character->coins;
+	this->lives = character->lives;
+	this->invicibleStarTime = character->invicibleStarTime;
+	this->sinkingTime = character->sinkingTime;
+	this->holding = character->holding;
+	this->isThrowing = character->isThrowing;
+	this->playerId = character->playerId;
+	this->countThrowTime = character->countThrowTime;
+	this->countImmortalTime = character->countImmortalTime;
+	this->standingUp = character->standingUp;
+	this->transitioningFrameTime = character->transitioningFrameTime;
+	this->transitioningFrameAcum = 0.f; // Reset for new instance
+	this->transitionSteps = character->transitionSteps;
+	this->transitionCurrentFrame = 0; // Reset for new instance
+	this->transitionCurrentFramePos = 0; // Reset for new instance
+	this->throwFrameCounter = character->throwFrameCounter;
+	this->victoryFrameCounter = character->victoryFrameCounter;
+	this->victory = character->victory;
+	this->exitlevel = character->exitlevel;
+	this->lostSuitTrigger = character->lostSuitTrigger;
+
+	// Clear existing fireballs to avoid memory leaks
+	for (auto* fireball : fireballs) {
+		delete fireball; // Assuming fireballs owns its pointers
+	}
+	fireballs.clear();
+
+	//// Deep copy fireballs
+	//for (const auto* fireball : character->fireballs) {
+	//	if (fireball) {
+	//		fireballs.push_back(new FireBall(*fireball)); // Clone each fireball
+	//	}
+	//}
 }
 
 

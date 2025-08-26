@@ -37,6 +37,7 @@ void HiddenBlock::reveal()
 		break;
 	case COINBLOCK:
 		newBlock = new CoinBlock(position, size);
+		dynamic_cast<CoinBlock*>(newBlock)->setCount(3); // default coin count
 		break;
 	default:
 		newBlock = new SolidBlock(position, size);
@@ -45,6 +46,8 @@ void HiddenBlock::reveal()
 	int gridX = static_cast<int>(position.x) / 32.f;
 	int gridY = static_cast<int>(position.y) / 32.f;
 
+	newBlock->setTextureName(getTextureName());
+	newBlock->setTexture(RESOURCE_MANAGER.getTexture(getTextureName().c_str()));
 	auto& grid = globalGameEngine->getTileGrid();
 	if (grid[gridY][gridX]) {
 		delete grid[gridY][gridX];

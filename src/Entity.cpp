@@ -2,7 +2,7 @@
 #include "../include/GameEngine.h"
 
 Entity::Entity():
-	Entity(Vector2{0, 0}, Vector2{0, 0}, Vector2{0, 0}, RIGHT, IDLING, texture, 0.1f, 0, BLACK)
+	Entity(Vector2{0, 0}, Vector2{0, 0}, Vector2{0, 0}, RIGHT, IDLING, {0}, 0.1f, 0, BLACK)
 {}
 Entity::Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState state, Texture2D tex, std::string name):
 	Entity(pos, sz, vel, dir, state, tex, 0.1, 0, BLACK)
@@ -35,6 +35,25 @@ Entity::Entity(Vector2 pos, Vector2 sz, Vector2 vel, Direction dir, EntityState 
 	currFrame = 0;
 	frameAcum = 0;
 	rect = { pos.x, pos.y, size.x, size.y };
+}
+
+void Entity::clone(const Entity& entity)
+{
+	this->position = entity.position;
+	//this->size = entity.size;
+	this->velocity = entity.velocity;
+	this->direction = entity.direction;
+	this->state = entity.state;
+	//this->texture = entity.texture;
+	this->frameTime = entity.frameTime;
+	//this->maxFrame = entity.maxFrame;
+	//this->currFrame = entity.currFrame;
+	this->frameAcum = 0;
+	this->color = entity.color;
+	collisionAvailable = entity.collisionAvailable;
+	gravityAvailable = entity.gravityAvailable;
+	isjumping = entity.isjumping;
+	dead = entity.dead;
 }
 
 void Entity::Update() {

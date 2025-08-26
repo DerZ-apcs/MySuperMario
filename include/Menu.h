@@ -42,7 +42,8 @@ private:
 	TextButton settingButton;
 	TextButton mapSelectionButton;
 	TextButton modePlayerButton;
-	std::vector<int> choosingPosition = { 0, 1, 2, 3, 4, 5, 6 };
+	TextButton editorButton;
+	std::vector<int> choosingPosition = { 0, 1, 2, 3, 4, 5, 6, 7 };
 	Texture2D guiArrow;
 	int currentPosition = 0;
 };
@@ -72,9 +73,8 @@ public:
 private:
 	TextButton singleButton;
 	TextButton dualButton;
-	TextButton difficultyButton;
 	TextButton returnButton;
-	std::vector<int> choosingPosition = { 0, 1, 2, 3};
+	std::vector<int> choosingPosition = { 0, 1, 2};
 	Texture2D guiArrow;
 	int currentPosition = 0;
 };
@@ -87,11 +87,13 @@ public:
 	void update() override;
 private:
 	TextButton map1Button,
-		   map2Button,
-		   map3Button;
-		//map4Button
+		map2Button,
+		map3Button,
+		map4Button,
+		map5Button;
+	//map5Button;
 	TextButton backButton;
-	std::vector<int> choosingPosition = { 0, 1, 2, 3};
+	std::vector<int> choosingPosition = { 0, 1, 2, 3, 4, 5};
 	Texture2D guiArrow;
 	int currentPosition = 0;
 };

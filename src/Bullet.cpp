@@ -83,10 +83,6 @@ void Bullet::CollisionWithFireball(FireBall* fireball)
 {
     fireball->setEntityDead();
     if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomp.wav");
-    SmokeEffect* smokeright = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ 60, 120 });
-    globalGameEngine->addEffect(smokeright);
-    SmokeEffect* smokeleft = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ -60, 120 });
-    globalGameEngine->addEffect(smokeleft);
 }
 
 void Bullet::loadEntity(const json& j)
@@ -99,6 +95,18 @@ void Bullet::saveEntity(json& j) const
 {
     Enemy::saveEntity(j);
     j["bulletType"] = static_cast<int>(bulletType);
+	j["properties"] = json::array({
+	{
+		{ "name", "Name" },
+		{ "type", "string" },
+		{ "value", "Enemy" }
+	},
+	{
+		{ "name", "Type" },
+		{ "type", "string" },
+		{ "value", "Bullet" }
+	}
+		});
 }
 
 
@@ -174,6 +182,18 @@ void FireBullet::loadEntity(const json& j)
 
 void FireBullet::saveEntity(json& j) const
 {
-    Enemy::saveEntity(j);
+    Bullet::saveEntity(j);
     j["fireBallTimer"] = fireBallTimer;
+    j["properties"] = json::array({
+    {
+        { "name", "Name" },
+        { "type", "string" },
+        { "value", "Enemy" }
+    },
+    {
+        { "name", "Type" },
+        { "type", "string" },
+        { "value", "FireBullet"}
+    }
+        });
 }

@@ -33,6 +33,8 @@ public:
     }
     void loadEntity(const json& j) override;
     void saveEntity(json& j) const override;
+    int getCurrentHp() const;
+    int getMaxHp() const;
 };
 
 #endif

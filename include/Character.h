@@ -30,7 +30,7 @@ public:
 	Character(Vector2 pos = { 0, 0 }, Vector2 size = { 0, 0 });
 	Character(Vector2 pos, Vector2 sz, CharacterState characterstate);
 	Character(Vector2 pos, Vector2 sz, CharacterState characterstate, CharacterType characterType);
-	virtual ~Character();
+	virtual ~Character() = default;
 	EntityType getEntityType() const override;
 	virtual CharacterType getCharacterType() const = 0;
 	virtual void resetInGame();
@@ -122,6 +122,7 @@ public:
 	};
 	void loadEntity(const json& j) override;
 	void saveEntity(json& j) const override;
+	void clone(const Entity& entity, CharacterType newCharacterType = MARIO);
 protected:
 	int playerId = 0; // 0 for player1, 1 for player2
 	struct TransitionFrame {

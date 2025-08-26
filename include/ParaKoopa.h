@@ -27,21 +27,32 @@ class ParaKoopaRed : public ParaKoopa {
 public:
     ParaKoopaRed(Vector2 pos, Texture2D texture);
     void Update() override;
+	void UpdateTexture() override;
+    void saveEntity(json& j) const override;
 };
 
 class ParaKoopaBlue : public ParaKoopa {
 public:
     ParaKoopaBlue(Vector2 pos, Texture2D texture);
     void Update() override;
+	void UpdateTexture() override;
+    void saveEntity(json& j) const override;
 };
+
 class ParaKoopaGreen : public ParaKoopa {
 public:
     ParaKoopaGreen(Vector2 pos, Texture2D texture);
     void Update() override;
+	void UpdateTexture() override;
+    void saveEntity(json& j) const override;
+
 };
 class ParaKoopaYellow : public ParaKoopa {
 public:
     ParaKoopaYellow(Vector2 pos, Texture2D texture);
     void Update() override;
+	void UpdateTexture() override;
+    void saveEntity(json& j) const override;
+
 };
 #endif // PARA_KOOPA_H

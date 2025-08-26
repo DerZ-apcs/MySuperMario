@@ -441,7 +441,9 @@ bool EnemyFloorInfo::HandleCollision(Entity* entityA, Entity* entityB)
 			return false; // only jumping piranha can collide with blocks
 	}
 	CollisionType Colltype = enemy->CheckCollision(*floor);
-
+	if (enemy->getEnemyType() == BULLET || enemy->getEnemyType() == BANZAIBILL) {
+		return false;
+	}
 	if (Colltype != COLLISION_TYPE_SOUTH)
 		return false;
 	
@@ -465,11 +467,8 @@ bool EnemyBrickInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	CollisionType Colltype = enemy->CheckCollision(*block);
 	if (Colltype == COLLISION_TYPE_NONE) 
 		return false;
-	if (enemy->getEnemyType() == BULLET) {
-		enemy->setVel({ 0, 0 });
-		if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomp.wav");
-		enemy->setEntityDead();
-		return true;
+	if (enemy->getEnemyType() == BULLET || enemy->getEnemyType() == BANZAIBILL) {
+		return false;
 	}
 	if (enemy->getVelX() != 0 || enemy->getEnemyType() == SHELL) {
 		
@@ -521,11 +520,8 @@ bool EnemyItemBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 	if (Colltype == COLLISION_TYPE_NONE) 
 		return false;
 
-	if (enemy->getEnemyType() == BULLET) {
-		enemy->setVel({ 0, 0 });
-		if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomp.wav");
-		enemy->setEntityDead();
-		return true;
+	if (enemy->getEnemyType() == BULLET || enemy->getEnemyType() == BANZAIBILL) {
+		return false;
 	}
 	if (enemy->getVelX() != 0 || enemy->getVelY() != 0 || enemy->getEnemyType() == SHELL) {
 
@@ -573,13 +569,10 @@ bool EnemyBlockInfo::HandleCollision(Entity* entityA, Entity* entityB)
 
 	if (Colltype == COLLISION_TYPE_NONE)
 		return false;
-	if (enemy->getEnemyType() == BULLET) {
+	if (enemy->getEnemyType() == BULLET || enemy->getEnemyType() == BANZAIBILL || enemy->getEnemyType() == PIRANHA) {
 		return false;
 	}
-	if (enemy->getEnemyType() == PIRANHA) {
-		if (dynamic_cast<PiranhaPlant*>(enemy)->getPiranhaType() != JUMPING_PIRANHA)
-			return false; // only jumping piranha can collide with blocks
-	}
+
 	switch (Colltype) {
 	case COLLISION_TYPE_NORTH:
 		enemy->setPosition(Vector2{ enemy->getX(), block->getY() + block->getHeight() });

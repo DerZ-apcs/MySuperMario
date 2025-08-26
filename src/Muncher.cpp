@@ -55,6 +55,20 @@ void Muncher::loadEntity(const json& j)
 void Muncher::saveEntity(json& j) const
 {
     Enemy::saveEntity(j);
+
+    // Add Tiled-compatible properties array
+    j["properties"] = json::array({
+        {
+            { "name", "Name" },
+            { "type", "string" },
+            { "value", "Enemy" }
+        },
+        {
+            { "name", "Type" },
+            { "type", "string" },
+            { "value", "Muncher"}
+        }
+        });
 }
 
 float Muncher::getScores() const {
@@ -64,8 +78,8 @@ float Muncher::getScores() const {
 void Muncher::CollisionWithFireball(FireBall* fireball) {
     fireball->setEntityDead();
     if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("stomp.wav");
-    SmokeEffect* smokeright = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ 60, 120 });
+   /* SmokeEffect* smokeright = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ 60, 120 });
     globalGameEngine->addEffect(smokeright);
     SmokeEffect* smokeleft = new SmokeEffect(Vector2{ getCenter().x, getTop() }, Vector2{ -60, 120 });
-    globalGameEngine->addEffect(smokeleft);
+    globalGameEngine->addEffect(smokeleft);*/
 }

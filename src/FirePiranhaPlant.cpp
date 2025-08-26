@@ -123,7 +123,7 @@ void FirePiranhaPlant::ShootFireBall() {
         if (p && p->getPhase() != CLEARLEVEL_PHASE && p->getPhase() != DEAD_PHASE) {
             Direction dir = (p->getX() > position.x) ? RIGHT : LEFT;
             Vector2 fireBallPos = { position.x, position.y + 10 };
-            const int numFireballs = 3;
+            const int numFireballs = 1;
             const float angleSpread = 15.0f;
             const float baseSpeed = 300.0f;
 
@@ -151,6 +151,19 @@ void FirePiranhaPlant::saveEntity(json& j) const
 {
     PiranhaPlant::saveEntity(j);
     j["fireBallTimer"] = fireBallTimer; 
+    // Add Tiled-compatible properties array
+    j["properties"] = json::array({
+        {
+            { "name", "Name" },
+            { "type", "string" },
+            { "value", "Enemy" }
+        },
+        {
+            { "name", "Type" },
+            { "type", "string" },
+            { "value", "FirePiranhaPlant"}
+        }
+        });
 }
 
 // RapidFirePiranha Class Implementation
@@ -171,6 +184,24 @@ void RapidFirePiranha::ShootFireBall() {
             globalGameEngine->addEnemyFireBall(fireball);
         }
     }
+}
+
+void RapidFirePiranha::saveEntity(json& j) const
+{
+	FirePiranhaPlant::saveEntity(j);
+	// Add Tiled-compatible properties array
+	j["properties"] = json::array({
+		{
+			{ "name", "Name" },
+			{ "type", "string" },
+			{ "value", "Enemy" }
+		},
+		{
+			{ "name", "Type" },
+			{ "type", "string" },
+			{ "value", "RapidFirePiranha"}
+		}
+		});
 }
 
 HomingFirePiranha::HomingFirePiranha(Vector2 pos, Texture2D texture)
@@ -203,4 +234,22 @@ void HomingFirePiranha::ShootFireBall() {
             globalGameEngine->addEnemyFireBall(fireball);
         }
     }
+}
+
+void HomingFirePiranha::saveEntity(json& j) const
+{
+	FirePiranhaPlant::saveEntity(j);
+	// Add Tiled-compatible properties array
+	j["properties"] = json::array({
+		{
+			{ "name", "Name" },
+			{ "type", "string" },
+			{ "value", "Enemy" }
+		},
+		{
+			{ "name", "Type" },
+			{ "type", "string" },
+			{ "value", "HomingFirePiranha"}
+		}
+		});
 }

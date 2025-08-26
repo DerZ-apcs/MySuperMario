@@ -55,7 +55,8 @@ public:
     void onHit() override;
     float getScores() const override;
 
-    void stomped() override; 
+    void stomped() override;
+	void updateCollision() override;
     void CollisionWithFireball(FireBall* fireball) override; 
     void loadEntity(const json& j) override;
     void saveEntity(json& j) const override;

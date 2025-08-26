@@ -50,12 +50,16 @@ void Game::init()
 		Map::basePath + "kmap_2.json", "BACKGROUND_2", "MUSIC_2", "1-2"));
 	loadedLevel.push_back(std::make_unique<Level>(
 		Map::basePath + "kmap_3.json", "BACKGROUND_3", "MUSIC_3", "1-3"));
-	
+	loadedLevel.push_back(std::make_unique<Level>(
+		Map::basePath + "kmap_4.json", "BACKGROUND_4", "MUSIC_4", "1-4"));
+	loadedLevel.push_back(std::make_unique<Level>(
+		Map::basePath + "kmap_5.json", "BACKGROUND_5", "MUSIC_5", "1-5"));
 	// gui
 	loadGUI();
 
 	// map
 	selectMap(selectedMap);
+	level = loadedLevel[0].get();
 
 	while (!WindowShouldClose()) {
 		BeginDrawing();
@@ -107,7 +111,7 @@ void Game::selectCharacter(int characterIndex)
 
 void Game::selectMap(int mapIndex)
 {
-	if (mapIndex > 3 || mapIndex <= 0)
+	if (mapIndex > 5 || mapIndex <= 0)
 		return;
 		
 	switch (mapIndex)
@@ -121,9 +125,12 @@ void Game::selectMap(int mapIndex)
 	case 3:
 		this->level = loadedLevel[2].get();
 		break;
-	//case 4:
-	//	this->level = loadedLevel[3];
-	//	break;
+	case 4: 
+		this->level = loadedLevel[3].get();
+		break;
+	case 5:
+		this->level = loadedLevel[4].get();
+		break;
 	}
 	this->selectedMap = mapIndex;
 }
@@ -172,6 +179,7 @@ void Game::setBackground(const std::string& imageName)
 
 void Game::loadGUI()
 {
+	GUI::heartTexture = RESOURCE_MANAGER.getTexture("HEART");
 	GUI::board = RESOURCE_MANAGER.getTexture("BOARD");
 	GUI::board1 = RESOURCE_MANAGER.getTexture("BOARD1");
 	GUI::board2 = RESOURCE_MANAGER.getTexture("BOARD2");
@@ -198,4 +206,16 @@ void Game::loadGUI()
 	GUI::guiLuigi = RESOURCE_MANAGER.getTexture("LuigiGUI");
 	GUI::guiMario = RESOURCE_MANAGER.getTexture("MarioGUI");
 
+	GUI::ChoosingMario = RESOURCE_MANAGER.getTexture("SmallMario_Straight");
+	GUI::ChoosingLuigi = RESOURCE_MANAGER.getTexture("SmallLuigi_Straight");
+	GUI::ChoosingPeach = RESOURCE_MANAGER.getTexture("SmallPeach_Straight");
+	GUI::ChoosingMarisa = RESOURCE_MANAGER.getTexture("SmallMarisa_RIGHT_0");
+	GUI::ChoosingToad = RESOURCE_MANAGER.getTexture("SmallToad_Straight");
+	GUI::GuiP1 = RESOURCE_MANAGER.getTexture("P1GUI");
+	GUI::GuiP2 = RESOURCE_MANAGER.getTexture("P2GUI");
+	GUI::choosingTextures.push_back(GUI::ChoosingMario);
+	GUI::choosingTextures.push_back(GUI::ChoosingLuigi);
+	GUI::choosingTextures.push_back(GUI::ChoosingToad);
+	GUI::choosingTextures.push_back(GUI::ChoosingPeach);
+	GUI::choosingTextures.push_back(GUI::ChoosingMarisa);
 }

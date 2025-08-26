@@ -6,13 +6,11 @@
 using namespace std;
 
 class Character;
-
+class Boss;
 //Static class to draw GUI using raylib
 class GUI {
 public:
 	static Texture2D heartTexture;
-	static Texture2D coinTexture;
-	static Texture2D multiplicationSign;
 	static Texture2D board;
 	static Texture2D largeBoard;
 	static Texture2D board1;
@@ -38,6 +36,15 @@ public:
 	static Texture2D guiLuigi;
 	static Texture2D guiMario;
 
+	static Texture2D ChoosingMario;
+	static Texture2D ChoosingLuigi;
+	static Texture2D ChoosingPeach;
+	static Texture2D ChoosingMarisa;
+	static Texture2D ChoosingToad;
+	static Texture2D GuiP1;
+	static Texture2D GuiP2;
+	static std::vector<Texture2D> choosingTextures;
+
 	static void drawPlayerStatus(const Character* player, Vector2 origin);
 	static void drawStatusBar(const Character* player);
 	static void drawStatusBar(std::vector<std::unique_ptr<Character>>& multiplayers);
@@ -51,11 +58,21 @@ public:
 	static void drawSmallNumber(int number, Vector2 position, float spacing = 5.f);
 	static void drawYellowNumber(int number, Vector2 position, float spacing = 5.f);
 	static void drawEditorUI();
+	static void drawItemChoice(Vector2 position, ITEM_TYPE& itemChoice);
+	static void drawInputBox(Vector2 position, std::string& inputText);
+	static void drawMapChoice(int& mapChoice);
+	static void drawBossHealthBar(const Boss* boss);
+	static void drawChoosingSingleCharacter(int& choice);
+	static void drawChoosingDualCharacter(int& choice1, int& choice2);
 
+	static bool inSelection;
+	static bool return_is_pressed;
 	static bool home_is_pressed;
 	static bool restart_is_pressed;
 	static bool sound_is_pressed;
 	static bool setting_is_pressed;
+	static bool input_box_is_active;
+	static bool back_editor_is_pressed;
 };
 
 #endif

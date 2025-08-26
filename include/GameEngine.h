@@ -29,10 +29,10 @@ private:
     struct PlayerControls {
         int left, right, up, down, fire;
     };
-    std::vector<PlayerControls> controlBindings = {
-        {KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_RIGHT_SHIFT},
-        {KEY_A, KEY_D, KEY_W, KEY_S, KEY_LEFT_SHIFT}
-    };
+    //std::vector<PlayerControls> controlBindings = {
+    //    {KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_RIGHT_SHIFT},
+    //    {KEY_A, KEY_D, KEY_W, KEY_S, KEY_LEFT_SHIFT}
+    //};
     std::vector<InputHandler> inputHandlers;
 	InputHandler inputHandler1;
 	InputHandler inputHandler2;
@@ -49,6 +49,7 @@ private:
     // other
     Level* level;
     Map map;
+    Boss* boss;
     std::vector<std::unique_ptr<Character>>* multiplayers; // for multiplayers
     //std::vector<Blocks*> blocks;
 	std::vector<MovingBlock*> movingBlocks; // for moving blocks
@@ -73,7 +74,8 @@ private:
     int sharedLives = 5;
     Texture2D BackGroundTex;
     Vector2 bounce;
-
+    // for choosing character
+    int choice1 = 0, choice2 = 0;
     std::map<std::string, Texture2D> backgroundTextures;
     std::vector<Vector2> BackGroundPos;
 public:

@@ -141,5 +141,19 @@ void DryBones::saveEntity(json& j) const
     j["breakTimer"] = breakTimer;
     j["reviveTimer"] = reviveTimer;
     j["shakeTimer"] = shakeTimer;
+
+    // Add Tiled-compatible properties array
+    j["properties"] = json::array({
+        {
+            { "name", "Name" },
+            { "type", "string" },
+            { "value", "Enemy" }
+        },
+        {
+            { "name", "Type" },
+            { "type", "string" },
+            { "value", "DryBones"}
+        }
+        });
 }
 

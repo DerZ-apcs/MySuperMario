@@ -101,21 +101,4 @@ inline void registerBlocks() {
 		return new RotatingBlock(pos);
 		});
 }
-//inline void registerBlocks() {
-//	BlockFactory& factory = BlockFactory::getInstance();
-//
-//	factory.registerBlock(FLOOR, createFloor);
-//	factory.registerBlock(BRICK, createBrick);
-//	factory.registerBlock(SOLIDBLOCK, createSolidBlock);
-//	factory.registerBlock(MOVINGBLOCK, createMovingBlock);
-//	factory.registerBlock(ITEMBLOCK, createItemBlock);
-//	//factory.registerBlock(HIDDEN, createHiddenBlock);
-//	factory.registerBlock(DECOR, createDecorBlock);
-//	factory.registerBlock(CLOUDBLOCK, createCloudBlock);
-//	factory.registerBlock(NOTEBLOCK, createNoteBlock);
-//	factory.registerBlock(ROTATINGBLOCK, createRotatingBlock);
-//	factory.registerBlock(COINBLOCK, createCoinBlock);
-//	//factory.registerBlock(TEMPBLOCK, createTempBlock);
-//}
-
 #endif

@@ -24,6 +24,7 @@
 #include "../include/PiranhaPlant.h"
 #include "../include/DryBones.h"
 #include "../include/Spiny.h"
+#include "../include/PeteyPiranha.h"
 #include "../include/BoomBoom.h"
 #include "../include/SaveManager.h"
 #include <iostream>
@@ -32,7 +33,7 @@ using json = nlohmann::json;
 GameEngine* globalGameEngine = nullptr;
 
 GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std::vector<std::unique_ptr<Character>>* multiplayers):
-    camera(screenWidth, screenHeight, 1.25f), level(&level), multiplayers(multiplayers)
+    camera(screenWidth, screenHeight, 1.25f), level(&level), multiplayers(multiplayers), boss(nullptr)
 {
     globalGameEngine = this;
     isPaused = false;
@@ -69,28 +70,20 @@ GameEngine::GameEngine(float screenWidth, float screenHeight, Level& level, std:
     inputHandler2.bindKey(KEY_KP_0, InputType::Press, &fire);
     inputHandler2.setDefaultCommand(&stand);
 
-    //FirePiranhaPlant* plant = new FirePiranhaPlant({ 432, 710 }, RESOURCE_MANAGER.getTexture("PiranhaPlant_CLOSED"));
-    //enemies.push_back(plant);
-
- //   Koopa* koopa = new YellowKoopa({ 100, 500 }, RESOURCE_MANAGER.getTexture("YellowKoopa_LEFT_0"));
- //   enemies.push_back(koopa);
-	//enemies.push_back(new GreenKoopa({ 200, 500 }, RESOURCE_MANAGER.getTexture("GreenKoopa_LEFT_0")));
-	//enemies.push_back(new RedKoopa({ 300, 500 }, RESOURCE_MANAGER.getTexture("RedKoopa_LEFT_0")));
-    //enemies.push_back(new FlyingGoomba({ 350, 500 }, RESOURCE_MANAGER.getTexture("FlyingGoomba_LEFT_0")));
-    //enemies.push_back(new Goomba({ 200, 500 }, RESOURCE_MANAGER.getTexture("Goomba_LEFT_0")));
-
-    //enemies.push_back(new BobOmb({ 200, 600 }, RESOURCE_MANAGER.getTexture("BobOmb_LEFT_0")));
-    //enemies.push_back(new BuzzyBeetle({ 200, 600 }, RESOURCE_MANAGER.getTexture("BuzzyBeetle_LEFT_0")));
-    //enemies.push_back(new Spiny({ 300, 500 }, RESOURCE_MANAGER.getTexture("Spiny_DEAD")));
-	//enemies.push_back(new DryBones({ 500, 500 }, RESOURCE_MANAGER.getTexture("DryBones_LEFT_0")));
-    //enemies.push_back(new BoomBoom({500, 400}));
+    if (multiplayers->size() == 1) {
+        choice1 = static_cast<int>((*multiplayers)[0]->getCharacterType());
+    }
+    else if (multiplayers->size() == 2) {
+        choice1 = static_cast<int>((*multiplayers)[0]->getCharacterType());
+        choice2 = static_cast<int>((*multiplayers)[1]->getCharacterType());
+    }
 }
 
 void GameEngine::loadGameMap(Level& level) {
     map.LoadFromJsonFile(level.getMapPath());
     map.loadBackgroundTexture(level.getBackGroundName());
     Vector2 Msize = map.getMapSize();
-    camera.loadRenderTexture(Msize);
+	camera.loadRenderTexture(Msize);
     bounce = Msize;
 
 	movingBlocks = map.getMovingBlocks();
@@ -99,27 +92,17 @@ void GameEngine::loadGameMap(Level& level) {
     items = map.getItems();
     decor = map.getDecor();
     covers = map.getCovers();
-    secretAreas = map.getSecretAreas();
+    secretAreas = map.getSecretAreas(); 
+	//enemies.push_back(new BoomBoom({ 1000, 500 }));
+    // load boss from enemies
+	for (auto& enemy : enemies) {
+		if (enemy->getEnemyType() == BOSS) {
+			boss = dynamic_cast<Boss*>(enemy);
+			break;
+		}
+	}
+}
 
-    // test moving block
-    for (int i = 0; i < 3; i++) {
-        MovingBlock* block = new MovingBlock(Vector2{ (float)400 + i * 32, 850 }, { 32, 32 });
-		block->setBounds(400 + i * 32, 700 + i * 32, 700, 900);
-		block->setVelocity({ 50.0f, 0.0f });
-		movingBlocks.push_back(block);
-    }
-	enemies.push_back(new FlyingGoomba({ 700, 800 }, RESOURCE_MANAGER.getTexture("FlyingGoomba_LEFT_0")));
-    Cannon* cannon = new Cannon({ 600, 600 });
-    cannon->setBulletType(0);
-    tileGrid[20].push_back(cannon);
-}
-void GameEngine::InitGameCamera()
-{
-	if (multiplayers->empty() || (*multiplayers)[0] == nullptr) return;
-	camera = GameCamera(GetScreenWidth(), GetScreenHeight(), 1.25f);
-	Vector2 Msize = map.getMapSize();
-	camera.loadRenderTexture(Msize);
-}
 GameEngine::~GameEngine() {
     for (size_t i = 0; i < enemyFireball.size(); i++)
         delete enemyFireball[i];
@@ -194,34 +177,9 @@ void GameEngine::update()
     }
     if (IsKeyPressed(KEY_F5)) {
         saveGame(1);
-        cout << "Save game to slot 1: " << endl;
+        cout << "Game has been save" << endl;
     }
-    if (IsKeyPressed(KEY_F9))
-        loadGame(1);
-
-	Rectangle cameraView = camera.getViewRect();
-    float margin = 120.0f; // Margin for camera view
-    auto isInView = [&](float x, float y, float w = 32, float h = 32) {
-        return CheckCollisionRecs(cameraView, { x - margin, y - margin, w + 2 * margin, h + 2 * margin });
-    };
-
-    if (IsKeyPressed(KEY_F5)) {
-        saveGame(1);
-        const char* text = "Game has been saved";
-
-        Font* font = RESOURCE_MANAGER.getFont("SMW");
-        if (font) {
-            Vector2 position = { 400, 300 }; // Example position (adjust as needed)
-            float fontSize = 30.0f;
-            float spacing = 1.0f;
-            // Get size of the text to center it
-            Vector2 textSize = MeasureTextEx(*font, text, fontSize, spacing);
-            Vector2 origin = { textSize.x / 2, textSize.y / 2 };
-            DrawTextPro(*font, text, position, origin, 0.0f, fontSize, spacing, WHITE);
-        }
-
-    }
-    if (IsKeyPressed(KEY_F9)) {
+    if (IsKeyPressed(KEY_F9)){
         loadGame(1);
     }
     if (IsKeyPressed(KEY_SPACE) || GUI::setting_is_pressed) {
@@ -244,6 +202,7 @@ void GameEngine::update()
             if (SETTING.isSoundEnabled()) RESOURCE_MANAGER.playSound("pause.wav");
         }
     }
+
     if (GUI::restart_is_pressed) {
         GUI::restart_is_pressed = false;
         for (auto& p : *multiplayers) {
@@ -323,6 +282,8 @@ void GameEngine::update()
 			ef->Update();
 	}
     // enemies
+
+
     for (auto* e : enemies) {
         if (!e || !isInCameraView(e->getRect()))
             continue;
@@ -348,8 +309,24 @@ void GameEngine::update()
     // camera update
     if ((*multiplayers).size() == 2) {
         // need to know the goal
+        Vector2 goal = { 7900, 200 };
+        if (getCurrentMapName() == "1-1") {
+            goal = { 7940, 200 };
+        }
+        else if (getCurrentMapName() == "1-2") {
+            goal = {8512, 832};
+        }
+        else if (getCurrentMapName() == "1-3") {
+            goal = { 9216, 544 };
+        }
+        else if (getCurrentMapName() == "1-4") {
+            goal = { 1632, 224 };
+        }
+        else if (getCurrentMapName() == "1-5") {
+            goal = { 2368, 96 };
+        }
         camera.update((*multiplayers)[0]->getX(), (*multiplayers)[0]->getY(),
-            (*multiplayers)[1]->getX(), (*multiplayers)[1]->getY(), 7940, 100);
+            (*multiplayers)[1]->getX(), (*multiplayers)[1]->getY(), goal.x, goal.y);
     }
     else camera.update((*multiplayers)[0]->getX(), (*multiplayers)[0]->getY());
 }
@@ -411,18 +388,6 @@ void GameEngine::handleCollision() {
         for (Blocks* b : nearby)
             CollI.HandleCollision(item, b);
     }   
-	// enemy fireball
-	for (size_t i = 0; i < enemyFireball.size(); i++) {
-		auto nearby = getNearbyBlocks(enemyFireball[i]->getPosition(), 2);
-		for (Blocks* b : nearby) {
-            if (!b || b->getBlockType() == DECOR) continue;
-			CollI.HandleCollision(enemyFireball[i], b);
-		}
-        for (auto& mb : movingBlocks) {
-			if (!mb || !isInCameraView(mb->getRect())) continue; 
-			CollI.HandleCollision(enemyFireball[i], mb);
-        }
-	}
 
     // player vs enemy
     for (auto& p : *multiplayers) {
@@ -433,21 +398,30 @@ void GameEngine::handleCollision() {
                 CollI.HandleCollision(fireball, e);
         }
     }
-
     // Player vs Items
     for (auto& p : *multiplayers)
         for (auto& item : items)
             CollI.HandleCollision(p.get(), item);
     // Enemy fireball ↔ player
-    for (auto& ef : enemyFireball)
+    for (auto& ef : enemyFireball) {
         for (auto& p : *multiplayers)
             CollI.HandleCollision(ef, p.get());
+        // collsion with tile
+        auto nearbyBlocks = getNearbyBlocks(ef->getPosition(), 2);
+        for (Blocks* b : nearbyBlocks) {
+            if (b == nullptr || b->getBlockType() == DECOR) continue;
+            CollI.HandleCollision(ef, b);
+        }
+    }
+       
 }
 // draw
 void GameEngine::draw()
 {
     camera.beginDrawing();
-    ClearBackground(SKYBLUE);
+    if (getCurrentMapName() == "1-4")
+		ClearBackground(BLACK);
+    else ClearBackground(SKYBLUE);
 
     map.drawBackGround(camera.getSize(), camera.getScale());
     //map.drawMap();
@@ -458,7 +432,15 @@ void GameEngine::draw()
         lostLife = (lostLife == true || p->isLostLife());
     }
     bool drawCover = true;
-    // cover
+    for (auto& area : secretAreas) {
+        for (size_t i = 0; i < (*multiplayers).size(); i++) {
+            if (CheckCollisionPointRec((*multiplayers)[i]->getPosition(), area) == true) {
+                //printf("Character in the secret area at (%f, %f)\n", (*multiplayers)[i]->getX(), (*multiplayers)[i]->getY());
+                drawCover = false;
+                break;
+            }
+        }
+    }
     if (drawCover == true) {
         for (auto* cover : covers) {
             if (!cover || !isInCameraView(cover->getRect()))
@@ -470,15 +452,10 @@ void GameEngine::draw()
 		if (!dec || !isInCameraView(dec->getRect())) continue;
 		dec->draw();
     }
-    // enemy fireball draw
-    for (auto* ef : enemyFireball) {
-		if (!ef || !isInCameraView(ef->getRect())) 
-			continue; // skip drawing this fireball
-        ef->draw();
-    }
+
 	// enemy draw
     for (auto* e : enemies) {
-        if (!e || !isInCameraView(e->getRect()))
+        if (!e || !isInCameraView(e->getRect()) || e->getEnemyType() != PIRANHA)
             continue; // skip drawing this enemy
 		e->draw();
     }
@@ -518,12 +495,29 @@ void GameEngine::draw()
             }
         }
     }
-
+    // heart of boss draw (check that boss near character)
+    for (auto& c : *multiplayers) {
+        if (boss == nullptr || !isInCameraView(boss->getRect())) continue; // skip drawing boss
+        if (abs(boss->getX() - c->getX()) <= 1400 && (abs(boss->getY() - c->getY()) <= 700)) {
+            GUI::drawBossHealthBar(boss);
+            break; // only draw once
+        }
+    }
     // item draw
     for (auto* item : items) {
 		if (!item || !isInCameraView(item->getRect())) 
 			continue; // skip drawing this item
         item->draw();
+    }
+    for (auto* e : enemies) {
+        if (e->getEnemyType() != PIRANHA)
+            e->draw();
+    }
+    // enemy fireball draw
+    for (auto* ef : enemyFireball) {
+        if (!ef || !isInCameraView(ef->getRect()))
+            continue; // skip drawing this fireball
+        ef->draw();
     }
     // effects draw
     for (auto* ef : effects) {
@@ -531,7 +525,7 @@ void GameEngine::draw()
 			continue; // skip drawing this effect
         ef->draw();
     }
-   
+    
     camera.endDrawing();
 
     BeginDrawing();
@@ -547,6 +541,7 @@ void GameEngine::draw()
 
     if (isPaused) {
         DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.3f));
+
         if (cleared) {
             GUI::drawLevelClear();
         }
@@ -564,6 +559,15 @@ void GameEngine::draw()
                 }
                 else SETTING.setMusic(true);
             }
+            if (GUI::inSelection) {
+
+                if (multiplayers->size() == 1) {
+                    GUI::drawChoosingSingleCharacter(choice1);
+                }
+                else {
+                    GUI::drawChoosingDualCharacter(choice1, choice2);
+                }
+            }
         }
     }
 
@@ -575,8 +579,6 @@ void GameEngine::draw()
 bool GameEngine::run() {
     RESOURCE_MANAGER.stopCurrentMusic();
     RESOURCE_MANAGER.playMusic(level->getMusic());
-    // load and play the new music
-
     // second game loop (main game loop)
     while (!WindowShouldClose()) {
         if (SETTING.isMusicEnabled()) {
@@ -585,13 +587,7 @@ bool GameEngine::run() {
         update();
         ClearBackground(RAYWHITE);
         draw();
-        if (IsKeyPressed(KEY_T)) {
-			cout << "Character state: " << static_cast<CharacterState>((*multiplayers)[0]->getCharacterState()) << endl;
-			cout << "died: " << died << endl;
-			cout << "gameover: " << gameover << endl;
-			cout << "lost life: " << (*multiplayers)[0]->isLostLife() << endl;
-			cout << "phase: " << static_cast<Phase>((*multiplayers)[0]->getPhase()) << endl;
-        }
+
         if (cleared == true && isPaused == false) {
             RESOURCE_MANAGER.stopCurrentMusic();
             RESOURCE_MANAGER.playMusic("MUSIC_1");
@@ -760,17 +756,23 @@ std::vector<Blocks*> GameEngine::getNearbyBlocks(Vector2 pos, int range)
 {
     std::vector<Blocks*> nearbyBlocks;
     int tileX = pos.x / 32;
-	int tileY = pos.y / 32;
-	for (int x = tileX - range; x <= tileX + range; ++x) {
-		for (int y = tileY - range; y <= tileY + range; ++y) {
-			if (x >= 0 && x < tileGrid[0].size() && y >= 0 && y < tileGrid.size()) {
-				Blocks* block = tileGrid[y][x];
-				if (block != nullptr) nearbyBlocks.push_back(block);
-			}
-		}
-	}
-	return nearbyBlocks;
+    int tileY = pos.y / 32;
+
+    for (int x = tileX - range; x <= tileX + range; ++x) {
+        for (int y = tileY - range; y <= tileY + range; ++y) {
+            if (y >= 0 && y < (int)tileGrid.size() &&
+                x >= 0 && x < (int)tileGrid[y].size())
+            {
+                Blocks* block = tileGrid[y][x];
+                if (block != nullptr) {
+                    nearbyBlocks.push_back(block);
+                }
+            }
+        }
+    }
+    return nearbyBlocks;
 }
+
 
 bool GameEngine::isInCameraView(Rectangle entityRect) const {
     Rectangle view = camera.getViewRect();
@@ -860,6 +862,9 @@ json GameEngine::serialize()
     map.saveMap(j);
     j["mapSize"] = { map.getMapSize().x, map.getMapSize().y };
     j["background"] = level->getBackGroundName();
+    // camera
+	j["Camera"] = json::object();
+   	camera.saveCamera(j["Camera"]);
 
     saveMultiCharacters(*multiplayers, j);
     saveGameEngineState(this, j);
@@ -872,8 +877,8 @@ json GameEngine::serialize()
 void GameEngine::deserialize(const json& j)
 {
     level->loadLevel(j);
-    loadGameMap(*level);
     map.loadMap(j);
+    loadGameMap(*level);
 
     Vector2 Msize = { j["mapSize"][0], j["mapSize"][1] };
     map.setMapSize(Msize);
@@ -886,6 +891,19 @@ void GameEngine::deserialize(const json& j)
     loadEnemies(enemies, j);
     loadItems(items, j);
     loadTileGrids(tileGrid, j);
+    for (auto& enemy : enemies) {
+        if (enemy->getEnemyType() == BOSS) {
+            boss = dynamic_cast<Boss*>(enemy);
+            break;
+        }
+    }
+    // load camera
+	if (!j.contains("Camera")) {
+		std::cerr << "Error: Camera data not found in JSON." << std::endl;
+		return;
+	}
+	camera.loadCamera(j.at("Camera"));
+    //InitGameCamera();
 }
 
 std::vector<std::vector<Blocks*>>& GameEngine::getTileGrid()

@@ -118,7 +118,7 @@ void BobOmb::Explode() {
     state = STATE_IS_DYING;
     deathTimer = BOBOMB_EXPLOSION_DURATION;
     velocity = { 0, 0 };
-    RESOURCE_MANAGER.playSound("ENEMY_EXPLOSION"); // Cần thêm âm thanh này
+    RESOURCE_MANAGER.playSound("fireball.wav"); // Cần thêm âm thanh này
 
     for (auto& p : globalGameEngine->getMultiplayers()) {
         if (p && p->getPhase() != CLEARLEVEL_PHASE && p->getPhase() != DEAD_PHASE) {
@@ -144,4 +144,18 @@ void BobOmb::saveEntity(json& j) const
     Enemy::saveEntity(j);
     j["isActivated"] = isActivated;          
     j["fuseTimer"] = fuseTimer;
+
+    // Add Tiled-compatible properties array
+    j["properties"] = json::array({
+        {
+            { "name", "Name" },
+            { "type", "string" },
+            { "value", "Enemy" }
+        },
+        {
+            { "name", "Type" },
+            { "type", "string" },
+            { "value", "BobOmb"}
+        }
+        });
 }
